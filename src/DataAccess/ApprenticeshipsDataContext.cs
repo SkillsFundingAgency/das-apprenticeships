@@ -18,6 +18,6 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             optionsBuilder.UseSqlServer(_connectionString);
         }
 
-        public virtual DbSet<Earning> Earning { get; set; }
+        public virtual DbSet<Apprenticeship> Apprenticeships { get; set; }
     }
 }

@@ -1,5 +1,0 @@
-﻿CREATE TABLE [dbo].[Earning]
-(
-	[Id] BIGINT NOT NULL PRIMARY KEY,
-	[Ukprn] BIGINT NOT NULL
-)

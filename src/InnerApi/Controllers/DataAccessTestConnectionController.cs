@@ -18,9 +18,9 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         }
 
         [HttpGet(Name = "TestDBConnection")]
-        public IEnumerable<long> GetUkprns()
+        public IEnumerable<Guid> GetApprenticeshipKeys()
         {
-            return _dataContext.Earning.Select(x => x.Ukprn);
+            return _dataContext.Apprenticeships.Select(x => x.Key);
         }
     }
 }

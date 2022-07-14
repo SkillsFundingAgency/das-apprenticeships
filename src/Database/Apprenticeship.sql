@@ -1,0 +1,4 @@
+﻿CREATE TABLE [dbo].[Apprenticeship]
+(
+	[Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY
+)

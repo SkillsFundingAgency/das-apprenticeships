@@ -1,8 +1,8 @@
 ﻿namespace SFA.DAS.Apprenticeships.DataAccess.Entities
 {
-    public class Earning
+    public class Approval
     {
         public long Id { get; set; }
-        public long Ukprn { get; set; }
+        public Guid ApprenticeshipKey { get; set; }
     }
 }
