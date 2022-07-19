@@ -1,8 +1,10 @@
-﻿namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models
+﻿using SFA.DAS.Apprenticeships.Enums;
+
+namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models
 {
     public class ApprovalModel
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public long ApprovalsApprenticeshipId { get; set; }
         public long UKPRN { get; set; }
         public long EmployerAccountId { get; set; }

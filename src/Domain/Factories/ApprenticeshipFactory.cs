@@ -2,9 +2,9 @@
 {
     public class ApprenticeshipFactory : IApprenticeshipFactory
     {
-        public Apprenticeship.Apprenticeship CreateNew()
+        public Apprenticeship.Apprenticeship CreateNew(long uln, string trainingCode)
         {
-            return Apprenticeship.Apprenticeship.New();
+            return Apprenticeship.Apprenticeship.New(uln, trainingCode);
         }
     }
 }

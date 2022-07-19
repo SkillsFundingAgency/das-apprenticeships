@@ -2,6 +2,6 @@
 {
     public interface IApprenticeshipFactory
     {
-        Apprenticeship.Apprenticeship CreateNew();
+        Apprenticeship.Apprenticeship CreateNew(long uln, string trainingCode);
     }
 }

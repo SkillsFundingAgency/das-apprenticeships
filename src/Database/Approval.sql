@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Approval]
 (
-	[Id] BIGINT NOT NULL PRIMARY KEY,
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
 	[ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL, 
     [ApprovalsApprenticeshipId] BIGINT NOT NULL, 
     [UKPRN] BIGINT NOT NULL, 

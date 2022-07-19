@@ -19,7 +19,20 @@ namespace SFA.DAS.Apprenticeships.Functions
         [FunctionName("HandleApprovalCreatedCommand")]
         public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedCommand command)
         {
-            await _commandDispatcher.Send(new AddApprovalCommand());
+            await _commandDispatcher.Send(new AddApprovalCommand
+            {
+                TrainingCode = command.TrainingCode,
+                ActualStartDate = command.ActualStartDate,
+                AgreedPrice = command.AgreedPrice,
+                ApprovalsApprenticeshipId = command.ApprovalsApprenticeshipId,
+                EmployerAccountId = command.EmployerAccountId,
+                FundingEmployerAccountId = command.FundingEmployerAccountId,
+                FundingType = command.FundingType,
+                LegalEntityName = command.LegalEntityName,
+                PlannedEndDate = command.PlannedEndDate,
+                UKPRN = command.UKPRN,
+                Uln = command.Uln
+            });
         }
     }
 }

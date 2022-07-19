@@ -1,8 +1,12 @@
-﻿using SFA.DAS.Apprenticeships.Enums;
+﻿using System;
+using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.Command.AddApproval
+namespace SFA.DAS.Apprenticeships.Functions
 {
-    public class AddApprovalCommand : ICommand
+    /// <summary>
+    /// Get this from the event handlers repo
+    /// </summary>
+    public class ApprovalCreatedCommand
     {
         public long Uln { get; set; }
         public string TrainingCode { get; set; }

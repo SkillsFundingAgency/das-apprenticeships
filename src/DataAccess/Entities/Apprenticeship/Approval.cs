@@ -1,8 +1,10 @@
-﻿namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship
+﻿using SFA.DAS.Apprenticeships.Enums;
+
+namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship
 {
     public class Approval
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public Guid ApprenticeshipKey { get; set; }
         public long ApprovalsApprenticeshipId { get; set; }
         public long UKPRN { get; set; }
