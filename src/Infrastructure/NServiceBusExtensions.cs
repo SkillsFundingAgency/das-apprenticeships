@@ -1,82 +1,48 @@
-﻿using System.Data.SqlClient;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Azure.WebJobs.Host.Config;
 using Microsoft.Extensions.DependencyInjection;
-using NServiceBus;
-using NServiceBus.ObjectBuilder.MSDependencyInjection;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.NServiceBus.AzureFunction.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Hosting;
-using SFA.DAS.NServiceBus.Configuration;
-using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
-using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
-using SFA.DAS.NServiceBus.SqlServer.Configuration;
-using SFA.DAS.UnitOfWork.NServiceBus.Configuration;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure
 {
-    public static class RoutingSettingsExtensions
-    {
-        public static void AddRouting(this RoutingSettings routingSettings)
-        {
-        }
-    }
-
-    public static class NServiceBusExtensions
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddNServiceBus(
             this IServiceCollection serviceCollection,
-            IConfiguration configuration)
+            ILogger logger,
+            Action<NServiceBusOptions> OnConfigureOptions = null)
         {
-            var webBuilder = serviceCollection.AddWebJobs(x => { });
-            webBuilder.AddExecutionContextBinding();
-            //webBuilder.AddExtension<NServiceBusExtensionConfigProvider>();
-            webBuilder.AddExtension(new NServiceBusExtensionConfigProvider(new NServiceBusOptions()));
-
-            var endpointName = configuration["NServiceBusEndpointName"];
-            if (string.IsNullOrEmpty(endpointName))
+            serviceCollection.AddSingleton<IExtensionConfigProvider, NServiceBusExtensionConfigProvider>((c) =>
             {
-                endpointName = QueueNames.ApprenticeshipLearners;
-            }
+                var options = new NServiceBusOptions
+                {
+                    OnMessageReceived = (context) =>
+                    {
+                        context.Headers.TryGetValue("NServiceBus.EnclosedMessageTypes", out string messageType);
+                        context.Headers.TryGetValue("NServiceBus.MessageId", out string messageId);
+                        context.Headers.TryGetValue("NServiceBus.CorrelationId", out string correlationId);
+                        context.Headers.TryGetValue("NServiceBus.OriginatingEndpoint", out string originatingEndpoint);
+                        logger.LogInformation($"Received NServiceBusTriggerData Message of type '{(messageType != null ? messageType.Split(',')[0] : string.Empty)}' with messageId '{messageId}' and correlationId '{correlationId}' from endpoint '{originatingEndpoint}'");
 
-            var endpointConfiguration = new EndpointConfiguration(endpointName)
-                .UseMessageConventions()
-                .UseNewtonsoftJsonSerializer()
-                .UseOutbox(true)
-                .UseSqlServerPersistence(() => new SqlConnection(configuration["ApprenticeshipEarningsDatabase"]))
-                .UseUnitOfWork();
-                
-            //todo scrap this before PR?
-            //endpointConfiguration.DefineCriticalErrorAction(async context =>
-            //{
-            //    await Console.Out.WriteLineAsync("Critical error: " + context.Exception);
-            //});
+                    },
+                    OnMessageErrored = (ex, context) =>
+                    {
+                        context.Headers.TryGetValue("NServiceBus.EnclosedMessageTypes", out string messageType);
+                        context.Headers.TryGetValue("NServiceBus.MessageId", out string messageId);
+                        context.Headers.TryGetValue("NServiceBus.CorrelationId", out string correlationId);
+                        context.Headers.TryGetValue("NServiceBus.OriginatingEndpoint", out string originatingEndpoint);
+                        logger.LogError(ex, $"Error handling NServiceBusTriggerData Message of type '{(messageType != null ? messageType.Split(',')[0] : string.Empty)}' with messageId '{messageId}' and correlationId '{correlationId}' from endpoint '{originatingEndpoint}'");
+                    }
+                };
 
-            //endpointConfiguration.CustomDiagnosticsWriter(async x =>
-            //{
-            //    await Console.Out.WriteLineAsync("Diagnostics: " + x);
-            //});
+                if (OnConfigureOptions != null)
+                {
+                    OnConfigureOptions.Invoke(options);
+                }
 
-            if (configuration["NServiceBusConnectionString"].Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
-            {
-                endpointConfiguration
-                    .UseTransport<LearningTransport>()
-                    .StorageDirectory(configuration.GetValue("UseLearningEndpointStorageDirectory", Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"src\.learningtransport")));
-                endpointConfiguration.UseLearningTransport(s => s.AddRouting());
-            }
-            else
-            {
-                endpointConfiguration
-                    .UseAzureServiceBusTransport(configuration["NServiceBusConnectionString"], r => r.AddRouting());
-            }
-
-            if (!string.IsNullOrEmpty(configuration["NServiceBusLicense"]))
-            {
-                endpointConfiguration.License(configuration["NServiceBusLicense"]);
-            }
-
-            var endpointWithExternallyManagedServiceProvider = EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
-            endpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
-            serviceCollection.AddSingleton(p => endpointWithExternallyManagedServiceProvider.MessageSession.Value);
+                return new NServiceBusExtensionConfigProvider(options);
+            });
 
             return serviceCollection;
         }

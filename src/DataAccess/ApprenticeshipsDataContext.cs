@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using SFA.DAS.Apprenticeships.DataAccess.Entities;
+using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 
 namespace SFA.DAS.Apprenticeships.DataAccess
 {
@@ -19,5 +19,6 @@ namespace SFA.DAS.Apprenticeships.DataAccess
         }
 
         public virtual DbSet<Apprenticeship> Apprenticeships { get; set; }
+        public virtual DbSet<Approval> Approvals { get; set; }
     }
 }
