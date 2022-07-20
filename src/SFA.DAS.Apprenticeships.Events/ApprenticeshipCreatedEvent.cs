@@ -1,6 +1,8 @@
-﻿namespace SFA.DAS.Apprenticeships.Events
+﻿using NServiceBus;
+
+namespace SFA.DAS.Apprenticeships.Events
 {
-    public class ApprenticeshipCreated
+    public class ApprenticeshipCreatedEvent : IEvent
     {
         public Guid ApprenticeshipKey { get; set; }
         public long ApprovalsApprenticeshipId { get; set; }
