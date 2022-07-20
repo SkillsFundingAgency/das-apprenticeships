@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Que
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Functions", "Functions\SFA.DAS.Apprenticeships.Functions.csproj", "{15C38F71-002C-44D3-8467-2ED893EA1120}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Domain.Tests", "Domain.Tests\SFA.DAS.Apprenticeships.Domain.Tests.csproj", "{0E5FBB69-B1BA-4DDD-8CE2-228CA203C36E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Domain.UnitTests", "Domain.Tests\SFA.DAS.Apprenticeships.Domain.UnitTests.csproj", "{0E5FBB69-B1BA-4DDD-8CE2-228CA203C36E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Acceptance", "AcceptanceTests\SFA.DAS.Apprenticeships.Acceptance.csproj", "{A22E55BF-9071-42BE-9F66-80D21815AADD}"
 EndProject
@@ -28,6 +28,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Events", "SFA.DAS.Apprenticeships.Events\SFA.DAS.Apprenticeships.Events.csproj", "{C9224A94-8D7C-400C-BAE6-8D79A5D8DA0A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Enums", "SFA.DAS.Apprenticeships.Enums\SFA.DAS.Apprenticeships.Enums.csproj", "{3E5B8C43-BA30-49D1-B84D-A5D433416EC6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8B9357D2-75AF-4B77-98C0-B1C9F310BD88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Command.UnitTests", "SFA.DAS.Apprenticeships.Command.UnitTests\SFA.DAS.Apprenticeships.Command.UnitTests.csproj", "{C1792F52-CC9E-4A35-8E50-F6B0755A09E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,9 +93,19 @@ Global
 		{3E5B8C43-BA30-49D1-B84D-A5D433416EC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E5B8C43-BA30-49D1-B84D-A5D433416EC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E5B8C43-BA30-49D1-B84D-A5D433416EC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1792F52-CC9E-4A35-8E50-F6B0755A09E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1792F52-CC9E-4A35-8E50-F6B0755A09E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1792F52-CC9E-4A35-8E50-F6B0755A09E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1792F52-CC9E-4A35-8E50-F6B0755A09E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0E5FBB69-B1BA-4DDD-8CE2-228CA203C36E} = {8B9357D2-75AF-4B77-98C0-B1C9F310BD88}
+		{A22E55BF-9071-42BE-9F66-80D21815AADD} = {8B9357D2-75AF-4B77-98C0-B1C9F310BD88}
+		{44B8941D-9B56-4024-A04B-E819AFCECA1F} = {8B9357D2-75AF-4B77-98C0-B1C9F310BD88}
+		{C1792F52-CC9E-4A35-8E50-F6B0755A09E1} = {8B9357D2-75AF-4B77-98C0-B1C9F310BD88}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A244BDC-EE6C-4218-8982-87E249BFFA07}
