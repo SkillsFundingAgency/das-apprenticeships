@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NServiceBus;
 using NServiceBus.ObjectBuilder.MSDependencyInjection;
+using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.NServiceBus.AzureFunction.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 using SFA.DAS.NServiceBus.Configuration;
@@ -29,7 +30,6 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
         {
             var webBuilder = serviceCollection.AddWebJobs(x => { });
             webBuilder.AddExecutionContextBinding();
-            //webBuilder.AddExtension<NServiceBusExtensionConfigProvider>();
             webBuilder.AddExtension(new NServiceBusExtensionConfigProvider(new NServiceBusOptions()));
 
             var endpointName = configuration["NServiceBusEndpointName"];
@@ -44,17 +44,6 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
                 .UseOutbox(true)
                 .UseSqlServerPersistence(() => new SqlConnection(configuration["ApprenticeshipEarningsDatabase"]))
                 .UseUnitOfWork();
-                
-            //todo scrap this before PR?
-            //endpointConfiguration.DefineCriticalErrorAction(async context =>
-            //{
-            //    await Console.Out.WriteLineAsync("Critical error: " + context.Exception);
-            //});
-
-            //endpointConfiguration.CustomDiagnosticsWriter(async x =>
-            //{
-            //    await Console.Out.WriteLineAsync("Diagnostics: " + x);
-            //});
 
             if (configuration["NServiceBusConnectionString"].Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
             {
