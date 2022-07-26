@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApproval;
 using SFA.DAS.Apprenticeships.Infrastructure;
+using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 
 namespace SFA.DAS.Apprenticeships.Functions
