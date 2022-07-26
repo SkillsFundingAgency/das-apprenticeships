@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.17.0" />
+    <PackageReference Include="FluentAssertions" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.18.1" />
     <PackageReference Include="NUnit" Version="3.13.2" />
@@ -16,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Apprenticeship\" />
+    <ProjectReference Include="..\Domain\SFA.DAS.Apprenticeships.Domain.csproj" />
   </ItemGroup>
 
 </Project>

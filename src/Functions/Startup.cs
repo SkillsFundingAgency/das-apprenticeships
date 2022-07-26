@@ -4,8 +4,6 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
-using NServiceBus;
 using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Configuration.AzureTableStorage;
@@ -44,23 +42,7 @@ namespace SFA.DAS.Apprenticeships.Functions
             builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), config));
 
             builder.Services.AddOptions();
-
-            var logger = serviceProvider.GetService<ILoggerProvider>().CreateLogger(GetType().AssemblyQualifiedName);
-            if (config["NServiceBusConnectionString"] == "UseDevelopmentStorage=true")
-            {
-                builder.Services.AddNServiceBus(logger, (options) =>
-                {
-                    options.EndpointConfiguration = (endpoint) =>
-                    {
-                        endpoint.UseTransport<LearningTransport>().StorageDirectory(config.GetValue("UseLearningEndpointStorageDirectory", Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"src\SFA.DAS.EmployerIncentives.Functions.TestConsole\.learningtransport")));
-                        return endpoint;
-                    };
-                });
-            }
-            else
-            {
-                builder.Services.AddNServiceBus(logger);
-            }
+            builder.Services.AddNServiceBus(config);
         }
     }
 }

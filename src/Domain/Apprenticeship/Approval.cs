@@ -27,7 +27,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         private Approval(ApprovalModel model)
         {
             _model = model;
-
         }
 
         public ApprovalModel GetModel()

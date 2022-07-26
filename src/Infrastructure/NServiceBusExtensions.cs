@@ -1,50 +1,83 @@
-﻿using Microsoft.Azure.WebJobs.Host.Config;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.NServiceBus.AzureFunction.Configuration;
+using NServiceBus;
+using NServiceBus.ObjectBuilder.MSDependencyInjection;
 using SFA.DAS.NServiceBus.AzureFunction.Hosting;
+using SFA.DAS.NServiceBus.Configuration;
+using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
+using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure
 {
-    public static class ServiceCollectionExtensions
+    public static class NServiceBusStartupExtensions
     {
         public static IServiceCollection AddNServiceBus(
             this IServiceCollection serviceCollection,
-            ILogger logger,
-            Action<NServiceBusOptions> OnConfigureOptions = null)
+            IConfiguration configuration)
         {
-            serviceCollection.AddSingleton<IExtensionConfigProvider, NServiceBusExtensionConfigProvider>((c) =>
+            var webBuilder = serviceCollection.AddWebJobs(x => { });
+            webBuilder.AddExecutionContextBinding();
+            webBuilder.AddExtension(new NServiceBusExtensionConfigProvider());
+
+            var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Apprenticeships")
+                .UseMessageConventions()
+                .UseNewtonsoftJsonSerializer();
+
+            if (configuration["NServiceBusConnectionString"].Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
             {
-                var options = new NServiceBusOptions
-                {
-                    OnMessageReceived = (context) =>
-                    {
-                        context.Headers.TryGetValue("NServiceBus.EnclosedMessageTypes", out string messageType);
-                        context.Headers.TryGetValue("NServiceBus.MessageId", out string messageId);
-                        context.Headers.TryGetValue("NServiceBus.CorrelationId", out string correlationId);
-                        context.Headers.TryGetValue("NServiceBus.OriginatingEndpoint", out string originatingEndpoint);
-                        logger.LogInformation($"Received NServiceBusTriggerData Message of type '{(messageType != null ? messageType.Split(',')[0] : string.Empty)}' with messageId '{messageId}' and correlationId '{correlationId}' from endpoint '{originatingEndpoint}'");
+                endpointConfiguration
+                    .UseTransport<LearningTransport>()
+                    .StorageDirectory(configuration.GetValue("LearningTransportStorageDirectory",
+                        Path.Combine(
+                            Directory.GetCurrentDirectory()
+                                .Substring(0, Directory.GetCurrentDirectory().IndexOf("src")),
+                            @"src\SFA.DAS.Apprenticeships.Functions.TestConsole\.learningtransport")));
+                endpointConfiguration.UseLearningTransport(s => s.AddRouting());
+            }
+            else
+            {
+                endpointConfiguration
+                    .UseAzureServiceBusTransport(configuration["NServiceBusConnectionString"], r => r.AddRouting());
+            }
 
-                    },
-                    OnMessageErrored = (ex, context) =>
-                    {
-                        context.Headers.TryGetValue("NServiceBus.EnclosedMessageTypes", out string messageType);
-                        context.Headers.TryGetValue("NServiceBus.MessageId", out string messageId);
-                        context.Headers.TryGetValue("NServiceBus.CorrelationId", out string correlationId);
-                        context.Headers.TryGetValue("NServiceBus.OriginatingEndpoint", out string originatingEndpoint);
-                        logger.LogError(ex, $"Error handling NServiceBusTriggerData Message of type '{(messageType != null ? messageType.Split(',')[0] : string.Empty)}' with messageId '{messageId}' and correlationId '{correlationId}' from endpoint '{originatingEndpoint}'");
-                    }
-                };
+            if (!string.IsNullOrEmpty(configuration["NServiceBusLicense"]))
+            {
+                endpointConfiguration.License(configuration["NServiceBusLicense"]);
+            }
 
-                if (OnConfigureOptions != null)
-                {
-                    OnConfigureOptions.Invoke(options);
-                }
+            ExcludeTestAssemblies(endpointConfiguration.AssemblyScanner());
+            //endpointConfiguration.SendOnly();
 
-                return new NServiceBusExtensionConfigProvider(options);
-            });
+            var endpointWithExternallyManagedServiceProvider =
+                EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
+            endpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
+            serviceCollection.AddSingleton(p => endpointWithExternallyManagedServiceProvider.MessageSession.Value);
 
             return serviceCollection;
+        }
+
+        private static void ExcludeTestAssemblies(AssemblyScannerConfiguration scanner)
+        {
+            var excludeRegexs = new List<string>
+            {
+                @"nunit.*.dll"
+            };
+
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            foreach (var fileName in Directory.EnumerateFiles(baseDirectory, "*.dll")
+                         .Select(Path.GetFileName))
+            {
+                foreach (var pattern in excludeRegexs)
+                {
+                    if (Regex.IsMatch(fileName, pattern, RegexOptions.IgnoreCase))
+                    {
+                        scanner.ExcludeAssemblies(fileName);
+                        break;
+                    }
+                }
+            }
         }
     }
 }

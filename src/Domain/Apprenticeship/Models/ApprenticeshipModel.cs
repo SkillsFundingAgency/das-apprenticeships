@@ -6,5 +6,10 @@
         public long Uln { get; set; }
         public string TrainingCode { get; set; }
         public List<ApprovalModel> Approvals { get; set; }
+
+        public ApprenticeshipModel()
+        {
+            Approvals = new List<ApprovalModel>();
+        }
     }
 }

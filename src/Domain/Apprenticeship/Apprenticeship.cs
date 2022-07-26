@@ -25,6 +25,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             var approval = Approval.New(approvalsApprenticeshipId, ukprn, employerAccountId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType);
             _approvals.Add(approval);
+            _model.Approvals.Add(approval.GetModel());
         }
 
         public ApprenticeshipModel GetModel()

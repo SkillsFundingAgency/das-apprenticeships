@@ -2,6 +2,6 @@
 {
     public static class QueueNames
     {
-        public const string ApprovalCreated = "sfa-das-funding-approval-created";
+        public const string ApprovalCreated = "sfa-das-apprenticeships-approval-created";
     }
 }
