@@ -1,8 +1,7 @@
-﻿using System;
-using AutoFixture;
+﻿using AutoFixture;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.AutoFixture.Customizations
+namespace SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations
 {
     public class ApprenticeshipCustomization : ICustomization
     {
