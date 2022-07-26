@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Infrastructure
+﻿namespace SFA.DAS.Apprenticeships.Types
 {
     public static class QueueNames
     {
