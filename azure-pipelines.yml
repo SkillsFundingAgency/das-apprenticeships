@@ -14,7 +14,7 @@ variables:
 - name: SolutionBaseName
   value: SFA.DAS.Apprenticeships
 - name: DACPACSolutionBaseName
-    value: SFA.DAS.Apprenticeships.Database
+  value: SFA.DAS.Apprenticeships.Database
 - name: BuildConfiguration
   value: release
 - name: BuildPlatform
