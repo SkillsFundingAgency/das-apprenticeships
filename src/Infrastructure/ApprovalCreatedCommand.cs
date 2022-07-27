@@ -1,7 +1,6 @@
-﻿using System;
-using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.Functions
+namespace SFA.DAS.Apprenticeships.Infrastructure
 {
     /// <summary>
     /// Get this from the event handlers repo

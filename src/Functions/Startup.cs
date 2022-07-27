@@ -4,8 +4,10 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure;
+using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Configuration.AzureTableStorage;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -42,7 +44,11 @@ namespace SFA.DAS.Apprenticeships.Functions
             builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), config));
 
             builder.Services.AddOptions();
+            builder.Services.Configure<ApplicationSettings>(config.GetSection("ApplicationSettings"));
+
             builder.Services.AddNServiceBus(config);
+            builder.Services.AddEntityFrameworkForApprenticeships();
+            builder.Services.AddCommandServices();
         }
     }
 }

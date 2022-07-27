@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataAccess\SFA.DAS.Apprenticeships.DataAccess.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Apprenticeships.Types.csproj" />
   </ItemGroup>
 

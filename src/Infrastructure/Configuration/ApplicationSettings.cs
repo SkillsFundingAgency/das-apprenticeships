@@ -6,5 +6,6 @@
         public string ServiceBusConnectionString { get; set; }
         public string QueueName { get; set; }
         public string TopicPath { get; set; }
+        public string DbConnectionString { get; set; }
     }
 }
