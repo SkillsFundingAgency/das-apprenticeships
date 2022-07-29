@@ -7,23 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Drivers\**" />
-    <Compile Remove="Support\**" />
-    <EmbeddedResource Remove="Drivers\**" />
-    <EmbeddedResource Remove="Support\**" />
-    <None Remove="Drivers\**" />
-    <None Remove="Support\**" />
-    <SpecFlowFeatureFiles Remove="Drivers\**" />
-    <SpecFlowFeatureFiles Remove="Support\**" />
-    <SpecFlowObsoleteCodeBehindFiles Remove="Drivers\**" />
-    <SpecFlowObsoleteCodeBehindFiles Remove="Support\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.33" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.6.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
