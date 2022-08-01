@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="SFA.DAS.NServiceBus" Version="17.0.13" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

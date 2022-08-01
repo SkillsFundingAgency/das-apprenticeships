@@ -32,7 +32,7 @@ public class HostingStepDefinitions
     //[When(@"A call is made")]
     public async Task MakeCall()
     {
-        await _testContext.TestFunction.Start(new OrchestrationStarterInfo("Function1", nameof(EarningsFunctions), new Dictionary<string, object>
+        await _testContext.TestFunction.Start(new OrchestrationStarterInfo("Function1", "EarningsFunctions", new Dictionary<string, object>
         {
             ["req"] = new DummyHttpRequest() { Path = "/api/Function1" }
         }));
