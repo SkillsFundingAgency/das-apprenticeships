@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
+﻿using System.Collections.ObjectModel;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -9,9 +10,19 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         private readonly ApprenticeshipModel _model;
         private readonly List<Approval> _approvals;
 
-        internal static Apprenticeship New(long uln, string trainingCode)
+        public Guid Key => _model.Key;
+        public string TrainingCode => _model.TrainingCode;
+        public string Uln => _model.Uln;
+        public IReadOnlyCollection<Approval> Approvals => new ReadOnlyCollection<Approval>(_approvals);
+
+        internal static Apprenticeship New(string uln, string trainingCode)
         {
             return new Apprenticeship(new ApprenticeshipModel { Key = Guid.NewGuid(), Uln = uln, TrainingCode = trainingCode });
+        }
+
+        internal static Apprenticeship Get(ApprenticeshipModel model)
+        {
+            return new Apprenticeship(model);
         }
 
         private Apprenticeship(ApprenticeshipModel model)

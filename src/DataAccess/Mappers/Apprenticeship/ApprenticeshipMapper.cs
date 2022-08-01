@@ -16,5 +16,18 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
 
             return dataModel;
         }
+
+        internal static ApprenticeshipModel Map(this Entities.Apprenticeship.Apprenticeship dataModel)
+        {
+            var domainModel = new ApprenticeshipModel(dataModel.Key)
+            {
+                TrainingCode = dataModel.TrainingCode,
+                Uln = dataModel.Uln
+            };
+
+            domainModel.Approvals = dataModel.Approvals.Map();
+
+            return domainModel;
+        }
     }
 }

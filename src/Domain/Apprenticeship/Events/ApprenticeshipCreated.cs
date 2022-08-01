@@ -2,11 +2,11 @@
 {
     public class ApprenticeshipCreated : IDomainEvent
     {
-        private readonly Guid _apprenticeshipKey;
+        public Guid ApprenticeshipKey { get; }
 
         public ApprenticeshipCreated(Guid apprenticeshipKey)
         {
-            _apprenticeshipKey = apprenticeshipKey;
+            ApprenticeshipKey = apprenticeshipKey;
         }
     }
 }

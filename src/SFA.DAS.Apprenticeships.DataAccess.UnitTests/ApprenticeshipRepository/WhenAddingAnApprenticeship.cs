@@ -9,6 +9,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models;
+using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
 namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
@@ -19,6 +20,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
         private Mock<IDomainEventDispatcher> _domainEventDispatcher;
+        private Mock<IApprenticeshipFactory> _apprenticeshipFactory;
 
         [SetUp]
         public void Arrange()
@@ -30,8 +32,9 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
             _dbContext = new ApprenticeshipsDataContext(options);
 
             _domainEventDispatcher = new Mock<IDomainEventDispatcher>();
+            _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
 
-            _sut = new Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), _domainEventDispatcher.Object);
+            _sut = new Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), _domainEventDispatcher.Object, _apprenticeshipFactory.Object);
         }
 
         [TearDown]

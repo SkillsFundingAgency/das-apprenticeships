@@ -4,7 +4,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
 {
     public class AddApprovalCommand : ICommand
     {
-        public long Uln { get; set; }
+        public string Uln { get; set; }
         public string TrainingCode { get; set; }
         public long ApprovalsApprenticeshipId { get; set; }
         public long UKPRN { get; set; }

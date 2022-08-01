@@ -24,5 +24,24 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
 
             return dataModels;
         }
+
+        internal static List<ApprovalModel> Map(this List<Approval> dataModels)
+        {
+            var domainModels = dataModels.Select(x => new ApprovalModel
+            {
+                Id = x.Id,
+                FundingEmployerAccountId = x.FundingEmployerAccountId,
+                EmployerAccountId = x.EmployerAccountId,
+                ActualStartDate = x.ActualStartDate,
+                AgreedPrice = x.AgreedPrice,
+                ApprovalsApprenticeshipId = x.ApprovalsApprenticeshipId,
+                FundingType = x.FundingType,
+                LegalEntityName = x.LegalEntityName,
+                PlannedEndDate = x.PlannedEndDate,
+                UKPRN = x.UKPRN
+            }).ToList();
+
+            return domainModels;
+        }
     }
 }

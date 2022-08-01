@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SFA.DAS.NServiceBus" Version="17.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Apprenticeships.Enums\SFA.DAS.Apprenticeships.Enums.csproj" />
+    <ProjectReference Include="..\Types\SFA.DAS.Apprenticeships.Types.csproj" />
   </ItemGroup>
 
   <ItemGroup>

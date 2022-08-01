@@ -7,7 +7,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
     /// </summary>
     public class ApprovalCreatedCommand
     {
-        public long Uln { get; set; }
+        public string Uln { get; set; }
         public string TrainingCode { get; set; }
         public long ApprovalsApprenticeshipId { get; set; }
         public long UKPRN { get; set; }

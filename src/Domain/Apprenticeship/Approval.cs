@@ -7,6 +7,16 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
     {
         private readonly ApprovalModel _model;
 
+        public long ApprovalsApprenticeshipId => _model.ApprovalsApprenticeshipId;
+        public long Ukprn => _model.UKPRN;
+        public long EmployerAccountId => _model.EmployerAccountId;
+        public string LegalEntityName => _model.LegalEntityName;
+        public DateTime? ActualStartDate => _model.ActualStartDate;
+        public DateTime? PlannedEndDate => _model.PlannedEndDate;
+        public decimal AgreedPrice => _model.AgreedPrice;
+        public long FunctionEmployerAccountId => _model.FundingEmployerAccountId;
+        public FundingType FundingType => _model.FundingType;
+
         internal static Approval New(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime? plannedEndDate, decimal agreedPrice, long fundingEmployerAccountId, FundingType fundingType)
         {
             return new Approval(new ApprovalModel
