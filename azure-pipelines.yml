@@ -12,7 +12,7 @@ trigger:
 
 variables:
 - name: SolutionBaseName
-  value: SFA.DAS.Apprenticeships.Types
+  value: SFA.DAS.Apprenticeships
 - name: DACPACSolutionBaseName
   value: SFA.DAS.Apprenticeships.Database
 - name: BuildConfiguration
@@ -55,7 +55,9 @@ stages:
     parameters:
       SolutionBaseName: $(DACPACSolutionBaseName)
       SqlProjectPath: src/Database/$(DACPACSolutionBaseName).sqlproj
-    
+
+- template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks
+   
 - stage: Deploy_AT
   dependsOn: Build
   displayName: Deploy to AT
