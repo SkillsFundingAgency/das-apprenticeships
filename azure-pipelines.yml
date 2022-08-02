@@ -12,7 +12,7 @@ trigger:
 
 variables:
 - name: SolutionBaseName
-  value: SFA.DAS.Apprenticeships
+  value: SFA.DAS.Apprenticeships.Types
 - name: DACPACSolutionBaseName
   value: SFA.DAS.Apprenticeships.Database
 - name: BuildConfiguration
