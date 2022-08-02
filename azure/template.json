@@ -108,7 +108,7 @@
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
-        "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
+        "appServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
         "appServicePlanName": "[concat(variables('resourceNamePrefix'), '-asp')]",
         "configNames": "SFA.DAS.Funding.Apprenticeships"
     },
