@@ -18,5 +18,6 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
         public decimal AgreedPrice { get; set; }
         public long FundingEmployerAccountId { get; set; }
         public FundingType FundingType { get; set; }
+        public decimal FundingBandMaximum { get; set; }
     }
 }
