@@ -15,6 +15,8 @@ namespace SFA.DAS.Apprenticeships.Functions
 {
     public class Startup : FunctionsStartup
     {
+        public IConfiguration Configuration { get; set; }
+
         public override void Configure(IFunctionsHostBuilder builder)
         {
             var serviceProvider = builder.Services.BuildServiceProvider();
@@ -23,11 +25,8 @@ namespace SFA.DAS.Apprenticeships.Functions
             var configBuilder = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddEnvironmentVariables();
-
-#if DEBUG
-            configBuilder.AddJsonFile("local.settings.json", optional: true);
-#endif
+                .AddEnvironmentVariables()
+                .AddJsonFile("local.settings.json", optional: true);
 
             if (!configuration["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -40,15 +39,28 @@ namespace SFA.DAS.Apprenticeships.Functions
                 });
             }
 
-            var config = configBuilder.Build();
-            builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), config));
+            Configuration = configBuilder.Build();
+
+            var applicationSettings = new ApplicationSettings();
+            Configuration.Bind(nameof(ApplicationSettings), applicationSettings);
+            EnsureConfig(applicationSettings);
+            Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
+
+            builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
+            builder.Services.AddSingleton(_ => applicationSettings);
+
+            builder.Services.AddNServiceBus(applicationSettings);
 
             builder.Services.AddOptions();
-            builder.Services.Configure<ApplicationSettings>(config.GetSection("ApplicationSettings"));
 
-            builder.Services.AddNServiceBus(config);
             builder.Services.AddEntityFrameworkForApprenticeships();
             builder.Services.AddCommandServices();
+        }
+
+        private static void EnsureConfig(ApplicationSettings applicationSettings) // TODO: Delete this
+        {
+            if (string.IsNullOrWhiteSpace(applicationSettings.NServiceBusConnectionString))
+                throw new Exception("NServiceBusConnectionString in ApplicationSettings should not be null.");
         }
     }
 }

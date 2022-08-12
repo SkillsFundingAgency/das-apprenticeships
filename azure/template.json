@@ -57,7 +57,8 @@
             "type": "string"
         },
         "elasticPoolName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
         },
         "databaseSkuName": {
             "type": "string",
@@ -110,7 +111,7 @@
         "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
         "appServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
         "appServicePlanName": "[concat(variables('resourceNamePrefix'), '-asp')]",
-        "configNames": "SFA.DAS.Funding.Apprenticeships"
+        "configNames": "SFA.DAS.Apprenticeships"
     },
     "resources": [
         {
