@@ -108,7 +108,7 @@ public class TestFunction : IDisposable
                         a.AzureWebJobsStorage = _appConfig["AzureWebJobsStorage"];
                         a.QueueName = _appConfig["QueueName"];
                         a.TopicPath = _appConfig["TopicPath"];
-                        a.ServiceBusConnectionString = _appConfig["ServiceBusConnectionString"];
+                        a.NServiceBusConnectionString = _appConfig["NServiceBusConnectionString"];
                     });
 
                     new Startup().Configure(builder);
