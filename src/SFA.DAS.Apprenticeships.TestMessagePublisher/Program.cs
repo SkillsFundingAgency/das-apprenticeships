@@ -2,9 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NServiceBus;
-using SFA.DAS.Apprenticeships.Functions;
-using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.TestMessagePublisher;
+using SFA.DAS.Approvals.EventHandlers.Messages;
 
 IConfiguration config = new ConfigurationBuilder()
     .AddJsonFile("local.settings.json")

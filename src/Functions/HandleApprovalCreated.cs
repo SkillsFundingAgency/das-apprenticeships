@@ -4,6 +4,7 @@ using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApproval;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Approvals.EventHandlers.Messages;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 
 namespace SFA.DAS.Apprenticeships.Functions
@@ -27,8 +28,8 @@ namespace SFA.DAS.Apprenticeships.Functions
                 AgreedPrice = command.AgreedPrice,
                 ApprovalsApprenticeshipId = command.ApprovalsApprenticeshipId,
                 EmployerAccountId = command.EmployerAccountId,
-                FundingEmployerAccountId = command.FundingEmployerAccountId,
-                FundingType = command.FundingType,
+                FundingEmployerAccountId = command.FundingEmployerAccountId.GetValueOrDefault(),
+                FundingType = command.FundingType.ToFundingType(),
                 LegalEntityName = command.LegalEntityName,
                 PlannedEndDate = command.PlannedEndDate,
                 UKPRN = command.UKPRN,

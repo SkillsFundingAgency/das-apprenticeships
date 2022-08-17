@@ -19,7 +19,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 Id = x.Id,
                 LegalEntityName = x.LegalEntityName, 
                 PlannedEndDate = x.PlannedEndDate, 
-                UKPRN = x.UKPRN
+                UKPRN = x.UKPRN,
+                FundingBandMaximum = x.FundingBandMaximum
             }).ToList();
 
             return dataModels;
@@ -38,7 +39,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 FundingType = x.FundingType,
                 LegalEntityName = x.LegalEntityName,
                 PlannedEndDate = x.PlannedEndDate,
-                UKPRN = x.UKPRN
+                UKPRN = x.UKPRN,
+                FundingBandMaximum = x.FundingBandMaximum
             }).ToList();
 
             return domainModels;

@@ -1,5 +1,6 @@
 ﻿using NServiceBus;
 using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Approvals.EventHandlers.Messages;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure
 {
