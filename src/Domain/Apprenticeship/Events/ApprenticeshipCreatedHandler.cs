@@ -32,7 +32,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 EmployerAccountId = approval.EmployerAccountId,
                 LegalEntityName = approval.LegalEntityName,
                 PlannedEndDate = approval.PlannedEndDate,
-                UKPRN = approval.Ukprn
+                UKPRN = approval.Ukprn,
+                DateOfBirth = apprenticeship.DateOfBirth,
+                AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship
             };
 
             await _eventPublisher.Publish(apprenticeshipCreatedEvent);

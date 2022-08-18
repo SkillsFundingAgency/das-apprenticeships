@@ -35,7 +35,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var apprenticeship = _fixture.Create<Apprenticeship>();
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
 
             await _commandHandler.Handle(command);
 

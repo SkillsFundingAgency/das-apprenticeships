@@ -13,11 +13,21 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public Guid Key => _model.Key;
         public string TrainingCode => _model.TrainingCode;
         public string Uln => _model.Uln;
+        public DateTime DateOfBirth => _model.DateOfBirth;
         public IReadOnlyCollection<Approval> Approvals => new ReadOnlyCollection<Approval>(_approvals);
 
-        internal static Apprenticeship New(string uln, string trainingCode)
+        public int AgeAtStartOfApprenticeship
         {
-            return new Apprenticeship(new ApprenticeshipModel { Key = Guid.NewGuid(), Uln = uln, TrainingCode = trainingCode });
+            get
+            {
+                var firstApproval = _approvals.OrderBy(x => x.ActualStartDate).First();
+                return firstApproval.ActualStartDate.Year - DateOfBirth.Year;
+            }
+        }
+
+        internal static Apprenticeship New(string uln, string trainingCode, DateTime dateOfBirth)
+        {
+            return new Apprenticeship(new ApprenticeshipModel { Key = Guid.NewGuid(), Uln = uln, TrainingCode = trainingCode, DateOfBirth = dateOfBirth });
         }
 
         internal static Apprenticeship Get(ApprenticeshipModel model)
@@ -32,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             AddEvent(new ApprenticeshipCreated(_model.Key));
         }
 
-        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime? plannedEndDate, decimal agreedPrice, long fundingEmployerAccountId, FundingType fundingType)
+        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long fundingEmployerAccountId, FundingType fundingType)
         {
             var approval = Approval.New(approvalsApprenticeshipId, ukprn, employerAccountId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType);
             _approvals.Add(approval);

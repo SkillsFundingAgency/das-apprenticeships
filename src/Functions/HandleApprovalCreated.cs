@@ -32,7 +32,8 @@ namespace SFA.DAS.Apprenticeships.Functions
                 LegalEntityName = command.LegalEntityName,
                 PlannedEndDate = command.PlannedEndDate,
                 UKPRN = command.UKPRN,
-                Uln = command.Uln
+                Uln = command.Uln,
+                DateOfBirth = command.DateOfBirth
             });
         }
     }

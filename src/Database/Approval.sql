@@ -6,8 +6,8 @@
     [UKPRN] BIGINT NOT NULL, 
     [EmployerAccountId] BIGINT NOT NULL, 
     [LegalEntityName] NVARCHAR(255) NOT NULL, 
-    [ActualStartDate] DATETIME NULL, 
-    [PlannedEndDate] DATETIME NULL, 
+    [ActualStartDate] DATETIME NOT NULL, 
+    [PlannedEndDate] DATETIME NOT NULL, 
     [AgreedPrice] MONEY NOT NULL, 
     [FundingEmployerAccountId] BIGINT NULL, 
     [FundingType] NVARCHAR(50) NOT NULL

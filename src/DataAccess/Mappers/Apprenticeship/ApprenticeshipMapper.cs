@@ -11,6 +11,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 Key = domainModel.Key,
                 Uln = domainModel.Uln,
                 TrainingCode = domainModel.TrainingCode,
+                DateOfBirth = domainModel.DateOfBirth,
                 Approvals = domainModel.Approvals.Map(domainModel.Key)
             };
 
@@ -22,7 +23,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
             var domainModel = new ApprenticeshipModel(dataModel.Key)
             {
                 TrainingCode = dataModel.TrainingCode,
-                Uln = dataModel.Uln
+                Uln = dataModel.Uln,
+                DateOfBirth = dataModel.DateOfBirth
             };
 
             domainModel.Approvals = dataModel.Approvals.Map();
