@@ -41,12 +41,11 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         [Then(@"an apprenticeship record is created")]
         public async Task ThenAnApprenticeshipRecordIsCreated()
         {
-            await using var dbConnection = new SqlConnection(_testContext.SqlDatabase.DatabaseInfo.ConnectionString);
+            await using var dbConnection = new SqlConnection(_testContext.SqlDatabase?.DatabaseInfo.ConnectionString);
 
             var apprenticeship = (await dbConnection.GetAllAsync<Apprenticeship>()).SingleOrDefault(x => x.Uln == _approvalCreatedCommand.Uln);
 
             apprenticeship.Should().NotBeNull();
-
         }
 
         [BeforeTestRun]
