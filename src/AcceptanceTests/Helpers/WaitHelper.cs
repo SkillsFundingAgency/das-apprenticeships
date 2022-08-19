@@ -43,6 +43,20 @@ public class WaitHelper
 
         Assert.Fail($"{failText}  Time: {DateTime.Now:G}.");
     }
+
+    public static async Task WaitForIt(Func<Task<bool>> lookForIt, string failText)
+    {
+        var endTime = DateTime.Now.Add(Config.TimeToWait);
+
+        while (DateTime.Now <= endTime)
+        {
+            if (await lookForIt()) return;
+
+            await Task.Delay(Config.TimeToPause);
+        }
+
+        Assert.Fail($"{failText}  Time: {DateTime.Now:G}.");
+    }
 }
 
 public class WaitConfiguration

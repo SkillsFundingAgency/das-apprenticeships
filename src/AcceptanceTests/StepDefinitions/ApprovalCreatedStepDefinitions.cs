@@ -41,11 +41,16 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         [Then(@"an apprenticeship record is created")]
         public async Task ThenAnApprenticeshipRecordIsCreated()
         {
+            await WaitHelper.WaitForIt(async () => await IsApprenticeshipNotNull(), "Failed to fine non null apprenticeship");
+        }
+
+        private async Task<bool> IsApprenticeshipNotNull()
+        {
             await using var dbConnection = new SqlConnection(_testContext.SqlDatabase?.DatabaseInfo.ConnectionString);
 
             var apprenticeship = (await dbConnection.GetAllAsync<Apprenticeship>()).SingleOrDefault(x => x.Uln == _approvalCreatedCommand.Uln);
 
-            apprenticeship.Should().NotBeNull();
+            return apprenticeship != null;
         }
 
         [BeforeTestRun]
