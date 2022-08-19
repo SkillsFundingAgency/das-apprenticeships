@@ -10,7 +10,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
     {
         public static IServiceCollection AddEntityFrameworkForApprenticeships(this IServiceCollection services)
         {
-            return services.AddScoped(p =>
+            services.AddScoped(p =>
             {
                 var settings = p.GetService<IOptions<ApplicationSettings>>();
                 var optionsBuilder = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseSqlServer(settings.Value.DbConnectionString);
@@ -18,6 +18,8 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
 
                 return dbContext;
             });
+
+            return services.AddScoped<Lazy<ApprenticeshipsDataContext>>(provider => new Lazy<ApprenticeshipsDataContext>(provider.GetService<ApprenticeshipsDataContext>));
         }
     }
 }

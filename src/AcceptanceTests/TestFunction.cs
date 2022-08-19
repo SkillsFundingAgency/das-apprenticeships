@@ -15,6 +15,7 @@ public class Settings
     public string NServiceBusConnectionString { get; set; }
     public string TopicPath { get; set; }
     public string QueueName { get; set; }
+    public string DbConnectionString { get; set; }
 }
 
 public class TestFunction : IDisposable
@@ -49,7 +50,8 @@ public class TestFunction : IDisposable
             { "AzureWebJobsStorage", settings.AzureWebJobsStorage },
             { "NServiceBusConnectionString", settings.NServiceBusConnectionString ?? "UseLearningEndpoint=true" },
             { "TopicPath", settings.TopicPath },
-            { "QueueName", settings.QueueName }
+            { "QueueName", settings.QueueName },
+            { "DbConnectionString", _testContext.SqlDatabase?.DatabaseInfo.ConnectionString }
         };
 
         _testContext = testContext;
@@ -59,6 +61,7 @@ public class TestFunction : IDisposable
         Environment.SetEnvironmentVariable("ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true", EnvironmentVariableTarget.Process);
         Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"src\.learningtransport"), EnvironmentVariableTarget.Process);
         Environment.SetEnvironmentVariable("EnvironmentName", "LOCAL_ACCEPTANCE_TESTS", EnvironmentVariableTarget.Process);
+        Environment.SetEnvironmentVariable("DbConnectionString", _testContext.SqlDatabase?.DatabaseInfo.ConnectionString, EnvironmentVariableTarget.Process);
 
         _host = new HostBuilder()
             .ConfigureAppConfiguration(a =>
@@ -85,6 +88,7 @@ public class TestFunction : IDisposable
                         a.QueueName = appConfig["QueueName"];
                         a.TopicPath = appConfig["TopicPath"];
                         a.NServiceBusConnectionString = appConfig["NServiceBusConnectionString"];
+                        a.DbConnectionString = appConfig["DbConnectionString"];
                     });
 
                     new Startup().Configure(builder);
