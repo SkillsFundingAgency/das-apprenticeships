@@ -43,10 +43,10 @@ namespace SFA.DAS.Apprenticeships.Functions
             Configuration = configBuilder.Build();
 
             // Application Configuration
-            builder.Services.Configure<ApplicationSettings>(configuration.GetSection("ApplicationSettings"));
+            builder.Services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
             builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApplicationSettings>>()?.Value);
 
-            var applicationSettings = configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>();
+            var applicationSettings = Configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>();
 
             Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
 
