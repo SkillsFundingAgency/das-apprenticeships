@@ -104,7 +104,10 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Given("An apprenticeship has been created as part of the approvals journey", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 5
- testRunner.Then("an apprenticeship record is created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("an Apprenticeship record is created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 6
+ testRunner.And("an ApprenticeshipCreatedEvent event is published", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
