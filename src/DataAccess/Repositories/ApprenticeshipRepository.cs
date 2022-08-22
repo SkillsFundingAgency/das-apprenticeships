@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
 
         public async Task<Apprenticeship> Get(Guid key)
         {
-            var apprenticeshipDataModel = await DbContext.Apprenticeships.Include(x => x.Approvals).SingleAsync(x => x.Key == key);
+            var apprenticeshipDataModel = DbContext.Apprenticeships.Local.Single(x => x.Key == key);
             var domainModel = apprenticeshipDataModel.Map();
             var domainObject = _apprenticeshipFactory.GetExisting(domainModel);
             return domainObject;

@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Configuration.AzureTableStorage;
 using System;
 using System.IO;
+using SFA.DAS.Apprenticeships.Domain;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Apprenticeships.Functions
@@ -53,7 +54,7 @@ namespace SFA.DAS.Apprenticeships.Functions
             builder.Services.AddOptions();
             builder.Services.AddNServiceBus(applicationSettings);
             builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings);
-            builder.Services.AddCommandServices();
+            builder.Services.AddCommandServices().AddEventServices();
         }
     }
 }

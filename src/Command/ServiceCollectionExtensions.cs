@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Apprenticeships.Command.Decorators;
 using SFA.DAS.Apprenticeships.DataAccess.Repositories;
-using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 
@@ -17,7 +16,6 @@ namespace SFA.DAS.Apprenticeships.Command
 
             serviceCollection.AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>();
             serviceCollection.AddPersistenceServices();
-            serviceCollection.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
             return serviceCollection;
         }
@@ -40,7 +38,7 @@ namespace SFA.DAS.Apprenticeships.Command
 
             return serviceCollection;
         }
-
+        
         private static IServiceCollection AddPersistenceServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IApprenticeshipRepository, ApprenticeshipRepository>();
