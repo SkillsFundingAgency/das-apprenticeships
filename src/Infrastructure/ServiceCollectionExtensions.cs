@@ -12,8 +12,8 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
         {
             services.AddScoped(p =>
             {
-                var settings = p.GetService<IOptions<ApplicationSettings>>();
-                var optionsBuilder = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseSqlServer(settings.Value.DbConnectionString);
+                var settings = p.GetService<ApplicationSettings>();
+                var optionsBuilder = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseSqlServer(settings.DbConnectionString);
                 var dbContext = new ApprenticeshipsDataContext(optionsBuilder.Options);
 
                 return dbContext;

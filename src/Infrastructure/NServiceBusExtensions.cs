@@ -28,10 +28,11 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
 
             if (applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
             {
-                var learningTransportFolder =
+                var learningTransportFolder = string.IsNullOrEmpty(applicationSettings.LearningTransportStorageDirectory) ?
                     Path.Combine(
                         Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)],
-                        @"src\.learningtransport");
+                        @"src\.learningtransport")
+                    : applicationSettings.LearningTransportStorageDirectory;
                 endpointConfiguration
                     .UseTransport<LearningTransport>()
                     .StorageDirectory(learningTransportFolder);
