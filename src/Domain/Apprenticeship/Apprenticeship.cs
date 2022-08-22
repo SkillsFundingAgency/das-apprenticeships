@@ -21,7 +21,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             get
             {
                 var firstApproval = _approvals.OrderBy(x => x.ActualStartDate).First();
-                return firstApproval.ActualStartDate.Year - DateOfBirth.Year;
+                var age = firstApproval.ActualStartDate.Year - DateOfBirth.Year;
+                if (firstApproval.ActualStartDate.Date.AddYears(-age) < DateOfBirth.Date)
+                {
+                    age--;
+                }
+
+                return age;
             }
         }
 
