@@ -1,14 +1,14 @@
-﻿using System;
-using System.IO;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Configuration.AzureTableStorage;
+using System;
+using System.IO;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Apprenticeships.Functions
@@ -26,9 +26,10 @@ namespace SFA.DAS.Apprenticeships.Functions
                 .AddConfiguration(configuration)
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables()
-                .AddJsonFile("local.settings.json", optional: true);
+                .AddJsonFile("local.settings.json", optional: true)
+                ;
 
-            if (!configuration["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase))
+            if (!configuration!["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase))
             {
                 configBuilder.AddAzureTableStorage(options =>
                 {
@@ -41,26 +42,18 @@ namespace SFA.DAS.Apprenticeships.Functions
 
             Configuration = configBuilder.Build();
 
-            var applicationSettings = new ApplicationSettings();
-            Configuration.Bind(nameof(ApplicationSettings), applicationSettings);
-            EnsureConfig(applicationSettings);
+            // Application Configuration
+            builder.Services.Configure<ApplicationSettings>(configuration.GetSection("ApplicationSettings"));
+            builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApplicationSettings>>()?.Value);
+
+            var applicationSettings = configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>();
+
             Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
 
-            builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
-            builder.Services.AddSingleton(_ => applicationSettings);
-
-            builder.Services.AddNServiceBus(applicationSettings);
-
             builder.Services.AddOptions();
-
-            builder.Services.AddEntityFrameworkForApprenticeships();
+            builder.Services.AddNServiceBus(applicationSettings);
+            builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings);
             builder.Services.AddCommandServices();
-        }
-
-        private static void EnsureConfig(ApplicationSettings applicationSettings) // TODO: Delete this
-        {
-            if (string.IsNullOrWhiteSpace(applicationSettings.NServiceBusConnectionString))
-                throw new Exception("NServiceBusConnectionString in ApplicationSettings should not be null.");
         }
     }
 }

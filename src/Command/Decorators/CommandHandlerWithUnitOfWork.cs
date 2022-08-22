@@ -8,7 +8,7 @@ namespace SFA.DAS.Apprenticeships.Command.Decorators
         private readonly ApprenticeshipsDataContext _dataContext;
 
         public CommandHandlerWithUnitOfWork(
-            ICommandHandler<T> handler,         
+            ICommandHandler<T> handler,
             ApprenticeshipsDataContext dataContext)
         {
             _handler = handler;

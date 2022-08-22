@@ -14,17 +14,14 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
     public class ApprovalCreatedStepDefinitions
     {
         public readonly TestContext _testContext;
-        private readonly ScenarioContext _scenarioContext;
         private static IEndpointInstance _endpointInstance;
         private ApprovalCreatedCommand _approvalCreatedCommand;
         private readonly Fixture _fixture;
 
 
-        public ApprovalCreatedStepDefinitions(ScenarioContext scenarioContext,
-            TestContext testContext)
+        public ApprovalCreatedStepDefinitions(TestContext testContext)
         {
             _testContext = testContext;
-            _scenarioContext = scenarioContext;
             _fixture = new Fixture();
         }
 
@@ -33,6 +30,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         {
             _approvalCreatedCommand = _fixture.Build<ApprovalCreatedCommand>() 
                 .With(_ => _.Uln, _fixture.Create<long>().ToString)
+                .With(_ => _.TrainingCode, _fixture.Create<string>()[..10])
                 .Create();
 
             await _endpointInstance.Publish(_approvalCreatedCommand);
