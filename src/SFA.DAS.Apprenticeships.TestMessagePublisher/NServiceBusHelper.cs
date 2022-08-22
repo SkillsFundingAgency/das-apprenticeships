@@ -27,12 +27,12 @@ namespace SFA.DAS.Apprenticeships.TestMessagePublisher
                 .UseMessageConventions()
                 .UseNewtonsoftJsonSerializer();
 
-            if (configuration["NServiceBusConnectionString"]
+            if (configuration["Values:NServiceBusConnectionString"]
                 .Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
             {
                 endpointConfiguration
                     .UseTransport<LearningTransport>()
-                    .StorageDirectory(configuration.GetValue("LearningTransportStorageDirectory",
+                    .StorageDirectory(configuration.GetValue("Values:LearningTransportStorageDirectory",
                         Path.Combine(
                             Directory.GetCurrentDirectory()
                                 .Substring(0, Directory.GetCurrentDirectory().IndexOf("src")),

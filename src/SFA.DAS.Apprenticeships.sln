@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Typ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.DataAccess.UnitTests", "SFA.DAS.Apprenticeships.DataAccess.UnitTests\SFA.DAS.Apprenticeships.DataAccess.UnitTests.csproj", "{78720A44-A3DD-4D2C-AE24-777CC075F21C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.TestMessagePublisher", "SFA.DAS.Apprenticeships.TestMessagePublisher\SFA.DAS.Apprenticeships.TestMessagePublisher.csproj", "{5502D1B5-BCA1-44D2-8561-21DA39C8BDF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.TestMessagePublisher", "SFA.DAS.Apprenticeships.TestMessagePublisher\SFA.DAS.Apprenticeships.TestMessagePublisher.csproj", "{5502D1B5-BCA1-44D2-8561-21DA39C8BDF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

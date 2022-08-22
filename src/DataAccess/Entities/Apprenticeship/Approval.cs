@@ -2,6 +2,8 @@
 
 namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship
 {
+    [Table("dbo.Approval")]
+    [System.ComponentModel.DataAnnotations.Schema.Table("Approval")]
     public class Approval
     {
         public Guid Id { get; set; }
