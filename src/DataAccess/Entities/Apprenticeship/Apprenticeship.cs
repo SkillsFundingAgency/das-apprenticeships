@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship
 {
     [Table("dbo.Apprenticeship")]
+    [System.ComponentModel.DataAnnotations.Schema.Table("Apprenticeship")]
     public class Apprenticeship
     {
         [Key]
