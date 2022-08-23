@@ -3,19 +3,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Types;
-using SFA.DAS.NServiceBus.Services;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 {
     public class WhenHandleApprenticeshipCreated
     {
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
-        private Mock<IEventPublisher> _eventPublisher;
+        private Mock<IMessageSession> _messageSession;
         private ApprenticeshipCreatedHandler _handler;
         private Fixture _fixture;
 
@@ -24,15 +24,15 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         {
             _fixture = new Fixture();
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
-            _eventPublisher = new Mock<IEventPublisher>();
-            _handler = new ApprenticeshipCreatedHandler(_apprenticeshipRepository.Object, _eventPublisher.Object);
+            _messageSession = new Mock<IMessageSession>();
+            _handler = new ApprenticeshipCreatedHandler(_apprenticeshipRepository.Object, _messageSession.Object);
         }
 
         [Test]
         public async Task ThenApprenticeshipCreatedEventIsPublished()
         {
             var apprenticeshipFactory = new ApprenticeshipFactory();
-            var apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16));
+            var apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN");
             apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>());
             var approval = apprenticeship.Approvals.Single();
             var command = _fixture.Create<ApprenticeshipCreated>();
@@ -41,7 +41,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 
             await _handler.Handle(command);
 
-            _eventPublisher.Verify(x => x.Publish<ApprenticeshipCreatedEvent>(It.Is<ApprenticeshipCreatedEvent>(e =>
+            _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipCreatedEvent>(e =>
                     e.ApprenticeshipKey == apprenticeship.Key &&
                     e.Uln == apprenticeship.Uln &&
                     e.TrainingCode == apprenticeship.TrainingCode &&
@@ -53,10 +53,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.EmployerAccountId == approval.EmployerAccountId &&
                     e.LegalEntityName == approval.LegalEntityName &&
                     e.PlannedEndDate == approval.PlannedEndDate &&
-                    e.UKPRN == approval.Ukprn &&
-                    e.DateOfBirth == apprenticeship.DateOfBirth &&
-                    e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship
-                )));
+                    e.UKPRN == approval.Ukprn
+                ), It.IsAny<PublishOptions>()));
         }
     }
 }
