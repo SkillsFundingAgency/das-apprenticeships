@@ -30,7 +30,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         public static async Task StartEndpoint()
         {
             _endpointInstance = await EndpointHelper
-                .StartEndpoint(QueueNames.ApprovalCreated, false, new[] { typeof(ApprovalCreatedCommand), typeof(ApprenticeshipCreatedEvent) });
+                .StartEndpoint(QueueNames.ApprovalCreated + "TEST", false, new[] { typeof(ApprovalCreatedCommand), typeof(ApprenticeshipCreatedEvent) });
         }
 
         [AfterTestRun]
