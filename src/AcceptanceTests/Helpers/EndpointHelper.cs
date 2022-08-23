@@ -1,4 +1,5 @@
 ﻿using NServiceBus;
+using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
 
 namespace SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
@@ -17,6 +18,7 @@ public static class EndpointHelper
 
         var transport = endpointConfiguration.UseTransport<LearningTransport>();
         transport.StorageDirectory(Path.Combine(Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)], @"src\.learningtransport"));
+        transport.Routing().AddRouting();
 
         return await Endpoint.Start(endpointConfiguration)
             .ConfigureAwait(false);
