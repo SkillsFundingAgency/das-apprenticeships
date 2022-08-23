@@ -30,15 +30,8 @@ public class TestFunction : IDisposable
             { "ConfigurationStorageConnectionString", "UseDevelopmentStorage=true" },
             { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true" },
             { "ApplicationSettings:LogLevel", "DEBUG" },
-            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo?.ConnectionString }
+            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! }
         };
-
-        //Environment.SetEnvironmentVariable("AzureWebJobsStorage", "UseDevelopmentStorage=true", EnvironmentVariableTarget.Process);
-       // Environment.SetEnvironmentVariable("NServiceBusConnectionString", "UseLearningEndpoint=true", EnvironmentVariableTarget.Process);
-      //  Environment.SetEnvironmentVariable("ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true", EnvironmentVariableTarget.Process);
-       // Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"src\.learningtransport"), EnvironmentVariableTarget.Process);
-       // Environment.SetEnvironmentVariable("EnvironmentName", "LOCAL_ACCEPTANCE_TESTS", EnvironmentVariableTarget.Process);
-      //  Environment.SetEnvironmentVariable("DbConnectionString", _testContext.SqlDatabase?.DatabaseInfo.ConnectionString, EnvironmentVariableTarget.Process);
 
         _host = new HostBuilder()
             .ConfigureAppConfiguration(a =>
@@ -63,6 +56,12 @@ public class TestFunction : IDisposable
                     {
                         options.SetMinimumLevel(LogLevel.Trace);
                         options.AddConsole();
+                    });
+                    s.Configure<ApplicationSettings>(a =>
+                    {
+                        a.AzureWebJobsStorage = appConfig["AzureWebJobsStorage"];
+                        a.NServiceBusConnectionString = appConfig["NServiceBusConnectionString"];
+                        a.DbConnectionString = appConfig["DbConnectionString"];
                     });
 
                     new Startup().Configure(builder);

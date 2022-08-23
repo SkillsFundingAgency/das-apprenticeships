@@ -86,7 +86,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 
         private bool EventMatchesExpectation(ApprenticeshipCreatedEvent apprenticeshipCreatedEvent)
         {
-            return true;
+            return apprenticeshipCreatedEvent != null;
 
         //    return apprenticeshipCreatedEvent.FundingPeriods.Count == 1
         //           && apprenticeshipCreatedEvent.FundingPeriods.First().DeliveryPeriods.Count == (int)_scenarioContext["expectedDeliveryPeriodCount"]

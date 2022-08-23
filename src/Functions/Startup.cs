@@ -1,8 +1,9 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using SFA.DAS.Apprenticeships.Command;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
@@ -10,7 +11,6 @@ using SFA.DAS.Configuration.AzureTableStorage;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using SFA.DAS.Apprenticeships.Domain;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Apprenticeships.Functions
@@ -29,10 +29,9 @@ namespace SFA.DAS.Apprenticeships.Functions
                 .AddConfiguration(configuration)
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables()
-                .AddJsonFile("local.settings.json", optional: true)
                 ;
 
-            if (!configuration!["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase))
+            if (NotAcceptanceTests(configuration))
             {
                 configBuilder.AddAzureTableStorage(options =>
                 {
@@ -41,22 +40,26 @@ namespace SFA.DAS.Apprenticeships.Functions
                     options.EnvironmentName = configuration["EnvironmentName"];
                     options.PreFixConfigurationKeys = false;
                 });
+                configBuilder.AddJsonFile("local.settings.json", optional: true);
             }
 
             Configuration = configBuilder.Build();
+            builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
+            builder.Services.AddOptions();
 
-            // Application Configuration
             builder.Services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
-            builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApplicationSettings>>()?.Value);
-
             var applicationSettings = Configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>();
 
             Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
 
-            builder.Services.AddOptions();
             builder.Services.AddNServiceBus(applicationSettings);
             builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings);
             builder.Services.AddCommandServices().AddEventServices();
+        }
+
+        private static bool NotAcceptanceTests(IConfiguration configuration)
+        {
+            return !configuration!["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }
