@@ -59,7 +59,8 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             await WaitHelper.WaitForIt(async () => await ApprenticeshipRecordMatchesExpectation(), "Failed to find the apprenticeship record");
 
             await using var dbConnection = new SqlConnection(_testContext.SqlDatabase?.DatabaseInfo.ConnectionString);
-            var apprenticeship = (await dbConnection.GetAllAsync<Apprenticeship>()).Single(x => x.Uln == ApprovalCreatedCommand.Uln);
+
+            var apprenticeship = dbConnection.GetAll<Apprenticeship>().Single(x => x.Uln == ApprovalCreatedCommand.Uln);
             apprenticeship.Uln.Should().Be(ApprovalCreatedCommand.Uln);
             apprenticeship.TrainingCode.Should().Be(ApprovalCreatedCommand.TrainingCode);
             apprenticeship.Key.Should().NotBe(Guid.Empty);
@@ -111,7 +112,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 
         private bool EventMatchesExpectation(ApprenticeshipCreatedEvent apprenticeshipCreatedEvent)
         {
-            return apprenticeshipCreatedEvent.Uln == Apprenticeship.Uln;
+            return apprenticeshipCreatedEvent.ApprenticeshipKey == Apprenticeship.Key;
         }
 
         public ApprovalCreatedCommand ApprovalCreatedCommand => (ApprovalCreatedCommand)_scenarioContext["ApprovalCreatedCommand"];
