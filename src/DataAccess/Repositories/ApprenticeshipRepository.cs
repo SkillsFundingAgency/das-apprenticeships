@@ -25,6 +25,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
         {
             var apprenticeshipDataModel = apprenticeship.GetModel().Map();
             await DbContext.AddAsync(apprenticeshipDataModel);
+            await DbContext.SaveChangesAsync();
 
             foreach (dynamic domainEvent in apprenticeship.FlushEvents())
             {
@@ -34,7 +35,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
 
         public async Task<Apprenticeship> Get(Guid key)
         {
-            var apprenticeshipDataModel = DbContext.Apprenticeships.Local.Single(x => x.Key == key);
+            var apprenticeshipDataModel = await DbContext.Apprenticeships.Include(x => x.Approvals).SingleAsync(x => x.Key == key);
             var domainModel = apprenticeshipDataModel.Map();
             var domainObject = _apprenticeshipFactory.GetExisting(domainModel);
             return domainObject;
