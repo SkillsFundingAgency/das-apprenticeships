@@ -26,8 +26,8 @@ public class TestFunction : IDisposable
         var appConfig = new Dictionary<string, string>
         {
             { "EnvironmentName", "LOCAL_ACCEPTANCE_TESTS" },
+            { "FUNCTIONS_WORKER_RUNTIME", "dotnet" },
             { "AzureWebJobsStorage", "UseDevelopmentStorage=true" },
-            { "ConfigurationStorageConnectionString", "UseDevelopmentStorage=true" },
             { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true" },
             { "ApplicationSettings:LogLevel", "DEBUG" },
             { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! }

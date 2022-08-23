@@ -74,12 +74,12 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Simple Earnings Generation")]
-        public virtual void SimpleEarningsGeneration()
+        [NUnit.Framework.DescriptionAttribute("Create Apprenticeship from approved commitment")]
+        public virtual void CreateApprenticeshipFromApprovedCommitment()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Simple Earnings Generation", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create Apprenticeship from approved commitment", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
 #line 3
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
