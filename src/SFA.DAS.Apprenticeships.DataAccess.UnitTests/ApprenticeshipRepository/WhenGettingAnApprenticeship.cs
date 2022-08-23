@@ -56,7 +56,6 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
 
             // Act
             await _sut.Add(expectedApprenticeship);
-            await _dbContext.SaveChangesAsync();
             var actualApprenticeship = await _sut.Get(expectedApprenticeship.Key);
 
             // Assert
