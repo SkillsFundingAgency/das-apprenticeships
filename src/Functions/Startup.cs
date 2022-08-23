@@ -8,12 +8,14 @@ using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Configuration.AzureTableStorage;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using SFA.DAS.Apprenticeships.Domain;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Apprenticeships.Functions
 {
+    [ExcludeFromCodeCoverage]
     public class Startup : FunctionsStartup
     {
         public IConfiguration Configuration { get; set; }

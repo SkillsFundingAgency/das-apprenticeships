@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using NServiceBus;
-using SFA.DAS.NServiceBus.Services;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SFA.DAS.Apprenticeships.Domain
 {
+    [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddEventServices(this IServiceCollection serviceCollection)
