@@ -44,7 +44,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         private Apprenticeship(ApprenticeshipModel model)
         {
             _model = model;
-            _approvals = new List<Approval>();
+            _approvals = model.Approvals.Select(Approval.Get).ToList();
             AddEvent(new ApprenticeshipCreated(_model.Key));
         }
 

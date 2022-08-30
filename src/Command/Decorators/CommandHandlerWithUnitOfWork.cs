@@ -8,7 +8,7 @@ namespace SFA.DAS.Apprenticeships.Command.Decorators
         private readonly ApprenticeshipsDataContext _dataContext;
 
         public CommandHandlerWithUnitOfWork(
-            ICommandHandler<T> handler,         
+            ICommandHandler<T> handler,
             ApprenticeshipsDataContext dataContext)
         {
             _handler = handler;
@@ -17,8 +17,17 @@ namespace SFA.DAS.Apprenticeships.Command.Decorators
 
         public async Task Handle(T command, CancellationToken cancellationToken = default)
         {
-            await _handler.Handle(command, cancellationToken);
-            await _dataContext.SaveChangesAsync(cancellationToken);
+            var transaction = await _dataContext.Database.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                await _handler.Handle(command, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         }
     }
 }

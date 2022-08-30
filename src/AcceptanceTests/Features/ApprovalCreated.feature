@@ -1,5 +1,6 @@
 ﻿Feature: Approval Created
 
-Scenario: Simple Earnings Generation
+Scenario: Create Apprenticeship from approved commitment
 	Given An apprenticeship has been created as part of the approvals journey
-	Then an apprenticeship record is created
+	Then an Apprenticeship record is created
+	And an ApprenticeshipCreatedEvent event is published

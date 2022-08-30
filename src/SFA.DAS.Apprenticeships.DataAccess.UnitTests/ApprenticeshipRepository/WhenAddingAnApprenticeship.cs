@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
@@ -8,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
@@ -51,8 +53,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
             
             // Act
             await _sut.Add(testApprenticeship);
-            await _dbContext.SaveChangesAsync();
-
+            
             // Assert
             _dbContext.Apprenticeships.Count().Should().Be(1);
 
@@ -72,14 +73,26 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
             // Act
             testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.UKPRN, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType);
             await _sut.Add(testApprenticeship);
-            await _dbContext.SaveChangesAsync();
-
+            
             // Assert
             _dbContext.Approvals.Count().Should().Be(1);
 
             var storedApproval = _dbContext.Approvals.Single();
             
             storedApproval.Should().BeEquivalentTo(expectedApproval, opts => opts.Excluding(x => x.Id));
+        }
+
+        [Test]
+        public async Task Then_the_domain_events_are_published()
+        {
+            // Arrange
+            var testApprenticeship = _fixture.Create<Apprenticeship>();
+            
+            // Act
+            await _sut.Add(testApprenticeship);
+            
+            // Assert
+            _domainEventDispatcher.Verify(x => x.Send(It.Is<ApprenticeshipCreated>(e => e.ApprenticeshipKey == testApprenticeship.Key), It.IsAny<CancellationToken>()), Times.Once());
         }
     }
 }

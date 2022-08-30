@@ -350,3 +350,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 /src/.learningtransport/
+/src/SFA.DAS.Apprenticeships.Functions/.learningtransport/

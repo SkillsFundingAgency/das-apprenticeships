@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
@@ -15,7 +16,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
     public class WhenHandleApprenticeshipCreated
     {
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
-        private Mock<IEventPublisher> _eventPublisher;
+        private Mock<IMessageSession> _messageSession;
         private ApprenticeshipCreatedHandler _handler;
         private Fixture _fixture;
 
@@ -24,8 +25,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         {
             _fixture = new Fixture();
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
-            _eventPublisher = new Mock<IEventPublisher>();
-            _handler = new ApprenticeshipCreatedHandler(_apprenticeshipRepository.Object, _eventPublisher.Object);
+            _messageSession = new Mock<IMessageSession>();
+            _handler = new ApprenticeshipCreatedHandler(_apprenticeshipRepository.Object, _messageSession.Object);
         }
 
         [Test]
@@ -41,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 
             await _handler.Handle(command);
 
-            _eventPublisher.Verify(x => x.Publish<ApprenticeshipCreatedEvent>(It.Is<ApprenticeshipCreatedEvent>(e =>
+            _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipCreatedEvent>(e =>
                     e.ApprenticeshipKey == apprenticeship.Key &&
                     e.Uln == apprenticeship.Uln &&
                     e.TrainingCode == apprenticeship.TrainingCode &&
@@ -56,7 +57,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.UKPRN == approval.Ukprn &&
                     e.DateOfBirth == apprenticeship.DateOfBirth &&
                     e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship
-                )));
+                ), It.IsAny<PublishOptions>()));
         }
     }
 }

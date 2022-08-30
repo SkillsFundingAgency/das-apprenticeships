@@ -1,12 +1,12 @@
 namespace SFA.DAS.Apprenticeships.AcceptanceTests.Bindings;
 
 [Binding]
-public class HostingStepDefinitions
+public class TestFunctionPerScenarioHook
 {
     private readonly TestContext _testContext;
     private readonly FeatureContext _featureContext;
 
-    public HostingStepDefinitions(TestContext testContext, FeatureContext featureContext)
+    public TestFunctionPerScenarioHook(TestContext testContext, FeatureContext featureContext)
     {
         _testContext = testContext;
         _featureContext = featureContext;

@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using NServiceBus;
+using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.NServiceBus.Services;
 
@@ -7,12 +8,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
     public class ApprenticeshipCreatedHandler : IDomainEventHandler<ApprenticeshipCreated>
     {
         private readonly IApprenticeshipRepository _repository;
-        private readonly IEventPublisher _eventPublisher;
+        private readonly IMessageSession _messageSession;
 
-        public ApprenticeshipCreatedHandler(IApprenticeshipRepository repository, IEventPublisher eventPublisher)
+        public ApprenticeshipCreatedHandler(IApprenticeshipRepository repository, IMessageSession messageSession)
         {
             _repository = repository;
-            _eventPublisher = eventPublisher;
+            _messageSession = messageSession;
         }
 
         public async Task Handle(ApprenticeshipCreated @event, CancellationToken cancellationToken = default(CancellationToken))
@@ -37,7 +38,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship
             };
 
-            await _eventPublisher.Publish(apprenticeshipCreatedEvent);
+            await _messageSession.Publish(apprenticeshipCreatedEvent);
         }
     }
 }

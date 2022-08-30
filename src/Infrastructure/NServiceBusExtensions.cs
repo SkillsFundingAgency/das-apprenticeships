@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using NServiceBus;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
@@ -10,6 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class NServiceBusStartupExtensions
     {
         public static IServiceCollection AddNServiceBus(
