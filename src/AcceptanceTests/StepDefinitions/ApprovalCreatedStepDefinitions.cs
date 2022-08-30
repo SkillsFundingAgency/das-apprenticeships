@@ -66,14 +66,14 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             apprenticeship.Key.Should().NotBe(Guid.Empty);
            
             var approval = (await dbConnection.GetAllAsync<Approval>()).Single(x => x.ApprenticeshipKey == apprenticeship.Key);
-            approval.ActualStartDate.Should().BeSameDateAs(ApprovalCreatedCommand.ActualStartDate!.Value);
+            approval.ActualStartDate.Should().BeSameDateAs(ApprovalCreatedCommand.ActualStartDate);
             approval.ApprovalsApprenticeshipId.Should().Be(ApprovalCreatedCommand.ApprovalsApprenticeshipId);
             approval.AgreedPrice.Should().Be(ApprovalCreatedCommand.AgreedPrice);
             approval.EmployerAccountId.Should().Be(ApprovalCreatedCommand.EmployerAccountId);
             approval.FundingEmployerAccountId.Should().Be(ApprovalCreatedCommand.FundingEmployerAccountId);
             approval.FundingType.Should().Be(ApprovalCreatedCommand.FundingType);
             approval.LegalEntityName.Should().Be(ApprovalCreatedCommand.LegalEntityName);
-            approval.PlannedEndDate.Should().BeSameDateAs(ApprovalCreatedCommand.PlannedEndDate!.Value);
+            approval.PlannedEndDate.Should().BeSameDateAs(ApprovalCreatedCommand.PlannedEndDate);
             approval.UKPRN.Should().Be(ApprovalCreatedCommand.UKPRN);
             approval.Id.Should().NotBe(Guid.Empty);
 
@@ -99,8 +99,8 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.Uln.Should().Be(Apprenticeship.Uln);
             publishedEvent.ApprenticeshipKey.Should().Be(Apprenticeship.Key);
             publishedEvent.TrainingCode.Should().Be(Apprenticeship.TrainingCode);
-            publishedEvent.ActualStartDate.Should().BeSameDateAs(Approval.ActualStartDate!.Value);
-            publishedEvent.PlannedEndDate.Should().BeSameDateAs(Approval.PlannedEndDate!.Value);
+            publishedEvent.ActualStartDate.Should().BeSameDateAs(Approval.ActualStartDate);
+            publishedEvent.PlannedEndDate.Should().BeSameDateAs(Approval.PlannedEndDate);
             publishedEvent.AgreedPrice.Should().Be(Approval.AgreedPrice);
             publishedEvent.ApprovalsApprenticeshipId.Should().Be(Approval.ApprovalsApprenticeshipId);
             publishedEvent.EmployerAccountId.Should().Be(Approval.EmployerAccountId);
