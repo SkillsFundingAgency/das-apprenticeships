@@ -26,7 +26,13 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
                 .UseMessageConventions()
                 .UseNewtonsoftJsonSerializer();
 
+            EnsureNotNull(endpointConfiguration);
+
             endpointConfiguration.SendOnly();
+
+            EnsureNotNull(applicationSettings);
+            EnsureNotNull(applicationSettings.NServiceBusConnectionString);
+            Console.WriteLine("[CONFIG] NServiceBusConnectionString: " + applicationSettings.NServiceBusConnectionString);
 
             if (applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -57,6 +63,14 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
             endpointConfiguration.UseEndpointWithExternallyManagedService(serviceCollection);
 
             return serviceCollection;
+        }
+
+        private static void EnsureNotNull(object @object)
+        {
+            if (@object is null)
+            {
+                throw new ArgumentNullException(nameof(@object));
+            }
         }
 
         private static void ExcludeTestAssemblies(AssemblyScannerConfiguration scanner)
