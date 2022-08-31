@@ -22,16 +22,16 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
             webBuilder.AddExecutionContextBinding();
             webBuilder.AddExtension(new NServiceBusExtensionConfigProvider());
 
-            var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Apprenticeships")
+            var endpointConfiguration = new EndpointConfiguration("bundle-1")
                 .UseMessageConventions()
                 .UseNewtonsoftJsonSerializer();
 
-            EnsureNotNull(endpointConfiguration);
+            EnsureNotNull(endpointConfiguration, "endpointConfiguration");
 
             endpointConfiguration.SendOnly();
 
-            EnsureNotNull(applicationSettings);
-            EnsureNotNull(applicationSettings.NServiceBusConnectionString);
+            EnsureNotNull(applicationSettings, "applicationSettings");
+            EnsureNotNull(applicationSettings.NServiceBusConnectionString, "applicationSettings.NServiceBusConnectionString");
             Console.WriteLine("[CONFIG] NServiceBusConnectionString: " + applicationSettings.NServiceBusConnectionString);
 
             if (applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
@@ -65,11 +65,11 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
             return serviceCollection;
         }
 
-        private static void EnsureNotNull(object @object)
+        private static void EnsureNotNull(object @object, string what)
         {
             if (@object is null)
             {
-                throw new ArgumentNullException(nameof(@object));
+                throw new ArgumentNullException(what);
             }
         }
 
