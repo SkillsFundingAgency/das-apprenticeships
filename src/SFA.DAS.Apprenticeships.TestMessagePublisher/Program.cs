@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NServiceBus;
 using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.TestMessagePublisher;
 
