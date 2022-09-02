@@ -35,7 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Typ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.DataAccess.UnitTests", "SFA.DAS.Apprenticeships.DataAccess.UnitTests\SFA.DAS.Apprenticeships.DataAccess.UnitTests.csproj", "{78720A44-A3DD-4D2C-AE24-777CC075F21C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.TestMessagePublisher", "SFA.DAS.Apprenticeships.TestMessagePublisher\SFA.DAS.Apprenticeships.TestMessagePublisher.csproj", "{5502D1B5-BCA1-44D2-8561-21DA39C8BDF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.TestMessagePublisher", "SFA.DAS.Apprenticeships.TestMessagePublisher\SFA.DAS.Apprenticeships.TestMessagePublisher.csproj", "{5502D1B5-BCA1-44D2-8561-21DA39C8BDF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Functions.UnitTests", "SFA.DAS.Apprenticeships.Functions.UnitTests\SFA.DAS.Apprenticeships.Functions.UnitTests.csproj", "{5336F80F-C1F0-4D16-83B7-B403B7EFAFBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +111,10 @@ Global
 		{5502D1B5-BCA1-44D2-8561-21DA39C8BDF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5502D1B5-BCA1-44D2-8561-21DA39C8BDF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5502D1B5-BCA1-44D2-8561-21DA39C8BDF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5336F80F-C1F0-4D16-83B7-B403B7EFAFBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5336F80F-C1F0-4D16-83B7-B403B7EFAFBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5336F80F-C1F0-4D16-83B7-B403B7EFAFBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5336F80F-C1F0-4D16-83B7-B403B7EFAFBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +126,7 @@ Global
 		{C1792F52-CC9E-4A35-8E50-F6B0755A09E1} = {8B9357D2-75AF-4B77-98C0-B1C9F310BD88}
 		{78720A44-A3DD-4D2C-AE24-777CC075F21C} = {8B9357D2-75AF-4B77-98C0-B1C9F310BD88}
 		{5502D1B5-BCA1-44D2-8561-21DA39C8BDF3} = {8B9357D2-75AF-4B77-98C0-B1C9F310BD88}
+		{5336F80F-C1F0-4D16-83B7-B403B7EFAFBA} = {8B9357D2-75AF-4B77-98C0-B1C9F310BD88}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A244BDC-EE6C-4218-8982-87E249BFFA07}

@@ -6,11 +6,11 @@ namespace SFA.DAS.Apprenticeships.TestHelpers;
 public class SqlDatabase : IDisposable
 {
     private bool _isDisposed;
-    public DatabaseInfo DatabaseInfo { get; } = new DatabaseInfo();
+    public DatabaseInfo DatabaseInfo { get; } = new();
 
-    public SqlDatabase(string dbName)
+    public SqlDatabase(string? dbName = null)
     {
-        DatabaseInfo.SetDatabaseName(dbName);
+        DatabaseInfo.SetDatabaseName(dbName ?? Guid.NewGuid().ToString());
         CreateTestDatabase();
     }
 

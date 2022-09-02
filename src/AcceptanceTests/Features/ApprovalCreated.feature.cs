@@ -20,22 +20,22 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("HostingTest")]
-    public partial class HostingTestFeature
+    [NUnit.Framework.DescriptionAttribute("Approval Created")]
+    public partial class ApprovalCreatedFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
         private string[] _featureTags = ((string[])(null));
         
-#line 1 "HostingTest.feature"
+#line 1 "ApprovalCreated.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "HostingTest", "A short summary of the feature", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Approval Created", null, ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -74,13 +74,13 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Test Harness for self hosting code")]
-        public virtual void TestHarnessForSelfHostingCode()
+        [NUnit.Framework.DescriptionAttribute("Create Apprenticeship from approved commitment")]
+        public virtual void CreateApprenticeshipFromApprovedCommitment()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Test Harness for self hosting code", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 5
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create Apprenticeship from approved commitment", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+#line 3
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -100,11 +100,14 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 6
- testRunner.Given("Fire test harness", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 4
+ testRunner.Given("An apprenticeship has been created as part of the approvals journey", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 7
- testRunner.When("A call is made", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 5
+ testRunner.Then("an Apprenticeship record is created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 6
+ testRunner.And("an ApprenticeshipCreatedEvent event is published", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

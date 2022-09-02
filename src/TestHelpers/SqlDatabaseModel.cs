@@ -1,20 +1,21 @@
-﻿using System.Globalization;
-using Microsoft.SqlServer.Dac;
+﻿using Microsoft.SqlServer.Dac;
 using Polly;
+using System.Globalization;
 
 namespace SFA.DAS.Apprenticeships.TestHelpers;
 
 public static class SqlDatabaseModel
 {
     public const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True";
-    public const string DatabaseProjectName = "SFA.DAS.Funding.ApprenticeshipEarnings.Database";
-    private static string _dacpacFileLocation;
+    private static string? _databaseProjectName;
+    private static string? _dacpacFileLocation;
 
-    public static void Update()
+    public static void Update(string? databaseProjectName)
     {
+        _databaseProjectName = databaseProjectName;
         SetDacpacLocation();
 
-        var modelNeedsUpdating = false;
+        bool modelNeedsUpdating;
         try
         {
             modelNeedsUpdating = DacpacFileHasBeenModified();
@@ -65,15 +66,15 @@ public static class SqlDatabaseModel
 #if DEBUG
         const string environment = "debug";
 #else
-            const string environment = "release";
+        const string environment = "release";
 #endif
         _dacpacFileLocation = Path.Combine(
             Directory.GetCurrentDirectory().Substring(0,
                 Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)),
-            $"src\\{DatabaseProjectName}\\bin\\{environment}\\{DatabaseProjectName}.dacpac");
+            $"src\\Database\\bin\\{environment}\\{_databaseProjectName}.dacpac");
 
         if (!File.Exists(_dacpacFileLocation))
-            throw new FileNotFoundException($"DACPAC file not found in: {_dacpacFileLocation}.  Rebuid the database project.");
+            throw new FileNotFoundException($"DACPAC file not found in: {_dacpacFileLocation}.  Rebuild the database project.");
     }
 
     private static void PublishModel()

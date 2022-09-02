@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
-namespace SFA.DAS.Apprenticeships.Acceptance;
+namespace SFA.DAS.Apprenticeships.AcceptanceTests;
 
 public class PurgeBackgroundJob : BackgroundService
 {
@@ -16,7 +16,7 @@ public class PurgeBackgroundJob : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             await _jobHost.Purge();
-            await Task.Delay(TimeSpan.FromSeconds(10));
+            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
         }
     }
 }

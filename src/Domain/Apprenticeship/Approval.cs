@@ -45,5 +45,10 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             return _model;
         }
+
+        internal static Approval Get(ApprovalModel approvalModel)
+        {
+            return new Approval(approvalModel);
+        }
     }
 }

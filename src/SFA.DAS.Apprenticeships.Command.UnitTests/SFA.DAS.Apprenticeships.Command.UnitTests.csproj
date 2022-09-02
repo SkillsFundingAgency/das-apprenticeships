@@ -9,6 +9,10 @@
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
+    <PackageReference Include="coverlet.msbuild" Version="3.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.18.1" />
     <PackageReference Include="NUnit" Version="3.13.2" />
@@ -19,6 +23,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Command\SFA.DAS.Apprenticeships.Command.csproj" />
     <ProjectReference Include="..\TestHelpers\SFA.DAS.Apprenticeships.TestHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Decorators\" />
   </ItemGroup>
 
 </Project>

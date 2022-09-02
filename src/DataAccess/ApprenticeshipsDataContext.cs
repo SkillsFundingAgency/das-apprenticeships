@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 
 namespace SFA.DAS.Apprenticeships.DataAccess
 {
+    [ExcludeFromCodeCoverage]
     public class ApprenticeshipsDataContext : DbContext
     {
         public ApprenticeshipsDataContext(DbContextOptions<ApprenticeshipsDataContext> options) : base(options)

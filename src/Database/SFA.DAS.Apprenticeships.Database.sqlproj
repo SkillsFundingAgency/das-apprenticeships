@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>SFA.DAS.ProviderEarnings.Database</Name>
+    <Name>SFA.DAS.Apprenticeships.Database</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{cac7932f-3265-4884-bc9d-0be811fdd44e}</ProjectGuid>
@@ -22,6 +22,7 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <TargetDatabase>SFA.DAS.Apprenticeships.Database</TargetDatabase>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -59,8 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Apprenticeship.sql" />
-    <Build Include="OutboxData.sql" />
-    <Build Include="ClientOutboxData.sql" />
     <Build Include="Approval.sql" />
   </ItemGroup>
   <ItemGroup>

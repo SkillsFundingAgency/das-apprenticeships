@@ -1,13 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Apprenticeships.Command.Decorators;
 using SFA.DAS.Apprenticeships.DataAccess.Repositories;
-using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprovalsOuterApiClient;
 
 namespace SFA.DAS.Apprenticeships.Command
 {
+    [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddCommandServices(this IServiceCollection serviceCollection)
@@ -18,7 +19,6 @@ namespace SFA.DAS.Apprenticeships.Command
 
             serviceCollection.AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>();
             serviceCollection.AddPersistenceServices();
-            serviceCollection.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
             return serviceCollection;
         }
@@ -41,7 +41,7 @@ namespace SFA.DAS.Apprenticeships.Command
 
             return serviceCollection;
         }
-
+        
         private static IServiceCollection AddPersistenceServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IApprenticeshipRepository, ApprenticeshipRepository>();

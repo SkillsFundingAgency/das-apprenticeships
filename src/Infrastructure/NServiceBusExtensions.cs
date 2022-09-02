@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using NServiceBus;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
@@ -10,6 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class NServiceBusStartupExtensions
     {
         public static IServiceCollection AddNServiceBus(
@@ -28,10 +30,11 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
 
             if (applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
             {
-                var learningTransportFolder =
+                var learningTransportFolder = string.IsNullOrEmpty(applicationSettings.LearningTransportStorageDirectory) ?
                     Path.Combine(
                         Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)],
-                        @"src\.learningtransport");
+                        @"src\.learningtransport")
+                    : applicationSettings.LearningTransportStorageDirectory;
                 endpointConfiguration
                     .UseTransport<LearningTransport>()
                     .StorageDirectory(learningTransportFolder);

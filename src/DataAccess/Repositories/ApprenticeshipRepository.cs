@@ -25,6 +25,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
         {
             var apprenticeshipDataModel = apprenticeship.GetModel().Map();
             await DbContext.AddAsync(apprenticeshipDataModel);
+            await DbContext.SaveChangesAsync();
 
             foreach (dynamic domainEvent in apprenticeship.FlushEvents())
             {
