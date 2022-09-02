@@ -33,8 +33,7 @@ namespace SFA.DAS.Apprenticeships.Functions
                 LegalEntityName = command.LegalEntityName,
                 PlannedEndDate = command.PlannedEndDate,
                 UKPRN = command.UKPRN,
-                Uln = command.Uln,
-                FundingBandMaximum = command.FundingBandMaximum
+                Uln = command.Uln
             });
         }
     }

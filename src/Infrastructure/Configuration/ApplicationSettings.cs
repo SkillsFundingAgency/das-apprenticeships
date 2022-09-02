@@ -8,5 +8,6 @@
         public string QueueName { get; set; }
         public string TopicPath { get; set; }
         public string DbConnectionString { get; set; }
+        public ApprovalsOuterApiConfiguration ApprovalsOuterApiConfiguration { get; set; }
     }
 }

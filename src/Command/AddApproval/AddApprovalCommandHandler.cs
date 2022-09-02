@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprovalsOuterApiClient;
 
 namespace SFA.DAS.Apprenticeships.Command.AddApproval
 {
@@ -7,17 +8,20 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
     {
         private readonly IApprenticeshipFactory _apprenticeshipFactory;
         private readonly IApprenticeshipRepository _apprenticeshipRepository;
+        private readonly IApprovalsOuterApiClient _approvalsOuterApiClient;
 
-        public AddApprovalCommandHandler(IApprenticeshipFactory apprenticeshipFactory, IApprenticeshipRepository apprenticeshipRepository)
+        public AddApprovalCommandHandler(IApprenticeshipFactory apprenticeshipFactory, IApprenticeshipRepository apprenticeshipRepository, IApprovalsOuterApiClient approvalsOuterApiClient)
         {
             _apprenticeshipFactory = apprenticeshipFactory;
             _apprenticeshipRepository = apprenticeshipRepository;
+            _approvalsOuterApiClient = approvalsOuterApiClient;
         }
 
         public async Task Handle(AddApprovalCommand command, CancellationToken cancellationToken = default)
         {
             var apprenticeship = _apprenticeshipFactory.CreateNew(command.Uln, command.TrainingCode);
-            apprenticeship.AddApproval(command.ApprovalsApprenticeshipId, command.UKPRN, command.EmployerAccountId, command.LegalEntityName, command.ActualStartDate, command.PlannedEndDate, command.AgreedPrice, command.FundingEmployerAccountId, command.FundingType, command.FundingBandMaximum);
+            var fundingBandMaximum = await _approvalsOuterApiClient.GetFundingBandMaximum(int.Parse(command.TrainingCode));
+            apprenticeship.AddApproval(command.ApprovalsApprenticeshipId, command.UKPRN, command.EmployerAccountId, command.LegalEntityName, command.ActualStartDate, command.PlannedEndDate, command.AgreedPrice, command.FundingEmployerAccountId, command.FundingType, fundingBandMaximum);
             await _apprenticeshipRepository.Add(apprenticeship);
         }
     }

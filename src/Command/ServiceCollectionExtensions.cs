@@ -4,6 +4,7 @@ using SFA.DAS.Apprenticeships.DataAccess.Repositories;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprovalsOuterApiClient;
 
 namespace SFA.DAS.Apprenticeships.Command
 {
@@ -51,6 +52,20 @@ namespace SFA.DAS.Apprenticeships.Command
         {
             serviceCollection
                 .Decorate(typeof(ICommandHandler<>), typeof(CommandHandlerWithUnitOfWork<>));
+
+            return serviceCollection;
+        }
+
+        public static IServiceCollection AddApprovalsOuterApiClient(this IServiceCollection serviceCollection, string baseAddress, string key)
+        {
+            serviceCollection.AddScoped<IApprovalsOuterApiClient, ApprovalsOuterApiClient>(x =>
+            {
+                var httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri(baseAddress);
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", key);
+                httpClient.DefaultRequestHeaders.Add("X-Version", "1");
+                return new ApprovalsOuterApiClient(httpClient);
+            });
 
             return serviceCollection;
         }

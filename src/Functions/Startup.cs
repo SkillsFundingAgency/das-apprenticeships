@@ -55,6 +55,8 @@ namespace SFA.DAS.Apprenticeships.Functions
 
             builder.Services.AddEntityFrameworkForApprenticeships();
             builder.Services.AddCommandServices();
+
+            builder.Services.AddApprovalsOuterApiClient(applicationSettings.ApprovalsOuterApiConfiguration.BaseUrl, applicationSettings.ApprovalsOuterApiConfiguration.Key);
         }
 
         private static void EnsureConfig(ApplicationSettings applicationSettings) // TODO: Delete this
