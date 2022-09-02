@@ -8,6 +8,8 @@ using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Approvals.EventHandlers.Messages;
+using FundingType = SFA.DAS.Approvals.EventHandlers.Messages.FundingType;
 
 namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 {
@@ -71,7 +73,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             approval.AgreedPrice.Should().Be(ApprovalCreatedCommand.AgreedPrice);
             approval.EmployerAccountId.Should().Be(ApprovalCreatedCommand.EmployerAccountId);
             approval.FundingEmployerAccountId.Should().Be(ApprovalCreatedCommand.FundingEmployerAccountId);
-            approval.FundingType.Should().Be(ApprovalCreatedCommand.FundingType);
+            approval.FundingType.Should().Be(ApprovalCreatedCommand.FundingType == FundingType.Levy ? Enums.FundingType.Levy : ApprovalCreatedCommand.FundingType == FundingType.NonLevy ? Enums.FundingType.NonLevy : Enums.FundingType.Transfer);
             approval.LegalEntityName.Should().Be(ApprovalCreatedCommand.LegalEntityName);
             approval.PlannedEndDate.Should().BeSameDateAs(ApprovalCreatedCommand.PlannedEndDate!.Value);
             approval.UKPRN.Should().Be(ApprovalCreatedCommand.UKPRN);
