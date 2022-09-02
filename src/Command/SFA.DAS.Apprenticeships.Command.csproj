@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DataAccess\SFA.DAS.Apprenticeships.DataAccess.csproj" />
     <ProjectReference Include="..\Domain\SFA.DAS.Apprenticeships.Domain.csproj" />
   </ItemGroup>
