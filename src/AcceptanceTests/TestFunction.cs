@@ -4,7 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Moq;
 using SFA.DAS.Apprenticeships.Functions;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprovalsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
@@ -72,6 +74,12 @@ public class TestFunction : IDisposable
             .ConfigureServices(s =>
             {
                 s.AddHostedService<PurgeBackgroundJob>();
+                s.AddScoped<IApprovalsOuterApiClient>(_ =>
+                {
+                    var mockClient = new Mock<IApprovalsOuterApiClient>();
+                    mockClient.Setup(x => x.GetFundingBandMaximum(It.IsAny<int>())).ReturnsAsync(int.MaxValue);
+                    return mockClient.Object;
+                });
             })
             .Build();
     }

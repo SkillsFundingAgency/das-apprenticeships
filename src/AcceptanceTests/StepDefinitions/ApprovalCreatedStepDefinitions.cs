@@ -47,7 +47,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         {
             var approvalCreatedCommand = _fixture.Build<ApprovalCreatedCommand>() 
                 .With(_ => _.Uln, _fixture.Create<long>().ToString)
-                .With(_ => _.TrainingCode, _fixture.Create<string>()[..10])
+                .With(_ => _.TrainingCode, _fixture.Create<int>().ToString)
                 .Create();
 
             await _endpointInstance.Publish(approvalCreatedCommand);
@@ -64,7 +64,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 
             var apprenticeship = dbConnection.GetAll<Apprenticeship>().Single(x => x.Uln == ApprovalCreatedCommand.Uln);
             apprenticeship.Uln.Should().Be(ApprovalCreatedCommand.Uln);
-            apprenticeship.TrainingCode.Should().Be(ApprovalCreatedCommand.TrainingCode);
+            int.Parse(apprenticeship.TrainingCode).Should().Be(int.Parse(ApprovalCreatedCommand.TrainingCode));
             apprenticeship.Key.Should().NotBe(Guid.Empty);
            
             var approval = (await dbConnection.GetAllAsync<Approval>()).Single(x => x.ApprenticeshipKey == apprenticeship.Key);
@@ -100,7 +100,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 
             publishedEvent.Uln.Should().Be(Apprenticeship.Uln);
             publishedEvent.ApprenticeshipKey.Should().Be(Apprenticeship.Key);
-            publishedEvent.TrainingCode.Should().Be(Apprenticeship.TrainingCode);
+            int.Parse(publishedEvent.TrainingCode).Should().Be(int.Parse(Apprenticeship.TrainingCode));
             publishedEvent.ActualStartDate.Should().BeSameDateAs(Approval.ActualStartDate!.Value);
             publishedEvent.PlannedEndDate.Should().BeSameDateAs(Approval.PlannedEndDate!.Value);
             publishedEvent.AgreedPrice.Should().Be(Approval.AgreedPrice);
