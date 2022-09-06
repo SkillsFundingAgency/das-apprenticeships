@@ -8,7 +8,7 @@ using SFA.DAS.Apprenticeships.Command.AddApproval;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprovalsOuterApiClient;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
@@ -19,7 +19,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         private AddApprovalCommandHandler _commandHandler;
         private Mock<IApprenticeshipFactory> _apprenticeshipFactory;
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
-        private Mock<IApprovalsOuterApiClient> _approvalsOuterApiClient;
+        private Mock<IApprenticeshipsOuterApiClient> _approvalsOuterApiClient;
         private Fixture _fixture;
 
         [SetUp]
@@ -27,7 +27,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         {
             _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
-            _approvalsOuterApiClient = new Mock<IApprovalsOuterApiClient>();
+            _approvalsOuterApiClient = new Mock<IApprenticeshipsOuterApiClient>();
             _commandHandler = new AddApprovalCommandHandler(_apprenticeshipFactory.Object, _apprenticeshipRepository.Object, _approvalsOuterApiClient.Object);
 
             _fixture = new Fixture();

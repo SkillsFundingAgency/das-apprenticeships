@@ -1,15 +1,15 @@
 ﻿using System.Net;
 using Newtonsoft.Json;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.ApprovalsOuterApiClient;
+namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 
-public class ApprovalsOuterApiClient : IApprovalsOuterApiClient
+public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
 {
     private readonly HttpClient _httpClient;
 
     private const string GetStandardUrl = "TrainingCourses/standards";
 
-    public ApprovalsOuterApiClient(HttpClient httpClient)
+    public ApprenticeshipsOuterApiClient(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }

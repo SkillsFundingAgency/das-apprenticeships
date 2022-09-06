@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprovalsOuterApiClient;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 
 namespace SFA.DAS.Apprenticeships.Command.AddApproval
 {
@@ -8,9 +8,9 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
     {
         private readonly IApprenticeshipFactory _apprenticeshipFactory;
         private readonly IApprenticeshipRepository _apprenticeshipRepository;
-        private readonly IApprovalsOuterApiClient _approvalsOuterApiClient;
+        private readonly IApprenticeshipsOuterApiClient _approvalsOuterApiClient;
 
-        public AddApprovalCommandHandler(IApprenticeshipFactory apprenticeshipFactory, IApprenticeshipRepository apprenticeshipRepository, IApprovalsOuterApiClient approvalsOuterApiClient)
+        public AddApprovalCommandHandler(IApprenticeshipFactory apprenticeshipFactory, IApprenticeshipRepository apprenticeshipRepository, IApprenticeshipsOuterApiClient approvalsOuterApiClient)
         {
             _apprenticeshipFactory = apprenticeshipFactory;
             _apprenticeshipRepository = apprenticeshipRepository;

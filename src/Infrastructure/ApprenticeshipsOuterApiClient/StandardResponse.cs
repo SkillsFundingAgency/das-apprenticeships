@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Infrastructure.ApprovalsOuterApiClient;
+﻿namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 
 public class StandardResponse
 {

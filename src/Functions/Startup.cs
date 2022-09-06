@@ -58,7 +58,7 @@ namespace SFA.DAS.Apprenticeships.Functions
             builder.Services.AddCommandServices().AddEventServices();
 
             if(NotAcceptanceTests(configuration))
-                builder.Services.AddApprovalsOuterApiClient(applicationSettings.ApprovalsOuterApiConfiguration.BaseUrl, applicationSettings.ApprovalsOuterApiConfiguration.Key);
+                builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
         }
 
         private static bool NotAcceptanceTests(IConfiguration configuration)
