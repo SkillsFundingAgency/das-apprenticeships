@@ -8,8 +8,8 @@ using SFA.DAS.Apprenticeships.Command.AddApproval;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure.Adapters;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
@@ -20,7 +20,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         private AddApprovalCommandHandler _commandHandler;
         private Mock<IApprenticeshipFactory> _apprenticeshipFactory;
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
-        private Mock<IFundingBandMaximumApiAdapter> _fundingBandMaximumApiAdapter;
+        private Mock<IFundingBandMaximumService> _fundingBandMaximumService;
         private Fixture _fixture;
 
         [SetUp]
@@ -28,8 +28,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         {
             _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
-            _fundingBandMaximumApiAdapter = new Mock<IFundingBandMaximumApiAdapter>();
-            _commandHandler = new AddApprovalCommandHandler(_apprenticeshipFactory.Object, _apprenticeshipRepository.Object, _fundingBandMaximumApiAdapter.Object);
+            _fundingBandMaximumService = new Mock<IFundingBandMaximumService>();
+            _commandHandler = new AddApprovalCommandHandler(_apprenticeshipFactory.Object, _apprenticeshipRepository.Object, _fundingBandMaximumService.Object);
 
             _fixture = new Fixture();
             _fixture.Customize(new ApprenticeshipCustomization());
@@ -44,7 +44,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var apprenticeship = _fixture.Create<Apprenticeship>();
 
             _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode)).Returns(apprenticeship);
-            _fundingBandMaximumApiAdapter.Setup(x => x.GetFundingBandMaximum(trainingCodeInt))
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
 
             await _commandHandler.Handle(command);
@@ -61,7 +61,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var apprenticeship = _fixture.Create<Apprenticeship>();
             var fundingBandMaximum = _fixture.Create<int>();
 
-            _fundingBandMaximumApiAdapter.Setup(x => x.GetFundingBandMaximum(trainingCodeInt))
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt))
                 .ReturnsAsync(fundingBandMaximum);
 
             _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode)).Returns(apprenticeship);

@@ -1,12 +1,12 @@
 ﻿using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.Adapters;
+namespace SFA.DAS.Apprenticeships.Infrastructure.Services;
 
-public class FundingBandMaximumApiAdapter : IFundingBandMaximumApiAdapter
+public class FundingBandMaximumService : IFundingBandMaximumService
 {
     private readonly IApprenticeshipsOuterApiClient _apprenticeshipsOuterApiClient;
 
-    public FundingBandMaximumApiAdapter(IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient)
+    public FundingBandMaximumService(IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient)
     {
         _apprenticeshipsOuterApiClient = apprenticeshipsOuterApiClient;
     }

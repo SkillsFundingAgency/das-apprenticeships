@@ -3,15 +3,15 @@ using AutoFixture;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Infrastructure.Adapters;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
 {
     public class WhenGettingFundingBandMaximum
     {
         private Mock<IApprenticeshipsOuterApiClient> _apprenticeshipsOuterApiClient;
-        private FundingBandMaximumApiAdapter _adapter;
+        private FundingBandMaximumService _adapter;
         private Fixture _fixture;
 
         [SetUp]
@@ -19,7 +19,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
         {
             _fixture = new Fixture();
             _apprenticeshipsOuterApiClient = new Mock<IApprenticeshipsOuterApiClient>();
-            _adapter = new FundingBandMaximumApiAdapter(_apprenticeshipsOuterApiClient.Object);
+            _adapter = new FundingBandMaximumService(_apprenticeshipsOuterApiClient.Object);
         }
 
         [Test]
