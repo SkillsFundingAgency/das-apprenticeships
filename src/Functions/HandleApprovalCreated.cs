@@ -19,21 +19,21 @@ namespace SFA.DAS.Apprenticeships.Functions
         }
 
         [FunctionName("HandleApprovalCreatedEvent")]
-        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedEvent command)
+        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedEvent approvalCreatedEvent)
         {
             await _commandDispatcher.Send(new AddApprovalCommand
             {
-                TrainingCode = command.TrainingCode,
-                ActualStartDate = command.ActualStartDate,
-                AgreedPrice = command.AgreedPrice,
-                ApprovalsApprenticeshipId = command.ApprovalsApprenticeshipId,
-                EmployerAccountId = command.EmployerAccountId,
-                FundingEmployerAccountId = command.FundingEmployerAccountId.GetValueOrDefault(),
-                FundingType = command.FundingType.ToFundingType(),
-                LegalEntityName = command.LegalEntityName,
-                PlannedEndDate = command.PlannedEndDate,
-                UKPRN = command.UKPRN.GetValueOrDefault(),
-                Uln = command.Uln
+                TrainingCode = approvalCreatedEvent.TrainingCode,
+                ActualStartDate = approvalCreatedEvent.ActualStartDate,
+                AgreedPrice = approvalCreatedEvent.AgreedPrice,
+                ApprovalsApprenticeshipId = approvalCreatedEvent.ApprovalsApprenticeshipId,
+                EmployerAccountId = approvalCreatedEvent.EmployerAccountId,
+                FundingEmployerAccountId = approvalCreatedEvent.FundingEmployerAccountId.GetValueOrDefault(),
+                FundingType = approvalCreatedEvent.FundingType.ToFundingType(),
+                LegalEntityName = approvalCreatedEvent.LegalEntityName,
+                PlannedEndDate = approvalCreatedEvent.PlannedEndDate,
+                UKPRN = approvalCreatedEvent.UKPRN,
+                Uln = approvalCreatedEvent.Uln
             });
         }
     }
