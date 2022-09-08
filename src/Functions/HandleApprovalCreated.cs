@@ -1,9 +1,11 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApproval;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Approvals.EventHandlers.Messages;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 
 namespace SFA.DAS.Apprenticeships.Functions
@@ -17,23 +19,23 @@ namespace SFA.DAS.Apprenticeships.Functions
             _commandDispatcher = commandDispatcher;
         }
 
-        [FunctionName("HandleApprovalCreatedCommand")]
-        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedCommand command)
+        [FunctionName("HandleApprovalCreatedEvent")]
+        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedEvent @event)
         {
             await _commandDispatcher.Send(new AddApprovalCommand
             {
-                TrainingCode = command.TrainingCode,
-                ActualStartDate = command.ActualStartDate,
-                AgreedPrice = command.AgreedPrice,
-                ApprovalsApprenticeshipId = command.ApprovalsApprenticeshipId,
-                EmployerAccountId = command.EmployerAccountId,
-                FundingEmployerAccountId = command.FundingEmployerAccountId,
-                FundingType = command.FundingType,
-                LegalEntityName = command.LegalEntityName,
-                PlannedEndDate = command.PlannedEndDate,
-                UKPRN = command.UKPRN,
-                Uln = command.Uln,
-                DateOfBirth = command.DateOfBirth
+                TrainingCode = @event.TrainingCode,
+                ActualStartDate = @event.ActualStartDate.Value,
+                AgreedPrice = @event.AgreedPrice,
+                ApprovalsApprenticeshipId = @event.ApprovalsApprenticeshipId,
+                EmployerAccountId = @event.EmployerAccountId,
+                FundingEmployerAccountId = @event.FundingEmployerAccountId.Value,
+                FundingType = Enum.Parse<Enums.FundingType>(@event.FundingType.ToString()),
+                LegalEntityName = @event.LegalEntityName,
+                PlannedEndDate = @event.PlannedEndDate.Value,
+                UKPRN = @event.UKPRN,
+                Uln = @event.Uln,
+                DateOfBirth = DateTime.Now.AddYears(-18) // TODO: @event.DateOfBirth
             });
         }
     }

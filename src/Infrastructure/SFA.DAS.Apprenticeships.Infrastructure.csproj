@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SFA.DAS.Approvals.EventHandlers.Messages" Version="0.1.1-prerelease-41" />
     <PackageReference Include="SFA.DAS.NServiceBus.AzureFunction" Version="17.0.49" />
 	<PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
 	<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
