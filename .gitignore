@@ -351,3 +351,6 @@ MigrationBackup/
 .ionide/
 /src/.learningtransport/
 /src/SFA.DAS.Apprenticeships.Functions/.learningtransport/
+
+#specflow generated feature.cs files
+*.feature.cs
