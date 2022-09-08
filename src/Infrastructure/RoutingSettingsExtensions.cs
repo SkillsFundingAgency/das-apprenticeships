@@ -10,7 +10,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
     {
         public static void AddRouting(this RoutingSettings settings)
         {
-            settings.RouteToEndpoint(typeof(ApprovalCreatedCommand), QueueNames.ApprovalCreated);
+            settings.RouteToEndpoint(typeof(ApprovalCreatedEvent), QueueNames.ApprovalCreated);
         }
     }
 }

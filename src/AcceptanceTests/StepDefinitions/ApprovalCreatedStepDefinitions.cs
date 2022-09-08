@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         public static async Task StartEndpoint()
         {
             _endpointInstance = await EndpointHelper
-                .StartEndpoint(QueueNames.ApprovalCreated + "TEST", false, new[] { typeof(ApprovalCreatedCommand), typeof(ApprenticeshipCreatedEvent) });
+                .StartEndpoint(QueueNames.ApprovalCreated + "TEST", false, new[] { typeof(ApprovalCreatedEvent), typeof(ApprenticeshipCreatedEvent) });
         }
 
         [AfterTestRun]
@@ -47,14 +47,14 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         [Given(@"An apprenticeship has been created as part of the approvals journey")]
         public async Task GivenAnApprenticeshipHasBeenCreatedAsPartOfTheApprovalsJourney()
         {
-            var approvalCreatedCommand = _fixture.Build<ApprovalCreatedCommand>() 
+            var approvalCreatedEvent = _fixture.Build<ApprovalCreatedEvent>() 
                 .With(_ => _.Uln, _fixture.Create<long>().ToString)
                 .With(_ => _.TrainingCode, _fixture.Create<int>().ToString)
                 .Create();
 
-            await _endpointInstance.Publish(approvalCreatedCommand);
+            await _endpointInstance.Publish(approvalCreatedEvent);
 
-            _scenarioContext["ApprovalCreatedCommand"] = approvalCreatedCommand;
+            _scenarioContext["ApprovalCreatedEvent"] = approvalCreatedEvent;
         }
 
         [Given("the funding band maximum for that apprenticeship is set")]
@@ -72,21 +72,21 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 
             await using var dbConnection = new SqlConnection(_testContext.SqlDatabase?.DatabaseInfo.ConnectionString);
 
-            var apprenticeship = dbConnection.GetAll<Apprenticeship>().Single(x => x.Uln == ApprovalCreatedCommand.Uln);
-            apprenticeship.Uln.Should().Be(ApprovalCreatedCommand.Uln);
-            int.Parse(apprenticeship.TrainingCode).Should().Be(int.Parse(ApprovalCreatedCommand.TrainingCode));
+            var apprenticeship = dbConnection.GetAll<Apprenticeship>().Single(x => x.Uln == ApprovalCreatedEvent.Uln);
+            apprenticeship.Uln.Should().Be(ApprovalCreatedEvent.Uln);
+            int.Parse(apprenticeship.TrainingCode).Should().Be(int.Parse(ApprovalCreatedEvent.TrainingCode));
             apprenticeship.Key.Should().NotBe(Guid.Empty);
            
             var approval = (await dbConnection.GetAllAsync<Approval>()).Single(x => x.ApprenticeshipKey == apprenticeship.Key);
-            approval.ActualStartDate.Should().BeSameDateAs(ApprovalCreatedCommand.ActualStartDate!.Value);
-            approval.ApprovalsApprenticeshipId.Should().Be(ApprovalCreatedCommand.ApprovalsApprenticeshipId);
-            approval.AgreedPrice.Should().Be(ApprovalCreatedCommand.AgreedPrice);
-            approval.EmployerAccountId.Should().Be(ApprovalCreatedCommand.EmployerAccountId);
-            approval.FundingEmployerAccountId.Should().Be(ApprovalCreatedCommand.FundingEmployerAccountId);
-            approval.FundingType.Should().Be(ApprovalCreatedCommand.FundingType == FundingType.Levy ? Enums.FundingType.Levy : ApprovalCreatedCommand.FundingType == FundingType.NonLevy ? Enums.FundingType.NonLevy : Enums.FundingType.Transfer);
-            approval.LegalEntityName.Should().Be(ApprovalCreatedCommand.LegalEntityName);
-            approval.PlannedEndDate.Should().BeSameDateAs(ApprovalCreatedCommand.PlannedEndDate!.Value);
-            approval.UKPRN.Should().Be(ApprovalCreatedCommand.UKPRN);
+            approval.ActualStartDate.Should().BeSameDateAs(ApprovalCreatedEvent.ActualStartDate!.Value);
+            approval.ApprovalsApprenticeshipId.Should().Be(ApprovalCreatedEvent.ApprovalsApprenticeshipId);
+            approval.AgreedPrice.Should().Be(ApprovalCreatedEvent.AgreedPrice);
+            approval.EmployerAccountId.Should().Be(ApprovalCreatedEvent.EmployerAccountId);
+            approval.FundingEmployerAccountId.Should().Be(ApprovalCreatedEvent.FundingEmployerAccountId);
+            approval.FundingType.Should().Be(ApprovalCreatedEvent.FundingType == FundingType.Levy ? Enums.FundingType.Levy : ApprovalCreatedEvent.FundingType == FundingType.NonLevy ? Enums.FundingType.NonLevy : Enums.FundingType.Transfer);
+            approval.LegalEntityName.Should().Be(ApprovalCreatedEvent.LegalEntityName);
+            approval.PlannedEndDate.Should().BeSameDateAs(ApprovalCreatedEvent.PlannedEndDate!.Value);
+            approval.UKPRN.Should().Be(ApprovalCreatedEvent.UKPRN);
             approval.Id.Should().NotBe(Guid.Empty);
 
             _scenarioContext["Apprenticeship"] = apprenticeship;
@@ -103,7 +103,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         private async Task<bool> ApprenticeshipRecordMatchesExpectation()
         {
             await using var dbConnection = new SqlConnection(_testContext.SqlDatabase?.DatabaseInfo.ConnectionString);
-            var apprenticeship = (await dbConnection.GetAllAsync<Apprenticeship>()).SingleOrDefault(x => x.Uln == ApprovalCreatedCommand.Uln);
+            var apprenticeship = (await dbConnection.GetAllAsync<Apprenticeship>()).SingleOrDefault(x => x.Uln == ApprovalCreatedEvent.Uln);
 
             return apprenticeship != null;
         }
@@ -113,7 +113,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         {
             await WaitHelper.WaitForIt(() => ApprenticeshipCreatedEventHandler.ReceivedEvents.Any(EventMatchesExpectation), $"Failed to find published {nameof(ApprenticeshipCreated)} event");
 
-            var publishedEvent = ApprenticeshipCreatedEventHandler.ReceivedEvents.Single();
+            var publishedEvent = ApprenticeshipCreatedEventHandler.ReceivedEvents.Single(EventMatchesExpectation);
 
             publishedEvent.Uln.Should().Be(Apprenticeship.Uln);
             publishedEvent.ApprenticeshipKey.Should().Be(Apprenticeship.Key);
@@ -143,7 +143,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             return apprenticeshipCreatedEvent.ApprenticeshipKey == Apprenticeship.Key;
         }
 
-        public ApprovalCreatedCommand ApprovalCreatedCommand => (ApprovalCreatedCommand)_scenarioContext["ApprovalCreatedCommand"];
+        public ApprovalCreatedEvent ApprovalCreatedEvent => (ApprovalCreatedEvent)_scenarioContext["ApprovalCreatedEvent"];
         public Apprenticeship Apprenticeship => (Apprenticeship)_scenarioContext["Apprenticeship"];
         public Approval Approval => (Approval)_scenarioContext["Approval"];
     }

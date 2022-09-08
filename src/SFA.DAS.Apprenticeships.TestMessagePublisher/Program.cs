@@ -24,16 +24,16 @@ Console.WriteLine("X. Exit");
 var choice = Console.ReadLine();
 if (choice == "1")
 {
-    await PublishCreatedCommand(host.Services);
+    await PublishCreatedEvent(host.Services);
 }
 
-async Task PublishCreatedCommand(IServiceProvider services)
+async Task PublishCreatedEvent(IServiceProvider services)
 {
     using IServiceScope serviceScope = services.CreateScope();
     IServiceProvider provider = serviceScope.ServiceProvider;
     var messagePublisher = provider.GetRequiredService<IMessageSession>();
 
-    await messagePublisher.Send(new ApprovalCreatedCommand {FundingEmployerAccountId = 123436, Uln = "2135546", FundingType = FundingType.Levy, ApprovalsApprenticeshipId = 34254, UKPRN = 4536546, ActualStartDate = DateTime.Now, EmployerAccountId = 2344536, LegalEntityName = "Test", AgreedPrice = 122345m, PlannedEndDate = DateTime.Now.AddYears(1), TrainingCode = "ABC123"});
+    await messagePublisher.Send(new ApprovalCreatedEvent {FundingEmployerAccountId = 123436, Uln = "2135546", FundingType = FundingType.Levy, ApprovalsApprenticeshipId = 34254, UKPRN = 4536546, ActualStartDate = DateTime.Now, EmployerAccountId = 2344536, LegalEntityName = "Test", AgreedPrice = 122345m, PlannedEndDate = DateTime.Now.AddYears(1), TrainingCode = "ABC123"});
 
     Console.WriteLine("Message published.");
     Console.WriteLine("Press enter to quit");

@@ -26,7 +26,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
         [Test]
         public async Task ThenApprovalIsAdded()
         {
-            var command = _fixture.Create<ApprovalCreatedCommand>();
+            var command = _fixture.Create<ApprovalCreatedEvent>();
             command.FundingType = FundingType.Transfer;
             await _handler.HandleCommand(command);
 

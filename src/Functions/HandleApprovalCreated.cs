@@ -18,8 +18,8 @@ namespace SFA.DAS.Apprenticeships.Functions
             _commandDispatcher = commandDispatcher;
         }
 
-        [FunctionName("HandleApprovalCreatedCommand")]
-        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedCommand command)
+        [FunctionName("HandleApprovalCreatedEvent")]
+        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedEvent command)
         {
             await _commandDispatcher.Send(new AddApprovalCommand
             {
@@ -32,7 +32,7 @@ namespace SFA.DAS.Apprenticeships.Functions
                 FundingType = command.FundingType.ToFundingType(),
                 LegalEntityName = command.LegalEntityName,
                 PlannedEndDate = command.PlannedEndDate,
-                UKPRN = command.UKPRN,
+                UKPRN = command.UKPRN.GetValueOrDefault(),
                 Uln = command.Uln
             });
         }
