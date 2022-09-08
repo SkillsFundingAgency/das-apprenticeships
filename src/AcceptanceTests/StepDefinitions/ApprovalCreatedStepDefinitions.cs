@@ -1,12 +1,14 @@
 using AutoFixture;
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
+using Moq;
 using NServiceBus;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Handlers;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Infrastructure;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Approvals.EventHandlers.Messages;
 using FundingType = SFA.DAS.Approvals.EventHandlers.Messages.FundingType;
@@ -55,6 +57,14 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             _scenarioContext["ApprovalCreatedCommand"] = approvalCreatedCommand;
         }
 
+        [Given("the funding band maximum for that apprenticeship is set")]
+        public async Task GivenTheFundingBandMaximumForThatApprenticeshipIsSet()
+        {
+            var fundingBandMaximum = _fixture.Create<int>();
+            _scenarioContext["fundingBandMaximum"] = fundingBandMaximum;
+            _testContext.TestFunction.mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = fundingBandMaximum });
+        }
+
         [Then(@"an Apprenticeship record is created")]
         public async Task ThenAnApprenticeshipRecordIsCreated()
         {
@@ -81,6 +91,13 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 
             _scenarioContext["Apprenticeship"] = apprenticeship;
             _scenarioContext["Approval"] = approval;
+        }
+
+        [Then("an Apprenticeship record is created with the correct funding band maximum")]
+        public async Task ThenAnApprenticeshipRecordIsCreatedWithTheCorrectFundingBandMaximum()
+        {
+            await ThenAnApprenticeshipRecordIsCreated();
+            ((Approval)_scenarioContext["Approval"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
         }
 
         private async Task<bool> ApprenticeshipRecordMatchesExpectation()
@@ -110,6 +127,15 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.FundingType.ToString().Should().Be(Approval.FundingType.ToString());
             publishedEvent.LegalEntityName.Should().Be(Approval.LegalEntityName);
             publishedEvent.UKPRN.Should().Be(Approval.UKPRN);
+
+            _scenarioContext["publishedEvent"] = publishedEvent;
+        }
+
+        [Then("an ApprenticeshipCreatedEvent event is published with the correct funding band maximum")]
+        public async Task ThenAnApprenticeshipCreatedEventEventIsPublishedWithTheCorrectFundingBandMaximum()
+        {
+            await ThenAnApprenticeshipCreatedEventEventIsPublished();
+            ((ApprenticeshipCreatedEvent)_scenarioContext["publishedEvent"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
         }
 
         private bool EventMatchesExpectation(ApprenticeshipCreatedEvent apprenticeshipCreatedEvent)
