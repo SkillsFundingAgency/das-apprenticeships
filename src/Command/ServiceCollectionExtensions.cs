@@ -4,6 +4,7 @@ using SFA.DAS.Apprenticeships.Command.Decorators;
 using SFA.DAS.Apprenticeships.DataAccess.Repositories;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Infrastructure.Adapters;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 
 namespace SFA.DAS.Apprenticeships.Command
@@ -18,6 +19,7 @@ namespace SFA.DAS.Apprenticeships.Command
                 .AddScoped<ICommandDispatcher, CommandDispatcher>();
 
             serviceCollection.AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>();
+            serviceCollection.AddScoped<IFundingBandMaximumApiAdapter, FundingBandMaximumApiAdapter>();
             serviceCollection.AddPersistenceServices();
 
             return serviceCollection;

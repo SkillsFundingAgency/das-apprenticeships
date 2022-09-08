@@ -2,5 +2,5 @@
 
 public interface IApprenticeshipsOuterApiClient
 {
-    Task<int> GetFundingBandMaximum(int courseCode);
+    Task<GetStandardResponse> GetStandard(int courseCode);
 }

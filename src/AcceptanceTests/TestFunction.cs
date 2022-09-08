@@ -77,7 +77,7 @@ public class TestFunction : IDisposable
                 s.AddScoped<IApprenticeshipsOuterApiClient>(_ =>
                 {
                     var mockClient = new Mock<IApprenticeshipsOuterApiClient>();
-                    mockClient.Setup(x => x.GetFundingBandMaximum(It.IsAny<int>())).ReturnsAsync(int.MaxValue);
+                    mockClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = int.MaxValue });
                     return mockClient.Object;
                 });
             })

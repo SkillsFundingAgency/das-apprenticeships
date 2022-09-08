@@ -13,10 +13,9 @@ public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
     {
         _httpClient = httpClient;
     }
-
-    public async Task<int> GetFundingBandMaximum(int courseCode)
+    public async Task<GetStandardResponse> GetStandard(int courseCode)
     {
-        var response = await _httpClient.GetAsync(GetStandardUrl).ConfigureAwait(false);
+        var response = await _httpClient.GetAsync(Path.Combine(GetStandardUrl, courseCode.ToString())).ConfigureAwait(false);
 
         if (response.StatusCode.Equals(HttpStatusCode.NotFound))
         {
@@ -26,30 +25,9 @@ public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
         if (response.IsSuccessStatusCode)
         {
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var standardResponse = JsonConvert.DeserializeObject<StandardResponse>(json);
-            var summaries = FilterResponse(standardResponse);
-            return summaries.Single(x => x.LarsCode == courseCode).FundingBandMaximum;
+            return JsonConvert.DeserializeObject<GetStandardResponse>(json);
         }
 
-        throw new Exception($"Status code: {response.StatusCode} returned from approvals outer api.");
-    }
-
-    private IEnumerable<StandardSummary> FilterResponse(StandardResponse response)
-    {
-        var statusList = new string[] { "Approved for delivery", "Retired" };
-        var filteredStandards = response.Standards.Where(s => statusList.Contains(s.Status));
-
-        var latestVersionsOfStandards = filteredStandards.
-            GroupBy(s => s.LarsCode).
-            Select(c => c.OrderByDescending(x => x.VersionMajor).ThenByDescending(y => y.VersionMinor).FirstOrDefault());
-
-        var latestVersionsStandardUIds = latestVersionsOfStandards.Select(s => s.StandardUId);
-
-        foreach (var latestStandard in filteredStandards.Where(s => latestVersionsStandardUIds.Contains(s.StandardUId)))
-        {
-            latestStandard.IsLatestVersion = true;
-        }
-
-        return filteredStandards;
+        throw new Exception($"Status code: {response.StatusCode} returned from apprenticeships outer api.");
     }
 }
