@@ -11,5 +11,6 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.Configuration
         public string LearningTransportStorageDirectory { get; set; }
         public string DbConnectionString { get; set; }
         public ApprenticeshipsOuterApiConfiguration ApprenticeshipsOuterApiConfiguration { get; set; }
+        public bool ConnectionNeedsAccessToken { get; set; }
     }
 }
