@@ -60,6 +60,7 @@ namespace SFA.DAS.Apprenticeships.Command
 
         public static IServiceCollection AddApprenticeshipsOuterApiClient(this IServiceCollection serviceCollection, string baseAddress, string key)
         {
+            baseAddress = EnsureBaseAddressFormat(baseAddress);
             serviceCollection.AddScoped<IApprenticeshipsOuterApiClient, ApprenticeshipsOuterApiClient>(x =>
             {
                 var httpClient = new HttpClient();
@@ -70,6 +71,14 @@ namespace SFA.DAS.Apprenticeships.Command
             });
 
             return serviceCollection;
+        }
+
+        private static string EnsureBaseAddressFormat(string baseAddress)
+        {
+            if (baseAddress.EndsWith('/'))
+                return baseAddress;
+            
+            return baseAddress + '/';
         }
     }
 }
