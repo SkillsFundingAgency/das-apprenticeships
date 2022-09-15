@@ -7,7 +7,7 @@ public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
 {
     private readonly HttpClient _httpClient;
 
-    private const string GetStandardUrl = "TrainingCourses/standards";
+    private const string GetStandardUrl = "/TrainingCourses/standards";
 
     public ApprenticeshipsOuterApiClient(HttpClient httpClient)
     {
