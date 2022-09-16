@@ -2,5 +2,5 @@
 
 public interface IFundingBandMaximumService
 {
-    Task<int> GetFundingBandMaximum(int courseCode);
+    Task<int> GetFundingBandMaximum(int courseCode, DateTime? actualStartDate);
 }
