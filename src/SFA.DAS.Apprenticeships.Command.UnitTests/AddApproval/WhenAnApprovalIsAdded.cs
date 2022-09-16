@@ -44,7 +44,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var apprenticeship = _fixture.Create<Apprenticeship>();
 
             _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode)).Returns(apprenticeship);
-            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt))
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
 
             await _commandHandler.Handle(command);
@@ -61,7 +61,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var apprenticeship = _fixture.Create<Apprenticeship>();
             var fundingBandMaximum = _fixture.Create<int>();
 
-            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt))
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync(fundingBandMaximum);
 
             _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode)).Returns(apprenticeship);
