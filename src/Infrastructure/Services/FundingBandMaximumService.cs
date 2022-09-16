@@ -18,8 +18,8 @@ public class FundingBandMaximumService : IFundingBandMaximumService
             return standard.MaxFunding;
 
         return standard.ApprenticeshipFunding.Single(x =>
-                x.EffectiveFrom < actualStartDate
-                && (actualStartDate < x.EffectiveTo || x.EffectiveTo == null))
+                x.EffectiveFrom <= actualStartDate
+                && (actualStartDate <= x.EffectiveTo || x.EffectiveTo == null))
             .MaxEmployerLevyCap;
     }
 }

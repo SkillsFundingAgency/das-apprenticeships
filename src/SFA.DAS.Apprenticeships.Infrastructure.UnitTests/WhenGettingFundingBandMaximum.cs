@@ -45,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
             getStandardResponse.ApprenticeshipFunding[1].EffectiveFrom = new DateTime(2022, 05, 06);
             getStandardResponse.ApprenticeshipFunding[1].EffectiveTo = null;
             _apprenticeshipsOuterApiClient.Setup(x => x.GetStandard(courseCode)).ReturnsAsync(getStandardResponse);
-            var result = await _service.GetFundingBandMaximum(courseCode, new DateTime(2022, 02, 02));
+            var result = await _service.GetFundingBandMaximum(courseCode, new DateTime(2022, 01, 01));
             result.Should().Be(getStandardResponse.ApprenticeshipFunding[0].MaxEmployerLevyCap);
         }
 
