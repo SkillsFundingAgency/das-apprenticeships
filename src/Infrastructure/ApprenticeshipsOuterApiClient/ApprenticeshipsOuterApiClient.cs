@@ -7,7 +7,7 @@ public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
 {
     private readonly HttpClient _httpClient;
 
-    private const string GetStandardUrl = "/TrainingCourses/standards";
+    private const string GetStandardUrl = "TrainingCourses/standards";
 
     public ApprenticeshipsOuterApiClient(HttpClient httpClient)
     {
@@ -15,7 +15,7 @@ public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
     }
     public async Task<GetStandardResponse> GetStandard(int courseCode)
     {
-        var response = await _httpClient.GetAsync(Path.Combine(GetStandardUrl, courseCode.ToString())).ConfigureAwait(false);
+        var response = await _httpClient.GetAsync($"{GetStandardUrl}/{courseCode}").ConfigureAwait(false);
 
         if (response.StatusCode.Equals(HttpStatusCode.NotFound))
         {
