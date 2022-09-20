@@ -1,9 +1,11 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 
 namespace SFA.DAS.Apprenticeships.Command
 {
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public sealed class CommandDispatcherException : Exception
     {
         public CommandDispatcherException()
