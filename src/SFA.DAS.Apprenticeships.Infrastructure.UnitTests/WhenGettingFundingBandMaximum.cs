@@ -30,7 +30,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
             var courseCode = _fixture.Create<int>();
             var getStandardResponse = _fixture.Create<GetStandardResponse>();
             _apprenticeshipsOuterApiClient.Setup(x => x.GetStandard(courseCode)).ReturnsAsync(getStandardResponse);
-            var result = await _service.GetFundingBandMaximum(courseCode, null, Guid.NewGuid());
+            var result = await _service.GetFundingBandMaximum(courseCode, null);
             result.Should().Be(getStandardResponse.MaxFunding);
         }
 
@@ -45,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
             getStandardResponse.ApprenticeshipFunding[1].EffectiveFrom = new DateTime(2022, 05, 06);
             getStandardResponse.ApprenticeshipFunding[1].EffectiveTo = null;
             _apprenticeshipsOuterApiClient.Setup(x => x.GetStandard(courseCode)).ReturnsAsync(getStandardResponse);
-            var result = await _service.GetFundingBandMaximum(courseCode, new DateTime(2022, 01, 01), Guid.NewGuid());
+            var result = await _service.GetFundingBandMaximum(courseCode, new DateTime(2022, 01, 01));
             result.Should().Be(getStandardResponse.ApprenticeshipFunding[0].MaxEmployerLevyCap);
         }
 
@@ -60,12 +60,12 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
             getStandardResponse.ApprenticeshipFunding[1].EffectiveFrom = new DateTime(2022, 05, 06);
             getStandardResponse.ApprenticeshipFunding[1].EffectiveTo = null;
             _apprenticeshipsOuterApiClient.Setup(x => x.GetStandard(courseCode)).ReturnsAsync(getStandardResponse);
-            var result = await _service.GetFundingBandMaximum(courseCode, new DateTime(2022, 05, 07), Guid.NewGuid());
+            var result = await _service.GetFundingBandMaximum(courseCode, new DateTime(2022, 05, 07));
             result.Should().Be(getStandardResponse.ApprenticeshipFunding[1].MaxEmployerLevyCap);
         }
 
         [Test]
-        public async Task ThenExceptionIsThrownWhenNoFundingBandForGivenDateExists()
+        public async Task ThenNullIsReturnedWhenNoFundingBandForGivenDateExists()
         {
             var courseCode = _fixture.Create<int>();
             var getStandardResponse = _fixture.Create<GetStandardResponse>();
@@ -77,9 +77,8 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
             getStandardResponse.ApprenticeshipFunding[1].EffectiveFrom = new DateTime(2022, 05, 06);
             getStandardResponse.ApprenticeshipFunding[1].EffectiveTo = null;
             _apprenticeshipsOuterApiClient.Setup(x => x.GetStandard(courseCode)).ReturnsAsync(getStandardResponse);
-            await _service.Invoking(x => x.GetFundingBandMaximum(courseCode, actualStartDate, apprenticeshipKey)).Should()
-                .ThrowAsync<Exception>().WithMessage($"No funding band maximum found for given date {actualStartDate.ToString("u")}. Apprenticeship Key: {apprenticeshipKey}");
-
+            var result = await _service.GetFundingBandMaximum(courseCode, actualStartDate);
+            result.Should().BeNull();
         }
     }
 }
