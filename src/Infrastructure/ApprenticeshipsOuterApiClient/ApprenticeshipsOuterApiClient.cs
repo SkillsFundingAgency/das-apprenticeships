@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using Newtonsoft.Json;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 
+[ExcludeFromCodeCoverage]
 public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
 {
     private readonly HttpClient _httpClient;

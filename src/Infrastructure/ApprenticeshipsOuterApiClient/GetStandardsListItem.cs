@@ -1,5 +1,8 @@
-﻿namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+
+[ExcludeFromCodeCoverage]
 public class GetStandardsListItem : StandardApiResponseBase
 {
     public string StandardUId { get; set; }

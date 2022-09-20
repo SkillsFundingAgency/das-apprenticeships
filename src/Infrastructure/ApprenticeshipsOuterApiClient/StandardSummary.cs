@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 
+[ExcludeFromCodeCoverage]
 public class StandardSummary
 {
     public string StandardUId { get; set; }
