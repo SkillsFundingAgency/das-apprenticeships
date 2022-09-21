@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "SFA.DAS.Apprenticeships.Functions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7222",
+      "launchBrowser": false
+    }
+  }
+}
