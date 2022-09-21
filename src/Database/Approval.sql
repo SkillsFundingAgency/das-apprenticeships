@@ -10,7 +10,8 @@
     [PlannedEndDate] DATETIME NOT NULL, 
     [AgreedPrice] MONEY NOT NULL, 
     [FundingEmployerAccountId] BIGINT NULL, 
-    [FundingType] NVARCHAR(50) NOT NULL
+    [FundingType] NVARCHAR(50) NOT NULL, 
+    [FundingBandMaximum] INT NOT NULL
 )
 GO
 ALTER TABLE dbo.Approval

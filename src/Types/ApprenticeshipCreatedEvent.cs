@@ -14,6 +14,7 @@ public class ApprenticeshipCreatedEvent
     public string TrainingCode { get; set; }
     public long? FundingEmployerAccountId { get; set; }
     public FundingType FundingType { get; set; }
+    public int FundingBandMaximum { get; set; }
     public DateTime DateOfBirth { get; set; }
     public int AgeAtStartOfApprenticeship { get; set; }
 }

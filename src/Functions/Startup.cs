@@ -53,8 +53,12 @@ namespace SFA.DAS.Apprenticeships.Functions
             Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
 
             builder.Services.AddNServiceBus(applicationSettings);
-            builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings);
+            builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(configuration));
+
             builder.Services.AddCommandServices().AddEventServices();
+
+            if(NotAcceptanceTests(configuration))
+                builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
         }
 
         private static bool NotAcceptanceTests(IConfiguration configuration)

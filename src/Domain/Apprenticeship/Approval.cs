@@ -16,8 +16,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public decimal AgreedPrice => _model.AgreedPrice;
         public long FunctionEmployerAccountId => _model.FundingEmployerAccountId;
         public FundingType FundingType => _model.FundingType;
+        public int FundingBandMaximum => _model.FundingBandMaximum;
 
-        internal static Approval New(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long fundingEmployerAccountId, FundingType fundingType)
+        internal static Approval New(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime? plannedEndDate, decimal agreedPrice, long fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum)
         {
             return new Approval(new ApprovalModel
             {
@@ -30,7 +31,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 Id = Guid.NewGuid(),
                 LegalEntityName = legalEntityName, 
                 PlannedEndDate = plannedEndDate, 
-                UKPRN = ukprn
+                UKPRN = ukprn,
+                FundingBandMaximum = fundingBandMaximum
             });
         }
 

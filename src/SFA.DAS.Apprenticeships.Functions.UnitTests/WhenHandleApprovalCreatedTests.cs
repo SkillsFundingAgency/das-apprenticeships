@@ -5,7 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApproval;
-using SFA.DAS.Apprenticeships.Infrastructure;
+using SFA.DAS.Approvals.EventHandlers.Messages;
 using SFA.DAS.Approvals.EventHandlers.Messages;
 
 namespace SFA.DAS.Apprenticeships.Functions.UnitTests
@@ -28,6 +28,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
         public async Task ThenApprovalIsAdded()
         {
             var command = _fixture.Create<ApprovalCreatedEvent>();
+            command.FundingType = FundingType.Transfer;
             await _handler.HandleCommand(command);
 
             _commandDispatcher.Verify(x =>
@@ -38,7 +39,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                         c.ApprovalsApprenticeshipId == command.ApprovalsApprenticeshipId &&
                         c.EmployerAccountId == command.EmployerAccountId &&
                         c.FundingEmployerAccountId == command.FundingEmployerAccountId &&
-                       //  c.FundingType == command.FundingType &&
+                        c.FundingType == Enums.FundingType.Transfer &&
                         c.LegalEntityName == command.LegalEntityName &&
                         c.PlannedEndDate == command.PlannedEndDate &&
                         c.UKPRN == command.UKPRN &&

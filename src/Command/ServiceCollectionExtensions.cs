@@ -4,6 +4,8 @@ using SFA.DAS.Apprenticeships.Command.Decorators;
 using SFA.DAS.Apprenticeships.DataAccess.Repositories;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Command
 {
@@ -17,6 +19,7 @@ namespace SFA.DAS.Apprenticeships.Command
                 .AddScoped<ICommandDispatcher, CommandDispatcher>();
 
             serviceCollection.AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>();
+            serviceCollection.AddScoped<IFundingBandMaximumService, FundingBandMaximumService>();
             serviceCollection.AddPersistenceServices();
 
             return serviceCollection;
@@ -53,6 +56,29 @@ namespace SFA.DAS.Apprenticeships.Command
                 .Decorate(typeof(ICommandHandler<>), typeof(CommandHandlerWithUnitOfWork<>));
 
             return serviceCollection;
+        }
+
+        public static IServiceCollection AddApprenticeshipsOuterApiClient(this IServiceCollection serviceCollection, string baseAddress, string key)
+        {
+            baseAddress = EnsureBaseAddressFormat(baseAddress);
+            serviceCollection.AddScoped<IApprenticeshipsOuterApiClient, ApprenticeshipsOuterApiClient>(x =>
+            {
+                var httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri(baseAddress);
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", key);
+                httpClient.DefaultRequestHeaders.Add("X-Version", "1");
+                return new ApprenticeshipsOuterApiClient(httpClient);
+            });
+
+            return serviceCollection;
+        }
+
+        private static string EnsureBaseAddressFormat(string baseAddress)
+        {
+            if (baseAddress.EndsWith('/'))
+                return baseAddress;
+            
+            return baseAddress + '/';
         }
     }
 }

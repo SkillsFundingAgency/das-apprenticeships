@@ -10,5 +10,6 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.Configuration
         public string NServiceBusLicense { get; set; }
         public string LearningTransportStorageDirectory { get; set; }
         public string DbConnectionString { get; set; }
+        public ApprenticeshipsOuterApiConfiguration ApprenticeshipsOuterApiConfiguration { get; set; }
     }
 }

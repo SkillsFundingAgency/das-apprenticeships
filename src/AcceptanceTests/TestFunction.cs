@@ -4,7 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Moq;
 using SFA.DAS.Apprenticeships.Functions;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
@@ -17,6 +19,7 @@ public class TestFunction : IDisposable
 
     private IJobHost Jobs => _host.Services.GetService<IJobHost>()!;
     public string HubName { get; }
+    public Mock<IApprenticeshipsOuterApiClient> mockApprenticeshipsOuterApiClient  { get; }
 
     public TestFunction(TestContext testContext, string hubName)
     {
@@ -32,6 +35,9 @@ public class TestFunction : IDisposable
             { "ApplicationSettings:LogLevel", "DEBUG" },
             { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! }
         };
+
+        mockApprenticeshipsOuterApiClient = new Mock<IApprenticeshipsOuterApiClient>();
+        mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = int.MaxValue });
 
         _host = new HostBuilder()
             .ConfigureAppConfiguration(a =>
@@ -72,6 +78,7 @@ public class TestFunction : IDisposable
             .ConfigureServices(s =>
             {
                 s.AddHostedService<PurgeBackgroundJob>();
+                s.AddScoped<IApprenticeshipsOuterApiClient>(_ => mockApprenticeshipsOuterApiClient.Object);
             })
             .Build();
     }
