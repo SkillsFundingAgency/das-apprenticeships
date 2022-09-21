@@ -35,7 +35,7 @@ namespace SFA.DAS.Apprenticeships.Functions
                 PlannedEndDate = @event.PlannedEndDate.Value,
                 UKPRN = @event.UKPRN,
                 Uln = @event.Uln,
-                DateOfBirth = DateTime.Now.AddYears(-18) // TODO: @event.DateOfBirth
+                DateOfBirth = @event.DateOfBirth
             });
         }
     }

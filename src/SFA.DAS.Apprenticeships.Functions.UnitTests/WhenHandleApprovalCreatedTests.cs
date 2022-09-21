@@ -43,8 +43,8 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                         c.LegalEntityName == command.LegalEntityName &&
                         c.PlannedEndDate == command.PlannedEndDate &&
                         c.UKPRN == command.UKPRN &&
-                        c.Uln == command.Uln //&&
-                       // c.DateOfBirth == command.DateOfBirth TODO
+                        c.Uln == command.Uln &&
+                        c.DateOfBirth == command.DateOfBirth
                     ),
                     It.IsAny<CancellationToken>()));
         }
