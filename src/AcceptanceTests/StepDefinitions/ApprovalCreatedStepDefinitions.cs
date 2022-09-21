@@ -47,7 +47,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         [Given(@"An apprenticeship has been created as part of the approvals journey")]
         public async Task GivenAnApprenticeshipHasBeenCreatedAsPartOfTheApprovalsJourney()
         {
-            var ApprovalCreatedEvent = _fixture.Build<ApprovalCreatedEvent>() 
+            var approvalCreatedEvent = _fixture.Build<ApprovalCreatedEvent>() 
                 .With(_ => _.Uln, _fixture.Create<long>().ToString)
                 .With(_ => _.TrainingCode, _fixture.Create<int>().ToString)
                 .Create();
@@ -62,7 +62,10 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         {
             var fundingBandMaximum = _fixture.Create<int>();
             _scenarioContext["fundingBandMaximum"] = fundingBandMaximum;
-            _testContext.TestFunction.mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = fundingBandMaximum });
+            _testContext.TestFunction.mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = fundingBandMaximum, ApprenticeshipFunding = new List<GetStandardFundingResponse>
+            {
+                new GetStandardFundingResponse{ EffectiveFrom = DateTime.MinValue, EffectiveTo = null, MaxEmployerLevyCap = fundingBandMaximum }
+            }});
         }
 
         [Then(@"an Apprenticeship record is created")]

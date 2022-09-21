@@ -18,7 +18,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public FundingType FundingType => _model.FundingType;
         public int FundingBandMaximum => _model.FundingBandMaximum;
 
-        internal static Approval New(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime? plannedEndDate, decimal agreedPrice, long fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum)
+        internal static Approval New(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum)
         {
             return new Approval(new ApprovalModel
             {

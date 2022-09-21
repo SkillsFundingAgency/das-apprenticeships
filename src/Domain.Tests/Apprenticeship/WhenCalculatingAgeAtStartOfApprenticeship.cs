@@ -25,8 +25,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         [Test]
         public void ThenEarliestApprovalStartDateIsUsed()
         {
-            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2022, 09, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>());
-            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2020, 11, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>());
+            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2022, 09, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>());
+            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2020, 11, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>());
 
             _apprenticeship.AgeAtStartOfApprenticeship.Should().Be(20);
         }
@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         [Test]
         public void WhenTheStartDateIsLaterInTheYearThenTheDateOfBirthThenAgeIsCorrect()
         {
-            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2020, 11, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>());
+            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2020, 11, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>());
 
             _apprenticeship.AgeAtStartOfApprenticeship.Should().Be(20);
         }
@@ -42,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         [Test]
         public void WhenTheStartDateIsEarlierInTheYearThenTheDateOfBirthThenAgeIsCorrect()
         {
-            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2020, 09, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>());
+            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2020, 09, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>());
 
             _apprenticeship.AgeAtStartOfApprenticeship.Should().Be(19);
         }
