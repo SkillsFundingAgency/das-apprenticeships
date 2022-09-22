@@ -29,7 +29,7 @@ namespace SFA.DAS.Apprenticeships.Functions
                 AgreedPrice = @event.AgreedPrice,
                 ApprovalsApprenticeshipId = @event.ApprovalsApprenticeshipId,
                 EmployerAccountId = @event.EmployerAccountId,
-                FundingEmployerAccountId = @event.FundingEmployerAccountId.Value,
+                FundingEmployerAccountId = @event.FundingEmployerAccountId,
                 FundingType = Enum.Parse<Enums.FundingType>(@event.FundingType.ToString()),
                 LegalEntityName = @event.LegalEntityName,
                 PlannedEndDate = @event.PlannedEndDate.Value,

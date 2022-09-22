@@ -14,11 +14,11 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public DateTime ActualStartDate => _model.ActualStartDate;
         public DateTime PlannedEndDate => _model.PlannedEndDate;
         public decimal AgreedPrice => _model.AgreedPrice;
-        public long FunctionEmployerAccountId => _model.FundingEmployerAccountId;
+        public long? FunctionEmployerAccountId => _model.FundingEmployerAccountId;
         public FundingType FundingType => _model.FundingType;
         public int FundingBandMaximum => _model.FundingBandMaximum;
 
-        internal static Approval New(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum)
+        internal static Approval New(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum)
         {
             return new Approval(new ApprovalModel
             {
