@@ -12,7 +12,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship
         public long UKPRN { get; set; }
         public long EmployerAccountId { get; set; }
         public string LegalEntityName { get; set; }
-        public DateTime ActualStartDate { get; set; }
+        public DateTime? ActualStartDate { get; set; }
         public DateTime PlannedEndDate { get; set; }
         public decimal AgreedPrice { get; set; }
         public long? FundingEmployerAccountId { get; set; }

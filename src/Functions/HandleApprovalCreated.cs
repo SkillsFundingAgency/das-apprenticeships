@@ -25,7 +25,7 @@ namespace SFA.DAS.Apprenticeships.Functions
             await _commandDispatcher.Send(new AddApprovalCommand
             {
                 TrainingCode = @event.TrainingCode,
-                ActualStartDate = @event.ActualStartDate.Value,
+                ActualStartDate = @event.ActualStartDate,
                 AgreedPrice = @event.AgreedPrice,
                 ApprovalsApprenticeshipId = @event.ApprovalsApprenticeshipId,
                 EmployerAccountId = @event.EmployerAccountId,

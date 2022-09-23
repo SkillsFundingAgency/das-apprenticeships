@@ -88,7 +88,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             await _commandHandler.Invoking(x => x.Handle(command, It.IsAny<CancellationToken>())).Should()
                 .ThrowAsync<Exception>()
                 .WithMessage(
-                    $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate.ToString("u")}. Apprenticeship Key: {apprenticeship.Key}");
+                    $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Apprenticeship Key: {apprenticeship.Key}");
         }
     }
 }

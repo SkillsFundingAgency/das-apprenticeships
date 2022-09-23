@@ -16,13 +16,17 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public DateTime DateOfBirth => _model.DateOfBirth;
         public IReadOnlyCollection<Approval> Approvals => new ReadOnlyCollection<Approval>(_approvals);
 
-        public int AgeAtStartOfApprenticeship
+        public int? AgeAtStartOfApprenticeship
         {
             get
             {
                 var firstApproval = _approvals.OrderBy(x => x.ActualStartDate).First();
-                var age = firstApproval.ActualStartDate.Year - DateOfBirth.Year;
-                if (firstApproval.ActualStartDate.Date.AddYears(-age) < DateOfBirth.Date)
+                if (!firstApproval.ActualStartDate.HasValue)
+                {
+                    return null;
+                }
+                var age = firstApproval.ActualStartDate.Value.Year - DateOfBirth.Year;
+                if (firstApproval.ActualStartDate.Value.Date.AddYears(-age) < DateOfBirth.Date)
                 {
                     age--;
                 }
@@ -48,7 +52,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             AddEvent(new ApprenticeshipCreated(_model.Key));
         }
 
-        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum)
+        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum)
         {
             var approval = Approval.New(approvalsApprenticeshipId, ukprn, employerAccountId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType, fundingBandMaximum);
             _approvals.Add(approval);

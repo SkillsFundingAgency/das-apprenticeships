@@ -121,7 +121,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.Uln.Should().Be(Apprenticeship.Uln);
             publishedEvent.ApprenticeshipKey.Should().Be(Apprenticeship.Key);
             int.Parse(publishedEvent.TrainingCode).Should().Be(int.Parse(Apprenticeship.TrainingCode));
-            publishedEvent.ActualStartDate.Should().BeSameDateAs(Approval.ActualStartDate);
+            publishedEvent.ActualStartDate.Should().BeSameDateAs(Approval.ActualStartDate ?? DateTime.Now);
             publishedEvent.PlannedEndDate.Should().BeSameDateAs(Approval.PlannedEndDate);
             publishedEvent.AgreedPrice.Should().Be(Approval.AgreedPrice);
             publishedEvent.ApprovalsApprenticeshipId.Should().Be(Approval.ApprovalsApprenticeshipId);
