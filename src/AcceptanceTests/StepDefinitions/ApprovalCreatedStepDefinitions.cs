@@ -62,7 +62,10 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         {
             var fundingBandMaximum = _fixture.Create<int>();
             _scenarioContext["fundingBandMaximum"] = fundingBandMaximum;
-            _testContext.TestFunction.mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = fundingBandMaximum });
+            _testContext.TestFunction.mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = fundingBandMaximum, ApprenticeshipFunding = new List<GetStandardFundingResponse>
+            {
+                new GetStandardFundingResponse{ EffectiveFrom = DateTime.MinValue, EffectiveTo = null, MaxEmployerLevyCap = fundingBandMaximum }
+            }});
         }
 
         [Then(@"an Apprenticeship record is created")]
@@ -83,7 +86,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             approval.AgreedPrice.Should().Be(ApprovalCreatedEvent.AgreedPrice);
             approval.EmployerAccountId.Should().Be(ApprovalCreatedEvent.EmployerAccountId);
             approval.FundingEmployerAccountId.Should().Be(ApprovalCreatedEvent.FundingEmployerAccountId);
-            approval.FundingType.Should().Be(ApprovalCreatedEvent.FundingType == FundingType.Levy ? Enums.FundingType.Levy : ApprovalCreatedEvent.FundingType == FundingType.NonLevy ? Enums.FundingType.NonLevy : Enums.FundingType.Transfer);
+            approval.FundingType.Should().Be(Enum.Parse<Enums.FundingType>(ApprovalCreatedEvent.FundingType.ToString()));
             approval.LegalEntityName.Should().Be(ApprovalCreatedEvent.LegalEntityName);
             approval.PlannedEndDate.Should().BeSameDateAs(ApprovalCreatedEvent.PlannedEndDate!.Value);
             approval.UKPRN.Should().Be(ApprovalCreatedEvent.UKPRN);
@@ -118,8 +121,8 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.Uln.Should().Be(Apprenticeship.Uln);
             publishedEvent.ApprenticeshipKey.Should().Be(Apprenticeship.Key);
             int.Parse(publishedEvent.TrainingCode).Should().Be(int.Parse(Apprenticeship.TrainingCode));
-            publishedEvent.ActualStartDate.Should().BeSameDateAs(Approval.ActualStartDate!.Value);
-            publishedEvent.PlannedEndDate.Should().BeSameDateAs(Approval.PlannedEndDate!.Value);
+            publishedEvent.ActualStartDate.Should().BeSameDateAs(Approval.ActualStartDate ?? DateTime.Now);
+            publishedEvent.PlannedEndDate.Should().BeSameDateAs(Approval.PlannedEndDate);
             publishedEvent.AgreedPrice.Should().Be(Approval.AgreedPrice);
             publishedEvent.ApprovalsApprenticeshipId.Should().Be(Approval.ApprovalsApprenticeshipId);
             publishedEvent.EmployerAccountId.Should().Be(Approval.EmployerAccountId);

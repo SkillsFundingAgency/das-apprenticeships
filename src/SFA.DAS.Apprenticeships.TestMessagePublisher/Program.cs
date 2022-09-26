@@ -19,7 +19,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
     .Build();
 
 Console.WriteLine("Select an option...");
-Console.WriteLine("1. ApprovalCreatedCommand");
+Console.WriteLine("1. ApprovalCreatedEvent");
 Console.WriteLine("X. Exit");
 var choice = Console.ReadLine();
 if (choice == "1")

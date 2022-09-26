@@ -37,7 +37,10 @@ public class TestFunction : IDisposable
         };
 
         mockApprenticeshipsOuterApiClient = new Mock<IApprenticeshipsOuterApiClient>();
-        mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = int.MaxValue });
+        mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = int.MaxValue, ApprenticeshipFunding = new List<GetStandardFundingResponse>
+        {
+            new GetStandardFundingResponse{ EffectiveFrom = DateTime.MinValue, EffectiveTo = null, MaxEmployerLevyCap = int.MaxValue }
+        }});
 
         _host = new HostBuilder()
             .ConfigureAppConfiguration(a =>

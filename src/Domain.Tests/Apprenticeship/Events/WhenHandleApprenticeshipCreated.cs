@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.NServiceBus.Services;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 {
@@ -32,7 +33,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         public async Task ThenApprenticeshipCreatedEventIsPublished()
         {
             var apprenticeshipFactory = new ApprenticeshipFactory();
-            var apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN");
+            var apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16));
             apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>());
             var approval = apprenticeship.Approvals.Single();
             var command = _fixture.Create<ApprenticeshipCreated>();
@@ -53,7 +54,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.EmployerAccountId == approval.EmployerAccountId &&
                     e.LegalEntityName == approval.LegalEntityName &&
                     e.PlannedEndDate == approval.PlannedEndDate &&
-                    e.UKPRN == approval.Ukprn
+                    e.UKPRN == approval.Ukprn &&
+                    e.DateOfBirth == apprenticeship.DateOfBirth &&
+                    e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship
                 ), It.IsAny<PublishOptions>()));
         }
     }

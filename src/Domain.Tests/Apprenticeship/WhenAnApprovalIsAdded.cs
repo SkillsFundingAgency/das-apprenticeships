@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
@@ -17,7 +18,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         public void SetUp()
         {
             var apprenticeshipFactory = new ApprenticeshipFactory();
-            _apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN");
+            _apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", DateTime.Now);
 
             _fixture = new Fixture();
         }

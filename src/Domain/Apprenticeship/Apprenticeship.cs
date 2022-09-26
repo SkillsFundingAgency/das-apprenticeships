@@ -13,11 +13,31 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public Guid Key => _model.Key;
         public string TrainingCode => _model.TrainingCode;
         public string Uln => _model.Uln;
+        public DateTime DateOfBirth => _model.DateOfBirth;
         public IReadOnlyCollection<Approval> Approvals => new ReadOnlyCollection<Approval>(_approvals);
 
-        internal static Apprenticeship New(string uln, string trainingCode)
+        public int? AgeAtStartOfApprenticeship
         {
-            return new Apprenticeship(new ApprenticeshipModel { Key = Guid.NewGuid(), Uln = uln, TrainingCode = trainingCode });
+            get
+            {
+                var firstApproval = _approvals.OrderBy(x => x.ActualStartDate).First();
+                if (!firstApproval.ActualStartDate.HasValue)
+                {
+                    return null;
+                }
+                var age = firstApproval.ActualStartDate.Value.Year - DateOfBirth.Year;
+                if (firstApproval.ActualStartDate.Value.Date.AddYears(-age) < DateOfBirth.Date)
+                {
+                    age--;
+                }
+
+                return age;
+            }
+        }
+
+        internal static Apprenticeship New(string uln, string trainingCode, DateTime dateOfBirth)
+        {
+            return new Apprenticeship(new ApprenticeshipModel { Key = Guid.NewGuid(), Uln = uln, TrainingCode = trainingCode, DateOfBirth = dateOfBirth });
         }
 
         internal static Apprenticeship Get(ApprenticeshipModel model)
@@ -32,7 +52,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             AddEvent(new ApprenticeshipCreated(_model.Key));
         }
 
-        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime? plannedEndDate, decimal agreedPrice, long fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum)
+        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum)
         {
             var approval = Approval.New(approvalsApprenticeshipId, ukprn, employerAccountId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType, fundingBandMaximum);
             _approvals.Add(approval);

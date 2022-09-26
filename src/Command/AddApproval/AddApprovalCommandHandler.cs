@@ -19,7 +19,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
 
         public async Task Handle(AddApprovalCommand command, CancellationToken cancellationToken = default)
         {
-            var apprenticeship = _apprenticeshipFactory.CreateNew(command.Uln, command.TrainingCode);
+            var apprenticeship = _apprenticeshipFactory.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth);
             var fundingBandMaximum = await _fundingBandMaximumService.GetFundingBandMaximum(int.Parse(command.TrainingCode), command.ActualStartDate);
 
             if (fundingBandMaximum == null)

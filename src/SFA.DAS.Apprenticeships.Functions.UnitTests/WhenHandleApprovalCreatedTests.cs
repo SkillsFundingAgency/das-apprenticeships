@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApproval;
 using SFA.DAS.Approvals.EventHandlers.Messages;
+using SFA.DAS.Approvals.EventHandlers.Messages;
 
 namespace SFA.DAS.Apprenticeships.Functions.UnitTests
 {
@@ -42,7 +43,8 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                         c.LegalEntityName == command.LegalEntityName &&
                         c.PlannedEndDate == command.PlannedEndDate &&
                         c.UKPRN == command.UKPRN &&
-                        c.Uln == command.Uln
+                        c.Uln == command.Uln &&
+                        c.DateOfBirth == command.DateOfBirth
                     ),
                     It.IsAny<CancellationToken>()));
         }

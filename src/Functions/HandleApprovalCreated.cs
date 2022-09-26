@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using SFA.DAS.Apprenticeships.Command;
@@ -19,21 +20,22 @@ namespace SFA.DAS.Apprenticeships.Functions
         }
 
         [FunctionName("HandleApprovalCreatedEvent")]
-        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedEvent approvalCreatedEvent)
+        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedEvent @event)
         {
             await _commandDispatcher.Send(new AddApprovalCommand
             {
-                TrainingCode = approvalCreatedEvent.TrainingCode,
-                ActualStartDate = approvalCreatedEvent.ActualStartDate,
-                AgreedPrice = approvalCreatedEvent.AgreedPrice,
-                ApprovalsApprenticeshipId = approvalCreatedEvent.ApprovalsApprenticeshipId,
-                EmployerAccountId = approvalCreatedEvent.EmployerAccountId,
-                FundingEmployerAccountId = approvalCreatedEvent.FundingEmployerAccountId.GetValueOrDefault(),
-                FundingType = approvalCreatedEvent.FundingType.ToFundingType(),
-                LegalEntityName = approvalCreatedEvent.LegalEntityName,
-                PlannedEndDate = approvalCreatedEvent.PlannedEndDate,
-                UKPRN = approvalCreatedEvent.UKPRN,
-                Uln = approvalCreatedEvent.Uln
+                TrainingCode = @event.TrainingCode,
+                ActualStartDate = @event.ActualStartDate,
+                AgreedPrice = @event.AgreedPrice,
+                ApprovalsApprenticeshipId = @event.ApprovalsApprenticeshipId,
+                EmployerAccountId = @event.EmployerAccountId,
+                FundingEmployerAccountId = @event.FundingEmployerAccountId,
+                FundingType = Enum.Parse<Enums.FundingType>(@event.FundingType.ToString()),
+                LegalEntityName = @event.LegalEntityName,
+                PlannedEndDate = @event.PlannedEndDate.Value,
+                UKPRN = @event.UKPRN,
+                Uln = @event.Uln,
+                DateOfBirth = @event.DateOfBirth
             });
         }
     }

@@ -1,7 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using NServiceBus;
+﻿using NServiceBus;
 using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Approvals.EventHandlers.Messages;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure
 {

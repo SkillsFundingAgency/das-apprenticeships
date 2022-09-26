@@ -4,9 +4,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
 {
     public class ApprenticeshipFactory : IApprenticeshipFactory
     {
-        public Apprenticeship.Apprenticeship CreateNew(string uln, string trainingCode)
+        public Apprenticeship.Apprenticeship CreateNew(string uln, string trainingCode, DateTime dateOfBirth)
         {
-            return Apprenticeship.Apprenticeship.New(uln, trainingCode);
+            return Apprenticeship.Apprenticeship.New(uln, trainingCode, dateOfBirth);
         }
 
         public Apprenticeship.Apprenticeship GetExisting(ApprenticeshipModel model)

@@ -34,7 +34,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 LegalEntityName = approval.LegalEntityName,
                 PlannedEndDate = approval.PlannedEndDate,
                 UKPRN = approval.Ukprn,
-                FundingBandMaximum = approval.FundingBandMaximum
+                FundingBandMaximum = approval.FundingBandMaximum,
+                DateOfBirth = apprenticeship.DateOfBirth,
+                AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship
             };
 
             await _messageSession.Publish(apprenticeshipCreatedEvent);

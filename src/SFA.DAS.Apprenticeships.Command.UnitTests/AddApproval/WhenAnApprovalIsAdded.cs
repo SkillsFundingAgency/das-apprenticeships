@@ -44,7 +44,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<Apprenticeship>();
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
 
@@ -65,7 +65,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync(fundingBandMaximum);
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
 
             await _commandHandler.Handle(command);
 
@@ -83,12 +83,12 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int?)null);
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
 
             await _commandHandler.Invoking(x => x.Handle(command, It.IsAny<CancellationToken>())).Should()
                 .ThrowAsync<Exception>()
                 .WithMessage(
-                    $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate.Value.ToString("u")}. Apprenticeship Key: {apprenticeship.Key}");
+                    $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Apprenticeship Key: {apprenticeship.Key}");
         }
     }
 }
