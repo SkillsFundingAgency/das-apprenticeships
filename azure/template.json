@@ -399,6 +399,7 @@
                     "subnetResourceId": {
                         "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
                     },
+                    "netFrameworkVersion": "v6.0",
                     "functionAppAppSettings": {
                         "value": {
                             "array": [
