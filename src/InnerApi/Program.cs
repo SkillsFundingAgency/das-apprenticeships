@@ -26,10 +26,13 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ApprenticeshipsDataContext>();
+            builder.Services.AddHealthChecks();
 
             var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+            app.MapHealthChecks("/ping");
+
+            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
