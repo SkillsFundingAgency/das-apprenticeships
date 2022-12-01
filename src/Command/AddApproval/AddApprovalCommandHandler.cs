@@ -26,7 +26,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                 throw new Exception(
                     $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Apprenticeship Key: {apprenticeship.Key}");
 
-            apprenticeship.AddApproval(command.ApprovalsApprenticeshipId, command.UKPRN, command.EmployerAccountId, command.LegalEntityName, command.ActualStartDate, command.PlannedEndDate, command.AgreedPrice, command.FundingEmployerAccountId, command.FundingType, fundingBandMaximum.Value);
+            apprenticeship.AddApproval(command.ApprovalsApprenticeshipId, command.UKPRN, command.EmployerAccountId, command.LegalEntityName, command.ActualStartDate, command.PlannedEndDate, command.AgreedPrice, command.FundingEmployerAccountId, command.FundingType, fundingBandMaximum.Value, command.PlannedStartDate, command.IsOnFlexiPaymentPilot);
             await _apprenticeshipRepository.Add(apprenticeship);
         }
     }

@@ -11,7 +11,9 @@
     [AgreedPrice] MONEY NOT NULL, 
     [FundingEmployerAccountId] BIGINT NULL, 
     [FundingType] NVARCHAR(50) NOT NULL, 
-    [FundingBandMaximum] INT NOT NULL
+    [FundingBandMaximum] INT NOT NULL, 
+    [PlannedStartDate] DATETIME NULL, 
+    [IsOnFlexiPaymentPilot] BIT NULL
 )
 GO
 ALTER TABLE dbo.Approval
