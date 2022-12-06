@@ -1,6 +1,4 @@
 ﻿using NServiceBus;
-using SFA.DAS.Apprenticeships.Types;
-using SFA.DAS.Approvals.EventHandlers.Messages;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure
@@ -10,7 +8,6 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
     {
         public static void AddRouting(this RoutingSettings settings)
         {
-            settings.RouteToEndpoint(typeof(ApprovalCreatedEvent), QueueNames.ApprovalCreated);
         }
     }
 }
