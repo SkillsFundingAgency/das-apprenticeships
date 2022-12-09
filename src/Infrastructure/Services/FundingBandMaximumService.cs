@@ -11,14 +11,14 @@ public class FundingBandMaximumService : IFundingBandMaximumService
         _apprenticeshipsOuterApiClient = apprenticeshipsOuterApiClient;
     }
 
-    public async Task<int?> GetFundingBandMaximum(int courseCode, DateTime? actualStartDate)
+    public async Task<int?> GetFundingBandMaximum(int courseCode, DateTime? startDate)
     {
         var standard = await _apprenticeshipsOuterApiClient.GetStandard(courseCode);
-        if (actualStartDate == null)
-            return standard.MaxFunding;
+        if (startDate == null)
+            return null;
 
         return standard.ApprenticeshipFunding.SingleOrDefault(x =>
-                x.EffectiveFrom <= actualStartDate
-                && (actualStartDate <= x.EffectiveTo || x.EffectiveTo == null))?.MaxEmployerLevyCap;
+                x.EffectiveFrom <= startDate
+                && (startDate <= x.EffectiveTo || x.EffectiveTo == null))?.MaxEmployerLevyCap;
     }
 }
