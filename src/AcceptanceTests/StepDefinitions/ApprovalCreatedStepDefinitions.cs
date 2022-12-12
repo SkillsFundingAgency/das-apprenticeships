@@ -50,6 +50,21 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             var approvalCreatedEvent = _fixture.Build<ApprovalCreatedEvent>() 
                 .With(_ => _.Uln, _fixture.Create<long>().ToString)
                 .With(_ => _.TrainingCode, _fixture.Create<int>().ToString)
+                .With(_ => _.IsOnFlexiPaymentPilot, false)
+                .Create();
+
+            await _endpointInstance.Publish(approvalCreatedEvent);
+
+            _scenarioContext["ApprovalCreatedEvent"] = approvalCreatedEvent;
+        }
+
+        [Given(@"A pilot apprenticeship has been created as part of the approvals journey")]
+        public async Task GivenAPilotApprenticeshipHasBeenCreatedAsPartOfTheApprovalsJourney()
+        {
+            var approvalCreatedEvent = _fixture.Build<ApprovalCreatedEvent>()
+                .With(_ => _.Uln, _fixture.Create<long>().ToString)
+                .With(_ => _.TrainingCode, _fixture.Create<int>().ToString)
+                .With(_ => _.IsOnFlexiPaymentPilot, true)
                 .Create();
 
             await _endpointInstance.Publish(approvalCreatedEvent);
@@ -91,8 +106,13 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             approval.PlannedEndDate.Should().BeSameDateAs(ApprovalCreatedEvent.PlannedEndDate!.Value);
             approval.UKPRN.Should().Be(ApprovalCreatedEvent.UKPRN);
             approval.Id.Should().NotBe(Guid.Empty);
-            approval.PlannedStartDate.Should().BeSameDateAs(ApprovalCreatedEvent.StartDate!.Value);
             approval.IsOnFlexiPaymentPilot.Should().Be(ApprovalCreatedEvent.IsOnFlexiPaymentPilot);
+
+            if(ApprovalCreatedEvent.IsOnFlexiPaymentPilot.GetValueOrDefault())
+                approval.PlannedStartDate.Should().BeSameDateAs(new DateTime(ApprovalCreatedEvent.ActualStartDate!.Value.Year, ApprovalCreatedEvent.ActualStartDate!.Value.Month, 1));
+            else
+                approval.PlannedStartDate.Should().BeSameDateAs(ApprovalCreatedEvent.StartDate!.Value);
+            
 
             _scenarioContext["Apprenticeship"] = apprenticeship;
             _scenarioContext["Approval"] = approval;
@@ -132,8 +152,12 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.FundingType.ToString().Should().Be(Approval.FundingType.ToString());
             publishedEvent.LegalEntityName.Should().Be(Approval.LegalEntityName);
             publishedEvent.UKPRN.Should().Be(Approval.UKPRN);
-            publishedEvent.PlannedStartDate.Should().BeSameDateAs(Approval.PlannedStartDate!.Value);
             publishedEvent.IsOnFlexiPaymentPilot.Should().Be(Approval.IsOnFlexiPaymentPilot);
+
+            if (ApprovalCreatedEvent.IsOnFlexiPaymentPilot.GetValueOrDefault())
+                publishedEvent.PlannedStartDate.Should().BeSameDateAs(new DateTime(Approval.ActualStartDate!.Value.Year, Approval.ActualStartDate!.Value.Month, 1));
+            else
+                publishedEvent.PlannedStartDate.Should().BeSameDateAs(Approval.PlannedStartDate!.Value);
 
             _scenarioContext["publishedEvent"] = publishedEvent;
         }

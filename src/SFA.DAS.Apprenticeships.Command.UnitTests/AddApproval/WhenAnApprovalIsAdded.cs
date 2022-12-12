@@ -42,6 +42,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
+            command.IsOnFlexiPaymentPilot = false;
             var apprenticeship = _fixture.Create<Apprenticeship>();
 
             _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
@@ -59,6 +60,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
+            command.IsOnFlexiPaymentPilot = false;
             var apprenticeship = _fixture.Create<Apprenticeship>();
             var fundingBandMaximum = _fixture.Create<int>();
 
@@ -78,6 +80,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
+            command.IsOnFlexiPaymentPilot = false;
             var apprenticeship = _fixture.Create<Apprenticeship>();
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
@@ -89,6 +92,28 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                 .ThrowAsync<Exception>()
                 .WithMessage(
                     $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Apprenticeship Key: {apprenticeship.Key}");
+        }
+
+        [Test]
+        public async Task ThenAPilotApprenticeshipHasApprovalCreatedWithAutomaticPlannedStartDate()
+        {
+            var command = _fixture.Create<AddApprovalCommand>();
+            var trainingCodeInt = _fixture.Create<int>();
+            command.TrainingCode = trainingCodeInt.ToString();
+            command.IsOnFlexiPaymentPilot = true;
+            var apprenticeship = _fixture.Create<Apprenticeship>();
+
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
+                .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
+
+            await _commandHandler.Handle(command);
+
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.Count == 1)));
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.All(z => z.PlannedStartDate.HasValue))));
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.All(z => z.PlannedStartDate.Value.Year == command.ActualStartDate.Value.Year))));
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.All(z => z.PlannedStartDate.Value.Month == command.ActualStartDate.Value.Month))));
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.All(z => z.PlannedStartDate.Value.Day == 1))));
         }
     }
 }
