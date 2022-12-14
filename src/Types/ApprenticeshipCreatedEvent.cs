@@ -17,4 +17,6 @@ public class ApprenticeshipCreatedEvent
     public int FundingBandMaximum { get; set; }
     public DateTime DateOfBirth { get; set; }
     public int? AgeAtStartOfApprenticeship { get; set; }
+    public DateTime? PlannedStartDate { get; set; }
+    public bool? IsOnFlexiPaymentPilot { get; set; }
 }

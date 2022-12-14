@@ -27,7 +27,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         public void ThenTheApprovalIsAdded()
         {
             var expectedModel = _fixture.Create<ApprovalModel>();
-            _apprenticeship.AddApproval(expectedModel.ApprovalsApprenticeshipId, expectedModel.UKPRN, expectedModel.EmployerAccountId, expectedModel.LegalEntityName, expectedModel.ActualStartDate, expectedModel.PlannedEndDate, expectedModel.AgreedPrice, expectedModel.FundingEmployerAccountId, expectedModel.FundingType, expectedModel.FundingBandMaximum);
+            _apprenticeship.AddApproval(expectedModel.ApprovalsApprenticeshipId, expectedModel.UKPRN, expectedModel.EmployerAccountId, expectedModel.LegalEntityName, expectedModel.ActualStartDate, expectedModel.PlannedEndDate, expectedModel.AgreedPrice, expectedModel.FundingEmployerAccountId, expectedModel.FundingType, expectedModel.FundingBandMaximum, expectedModel.PlannedStartDate, expectedModel.IsOnFlexiPaymentPilot);
 
             var approval = _apprenticeship.GetModel().Approvals.Single();
 

@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         {
             var apprenticeshipFactory = new ApprenticeshipFactory();
             var apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16));
-            apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>());
+            apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<bool?>());
             var approval = apprenticeship.Approvals.Single();
             var command = _fixture.Create<ApprenticeshipCreated>();
 
@@ -56,7 +56,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.PlannedEndDate == approval.PlannedEndDate &&
                     e.UKPRN == approval.Ukprn &&
                     e.DateOfBirth == apprenticeship.DateOfBirth &&
-                    e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship
+                    e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship &&
+                    e.PlannedStartDate == approval.PlannedStartDate &&
+                    e.IsOnFlexiPaymentPilot == approval.IsOnFlexiPaymentPilot
                 ), It.IsAny<PublishOptions>()));
         }
     }

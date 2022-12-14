@@ -71,7 +71,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
             var expectedApproval = _fixture.Create<ApprovalModel>();
 
             // Act
-            testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.UKPRN, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType, expectedApproval.FundingBandMaximum);
+            testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.UKPRN, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType, expectedApproval.FundingBandMaximum, expectedApproval.PlannedStartDate, expectedApproval.IsOnFlexiPaymentPilot);
             await _sut.Add(testApprenticeship);
             
             // Assert

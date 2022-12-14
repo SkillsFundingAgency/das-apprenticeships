@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApproval;
-using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Approvals.EventHandlers.Messages;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
@@ -35,7 +34,9 @@ namespace SFA.DAS.Apprenticeships.Functions
                 PlannedEndDate = @event.PlannedEndDate.Value,
                 UKPRN = @event.UKPRN,
                 Uln = @event.Uln,
-                DateOfBirth = @event.DateOfBirth
+                DateOfBirth = @event.DateOfBirth,
+                PlannedStartDate = @event.StartDate,
+                IsOnFlexiPaymentPilot = @event.IsOnFlexiPaymentPilot
             });
         }
     }
