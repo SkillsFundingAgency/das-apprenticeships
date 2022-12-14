@@ -38,13 +38,13 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
                 endpointConfiguration
                     .UseTransport<LearningTransport>()
                     .StorageDirectory(learningTransportFolder);
-                endpointConfiguration.UseLearningTransport(s => s.AddRouting());
+                endpointConfiguration.UseLearningTransport();
                 Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", learningTransportFolder, EnvironmentVariableTarget.Process);
             }
             else
             {
                 endpointConfiguration
-                    .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString, r => r.AddRouting());
+                    .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString);
             }
 
             if (!string.IsNullOrEmpty(applicationSettings.NServiceBusLicense))
