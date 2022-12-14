@@ -44,7 +44,9 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                         c.PlannedEndDate == command.PlannedEndDate &&
                         c.UKPRN == command.UKPRN &&
                         c.Uln == command.Uln &&
-                        c.DateOfBirth == command.DateOfBirth
+                        c.DateOfBirth == command.DateOfBirth &&
+                        c.PlannedStartDate == command.StartDate &&
+                        c.IsOnFlexiPaymentPilot == command.IsOnFlexiPaymentPilot
                     ),
                     It.IsAny<CancellationToken>()));
         }
