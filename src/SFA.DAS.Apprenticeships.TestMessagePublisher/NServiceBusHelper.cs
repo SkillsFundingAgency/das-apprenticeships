@@ -29,13 +29,12 @@ namespace SFA.DAS.Apprenticeships.TestMessagePublisher
                             Directory.GetCurrentDirectory()
                                 .Substring(0, Directory.GetCurrentDirectory().IndexOf("src")),
                             @"src\SFA.DAS.Apprenticeships.Functions\.learningtransport")));
-                endpointConfiguration.UseLearningTransport(s => s.AddRouting());
+                endpointConfiguration.UseLearningTransport();
             }
             else
             {
                 endpointConfiguration
-                    .UseAzureServiceBusTransport(configuration["ApplicationSettings:NServiceBusConnectionString"],
-                        r => r.AddRouting());
+                    .UseAzureServiceBusTransport(configuration["ApplicationSettings:NServiceBusConnectionString"]);
             }
 
             if (!string.IsNullOrEmpty(configuration["ApplicationSettings:NServiceBusLicense"]))

@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.AcceptanceTests.Handlers;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
+using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Types;
