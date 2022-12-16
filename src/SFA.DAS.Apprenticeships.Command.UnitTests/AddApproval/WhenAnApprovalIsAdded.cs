@@ -92,6 +92,41 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         }
 
         [Test]
+        public async Task ThenTheApprovalIsCreatedWithNullPlannedStartDateWhenOneIsNotSpecified()
+        {
+            var command = _fixture.Create<AddApprovalCommand>();
+            var trainingCodeInt = _fixture.Create<int>();
+            command.TrainingCode = trainingCodeInt.ToString();
+            var apprenticeship = _fixture.Create<Apprenticeship>();
+            command.PlannedStartDate = new DateTime();
+
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
+                .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
+
+            await _commandHandler.Handle(command);
+
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.Single().PlannedStartDate == null)));
+        }
+
+        [Test]
+        public async Task ThenTheApprovalIsCreatedWithPlannedStartDateWhenOneIsSpecified()
+        {
+            var command = _fixture.Create<AddApprovalCommand>();
+            var trainingCodeInt = _fixture.Create<int>();
+            command.TrainingCode = trainingCodeInt.ToString();
+            var apprenticeship = _fixture.Create<Apprenticeship>();
+
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
+                .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
+
+            await _commandHandler.Handle(command);
+
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.Single().PlannedStartDate == command.PlannedStartDate)));
+        }
+
+        [Test]
         public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForPilotApprenticeship()
         {
             var command = _fixture.Create<AddApprovalCommand>();
