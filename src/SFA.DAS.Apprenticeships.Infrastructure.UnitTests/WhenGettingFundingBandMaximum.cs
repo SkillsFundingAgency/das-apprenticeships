@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
@@ -21,7 +22,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
         {
             _fixture = new Fixture();
             _apprenticeshipsOuterApiClient = new Mock<IApprenticeshipsOuterApiClient>();
-            _service = new FundingBandMaximumService(_apprenticeshipsOuterApiClient.Object);
+            _service = new FundingBandMaximumService(_apprenticeshipsOuterApiClient.Object, new Mock<ILogger<FundingBandMaximumService>>().Object);
         }
 
         [Test]
