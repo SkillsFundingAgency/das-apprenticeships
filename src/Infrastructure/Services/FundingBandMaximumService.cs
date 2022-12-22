@@ -1,19 +1,31 @@
-﻿using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 public class FundingBandMaximumService : IFundingBandMaximumService
 {
     private readonly IApprenticeshipsOuterApiClient _apprenticeshipsOuterApiClient;
+    private readonly ILogger<FundingBandMaximumService> _logger;
 
-    public FundingBandMaximumService(IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient)
+    public FundingBandMaximumService(IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient, ILogger<FundingBandMaximumService> logger)
     {
         _apprenticeshipsOuterApiClient = apprenticeshipsOuterApiClient;
+        _logger = logger;
     }
 
     public async Task<int?> GetFundingBandMaximum(int courseCode, DateTime? startDate)
     {
+        _logger.Log(LogLevel.Information, $"Getting standard for course code {courseCode}");
         var standard = await _apprenticeshipsOuterApiClient.GetStandard(courseCode);
+        _logger.Log(LogLevel.Information, $"Found standard with {standard.ApprenticeshipFunding.Count} apprenticeship funding records");
+
+        foreach (var getStandardFundingResponse in standard.ApprenticeshipFunding)
+        {
+            _logger.Log(LogLevel.Information, $"Apprenticeship funding found: EffectiveFrom: {getStandardFundingResponse.EffectiveFrom}, EffectiveTo: {getStandardFundingResponse.EffectiveTo}, MaxEmployerLevyCap: {getStandardFundingResponse.MaxEmployerLevyCap}");
+        }
+
+        _logger.Log(LogLevel.Information, $"Start Date used for query (if null will return null): {startDate}");
         if (startDate == null)
             return null;
 
