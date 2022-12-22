@@ -16,16 +16,16 @@ public class FundingBandMaximumService : IFundingBandMaximumService
 
     public async Task<int?> GetFundingBandMaximum(int courseCode, DateTime? startDate)
     {
-        _logger.Log(LogLevel.Information, $"Getting standard for course code {courseCode}");
+        _logger.Log(LogLevel.Trace, $"Getting standard for course code {courseCode}");
         var standard = await _apprenticeshipsOuterApiClient.GetStandard(courseCode);
-        _logger.Log(LogLevel.Information, $"Found standard with {standard.ApprenticeshipFunding.Count} apprenticeship funding records");
+        _logger.Log(LogLevel.Trace, $"Found standard with {standard.ApprenticeshipFunding.Count} apprenticeship funding records");
 
         foreach (var getStandardFundingResponse in standard.ApprenticeshipFunding)
         {
-            _logger.Log(LogLevel.Information, $"Apprenticeship funding found: EffectiveFrom: {getStandardFundingResponse.EffectiveFrom}, EffectiveTo: {getStandardFundingResponse.EffectiveTo}, MaxEmployerLevyCap: {getStandardFundingResponse.MaxEmployerLevyCap}");
+            _logger.Log(LogLevel.Trace, $"Apprenticeship funding found: EffectiveFrom: {getStandardFundingResponse.EffectiveFrom}, EffectiveTo: {getStandardFundingResponse.EffectiveTo}, MaxEmployerLevyCap: {getStandardFundingResponse.MaxEmployerLevyCap}");
         }
 
-        _logger.Log(LogLevel.Information, $"Start Date used for query (if null will return null): {startDate}");
+        _logger.Log(LogLevel.Trace, $"Start Date used for query (if null will return null): {startDate}");
         if (startDate == null)
             return null;
 
