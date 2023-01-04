@@ -66,7 +66,6 @@ namespace SFA.DAS.Apprenticeships.Functions
             {
                 options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
                 options.SetMinimumLevel(LogLevel.Trace);
-                options.SetMinimumLevel(LogLevel.Trace);
             });
 
         }
