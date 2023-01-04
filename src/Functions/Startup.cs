@@ -62,7 +62,6 @@ namespace SFA.DAS.Apprenticeships.Functions
             if(NotAcceptanceTests(configuration))
                 builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
 
-            //builder.Services.AddLogging(x => x.AddApplicationInsights());
             builder.Services.AddLogging((options) =>
             {
                 options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
