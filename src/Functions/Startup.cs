@@ -11,6 +11,8 @@ using SFA.DAS.Configuration.AzureTableStorage;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Configuration;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Apprenticeships.Functions
@@ -59,6 +61,13 @@ namespace SFA.DAS.Apprenticeships.Functions
 
             if(NotAcceptanceTests(configuration))
                 builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
+
+            builder.Services.AddLogging((options) =>
+            {
+                options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
+                options.SetMinimumLevel(LogLevel.Trace);
+            });
+
         }
 
         private static bool NotAcceptanceTests(IConfiguration configuration)

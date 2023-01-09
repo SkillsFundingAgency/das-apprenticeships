@@ -125,5 +125,45 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
 
             _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.Single().PlannedStartDate == command.PlannedStartDate)));
         }
+
+        [Test]
+        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForPilotApprenticeship()
+        {
+            var command = _fixture.Create<AddApprovalCommand>();
+            var trainingCodeInt = _fixture.Create<int>();
+            command.TrainingCode = trainingCodeInt.ToString();
+            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var fundingBandMaximum = _fixture.Create<int>();
+            command.IsOnFlexiPaymentPilot = true;
+
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
+                .ReturnsAsync(fundingBandMaximum);
+
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+
+            await _commandHandler.Handle(command);
+
+            _fundingBandMaximumService.Verify(x => x.GetFundingBandMaximum(trainingCodeInt, command.ActualStartDate));
+        }
+
+        [Test]
+        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForNonPilotApprenticeship()
+        {
+            var command = _fixture.Create<AddApprovalCommand>();
+            var trainingCodeInt = _fixture.Create<int>();
+            command.TrainingCode = trainingCodeInt.ToString();
+            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var fundingBandMaximum = _fixture.Create<int>();
+            command.IsOnFlexiPaymentPilot = false;
+
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
+                .ReturnsAsync(fundingBandMaximum);
+
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+
+            await _commandHandler.Handle(command);
+
+            _fundingBandMaximumService.Verify(x => x.GetFundingBandMaximum(trainingCodeInt, command.PlannedStartDate));
+        }
     }
 }

@@ -59,7 +59,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         }
 
         [Given("the funding band maximum for that apprenticeship is set")]
-        public async Task GivenTheFundingBandMaximumForThatApprenticeshipIsSet()
+        public void GivenTheFundingBandMaximumForThatApprenticeshipIsSet()
         {
             var fundingBandMaximum = _fixture.Create<int>();
             _scenarioContext["fundingBandMaximum"] = fundingBandMaximum;
@@ -68,6 +68,22 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
                 new GetStandardFundingResponse{ EffectiveFrom = DateTime.MinValue, EffectiveTo = null, MaxEmployerLevyCap = fundingBandMaximum }
             }});
         }
+
+        [Given("a funding band maximum for that apprenticeship and date range is not available")]
+        public void GivenAFundingBandMaximumForThatApprenticeshipAndDateRangeIsNotAvailable()
+        {
+            var fundingBandMaximum = _fixture.Create<int>();
+            _scenarioContext["fundingBandMaximum"] = fundingBandMaximum;
+            _testContext.TestFunction.mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse
+            {
+                MaxFunding = fundingBandMaximum,
+                ApprenticeshipFunding = new List<GetStandardFundingResponse>
+                {
+                    new GetStandardFundingResponse{ EffectiveFrom = DateTime.MinValue, EffectiveTo = DateTime.MinValue, MaxEmployerLevyCap = fundingBandMaximum }
+                }
+            });
+        }
+
 
         [Then(@"an Apprenticeship record is created")]
         public async Task ThenAnApprenticeshipRecordIsCreated()
@@ -104,6 +120,12 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         {
             await ThenAnApprenticeshipRecordIsCreated();
             ((Approval)_scenarioContext["Approval"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
+        }
+
+        [Then("an Apprenticeship record is not created")]
+        public async Task ThenAnApprenticeshipRecordIsNotCreated()
+        {
+            await WaitHelper.WaitForUnexpected(ApprenticeshipRecordMatchesExpectation, "Found unexpected apprenticeship record created.");
         }
 
         private async Task<bool> ApprenticeshipRecordMatchesExpectation()
@@ -146,9 +168,16 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             ((ApprenticeshipCreatedEvent)_scenarioContext["publishedEvent"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
         }
 
+        [Then(@"an ApprenticeshipCreatedEvent event is not published")]
+        public async Task ThenAnApprenticeshipCreatedEventEventIsNotPublished()
+        {
+            await WaitHelper.WaitForUnexpected(() => ApprenticeshipCreatedEventHandler.ReceivedEvents.Any(EventMatchesExpectation), $"Found unexpected {nameof(ApprenticeshipCreated)} event");
+        }
+
+
         private bool EventMatchesExpectation(ApprenticeshipCreatedEvent apprenticeshipCreatedEvent)
         {
-            return apprenticeshipCreatedEvent.ApprenticeshipKey == Apprenticeship.Key;
+            return apprenticeshipCreatedEvent.Uln == ApprovalCreatedEvent.Uln;
         }
 
         public ApprovalCreatedEvent ApprovalCreatedEvent => (ApprovalCreatedEvent)_scenarioContext["ApprovalCreatedEvent"];

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
@@ -21,17 +22,17 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
         {
             _fixture = new Fixture();
             _apprenticeshipsOuterApiClient = new Mock<IApprenticeshipsOuterApiClient>();
-            _service = new FundingBandMaximumService(_apprenticeshipsOuterApiClient.Object);
+            _service = new FundingBandMaximumService(_apprenticeshipsOuterApiClient.Object, new Mock<ILogger<FundingBandMaximumService>>().Object);
         }
 
         [Test]
-        public async Task ThenValueFromApiIsReturned()
+        public async Task ThenNullIsReturnedForNullStartDate()
         {
             var courseCode = _fixture.Create<int>();
             var getStandardResponse = _fixture.Create<GetStandardResponse>();
             _apprenticeshipsOuterApiClient.Setup(x => x.GetStandard(courseCode)).ReturnsAsync(getStandardResponse);
             var result = await _service.GetFundingBandMaximum(courseCode, null);
-            result.Should().Be(getStandardResponse.MaxFunding);
+            result.Should().BeNull();
         }
 
         [Test]
