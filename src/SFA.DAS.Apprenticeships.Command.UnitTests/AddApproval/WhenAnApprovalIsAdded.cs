@@ -12,6 +12,7 @@ using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using FluentAssertions;
+using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
 {
@@ -127,14 +128,14 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         }
 
         [Test]
-        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForPilotApprenticeship()
+        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithDasFundingPlatform() //TODO: check change
         {
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<Apprenticeship>();
             var fundingBandMaximum = _fixture.Create<int>();
-            command.IsOnFlexiPaymentPilot = true;
+            command.FundingPlatform = FundingPlatform.DAS; //TODO: check change
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync(fundingBandMaximum);
@@ -147,14 +148,14 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         }
 
         [Test]
-        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForNonPilotApprenticeship()
+        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithSldFundingPlatform() //TODO: check change
         {
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<Apprenticeship>();
             var fundingBandMaximum = _fixture.Create<int>();
-            command.IsOnFlexiPaymentPilot = false;
+            command.FundingPlatform = FundingPlatform.SLD; //TODO: check change
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync(fundingBandMaximum);

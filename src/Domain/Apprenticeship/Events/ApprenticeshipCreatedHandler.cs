@@ -1,7 +1,6 @@
 ﻿using NServiceBus;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Types;
-using SFA.DAS.NServiceBus.Services;
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
 {
@@ -35,10 +34,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 PlannedEndDate = approval.PlannedEndDate,
                 UKPRN = approval.Ukprn,
                 FundingBandMaximum = approval.FundingBandMaximum,
+                FirstName = apprenticeship.FirstName, 
+                LastName = apprenticeship.LastName,
                 DateOfBirth = apprenticeship.DateOfBirth,
                 AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
                 PlannedStartDate = approval.PlannedStartDate,
-                IsOnFlexiPaymentPilot = approval.IsOnFlexiPaymentPilot
+                FundingPlatform = approval.FundingPlatform
             };
 
             await _messageSession.Publish(apprenticeshipCreatedEvent);

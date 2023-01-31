@@ -13,6 +13,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public Guid Key => _model.Key;
         public string TrainingCode => _model.TrainingCode;
         public string Uln => _model.Uln;
+        public string FirstName => _model.FirstName;
+        public string LastName => _model.LastName;
         public DateTime DateOfBirth => _model.DateOfBirth;
         public IReadOnlyCollection<Approval> Approvals => new ReadOnlyCollection<Approval>(_approvals);
 
@@ -52,9 +54,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             AddEvent(new ApprenticeshipCreated(_model.Key));
         }
 
-        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, bool? isOnFlexiPaymentPilot)
+        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
         {
-            var approval = Approval.New(approvalsApprenticeshipId, ukprn, employerAccountId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType, fundingBandMaximum, plannedStartDate, isOnFlexiPaymentPilot);
+            var approval = Approval.New(approvalsApprenticeshipId, ukprn, employerAccountId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType, fundingBandMaximum, plannedStartDate, fundingPlatform);
             _approvals.Add(approval);
             _model.Approvals.Add(approval.GetModel());
         }

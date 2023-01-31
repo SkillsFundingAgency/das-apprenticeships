@@ -22,7 +22,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 UKPRN = x.UKPRN,
                 FundingBandMaximum = x.FundingBandMaximum,
                 PlannedStartDate = x.PlannedStartDate,
-                IsOnFlexiPaymentPilot = x.IsOnFlexiPaymentPilot
+                FundingPlatform = x.FundingPlatform
 
             }).ToList();
 
@@ -45,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 UKPRN = x.UKPRN,
                 FundingBandMaximum = x.FundingBandMaximum,
                 PlannedStartDate = x.PlannedStartDate,
-                IsOnFlexiPaymentPilot = x.IsOnFlexiPaymentPilot
+                FundingPlatform = x.FundingPlatform
             }).ToList();
 
             return domainModels;

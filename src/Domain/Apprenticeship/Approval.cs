@@ -18,9 +18,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public FundingType FundingType => _model.FundingType;
         public int FundingBandMaximum => _model.FundingBandMaximum;
         public DateTime? PlannedStartDate => _model.PlannedStartDate;
-        public bool? IsOnFlexiPaymentPilot => _model.IsOnFlexiPaymentPilot;
+        public FundingPlatform? FundingPlatform => _model.FundingPlatform;
 
-        internal static Approval New(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, bool? isOnFlexiPaymentPilot)
+        internal static Approval New(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
         {
             return new Approval(new ApprovalModel
             {
@@ -36,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 UKPRN = ukprn,
                 FundingBandMaximum = fundingBandMaximum,
                 PlannedStartDate = plannedStartDate,
-                IsOnFlexiPaymentPilot = isOnFlexiPaymentPilot
+                FundingPlatform = fundingPlatform
             });
         }
 

@@ -36,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.Functions
                 Uln = @event.Uln,
                 DateOfBirth = @event.DateOfBirth,
                 PlannedStartDate = @event.StartDate,
-                IsOnFlexiPaymentPilot = @event.IsOnFlexiPaymentPilot
+                FundingPlatform = @event.FundingPlatform
             });
         }
     }

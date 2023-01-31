@@ -6,7 +6,6 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApproval;
 using SFA.DAS.Approvals.EventHandlers.Messages;
-using SFA.DAS.Approvals.EventHandlers.Messages;
 
 namespace SFA.DAS.Apprenticeships.Functions.UnitTests
 {
@@ -46,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                         c.Uln == command.Uln &&
                         c.DateOfBirth == command.DateOfBirth &&
                         c.PlannedStartDate == command.StartDate &&
-                        c.IsOnFlexiPaymentPilot == command.IsOnFlexiPaymentPilot
+                        c.FundingPlatform == command.FundingPlatform
                     ),
                     It.IsAny<CancellationToken>()));
         }

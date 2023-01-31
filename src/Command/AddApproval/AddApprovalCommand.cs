@@ -17,6 +17,6 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
         public FundingType FundingType { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime? PlannedStartDate { get; set; }
-        public bool? IsOnFlexiPaymentPilot { get; set; }
+        public FundingPlatform? FundingPlatform { get; set; }
     }
 }

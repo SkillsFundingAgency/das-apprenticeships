@@ -48,7 +48,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         }
 
         [Test]
-        public void WhenCalculatingForANonPilotApprenticeThenAgeShouldBeNull()
+        public void WhenCalculatingForAnApprenticeWithSldFundingTypeThenAgeShouldBeNull() //TODO: check this change is correct
         {
             _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), null, _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>(), new DateTime(2020, 11, 01), true);
 

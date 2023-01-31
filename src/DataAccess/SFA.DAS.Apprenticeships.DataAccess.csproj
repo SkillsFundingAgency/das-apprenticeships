@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\SFA.DAS.Apprenticeships.Domain.csproj" />
+    <ProjectReference Include="..\SFA.DAS.Apprenticeships.DataTransferObjects\SFA.DAS.Apprenticeships.DataTransferObjects.csproj" />
   </ItemGroup>
 
 </Project>
