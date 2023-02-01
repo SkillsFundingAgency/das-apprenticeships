@@ -20,7 +20,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         [Test]
         public void ThenAnApprenticeshipCreatedEventIsAdded()
         {
-            var apprenticeship = _apprenticeshipFactory.CreateNew("1234567", "TRCODE", DateTime.Now);
+            var apprenticeship = _apprenticeshipFactory.CreateNew("1234567", "TRCODE", DateTime.Now, "Ron", "Swanson");
             var events = apprenticeship.FlushEvents();
             events.Should().ContainSingle(x => x.GetType() == typeof(ApprenticeshipCreated));
         }

@@ -35,6 +35,8 @@ namespace SFA.DAS.Apprenticeships.Functions
                 UKPRN = @event.UKPRN,
                 Uln = @event.Uln,
                 DateOfBirth = @event.DateOfBirth,
+                FirstName = @event.FirstName,
+                LastName = @event.LastName,
                 PlannedStartDate = @event.StartDate,
                 FundingPlatform = @event.IsOnFlexiPaymentPilot.HasValue ? (@event.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null
             });

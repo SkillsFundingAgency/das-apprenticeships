@@ -34,9 +34,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 PlannedEndDate = approval.PlannedEndDate,
                 UKPRN = approval.Ukprn,
                 FundingBandMaximum = approval.FundingBandMaximum,
+                DateOfBirth = apprenticeship.DateOfBirth,
                 FirstName = apprenticeship.FirstName, 
                 LastName = apprenticeship.LastName,
-                DateOfBirth = apprenticeship.DateOfBirth,
                 AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
                 PlannedStartDate = approval.PlannedStartDate,
                 FundingPlatform = (FundingPlatform?)approval.FundingPlatform

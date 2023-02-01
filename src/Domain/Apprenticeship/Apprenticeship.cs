@@ -37,9 +37,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             }
         }
 
-        internal static Apprenticeship New(string uln, string trainingCode, DateTime dateOfBirth)
+        internal static Apprenticeship New(string uln, string trainingCode, DateTime dateOfBirth, string firstName, string lastName)
         {
-            return new Apprenticeship(new ApprenticeshipModel { Key = Guid.NewGuid(), Uln = uln, TrainingCode = trainingCode, DateOfBirth = dateOfBirth });
+            return new Apprenticeship(new ApprenticeshipModel { Key = Guid.NewGuid(), Uln = uln, TrainingCode = trainingCode, DateOfBirth = dateOfBirth, FirstName = firstName, LastName = lastName });
         }
 
         internal static Apprenticeship Get(ApprenticeshipModel model)

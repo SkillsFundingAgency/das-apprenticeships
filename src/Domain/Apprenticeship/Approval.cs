@@ -31,7 +31,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 FundingEmployerAccountId = fundingEmployerAccountId, 
                 FundingType = fundingType, 
                 Id = Guid.NewGuid(),
-                LegalEntityName = legalEntityName, 
+                LegalEntityName = legalEntityName,
                 PlannedEndDate = plannedEndDate, 
                 UKPRN = ukprn,
                 FundingBandMaximum = fundingBandMaximum,
