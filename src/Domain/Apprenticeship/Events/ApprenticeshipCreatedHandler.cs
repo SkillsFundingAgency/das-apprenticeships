@@ -39,7 +39,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 DateOfBirth = apprenticeship.DateOfBirth,
                 AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
                 PlannedStartDate = approval.PlannedStartDate,
-                FundingPlatform = approval.FundingPlatform
+                FundingPlatform = (FundingPlatform?)approval.FundingPlatform
             };
 
             await _messageSession.Publish(apprenticeshipCreatedEvent);

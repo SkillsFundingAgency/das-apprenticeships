@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using Microsoft.OpenApi.Models;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Configuration.AzureTableStorage;
 
@@ -11,8 +13,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
             builder.Configuration.AddAzureTableStorage(options =>
             {
                 options.ConfigurationKeys = new[] {"SFA.DAS.Apprenticeships"};
@@ -22,9 +22,19 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             });
 
             builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(opt =>
+            {
+                opt.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Apprenticeships Internal API"
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                opt.IncludeXmlComments(xmlPath);
+            });
             builder.Services.AddDbContext<ApprenticeshipsDataContext>();
             builder.Services.AddHealthChecks();
 
@@ -32,7 +42,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi
 
             app.MapHealthChecks("/ping");
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

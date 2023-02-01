@@ -25,7 +25,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
             List<Apprenticeship> result = new();
             foreach (var apprenticeDataModel in dataModels)
             {
-                result.Add(new Apprenticeship() { LastName = apprenticeDataModel.LastName, FirstName = apprenticeDataModel.FirstName });
+                result.Add(new Apprenticeship() { Uln = apprenticeDataModel.Uln, LastName = apprenticeDataModel.LastName, FirstName = apprenticeDataModel.FirstName });
             }
 
             return result;

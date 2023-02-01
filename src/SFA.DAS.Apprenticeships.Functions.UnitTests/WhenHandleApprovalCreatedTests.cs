@@ -5,7 +5,9 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApproval;
+using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Approvals.EventHandlers.Messages;
+using FundingType = SFA.DAS.Approvals.EventHandlers.Messages.FundingType;
 
 namespace SFA.DAS.Apprenticeships.Functions.UnitTests
 {
@@ -45,7 +47,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                         c.Uln == command.Uln &&
                         c.DateOfBirth == command.DateOfBirth &&
                         c.PlannedStartDate == command.StartDate &&
-                        c.FundingPlatform == command.FundingPlatform
+                        c.FundingPlatform == (command.IsOnFlexiPaymentPilot.HasValue ? (command.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null)
                     ),
                     It.IsAny<CancellationToken>()));
         }

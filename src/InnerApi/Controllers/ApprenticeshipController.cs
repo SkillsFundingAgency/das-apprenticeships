@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Queries;
 
@@ -15,19 +16,21 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             _queryDispatcher = queryDispatcher;
         }
 
-        [HttpGet]
-        [Route("")]
-        public async Task<IActionResult> GetAll(long ukprn, FundingPlatform fundingPlatform)
+        /// <summary>
+        /// Get apprenticeships
+        /// </summary>
+        /// <remarks>Gets all apprenticeships. The response from this endpoint only contains summary apprenticeship information.</remarks>
+        /// <response code="200">Apprenticeships retrieved</response>
+        [HttpGet("")]
+        [ProducesResponseType(typeof(IEnumerable<Apprenticeship>), 200)]
+        public async Task<IActionResult> GetAll(long ukprn, FundingPlatform? fundingPlatform)
         {
-            //TODO: Swagger docs
-            //TODO: UNIT TEST
             var request = new GetApprenticeshipsRequest(ukprn, fundingPlatform);
             var response = await _queryDispatcher.Send<GetApprenticeshipsRequest, GetApprenticeshipsResponse>(request);
 
             return Ok(response.Apprenticeships);
 
-
-            //TODO: write unit test for 
+            //TODO: write acceptance tests
         }
     }
 }

@@ -109,7 +109,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             approval.UKPRN.Should().Be(ApprovalCreatedEvent.UKPRN);
             approval.Id.Should().NotBe(Guid.Empty);
             approval.PlannedStartDate.Should().BeSameDateAs(ApprovalCreatedEvent.StartDate!.Value);
-            approval.FundingPlatform.Should().Be(ApprovalCreatedEvent.);
+            approval.FundingPlatform.Should().Be(ApprovalCreatedEvent.IsOnFlexiPaymentPilot.HasValue ? (ApprovalCreatedEvent.IsOnFlexiPaymentPilot.Value ? Enums.FundingPlatform.DAS : Enums.FundingPlatform.SLD) : null);
 
             _scenarioContext["Apprenticeship"] = apprenticeship;
             _scenarioContext["Approval"] = approval;
@@ -156,7 +156,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.LegalEntityName.Should().Be(Approval.LegalEntityName);
             publishedEvent.UKPRN.Should().Be(Approval.UKPRN);
             publishedEvent.PlannedStartDate.Should().BeSameDateAs(Approval.PlannedStartDate!.Value);
-            publishedEvent.FundingPlatform.Should().Be(Approval.FundingPlatform);
+            publishedEvent.FundingPlatform.ToString().Should().Be(Approval.FundingPlatform.ToString());
 
             _scenarioContext["publishedEvent"] = publishedEvent;
         }

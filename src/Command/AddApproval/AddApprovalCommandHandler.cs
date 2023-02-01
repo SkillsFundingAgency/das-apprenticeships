@@ -20,7 +20,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
 
         public async Task Handle(AddApprovalCommand command, CancellationToken cancellationToken = default)
         {
-            var startDate = command.FundingPlatform == FundingPlatform.DAS ? command.ActualStartDate : command.PlannedStartDate; // TODO: check this new condition is correct
+            var startDate = command.FundingPlatform == FundingPlatform.DAS ? command.ActualStartDate : command.PlannedStartDate;
             var apprenticeship = _apprenticeshipFactory.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth);
             var fundingBandMaximum = await _fundingBandMaximumService.GetFundingBandMaximum(int.Parse(command.TrainingCode), startDate);
 

@@ -1,10 +1,12 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries
+﻿using SFA.DAS.Apprenticeships.DataTransferObjects;
+
+namespace SFA.DAS.Apprenticeships.Queries
 {
     public class GetApprenticeshipsResponse
     {
-        public IEnumerable<DataTransferObjects.Apprenticeship> Apprenticeships { get; set; }
+        public IEnumerable<Apprenticeship> Apprenticeships { get; set; }
 
-        public GetApprenticeshipsResponse(IEnumerable<DataTransferObjects.Apprenticeship> apprenticeships)
+        public GetApprenticeshipsResponse(IEnumerable<Apprenticeship> apprenticeships)
         {
             Apprenticeships = apprenticeships;
         }

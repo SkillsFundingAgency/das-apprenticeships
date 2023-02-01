@@ -7,7 +7,7 @@ namespace SFA.DAS.Apprenticeships.Queries
         public long Ukprn { get; }
         public FundingPlatform? FundingPlatform { get; set; }
 
-        public GetApprenticeshipsRequest(long ukprn, FundingPlatform fundingPlatform)
+        public GetApprenticeshipsRequest(long ukprn, FundingPlatform? fundingPlatform)
         {
             Ukprn = ukprn;
             FundingPlatform = fundingPlatform;

@@ -19,6 +19,5 @@ namespace SFA.DAS.Apprenticeships.Queries
 
             return await Task.FromResult(response);
         }
-        //TODO: UNIT TEST
     }
 }

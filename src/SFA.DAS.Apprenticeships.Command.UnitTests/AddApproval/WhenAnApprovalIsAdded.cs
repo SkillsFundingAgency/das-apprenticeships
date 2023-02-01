@@ -128,14 +128,14 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         }
 
         [Test]
-        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithDasFundingPlatform() //TODO: check change
+        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithDasFundingPlatform()
         {
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<Apprenticeship>();
             var fundingBandMaximum = _fixture.Create<int>();
-            command.FundingPlatform = FundingPlatform.DAS; //TODO: check change
+            command.FundingPlatform = FundingPlatform.DAS;
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync(fundingBandMaximum);
@@ -148,14 +148,14 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         }
 
         [Test]
-        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithSldFundingPlatform() //TODO: check change
+        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithSldFundingPlatform()
         {
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<Apprenticeship>();
             var fundingBandMaximum = _fixture.Create<int>();
-            command.FundingPlatform = FundingPlatform.SLD; //TODO: check change
+            command.FundingPlatform = FundingPlatform.SLD;
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync(fundingBandMaximum);
