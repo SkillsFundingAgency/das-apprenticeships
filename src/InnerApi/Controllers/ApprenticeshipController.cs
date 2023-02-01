@@ -2,6 +2,7 @@
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
 {
@@ -19,6 +20,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <summary>
         /// Get apprenticeships
         /// </summary>
+        /// <param name="ukprn">Filter by training provider using the unique provider number.</param>
+        /// <param name="fundingPlatform" >Filter by the funding platform. This parameter is optional.</param>
         /// <remarks>Gets all apprenticeships. The response from this endpoint only contains summary apprenticeship information.</remarks>
         /// <response code="200">Apprenticeships retrieved</response>
         [HttpGet("")]
@@ -29,8 +32,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             var response = await _queryDispatcher.Send<GetApprenticeshipsRequest, GetApprenticeshipsResponse>(request);
 
             return Ok(response.Apprenticeships);
-
-            //TODO: write acceptance tests
         }
     }
 }

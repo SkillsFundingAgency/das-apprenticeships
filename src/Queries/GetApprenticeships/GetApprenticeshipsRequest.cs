@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.Queries
+namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeships
 {
     public class GetApprenticeshipsRequest : IQuery
     {

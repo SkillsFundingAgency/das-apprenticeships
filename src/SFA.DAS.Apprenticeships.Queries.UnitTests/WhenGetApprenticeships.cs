@@ -3,6 +3,7 @@ using FluentAssertions;
 using Moq;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests
 {

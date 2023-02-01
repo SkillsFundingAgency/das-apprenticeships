@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.DataTransferObjects;
 
-namespace SFA.DAS.Apprenticeships.Queries
+namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeships
 {
     public class GetApprenticeshipsResponse
     {

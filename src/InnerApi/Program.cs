@@ -38,6 +38,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             builder.Services.AddDbContext<ApprenticeshipsDataContext>();
             builder.Services.AddHealthChecks();
 
+            builder.Services.ConfigureServices();
+
             var app = builder.Build();
 
             app.MapHealthChecks("/ping");

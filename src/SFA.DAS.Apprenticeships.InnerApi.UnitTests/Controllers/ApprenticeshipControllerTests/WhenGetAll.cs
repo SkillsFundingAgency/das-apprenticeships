@@ -5,6 +5,7 @@ using Moq;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
 using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests
 {
