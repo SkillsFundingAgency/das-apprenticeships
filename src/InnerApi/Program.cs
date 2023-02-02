@@ -1,8 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
-using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.Command;
+using SFA.DAS.Apprenticeships.Domain;
+using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+using SFA.DAS.Apprenticeships.Infrastructure;
+using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Configuration.AzureTableStorage;
+using SFA.DAS.Apprenticeships.DataAccess;
 
 namespace SFA.DAS.Apprenticeships.InnerApi
 {
@@ -35,11 +40,15 @@ namespace SFA.DAS.Apprenticeships.InnerApi
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 opt.IncludeXmlComments(xmlPath);
             });
+
+            var applicationSettings = new ApplicationSettings();
+            builder.Configuration.Bind(nameof(ApplicationSettings), applicationSettings);
             builder.Services.AddDbContext<ApprenticeshipsDataContext>();
+            builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocal(builder.Configuration));
+            builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
+            builder.Services.AddSingleton(x => applicationSettings);
+            builder.Services.AddCommandServices().AddEventServices().AddQueryServices();
             builder.Services.AddHealthChecks();
-
-            builder.Services.ConfigureServices();
-
             var app = builder.Build();
 
             app.MapHealthChecks("/ping");
@@ -57,6 +66,11 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             app.MapControllers();
 
             app.Run();
+
+            static bool NotLocal(IConfiguration configuration)
+            {
+                return !configuration!["EnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
+            }
         }
     }
 }
