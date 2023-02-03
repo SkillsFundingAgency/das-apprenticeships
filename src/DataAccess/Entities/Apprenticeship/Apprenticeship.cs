@@ -6,7 +6,6 @@
     {
         [Key]
         public Guid Key { get; set; }
-
         public string Uln { get; set; }
         public string TrainingCode { get; set; }
         public string FirstName { get; set; }
