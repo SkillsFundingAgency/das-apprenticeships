@@ -6,8 +6,8 @@ using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
 {
+    [Route("{ukprn}")]
     [ApiController]
-    [Route("apprenticeships")]
     public class ApprenticeshipController : ControllerBase
     {
         private readonly IQueryDispatcher _queryDispatcher;
@@ -24,7 +24,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <param name="fundingPlatform" >Filter by the funding platform. This parameter is optional.</param>
         /// <remarks>Gets all apprenticeships. The response from this endpoint only contains summary apprenticeship information.</remarks>
         /// <response code="200">Apprenticeships retrieved</response>
-        [HttpGet("")]
+        [HttpGet("apprenticeships")]
         [ProducesResponseType(typeof(IEnumerable<Apprenticeship>), 200)]
         public async Task<IActionResult> GetAll(long ukprn, FundingPlatform? fundingPlatform)
         {
