@@ -45,9 +45,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             builder.Configuration.Bind(nameof(ApplicationSettings), applicationSettings);
             builder.Services.AddDbContext<ApprenticeshipsDataContext>();
             builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocal(builder.Configuration));
-            builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
             builder.Services.AddSingleton(x => applicationSettings);
-            builder.Services.AddCommandServices().AddEventServices().AddQueryServices();
+            builder.Services.AddQueryServices();
             builder.Services.AddHealthChecks();
             var app = builder.Build();
 
