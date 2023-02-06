@@ -22,12 +22,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
                 .Where(x => x.Approvals.Any(x => x.UKPRN == ukprn && (fundingPlatform == null || x.FundingPlatform == fundingPlatform)))
                 .ToListAsync();
 
-            List<Apprenticeship> result = new();
-            foreach (var apprenticeDataModel in dataModels)
-            {
-                result.Add(new Apprenticeship() { Uln = apprenticeDataModel.Uln, LastName = apprenticeDataModel.LastName, FirstName = apprenticeDataModel.FirstName });
-            }
-
+            var result = dataModels.Select(x => new Apprenticeship() { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
             return result;
         }
     }
