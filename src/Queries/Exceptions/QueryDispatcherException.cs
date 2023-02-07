@@ -20,11 +20,9 @@ namespace SFA.DAS.Apprenticeships.Queries.Exceptions
         {
         }
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         private QueryDispatcherException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
     }
-
 }

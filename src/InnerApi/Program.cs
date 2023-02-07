@@ -1,8 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Queries;
@@ -11,6 +9,8 @@ using SFA.DAS.Apprenticeships.DataAccess;
 
 namespace SFA.DAS.Apprenticeships.InnerApi
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
     [ExcludeFromCodeCoverage]
     public static class Program
     {
@@ -20,7 +20,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi
 
             builder.Configuration.AddAzureTableStorage(options =>
             {
-                options.ConfigurationKeys = new[] {"SFA.DAS.Apprenticeships"};
+                options.ConfigurationKeys = new[] { "SFA.DAS.Apprenticeships" };
                 options.StorageConnectionString = builder.Configuration["ConfigurationStorageConnectionString"];
                 options.EnvironmentName = builder.Configuration["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;

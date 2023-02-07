@@ -6,12 +6,17 @@ using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
 {
+    /// <summary>
+    /// Controller for handling requests related to Apprenticeships
+    /// </summary>
     [Route("{ukprn}")]
     [ApiController]
     public class ApprenticeshipController : ControllerBase
     {
         private readonly IQueryDispatcher _queryDispatcher;
 
+        /// <summary>Initializes a new instance of the <see cref="ApprenticeshipController"/> class.</summary>
+        /// <param name="queryDispatcher"></param>
         public ApprenticeshipController(IQueryDispatcher queryDispatcher)
         {
             _queryDispatcher = queryDispatcher;
