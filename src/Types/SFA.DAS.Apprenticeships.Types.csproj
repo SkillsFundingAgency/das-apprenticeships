@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SFA.DAS.Apprenticeships.Enums\SFA.DAS.Apprenticeships.Enums.csproj" />
-  </ItemGroup>
-
 </Project>
