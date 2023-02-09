@@ -2,9 +2,11 @@
 using SFA.DAS.Apprenticeships.DataAccess.Repositories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Apprenticeships.Queries
 {
+    [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddQueryServices(this IServiceCollection serviceCollection)
