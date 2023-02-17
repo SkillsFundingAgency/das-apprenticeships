@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Command.AddApproval
@@ -19,8 +20,8 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
 
         public async Task Handle(AddApprovalCommand command, CancellationToken cancellationToken = default)
         {
-            var startDate = command.IsOnFlexiPaymentPilot.GetValueOrDefault() ? command.ActualStartDate : command.PlannedStartDate;
-            var apprenticeship = _apprenticeshipFactory.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth);
+            var startDate = command.FundingPlatform == FundingPlatform.DAS ? command.ActualStartDate : command.PlannedStartDate;
+            var apprenticeship = _apprenticeshipFactory.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName);
             var fundingBandMaximum = await _fundingBandMaximumService.GetFundingBandMaximum(int.Parse(command.TrainingCode), startDate);
 
             if (fundingBandMaximum == null)
@@ -39,7 +40,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                 command.FundingType,
                 fundingBandMaximum.Value,
                 (!command.PlannedStartDate.HasValue) || (command.PlannedStartDate.GetValueOrDefault().Year == 1) ? null : command.PlannedStartDate.Value,
-                command.IsOnFlexiPaymentPilot);
+                command.FundingPlatform);
             await _apprenticeshipRepository.Add(apprenticeship);
         }
     }

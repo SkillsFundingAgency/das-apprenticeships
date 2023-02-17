@@ -16,6 +16,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models
         public FundingType FundingType { get; set; }
         public int FundingBandMaximum { get; set; }
         public DateTime? PlannedStartDate { get; set; }
-        public bool? IsOnFlexiPaymentPilot { get; set; }
+        public FundingPlatform? FundingPlatform { get; set; }
     }
 }

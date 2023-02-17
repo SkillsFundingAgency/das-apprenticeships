@@ -8,6 +8,8 @@
         public Guid Key { get; set; }
         public string Uln { get; set; }
         public string TrainingCode { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public List<Approval> Approvals { get; set; }
     }

@@ -8,11 +8,9 @@ using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Functions;
-using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Approvals.EventHandlers.Messages;
-using FundingType = SFA.DAS.Approvals.EventHandlers.Messages.FundingType;
 
 namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 {
@@ -94,6 +92,8 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 
             var apprenticeship = dbConnection.GetAll<Apprenticeship>().Single(x => x.Uln == ApprovalCreatedEvent.Uln);
             apprenticeship.Uln.Should().Be(ApprovalCreatedEvent.Uln);
+            apprenticeship.FirstName.Should().Be(ApprovalCreatedEvent.FirstName);
+            apprenticeship.LastName.Should().Be(ApprovalCreatedEvent.LastName);
             int.Parse(apprenticeship.TrainingCode).Should().Be(int.Parse(ApprovalCreatedEvent.TrainingCode));
             apprenticeship.Key.Should().NotBe(Guid.Empty);
            
@@ -109,7 +109,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             approval.UKPRN.Should().Be(ApprovalCreatedEvent.UKPRN);
             approval.Id.Should().NotBe(Guid.Empty);
             approval.PlannedStartDate.Should().BeSameDateAs(ApprovalCreatedEvent.StartDate!.Value);
-            approval.IsOnFlexiPaymentPilot.Should().Be(ApprovalCreatedEvent.IsOnFlexiPaymentPilot);
+            approval.FundingPlatform.Should().Be(ApprovalCreatedEvent.IsOnFlexiPaymentPilot.HasValue ? (ApprovalCreatedEvent.IsOnFlexiPaymentPilot.Value ? Enums.FundingPlatform.DAS : Enums.FundingPlatform.SLD) : null);
 
             _scenarioContext["Apprenticeship"] = apprenticeship;
             _scenarioContext["Approval"] = approval;
@@ -155,8 +155,10 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.FundingType.ToString().Should().Be(Approval.FundingType.ToString());
             publishedEvent.LegalEntityName.Should().Be(Approval.LegalEntityName);
             publishedEvent.UKPRN.Should().Be(Approval.UKPRN);
+            publishedEvent.FirstName.Should().Be(Apprenticeship.FirstName);
+            publishedEvent.LastName.Should().Be(Apprenticeship.LastName);
             publishedEvent.PlannedStartDate.Should().BeSameDateAs(Approval.PlannedStartDate!.Value);
-            publishedEvent.IsOnFlexiPaymentPilot.Should().Be(Approval.IsOnFlexiPaymentPilot);
+            publishedEvent.FundingPlatform.ToString().Should().Be(Approval.FundingPlatform.ToString());
 
             _scenarioContext["publishedEvent"] = publishedEvent;
         }

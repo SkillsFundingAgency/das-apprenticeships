@@ -15,8 +15,10 @@ public class ApprenticeshipCreatedEvent
     public long? FundingEmployerAccountId { get; set; }
     public FundingType FundingType { get; set; }
     public int FundingBandMaximum { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     public DateTime DateOfBirth { get; set; }
     public int? AgeAtStartOfApprenticeship { get; set; }
     public DateTime? PlannedStartDate { get; set; }
-    public bool? IsOnFlexiPaymentPilot { get; set; }
+    public FundingPlatform? FundingPlatform { get; set; }
 }

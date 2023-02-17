@@ -15,8 +15,10 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
         public decimal AgreedPrice { get; set; }
         public long? FundingEmployerAccountId { get; set; }
         public FundingType FundingType { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime? PlannedStartDate { get; set; }
-        public bool? IsOnFlexiPaymentPilot { get; set; }
+        public FundingPlatform? FundingPlatform { get; set; }
     }
 }

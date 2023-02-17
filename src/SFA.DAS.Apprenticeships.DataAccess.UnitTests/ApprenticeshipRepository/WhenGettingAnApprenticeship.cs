@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -48,6 +50,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         {
             // Arrange
             var expectedApprenticeship = _fixture.Create<Apprenticeship>();
+
             _apprenticeshipFactory.Setup(x => x.GetExisting(It.Is<ApprenticeshipModel>(y =>
                     y.Key == expectedApprenticeship.Key &&
                     y.TrainingCode == expectedApprenticeship.TrainingCode &&

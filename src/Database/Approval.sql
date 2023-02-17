@@ -13,7 +13,7 @@
     [FundingType] NVARCHAR(50) NOT NULL, 
     [FundingBandMaximum] INT NOT NULL, 
     [PlannedStartDate] DATETIME NULL, 
-    [IsOnFlexiPaymentPilot] BIT NULL
+    [FundingPlatform] INT NULL
 )
 GO
 ALTER TABLE dbo.Approval

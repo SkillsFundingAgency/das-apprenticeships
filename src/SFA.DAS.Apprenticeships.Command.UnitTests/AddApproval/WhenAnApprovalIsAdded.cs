@@ -12,6 +12,7 @@ using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using FluentAssertions;
+using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
 {
@@ -44,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<Apprenticeship>();
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName)).Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
 
@@ -65,7 +66,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync(fundingBandMaximum);
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName)).Returns(apprenticeship);
 
             await _commandHandler.Handle(command);
 
@@ -83,7 +84,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int?)null);
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName)).Returns(apprenticeship);
 
             await _commandHandler.Invoking(x => x.Handle(command, It.IsAny<CancellationToken>())).Should()
                 .ThrowAsync<Exception>()
@@ -100,7 +101,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var apprenticeship = _fixture.Create<Apprenticeship>();
             command.PlannedStartDate = new DateTime();
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName)).Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
 
@@ -117,7 +118,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<Apprenticeship>();
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName)).Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
 
@@ -127,19 +128,19 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         }
 
         [Test]
-        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForPilotApprenticeship()
+        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithDasFundingPlatform()
         {
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<Apprenticeship>();
             var fundingBandMaximum = _fixture.Create<int>();
-            command.IsOnFlexiPaymentPilot = true;
+            command.FundingPlatform = FundingPlatform.DAS;
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync(fundingBandMaximum);
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName)).Returns(apprenticeship);
 
             await _commandHandler.Handle(command);
 
@@ -147,19 +148,19 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         }
 
         [Test]
-        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForNonPilotApprenticeship()
+        public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithSldFundingPlatform()
         {
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<Apprenticeship>();
             var fundingBandMaximum = _fixture.Create<int>();
-            command.IsOnFlexiPaymentPilot = false;
+            command.FundingPlatform = FundingPlatform.SLD;
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync(fundingBandMaximum);
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName)).Returns(apprenticeship);
 
             await _commandHandler.Handle(command);
 

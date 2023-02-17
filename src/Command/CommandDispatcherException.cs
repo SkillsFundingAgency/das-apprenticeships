@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace SFA.DAS.Apprenticeships.Command
 {
@@ -22,11 +21,9 @@ namespace SFA.DAS.Apprenticeships.Command
         {
         }
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         private CommandDispatcherException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
     }
-   
 }
