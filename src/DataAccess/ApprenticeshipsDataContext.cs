@@ -30,6 +30,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                     {
                         e.HasKey(ph => new { ph.ApprenticeshipKey, ph.ApprovedDate, ph.EffectiveFrom });
                         e.WithOwner().HasForeignKey(fk => fk.ApprenticeshipKey);
+                        e.HasIndex(a => a.ApprenticeshipKey);
                     });
 
             modelBuilder.Entity<Approval>()
@@ -43,9 +44,6 @@ namespace SFA.DAS.Apprenticeships.DataAccess
 
             modelBuilder.Entity<Approval>()
                 .HasIndex(a => a.ApprovalsApprenticeshipId);
-
-            modelBuilder.Entity<PriceHistory>()
-                .HasIndex(a => a.ApprenticeshipKey);
 
             base.OnModelCreating(modelBuilder);
         }
