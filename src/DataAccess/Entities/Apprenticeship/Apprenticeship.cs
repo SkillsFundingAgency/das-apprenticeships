@@ -12,5 +12,6 @@
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public List<Approval> Approvals { get; set; }
+        public List<PriceHistory> PriceHistory { get; set; }
     }
 }

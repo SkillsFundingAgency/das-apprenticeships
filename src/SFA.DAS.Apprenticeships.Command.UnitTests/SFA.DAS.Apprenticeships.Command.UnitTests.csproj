@@ -30,8 +30,4 @@
     <ProjectReference Include="..\TestHelpers\SFA.DAS.Apprenticeships.TestHelpers.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Decorators\" />
-  </ItemGroup>
-
 </Project>

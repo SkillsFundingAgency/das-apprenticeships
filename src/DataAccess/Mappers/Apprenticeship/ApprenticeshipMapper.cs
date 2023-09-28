@@ -14,7 +14,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 FirstName = domainModel.FirstName,
                 LastName = domainModel.LastName,
                 DateOfBirth = domainModel.DateOfBirth,
-                Approvals = domainModel.Approvals.Map(domainModel.Key)
+                Approvals = domainModel.Approvals.Map(domainModel.Key),
+                PriceHistory = domainModel.PriceHistory.Map(domainModel.Key),
             };
 
             return dataModel;
@@ -32,6 +33,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
             };
 
             domainModel.Approvals = dataModel.Approvals.Map();
+            domainModel.PriceHistory = dataModel.PriceHistory.Map();
 
             return domainModel;
         }

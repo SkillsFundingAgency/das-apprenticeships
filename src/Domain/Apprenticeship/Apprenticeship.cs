@@ -9,6 +9,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
     {
         private readonly ApprenticeshipModel _model;
         private readonly List<Approval> _approvals;
+        private readonly List<PriceHistory> _priceHistory;
 
         public Guid Key => _model.Key;
         public string TrainingCode => _model.TrainingCode;
@@ -17,6 +18,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public string LastName => _model.LastName;
         public DateTime DateOfBirth => _model.DateOfBirth;
         public IReadOnlyCollection<Approval> Approvals => new ReadOnlyCollection<Approval>(_approvals);
+        public IReadOnlyCollection<PriceHistory> PriceHistory => new ReadOnlyCollection<PriceHistory>(_priceHistory);
 
         public int? AgeAtStartOfApprenticeship
         {
@@ -51,6 +53,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             _model = model;
             _approvals = model.Approvals.Select(Approval.Get).ToList();
+            _priceHistory = model.PriceHistory.Select(Domain.Apprenticeship.PriceHistory.Get).ToList();
             AddEvent(new ApprenticeshipCreated(_model.Key));
         }
 
@@ -64,6 +67,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public ApprenticeshipModel GetModel()
         {
             return _model;
+        }
+
+        public void AddPriceChange(DateTime approvedDate, decimal assessmentPrice, decimal trainingPrice, DateTime effectiveFromDate)
+        {
+            var priceChange = Domain.Apprenticeship.PriceHistory.New(approvedDate, assessmentPrice, trainingPrice, effectiveFromDate);
+            _priceHistory.Add(priceChange);
+            _model.PriceHistory.Add(priceChange.GetModel());
         }
     }
 }

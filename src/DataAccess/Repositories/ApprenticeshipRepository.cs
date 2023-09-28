@@ -35,10 +35,34 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
 
         public async Task<Apprenticeship> Get(Guid key)
         {
-            var apprenticeshipDataModel = await DbContext.Apprenticeships.Include(x => x.Approvals).SingleAsync(x => x.Key == key);
+            var apprenticeshipDataModel = await DbContext.Apprenticeships
+                .Include(x => x.Approvals)
+                .SingleAsync(x => x.Key == key);
             var domainModel = apprenticeshipDataModel.Map();
             var domainObject = _apprenticeshipFactory.GetExisting(domainModel);
             return domainObject;
+        }
+
+        public async Task<Apprenticeship> GetByApprenticeshipId(long approvalsApprenticeshipId)
+        {
+            var apprenticeshipDataModel = await DbContext.Apprenticeships.Include(x => x.Approvals)
+                .SingleAsync(x => x.Approvals.Any(a => a.ApprovalsApprenticeshipId == approvalsApprenticeshipId));
+            var domainModel = apprenticeshipDataModel.Map();
+            var domainObject = _apprenticeshipFactory.GetExisting(domainModel);
+            return domainObject;
+        }
+
+        public async Task Update(Apprenticeship apprenticeship)
+        {
+            var apprenticeshipDataModel = DbContext.Apprenticeships.Single(a => a.Key == apprenticeship.Key);
+            apprenticeshipDataModel.PriceHistory.AddRange(apprenticeship.GetModel().PriceHistory.Map(apprenticeship.Key));
+            DbContext.Apprenticeships.Update(apprenticeshipDataModel);
+            await DbContext.SaveChangesAsync();
+
+            foreach (dynamic domainEvent in apprenticeship.FlushEvents())
+            {
+                await _domainEventDispatcher.Send(domainEvent);
+            }
         }
     }
 }

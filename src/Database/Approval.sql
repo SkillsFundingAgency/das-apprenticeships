@@ -18,3 +18,11 @@
 GO
 ALTER TABLE dbo.Approval
 ADD CONSTRAINT FK_Approval_Apprenticeship FOREIGN KEY (ApprenticeshipKey) REFERENCES dbo.Apprenticeship ([Key])
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Approval__ApprenticeshipKey]
+    ON [dbo].[Approval]([ApprenticeshipKey] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Approval__ApprovalsApprenticeshipId]
+    ON [dbo].[Approval]([ApprovalsApprenticeshipId] ASC);

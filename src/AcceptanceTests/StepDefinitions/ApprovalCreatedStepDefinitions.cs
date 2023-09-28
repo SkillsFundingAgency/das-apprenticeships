@@ -7,7 +7,6 @@ using SFA.DAS.Apprenticeships.AcceptanceTests.Handlers;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Approvals.EventHandlers.Messages;
@@ -15,9 +14,9 @@ using SFA.DAS.Approvals.EventHandlers.Messages;
 namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 {
     [Binding]
+    [Scope(Feature= "Approval Created")]
     public class ApprovalCreatedStepDefinitions
     {
-        private static IEndpointInstance? _endpointInstance;
         private readonly ScenarioContext _scenarioContext;
         private readonly TestContext _testContext;
         private readonly Fixture _fixture;
@@ -29,20 +28,6 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             _fixture = new Fixture();
         }
 
-        [BeforeTestRun]
-        public static async Task StartEndpoint()
-        {
-            _endpointInstance = await EndpointHelper
-                .StartEndpoint(QueueNames.ApprovalCreated + "TEST", false, new[] { typeof(ApprovalCreatedEvent), typeof(ApprenticeshipCreatedEvent) });
-        }
-
-        [AfterTestRun]
-        public static async Task StopEndpoint()
-        {
-            await _endpointInstance!.Stop()
-                .ConfigureAwait(false);
-        }
-
         [Given(@"An apprenticeship has been created as part of the approvals journey")]
         public async Task GivenAnApprenticeshipHasBeenCreatedAsPartOfTheApprovalsJourney()
         {
@@ -51,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
                 .With(_ => _.TrainingCode, _fixture.Create<int>().ToString)
                 .Create();
 
-            await _endpointInstance.Publish(approvalCreatedEvent);
+            await _testContext.EndpointInstance.Publish(approvalCreatedEvent);
 
             _scenarioContext["ApprovalCreatedEvent"] = approvalCreatedEvent;
         }
