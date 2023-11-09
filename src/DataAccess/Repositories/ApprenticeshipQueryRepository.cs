@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -23,6 +24,28 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
 
             var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
             return result;
+        }
+        
+        public async Task<IEnumerable<DataTransferObjects.ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
+        {
+            var dataModels = await DbContext.PriceHistories
+                .Where(x => x.Key == apprenticeshipKey)
+                .ToListAsync();
+
+            return dataModels.Select(x => new ApprenticeshipPrice
+            {
+                TrainingPrice = x.TrainingPrice,
+                AssessmentPrice = x.AssessmentPrice,
+                TotalPrice = x.TotalPrice,
+                EffectiveFromDate = x.EffectiveFromDate
+            });
+        }
+
+        public async Task<Guid?> GetKey(string apprenticeshipHashedId)
+        {
+            var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
+                x.ApprenticeshipHashedId == apprenticeshipHashedId);
+            return apprenticeship?.Key;
         }
     }
 }
