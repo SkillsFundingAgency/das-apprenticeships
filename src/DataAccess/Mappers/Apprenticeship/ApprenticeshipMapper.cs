@@ -14,6 +14,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 FirstName = domainModel.FirstName,
                 LastName = domainModel.LastName,
                 DateOfBirth = domainModel.DateOfBirth,
+                ApprenticeshipHashedId = domainModel.ApprenticeshipHashedId,
                 Approvals = domainModel.Approvals.Map(domainModel.Key)
             };
 
@@ -28,7 +29,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 Uln = dataModel.Uln,
                 FirstName = dataModel.FirstName,
                 LastName = dataModel.LastName,
-                DateOfBirth = dataModel.DateOfBirth
+                DateOfBirth = dataModel.DateOfBirth,
+                ApprenticeshipHashedId = dataModel.ApprenticeshipHashedId
             };
 
             domainModel.Approvals = dataModel.Approvals.Map();

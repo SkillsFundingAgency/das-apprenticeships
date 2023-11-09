@@ -14,6 +14,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
 
         public virtual DbSet<Apprenticeship> Apprenticeships { get; set; }
         public virtual DbSet<Approval> Approvals { get; set; }
+        public virtual DbSet<PriceHistory> PriceHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 .HasConversion(
                     v => v.ToString(),
                     v => (FundingType)Enum.Parse(typeof(FundingType), v));
+            modelBuilder.Entity<PriceHistory>()
+                .HasKey(x => x.Key);
 
             base.OnModelCreating(modelBuilder);
         }

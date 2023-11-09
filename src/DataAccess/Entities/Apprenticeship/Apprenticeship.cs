@@ -11,6 +11,7 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public string ApprenticeshipHashedId { get; set; }
         public List<Approval> Approvals { get; set; }
     }
 }

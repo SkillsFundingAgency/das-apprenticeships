@@ -41,11 +41,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Fun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Infrastructure.UnitTests", "SFA.DAS.Apprenticeships.Infrastructure.UnitTests\SFA.DAS.Apprenticeships.Infrastructure.UnitTests.csproj", "{5C725058-1E7A-400D-B4E1-B45D6923E679}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.DataTransferObjects", "SFA.DAS.Apprenticeships.DataTransferObjects\SFA.DAS.Apprenticeships.DataTransferObjects.csproj", "{734DBF72-69AA-46F2-B739-CE492EB12AFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.DataTransferObjects", "SFA.DAS.Apprenticeships.DataTransferObjects\SFA.DAS.Apprenticeships.DataTransferObjects.csproj", "{734DBF72-69AA-46F2-B739-CE492EB12AFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.Queries.UnitTests", "SFA.DAS.Apprenticeships.Queries.UnitTests\SFA.DAS.Apprenticeships.Queries.UnitTests.csproj", "{DCF2492B-A244-4F7F-B54D-C7B50B732B7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.Queries.UnitTests", "SFA.DAS.Apprenticeships.Queries.UnitTests\SFA.DAS.Apprenticeships.Queries.UnitTests.csproj", "{DCF2492B-A244-4F7F-B54D-C7B50B732B7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apprenticeships.InnerApi.UnitTests", "SFA.DAS.Apprenticeships.InnerApi.UnitTests\SFA.DAS.Apprenticeships.InnerApi.UnitTests.csproj", "{E33F079C-D877-48E1-A18A-F2BA546A033C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Apprenticeships.InnerApi.UnitTests", "SFA.DAS.Apprenticeships.InnerApi.UnitTests\SFA.DAS.Apprenticeships.InnerApi.UnitTests.csproj", "{E33F079C-D877-48E1-A18A-F2BA546A033C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
