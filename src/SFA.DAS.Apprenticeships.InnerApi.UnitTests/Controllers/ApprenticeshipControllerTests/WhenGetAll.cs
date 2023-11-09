@@ -2,6 +2,7 @@ using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
 using SFA.DAS.Apprenticeships.Queries;
@@ -20,7 +21,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipC
         {
             _fixture = new Fixture();
             _queryDispatcher = new Mock<IQueryDispatcher>();
-            _sut = new ApprenticeshipController(_queryDispatcher.Object);
+            _sut = new ApprenticeshipController(_queryDispatcher.Object, Mock.Of<ICommandDispatcher>());
         }
 
         [TestCase(null)]
