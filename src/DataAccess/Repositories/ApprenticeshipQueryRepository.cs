@@ -25,7 +25,19 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
             var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
             return result;
         }
-        
+
+        public async Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey)
+        {
+            var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
+                x.Key == apprenticeshipKey);
+            return apprenticeship == null ? null :  new ApprenticeshipPrice
+            {
+                TotalPrice = apprenticeship.TotalPrice,
+                AssessmentPrice = apprenticeship.EndPointAssessmentPrice,
+                TrainingPrice = apprenticeship.TrainingPrice
+            };
+        }
+
         public async Task<IEnumerable<DataTransferObjects.ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
         {
             var dataModels = await DbContext.PriceHistories
@@ -36,8 +48,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
             {
                 TrainingPrice = x.TrainingPrice,
                 AssessmentPrice = x.AssessmentPrice,
-                TotalPrice = x.TotalPrice,
-                EffectiveFromDate = x.EffectiveFromDate
+                TotalPrice = x.TotalPrice
             });
         }
 

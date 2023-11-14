@@ -26,6 +26,8 @@ namespace SFA.DAS.Apprenticeships.Functions
                 TrainingCode = @event.TrainingCode,
                 ActualStartDate = @event.ActualStartDate,
                 AgreedPrice = @event.AgreedPrice,
+                TrainingPrice = @event.TrainingPrice,
+                EndPointAssessmentPrice = @event.EndPointAssessmentPrice,
                 ApprovalsApprenticeshipId = @event.ApprovalsApprenticeshipId,
                 EmployerAccountId = @event.EmployerAccountId,
                 FundingEmployerAccountId = @event.FundingEmployerAccountId,
@@ -38,6 +40,7 @@ namespace SFA.DAS.Apprenticeships.Functions
                 FirstName = @event.FirstName,
                 LastName = @event.LastName,
                 PlannedStartDate = @event.StartDate,
+                ApprenticeshipHashedId = @event.ApprenticeshipHashedId,
                 FundingPlatform = @event.IsOnFlexiPaymentPilot.HasValue ? (@event.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null
             });
         }

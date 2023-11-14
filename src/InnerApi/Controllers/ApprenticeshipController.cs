@@ -77,6 +77,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
             var request = new GetApprenticeshipPriceRequest{ ApprenticeshipKey = apprenticeshipKey };
             var response = await _queryDispatcher.Send<GetApprenticeshipPriceRequest, GetApprenticeshipPriceResponse>(request);
+            if (response.TotalPrice == null) return NotFound();
             return Ok(response);
         }
 
@@ -91,8 +92,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
             var request = new GetApprenticeshipKeyRequest { ApprenticeshipHashedId = apprenticeshipHashedId };
             var response = await _queryDispatcher.Send<GetApprenticeshipKeyRequest, GetApprenticeshipKeyResponse>(request);
-            if (response.ApprenticeshipKey == null)
-                return NotFound();
+            if (response.ApprenticeshipKey == null) return NotFound();
             return Ok(response.ApprenticeshipKey);
         }
     }

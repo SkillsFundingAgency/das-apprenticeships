@@ -18,9 +18,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         public void SetUp()
         {
             var apprenticeshipFactory = new ApprenticeshipFactory();
-            _apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", DateTime.Now, "Ron", "Swanson");
-
             _fixture = new Fixture();
+            _apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16), "Ron", "Swanson", _fixture.Create<decimal?>(), _fixture.Create<decimal?>(), _fixture.Create<decimal>(), _fixture.Create<string>());
         }
 
         [Test]

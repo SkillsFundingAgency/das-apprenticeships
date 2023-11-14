@@ -12,6 +12,9 @@
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string ApprenticeshipHashedId { get; set; }
+        public decimal? TrainingPrice { get; set; }
+        public decimal? EndPointAssessmentPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public List<Approval> Approvals { get; set; }
     }
 }

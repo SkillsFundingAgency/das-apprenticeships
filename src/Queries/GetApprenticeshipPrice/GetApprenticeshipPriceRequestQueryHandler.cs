@@ -13,15 +13,14 @@ public class GetApprenticeshipPriceRequestQueryHandler : IQueryHandler<GetAppren
 
     public async Task<GetApprenticeshipPriceResponse> Handle(GetApprenticeshipPriceRequest query, CancellationToken cancellationToken = default)
     {
-        var priceHistory = await _apprenticeshipQueryRepository.GetPriceHistory(query.ApprenticeshipKey);
-        var latestPrice = priceHistory.MaxBy(x => x.EffectiveFromDate);
+        var price = await _apprenticeshipQueryRepository.GetPrice(query.ApprenticeshipKey);
 
         return new GetApprenticeshipPriceResponse
         {
             ApprenticeshipKey = query.ApprenticeshipKey,
-            TrainingPrice = latestPrice?.TrainingPrice,
-            AssessmentPrice = latestPrice?.AssessmentPrice,
-            TotalPrice = latestPrice.TotalPrice
+            TrainingPrice = price?.TrainingPrice,
+            AssessmentPrice = price?.AssessmentPrice,
+            TotalPrice = price?.TotalPrice
         };
     }
 }
