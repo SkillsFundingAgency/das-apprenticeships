@@ -21,12 +21,15 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
         public async Task Handle(AddApprovalCommand command, CancellationToken cancellationToken = default)
         {
             var startDate = command.FundingPlatform == FundingPlatform.DAS ? command.ActualStartDate : command.PlannedStartDate;
-            var apprenticeship = _apprenticeshipFactory.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName, command.TrainingPrice, command.EndPointAssessmentPrice, command.AgreedPrice, command.ApprenticeshipHashedId);
             var fundingBandMaximum = await _fundingBandMaximumService.GetFundingBandMaximum(int.Parse(command.TrainingCode), startDate);
 
             if (fundingBandMaximum == null)
                 throw new Exception(
-                    $"No funding band maximum found for course {command.TrainingCode} for given date {startDate?.ToString("u")}. Apprenticeship Key: {apprenticeship.Key}");
+                    $"No funding band maximum found for course {command.TrainingCode} for given date {startDate?.ToString("u")}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
+
+            var apprenticeship = _apprenticeshipFactory.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName, command.TrainingPrice, command.EndPointAssessmentPrice, command.AgreedPrice, command.ApprenticeshipHashedId, fundingBandMaximum.Value);
+
+            
 
             apprenticeship.AddApproval(
                 command.ApprovalsApprenticeshipId,

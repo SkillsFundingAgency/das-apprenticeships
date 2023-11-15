@@ -32,7 +32,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         public async Task ThenApprenticeshipCreatedEventIsPublished()
         {
             var apprenticeshipFactory = new ApprenticeshipFactory();
-            var apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16), "Ron", "Swanson", _fixture.Create<decimal?>(), _fixture.Create<decimal?>(), _fixture.Create<decimal>(), _fixture.Create<string>());
+            var apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16), "Ron", "Swanson", _fixture.Create<decimal?>(), _fixture.Create<decimal?>(), _fixture.Create<decimal>(), _fixture.Create<string>(), _fixture.Create<int>());
             apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
             var approval = apprenticeship.Approvals.Single();
             var command = _fixture.Create<ApprenticeshipCreated>();

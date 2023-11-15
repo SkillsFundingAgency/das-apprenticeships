@@ -20,7 +20,8 @@ public class GetApprenticeshipPriceRequestQueryHandler : IQueryHandler<GetAppren
             ApprenticeshipKey = query.ApprenticeshipKey,
             TrainingPrice = price?.TrainingPrice,
             AssessmentPrice = price?.AssessmentPrice,
-            TotalPrice = price?.TotalPrice
+            TotalPrice = price?.TotalPrice,
+            FundingBandMaximum = price?.FundingBandMaximum
         };
     }
 }

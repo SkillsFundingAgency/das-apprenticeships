@@ -8,6 +8,6 @@ public class GetApprenticeshipPriceResponse
     public decimal? TrainingPrice { get; set; }
     public decimal? AssessmentPrice { get; set; }
     public decimal? TotalPrice { get; set; }
-    public decimal FundingBandMaximum { get; set; } //todo retrieve from approvals
+    public int? FundingBandMaximum { get; set; }
     public DateTime EarliestEffectiveDate { get; set; } //todo retrieve from new collection calendar api
 }

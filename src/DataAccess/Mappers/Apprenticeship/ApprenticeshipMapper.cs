@@ -18,6 +18,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 TrainingPrice = domainModel.TrainingPrice,
                 EndPointAssessmentPrice = domainModel.EndPointAssessmentPrice,
                 TotalPrice = domainModel.TotalPrice,
+                FundingBandMaximum = domainModel.FundingBandMaximum,
                 Approvals = domainModel.Approvals.Map(domainModel.Key)
             };
 
@@ -37,6 +38,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 TrainingPrice = dataModel.TrainingPrice,
                 EndPointAssessmentPrice = dataModel.EndPointAssessmentPrice,
                 TotalPrice = dataModel.TotalPrice,
+                FundingBandMaximum = dataModel.FundingBandMaximum
             };
 
             domainModel.Approvals = dataModel.Approvals.Map();

@@ -5,4 +5,5 @@ public class ApprenticeshipPrice
     public decimal? TrainingPrice { get; set; }
     public decimal? AssessmentPrice { get; set; }
     public decimal TotalPrice { get; set; }
+    public int? FundingBandMaximum { get; set; }
 }

@@ -19,7 +19,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         {
             var apprenticeshipFactory = new ApprenticeshipFactory();
             _fixture = new Fixture();
-            _apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16), "Ron", "Swanson", _fixture.Create<decimal?>(), _fixture.Create<decimal?>(), _fixture.Create<decimal>(), _fixture.Create<string>());
+            _apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16), "Ron", "Swanson", _fixture.Create<decimal?>(), _fixture.Create<decimal?>(), _fixture.Create<decimal>(), _fixture.Create<string>(), _fixture.Create<int>());
         }
 
         [Test]

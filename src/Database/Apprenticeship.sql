@@ -9,5 +9,6 @@
     [ApprenticeshipHashedId] NVARCHAR(100) NULL, 
     [TrainingPrice] MONEY NULL, 
     [EndPointAssessmentPrice] MONEY NULL, 
-    [TotalPrice] MONEY NULL
+    [TotalPrice] MONEY NULL, 
+    [FundingBandMaximum] INT NULL
 )

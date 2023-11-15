@@ -37,9 +37,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             }
         }
 
-        internal static Apprenticeship New(string uln, string trainingCode, DateTime dateOfBirth, string firstName, string lastName, decimal? trainingPrice, decimal? endpointAssessmentPrice, decimal totalPrice, string apprenticeshipHashedId)
+        internal static Apprenticeship New(string uln, string trainingCode, DateTime dateOfBirth, string firstName, string lastName, decimal? trainingPrice, decimal? endpointAssessmentPrice, decimal totalPrice, string apprenticeshipHashedId, int fundingBandMaximum)
         {
-            return new Apprenticeship(new ApprenticeshipModel { Key = Guid.NewGuid(), Uln = uln, TrainingCode = trainingCode, DateOfBirth = dateOfBirth, FirstName = firstName, LastName = lastName, TrainingPrice = trainingPrice, EndPointAssessmentPrice = endpointAssessmentPrice, TotalPrice = totalPrice, ApprenticeshipHashedId = apprenticeshipHashedId});
+            return new Apprenticeship(new ApprenticeshipModel { Key = Guid.NewGuid(), Uln = uln, TrainingCode = trainingCode, DateOfBirth = dateOfBirth, FirstName = firstName, LastName = lastName, TrainingPrice = trainingPrice, EndPointAssessmentPrice = endpointAssessmentPrice, TotalPrice = totalPrice, ApprenticeshipHashedId = apprenticeshipHashedId, FundingBandMaximum = fundingBandMaximum});
         }
 
         internal static Apprenticeship Get(ApprenticeshipModel model)

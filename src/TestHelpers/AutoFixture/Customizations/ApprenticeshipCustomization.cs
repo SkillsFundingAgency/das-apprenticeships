@@ -10,7 +10,7 @@ namespace SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations
             fixture.Register(() => new ApprenticeshipFactory().CreateNew(fixture.Create<string>(),
                 fixture.Create<string>(), fixture.Create<DateTime>(), fixture.Create<string>(),
                 fixture.Create<string>(), fixture.Create<decimal?>(), fixture.Create<decimal?>(),
-                fixture.Create<decimal>(), fixture.Create<string>()));
+                fixture.Create<decimal>(), fixture.Create<string>(), fixture.Create<int>()));
         }
     }
 }
