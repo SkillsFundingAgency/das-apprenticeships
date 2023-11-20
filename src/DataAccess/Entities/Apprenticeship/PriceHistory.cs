@@ -17,5 +17,5 @@ public class PriceHistory
     public string? EmployerApprovedBy { get; set; }
     public DateTime? EmployerApprovedDate { get; set; }
     public DateTime CreatedDate { get; set; }
-    public short PriceChangeRequestStatus { get; set; }
+    public string? PriceChangeRequestStatus { get; set; }
 }
