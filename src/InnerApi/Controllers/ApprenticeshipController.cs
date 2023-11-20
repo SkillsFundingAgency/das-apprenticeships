@@ -46,7 +46,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create Apprenticeship Price Change Record
         /// </summary>
         /// <param name="ukprn"></param>
         /// <param name="employerId"></param>
@@ -56,7 +56,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <param name="assessmentPrice"></param>
         /// <param name="totalPrice"></param>
         /// <param name="reason"></param>
-        /// <returns></returns>
+        /// <response code="200">Apprenticeship Price Change Created</response>
         [HttpPost("apprenticeshipPriceChange")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> CreateApprenticeshipPriceChange(long? ukprn, long? employerId, Guid apprenticeshipKey,
@@ -67,10 +67,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get Apprenticeship Price
         /// </summary>
         /// <param name="apprenticeshipKey"></param>
-        /// <returns></returns>
+        /// <returns>Apprenticeship Price</returns>
         [HttpGet("{apprenticeshipKey}/price")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetApprenticeshipPrice(Guid apprenticeshipKey)
@@ -82,10 +82,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get Apprenticeship Key
         /// </summary>
-        /// <param name="apprenticeshipHashedId"></param>
-        /// <returns></returns>
+        /// <param name="apprenticeshipHashedId">This should be the hashed id for the apprenticeship not the commitment</param>
+        /// <returns>Apprenticeship Key</returns>
         [HttpGet("{apprenticeshipHashedId}/key")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetApprenticeshipKey(string apprenticeshipHashedId)
