@@ -9,5 +9,5 @@ public class GetApprenticeshipPriceResponse
     public decimal? AssessmentPrice { get; set; }
     public decimal? TotalPrice { get; set; }
     public int? FundingBandMaximum { get; set; }
-    public DateTime EarliestEffectiveDate { get; set; } //todo retrieve from new collection calendar api
+    public DateTime EarliestEffectiveDate { get; set; }
 }
