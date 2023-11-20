@@ -24,7 +24,7 @@ public class GetApprenticeshipKeyRequestQueryHandler : IQueryHandler<GetApprenti
 
     public async Task<GetApprenticeshipKeyResponse> Handle(GetApprenticeshipKeyRequest query, CancellationToken cancellationToken = default)
     {
-        var key= await _apprenticeshipQueryRepository.GetKey(query.ApprenticeshipHashedId);
+        var key = await _apprenticeshipQueryRepository.GetKey(query.ApprenticeshipHashedId);
         return new GetApprenticeshipKeyResponse { ApprenticeshipKey = key };
     }
 }
