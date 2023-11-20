@@ -1,20 +1,22 @@
 ﻿CREATE TABLE [dbo].[PriceHistory]
 (
 	[Key] UNIQUEIDENTIFIER PRIMARY KEY,
-    [ApprenticeshipKey] UNIQUEIDENTIFIER,
-    [ApprenticeshipId] BIGINT,
-    [TrainingPrice] DECIMAL(18, 2),
-    [AssessmentPrice] DECIMAL(18, 2),
+    [ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL,
+    [ApprenticeshipId] BIGINT NOT NULL,
+    [TrainingPrice] DECIMAL(18, 2) NULL,
+    [AssessmentPrice] DECIMAL(18, 2) NULL,
     [TotalPrice] DECIMAL(18, 2) NOT NULL,
-    [EffectiveFromDate] DATETIME,
-    [ProviderApprovedBy] NVARCHAR(500),
-    [ProviderApprovedDate] DATETIME,
-    [EmployerApprovedBy] NVARCHAR(500),
-    [EmployerApprovedDate] DATETIME,
-    [CreatedDate] DATETIME,
-    [PriceChangeRequestStatus] SMALLINT
+    [EffectiveFromDate] DATETIME NOT NULL,
+    [ProviderApprovedBy] NVARCHAR(500) NULL,
+    [ProviderApprovedDate] DATETIME NULL,
+    [EmployerApprovedBy] NVARCHAR(500) NULL,
+    [EmployerApprovedDate] DATETIME NULL,
+    [CreatedDate] DATETIME NOT NULL,
+    [PriceChangeRequestStatus] SMALLINT NULL
 )
 GO
 ALTER TABLE [dbo].[PriceHistory]
 ADD CONSTRAINT FK_PriceHistory_Apprenticeship FOREIGN KEY (ApprenticeshipKey) REFERENCES dbo.Apprenticeship ([Key])
+GO
+CREATE INDEX IX_ApprenticeshipKey ON [dbo].[PriceHistory] (ApprenticeshipKey);
 GO
