@@ -18,7 +18,7 @@ public class PriceHistory
     public string? EmployerApprovedBy => _model.EmployerApprovedBy;
     public DateTime? EmployerApprovedDate => _model.EmployerApprovedDate;
     public DateTime CreatedDate => _model.CreatedDate;
-    public short PriceChangeRequestStatus => _model.PriceChangeRequestStatus;
+    public string? PriceChangeRequestStatus => _model.PriceChangeRequestStatus;
 
     internal static PriceHistory New(
         Guid key,
@@ -33,7 +33,7 @@ public class PriceHistory
         string? employerApprovedBy,
         DateTime? employerApprovedDate,
         DateTime createdDate,
-        short priceChangeRequestStatus)
+        string? priceChangeRequestStatus)
     {
         return new PriceHistory(new PriceHistoryModel
         {
