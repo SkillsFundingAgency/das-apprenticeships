@@ -39,4 +39,21 @@ public class WhenGetApprenticeshipPrice
         //Assert
         actualResult.Should().BeEquivalentTo(expectedResult);
     }
+    
+    [Test]
+    public async Task ThenNullIsReturnedWhenNoRecordExists()
+    {
+        //Arrange
+        var query = _fixture.Create<GetApprenticeshipPriceRequest>();
+
+        _apprenticeshipQueryRepository
+            .Setup(x => x.GetPrice(query.ApprenticeshipKey))
+            .ReturnsAsync((ApprenticeshipPrice)null!);
+
+        //Act
+        var actualResult = await _sut.Handle(query);
+
+        //Assert
+        actualResult.Should().BeNull();
+    }
 }

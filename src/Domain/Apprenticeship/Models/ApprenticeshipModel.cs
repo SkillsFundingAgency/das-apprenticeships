@@ -13,6 +13,8 @@
         public decimal? EndPointAssessmentPrice { get; set; }
         public decimal TotalPrice { get; set; }
         public int? FundingBandMaximum { get; set; }
+        public DateTime? ActualStartDate { get; set; }
+        public DateTime? PlannedEndDate { get; set; }
         public List<ApprovalModel> Approvals { get; set; }
 
         public ApprenticeshipModel()

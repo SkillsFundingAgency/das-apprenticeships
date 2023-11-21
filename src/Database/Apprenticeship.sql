@@ -10,5 +10,7 @@
     [TrainingPrice] MONEY NULL, 
     [EndPointAssessmentPrice] MONEY NULL, 
     [TotalPrice] MONEY NULL, 
-    [FundingBandMaximum] INT NULL
+    [FundingBandMaximum] INT NULL,
+    [ActualStartDate] DATETIME NULL,
+    [PlannedEndDate] DATETIME NULL
 )
