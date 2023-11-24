@@ -39,7 +39,8 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                 command.ApprenticeshipHashedId,
                 fundingBandMaximum.Value,
                 command.ActualStartDate,
-                command.PlannedEndDate);
+                command.PlannedEndDate,
+                command.AccountLegalEntityId);
 
             
 

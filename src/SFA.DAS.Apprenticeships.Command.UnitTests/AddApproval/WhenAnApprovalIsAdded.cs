@@ -57,7 +57,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ApprenticeshipHashedId,
                     (int)Math.Ceiling(command.AgreedPrice),
                     command.ActualStartDate,
-                    command.PlannedEndDate))
+                    command.PlannedEndDate,
+                    command.AccountLegalEntityId))
                 .Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
@@ -91,7 +92,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ApprenticeshipHashedId,
                     fundingBandMaximum,
                     command.ActualStartDate,
-                    command.PlannedEndDate))
+                    command.PlannedEndDate,
+                    command.AccountLegalEntityId))
                 .Returns(apprenticeship);
 
             await _commandHandler.Handle(command);
@@ -125,7 +127,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var apprenticeship = _fixture.Create<Apprenticeship>();
             command.PlannedStartDate = new DateTime();
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName, command.TrainingPrice, command.EndPointAssessmentPrice, command.AgreedPrice, command.ApprenticeshipHashedId, (int)Math.Ceiling(command.AgreedPrice), command.ActualStartDate, command.PlannedEndDate)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName, command.TrainingPrice, command.EndPointAssessmentPrice, command.AgreedPrice, command.ApprenticeshipHashedId, (int)Math.Ceiling(command.AgreedPrice), command.ActualStartDate, command.PlannedEndDate, command.AccountLegalEntityId)).Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
 
@@ -154,7 +156,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ApprenticeshipHashedId,
                     (int)Math.Ceiling(command.AgreedPrice),
                     command.ActualStartDate,
-                    command.PlannedEndDate))
+                    command.PlannedEndDate,
+                    command.AccountLegalEntityId))
                 .Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
@@ -189,7 +192,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ApprenticeshipHashedId,
                     fundingBandMaximum,
                     command.ActualStartDate,
-                    command.PlannedEndDate))
+                    command.PlannedEndDate,
+                    command.AccountLegalEntityId))
                 .Returns(apprenticeship);
 
             await _commandHandler.Handle(command);
@@ -222,7 +226,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ApprenticeshipHashedId,
                     fundingBandMaximum,
                     command.ActualStartDate,
-                    command.PlannedEndDate))
+                    command.PlannedEndDate, 
+                    command.AccountLegalEntityId))
                 .Returns(apprenticeship);
 
             await _commandHandler.Handle(command);

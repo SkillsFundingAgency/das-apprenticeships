@@ -41,8 +41,21 @@ namespace SFA.DAS.Apprenticeships.Functions
                 LastName = @event.LastName,
                 PlannedStartDate = @event.StartDate,
                 ApprenticeshipHashedId = @event.ApprenticeshipHashedId,
-                FundingPlatform = @event.IsOnFlexiPaymentPilot.HasValue ? (@event.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null
+                FundingPlatform = @event.IsOnFlexiPaymentPilot.HasValue ? (@event.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null,
+                AccountLegalEntityId = @event.AccountLegalEntityId
             });
         }
+
+        #region Temp
+        [FunctionName("TriggerHandleApprovalCreatedEvent")]
+        public async Task HandleApprovalCreatedEvent(
+            [HttpTrigger(Microsoft.Azure.WebJobs.Extensions.Http.AuthorizationLevel.Function, "post")] Microsoft.AspNetCore.Http.HttpRequest req)
+        {
+            string requestBody = new System.IO.StreamReader(req.Body).ReadToEnd();
+            var approvalCreatedEvent = System.Text.Json.JsonSerializer.Deserialize<ApprovalCreatedEvent>(requestBody);
+            await HandleCommand(approvalCreatedEvent);
+        }
+        #endregion
+
     }
 }

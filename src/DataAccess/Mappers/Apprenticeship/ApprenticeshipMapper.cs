@@ -21,6 +21,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 FundingBandMaximum = domainModel.FundingBandMaximum,
                 ActualStartDate = domainModel.ActualStartDate,
                 PlannedEndDate = domainModel.PlannedEndDate,
+                AccountLegalEntityId = domainModel.AccountLegalEntityId,
                 Approvals = domainModel.Approvals.Map(domainModel.Key)
             };
 
@@ -42,7 +43,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship
                 TotalPrice = dataModel.TotalPrice,
                 FundingBandMaximum = dataModel.FundingBandMaximum,
                 ActualStartDate = dataModel.ActualStartDate,
-                PlannedEndDate = dataModel.PlannedEndDate
+                PlannedEndDate = dataModel.PlannedEndDate,
+                AccountLegalEntityId= dataModel.AccountLegalEntityId,
             };
 
             domainModel.Approvals = dataModel.Approvals.Map();

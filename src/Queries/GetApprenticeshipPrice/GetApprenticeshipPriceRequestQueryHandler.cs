@@ -25,7 +25,8 @@ public class GetApprenticeshipPriceRequestQueryHandler : IQueryHandler<GetAppren
             TotalPrice = price.TotalPrice,
             FundingBandMaximum = price.FundingBandMaximum,
             ApprenticeshipActualStartDate = price.ApprenticeshipActualStartDate,
-            ApprenticeshipPlannedEndDate = price.ApprenticeshipPlannedEndDate
+            ApprenticeshipPlannedEndDate = price.ApprenticeshipPlannedEndDate,
+            AccountLegalEntityId = price.AccountLegalEntityId
         };
     }
 }

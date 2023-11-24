@@ -39,7 +39,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         internal static Apprenticeship New(string uln, string trainingCode, DateTime dateOfBirth, string firstName,
             string lastName, decimal? trainingPrice, decimal? endpointAssessmentPrice, decimal totalPrice,
-            string apprenticeshipHashedId, int fundingBandMaximum, DateTime? actualStartDate, DateTime plannedEndDate)
+            string apprenticeshipHashedId, int fundingBandMaximum, DateTime? actualStartDate, DateTime plannedEndDate, long accountLegalEntityId)
         {
             return new Apprenticeship(new ApprenticeshipModel
             {
@@ -55,7 +55,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 ApprenticeshipHashedId = apprenticeshipHashedId,
                 FundingBandMaximum = fundingBandMaximum,
                 ActualStartDate = actualStartDate,
-                PlannedEndDate = plannedEndDate
+                PlannedEndDate = plannedEndDate,
+                AccountLegalEntityId = accountLegalEntityId,
             });
         }
 
