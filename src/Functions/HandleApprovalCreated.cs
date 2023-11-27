@@ -46,16 +46,5 @@ namespace SFA.DAS.Apprenticeships.Functions
             });
         }
 
-        #region Temp
-        [FunctionName("TriggerHandleApprovalCreatedEvent")]
-        public async Task HandleApprovalCreatedEvent(
-            [HttpTrigger(Microsoft.Azure.WebJobs.Extensions.Http.AuthorizationLevel.Function, "post")] Microsoft.AspNetCore.Http.HttpRequest req)
-        {
-            string requestBody = new System.IO.StreamReader(req.Body).ReadToEnd();
-            var approvalCreatedEvent = System.Text.Json.JsonSerializer.Deserialize<ApprovalCreatedEvent>(requestBody);
-            await HandleCommand(approvalCreatedEvent);
-        }
-        #endregion
-
     }
 }
