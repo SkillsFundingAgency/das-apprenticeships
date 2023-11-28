@@ -1,5 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models;
+using PriceHistory = SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship.PriceHistory;
 
 namespace SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship;
 
@@ -21,7 +22,7 @@ internal static class PriceHistoryMapper
             EmployerApprovedBy = domainModel.EmployerApprovedBy,
             EmployerApprovedDate = domainModel.EmployerApprovedDate,
             CreatedDate = domainModel.CreatedDate,
-            PriceChangeRequestStatus = domainModel.PriceChangeRequestStatus
+            PriceChangeRequestStatus = domainModel.PriceChangeRequestStatus.ToString()
         };
 
         return dataModel;
@@ -42,9 +43,11 @@ internal static class PriceHistoryMapper
             ProviderApprovedDate = dataModel.ProviderApprovedDate,
             EmployerApprovedBy = dataModel.EmployerApprovedBy,
             EmployerApprovedDate = dataModel.EmployerApprovedDate,
-            CreatedDate = dataModel.CreatedDate,
-            PriceChangeRequestStatus = dataModel.PriceChangeRequestStatus
+            CreatedDate = dataModel.CreatedDate
         };
+
+        if (dataModel.PriceChangeRequestStatus != null && Enum.TryParse(dataModel.PriceChangeRequestStatus, out PriceChangeRequestStatus priceChangeRequestStatus))
+            domainModel.PriceChangeRequestStatus = priceChangeRequestStatus;
 
         return domainModel;
     }

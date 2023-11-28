@@ -9,6 +9,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
     {
         private readonly ApprenticeshipModel _model;
         private readonly List<Approval> _approvals;
+        private readonly List<PriceHistory> _priceHistories;
 
         public Guid Key => _model.Key;
         public string TrainingCode => _model.TrainingCode;
@@ -17,6 +18,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public string LastName => _model.LastName;
         public DateTime DateOfBirth => _model.DateOfBirth;
         public IReadOnlyCollection<Approval> Approvals => new ReadOnlyCollection<Approval>(_approvals);
+        public IReadOnlyCollection<PriceHistory> PriceHistories => new ReadOnlyCollection<PriceHistory>(_priceHistories);
 
         public int? AgeAtStartOfApprenticeship
         {
@@ -51,6 +53,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             _model = model;
             _approvals = model.Approvals.Select(Approval.Get).ToList();
+            _priceHistories = model.PriceHistories.Select(PriceHistory.Get).ToList();
             AddEvent(new ApprenticeshipCreated(_model.Key));
         }
 
@@ -64,6 +67,26 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public ApprenticeshipModel GetModel()
         {
             return _model;
+        }
+
+        public void AddPriceHistory(
+            decimal? trainingPrice,
+            decimal? assessmentPrice,
+            decimal totalPrice,
+            DateTime effectiveFromDate,
+            DateTime createdDate,
+            PriceChangeRequestStatus? priceChangeRequestStatus)
+        {
+            var priceHistory = PriceHistory.New(this.Key,
+                trainingPrice,
+                assessmentPrice,
+                totalPrice,
+                effectiveFromDate,
+                createdDate,
+                priceChangeRequestStatus);
+            
+            _priceHistories.Add(priceHistory);
+            _model.PriceHistories.Add(priceHistory.GetModel());
         }
     }
 }

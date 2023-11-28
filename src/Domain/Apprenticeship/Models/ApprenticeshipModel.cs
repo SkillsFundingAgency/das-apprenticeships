@@ -14,10 +14,12 @@
         public decimal TotalPrice { get; set; }
         public int? FundingBandMaximum { get; set; }
         public List<ApprovalModel> Approvals { get; set; }
+        public List<PriceHistoryModel> PriceHistories { get; set; }
 
         public ApprenticeshipModel()
         {
             Approvals = new List<ApprovalModel>();
+            PriceHistories = new List<PriceHistoryModel>();
         }
 
         public ApprenticeshipModel(Guid key) : this()

@@ -48,21 +48,22 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <summary>
         /// Create Apprenticeship Price Change Record
         /// </summary>
-        /// <param name="ukprn"></param>
-        /// <param name="employerId"></param>
-        /// <param name="apprenticeshipKey"></param>
-        /// <param name="userId"></param>
-        /// <param name="trainingPrice"></param>
-        /// <param name="assessmentPrice"></param>
-        /// <param name="totalPrice"></param>
-        /// <param name="reason"></param>
+        /// <param name="ukprn">The provider ukprn</param>
+        /// <param name="employerId"></param> //todo employer account id or legal entity id?
+        /// <param name="apprenticeshipKey">The apprenticeship key</param>
+        /// <param name="userId">The user id</param>
+        /// <param name="trainingPrice">The training price</param>
+        /// <param name="assessmentPrice">The assessment price</param>
+        /// <param name="totalPrice">The total price</param>
+        /// <param name="reason">The reason for the price change</param>
+        /// <param name="effectiveFromDate">The date the price change is effective from</param>
         /// <response code="200">Apprenticeship Price Change Created</response>
-        [HttpPost("apprenticeshipPriceChange")]
+        [HttpPost("{apprenticeshipKey}/priceHistory")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> CreateApprenticeshipPriceChange(long? ukprn, long? employerId, Guid apprenticeshipKey,
-            string userId, decimal? trainingPrice, decimal? assessmentPrice, decimal totalPrice, string reason)
+            string userId, decimal? trainingPrice, decimal? assessmentPrice, decimal totalPrice, string reason, DateTime effectiveFromDate)
         {
-            await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(ukprn, employerId, apprenticeshipKey, userId, trainingPrice, assessmentPrice, totalPrice, reason));
+            await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(ukprn, employerId, apprenticeshipKey, userId, trainingPrice, assessmentPrice, totalPrice, reason, effectiveFromDate));
             return Ok();
         }
 

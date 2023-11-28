@@ -9,7 +9,7 @@ public class PriceHistory
     public Guid Key => _model.ApprenticeshipKey;
     public Guid ApprenticeshipKey => _model.ApprenticeshipKey;
     public long ApprenticeshipId => _model.ApprenticeshipId;
-    public decimal TrainingPrice => _model.TrainingPrice;
+    public decimal? TrainingPrice => _model.TrainingPrice;
     public decimal? AssessmentPrice => _model.AssessmentPrice;
     public decimal TotalPrice => _model.TotalPrice;
     public DateTime EffectiveFromDate => _model.EffectiveFromDate;
@@ -18,36 +18,25 @@ public class PriceHistory
     public string? EmployerApprovedBy => _model.EmployerApprovedBy;
     public DateTime? EmployerApprovedDate => _model.EmployerApprovedDate;
     public DateTime CreatedDate => _model.CreatedDate;
-    public string? PriceChangeRequestStatus => _model.PriceChangeRequestStatus;
+    public PriceChangeRequestStatus? PriceChangeRequestStatus => _model.PriceChangeRequestStatus;
 
     internal static PriceHistory New(
-        Guid key,
         Guid apprenticeshipKey,
-        long apprenticeshipId,
-        decimal trainingPrice,
+        decimal? trainingPrice,
         decimal? assessmentPrice,
         decimal totalPrice,
         DateTime effectiveFromDate,
-        string? providerApprovedBy,
-        DateTime? providerApprovedDate,
-        string? employerApprovedBy,
-        DateTime? employerApprovedDate,
         DateTime createdDate,
-        string? priceChangeRequestStatus)
+        PriceChangeRequestStatus? priceChangeRequestStatus)
     {
         return new PriceHistory(new PriceHistoryModel
         {
-            Key = key,
+            Key = Guid.NewGuid(),
             ApprenticeshipKey = apprenticeshipKey,
-            ApprenticeshipId = apprenticeshipId,
             TrainingPrice = trainingPrice,
             AssessmentPrice = assessmentPrice,
             TotalPrice = totalPrice,
             EffectiveFromDate = effectiveFromDate,
-            ProviderApprovedBy = providerApprovedBy,
-            ProviderApprovedDate = providerApprovedDate,
-            EmployerApprovedBy = employerApprovedBy,
-            EmployerApprovedDate = employerApprovedDate,
             CreatedDate = createdDate,
             PriceChangeRequestStatus = priceChangeRequestStatus
         });

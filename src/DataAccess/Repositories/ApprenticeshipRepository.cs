@@ -40,5 +40,18 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
             var domainObject = _apprenticeshipFactory.GetExisting(domainModel);
             return domainObject;
         }
+
+        public async Task Update(Apprenticeship apprenticeship)
+        {
+            //todo mapping using the tracked entity
+            var apprenticeshipDataModel = apprenticeship.GetModel().Map();
+            DbContext.Update(apprenticeshipDataModel);
+            await DbContext.SaveChangesAsync();
+            
+            foreach (dynamic domainEvent in apprenticeship.FlushEvents())
+            {
+                await _domainEventDispatcher.Send(domainEvent);
+            }
+        }
     }
 }

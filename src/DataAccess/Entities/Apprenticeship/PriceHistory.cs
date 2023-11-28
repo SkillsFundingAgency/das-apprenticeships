@@ -8,7 +8,7 @@ public class PriceHistory
     public Guid Key { get; set; }
     public Guid ApprenticeshipKey { get; set; }
     public long ApprenticeshipId { get; set; }
-    public decimal TrainingPrice { get; set; }
+    public decimal? TrainingPrice { get; set; }
     public decimal? AssessmentPrice { get; set; }
     public decimal TotalPrice { get; set; }
     public DateTime EffectiveFromDate { get; set; }
