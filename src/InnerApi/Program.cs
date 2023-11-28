@@ -28,6 +28,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi
                 options.PreFixConfigurationKeys = false;
             });
 
+            builder.Services.AddApplicationInsightsTelemetry();
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(opt =>
