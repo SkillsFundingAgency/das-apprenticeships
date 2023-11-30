@@ -1,5 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.DataAccess.Repositories;
-using SFA.DAS.Apprenticeships.Domain.Factories;
+﻿using SFA.DAS.Apprenticeships.Domain.Factories;
+using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 

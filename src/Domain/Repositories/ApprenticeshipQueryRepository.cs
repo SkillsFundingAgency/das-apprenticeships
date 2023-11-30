@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
+namespace SFA.DAS.Apprenticeships.Domain.Repositories
 {
     public interface IApprenticeshipQueryRepository
     {

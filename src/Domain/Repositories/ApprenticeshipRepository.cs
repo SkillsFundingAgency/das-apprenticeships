@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.DataAccess;
 
-namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
+namespace SFA.DAS.Apprenticeships.Domain.Repositories
 {
     public interface IApprenticeshipRepository
     {
-        Task Add(Apprenticeship apprenticeship);
-        Task<Apprenticeship> Get(Guid key);
-        Task Update(Apprenticeship apprenticeship);
+        Task Add(DataAccess.Entities.Apprenticeship.Apprenticeship apprenticeship);
+        Task<DataAccess.Entities.Apprenticeship.Apprenticeship> Get(Guid key);
+        Task Update(DataAccess.Entities.Apprenticeship.Apprenticeship apprenticeship);
     }
     
     public class ApprenticeshipRepository : IApprenticeshipRepository
@@ -20,13 +20,13 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
             _lazyContext = dbContext;
         }
 
-        public async Task Add(Entities.Apprenticeship.Apprenticeship apprenticeship)
+        public async Task Add(DataAccess.Entities.Apprenticeship.Apprenticeship apprenticeship)
         {
             await DbContext.AddAsync(apprenticeship);
             await DbContext.SaveChangesAsync();
         }
 
-        public async Task<Apprenticeship> Get(Guid key)
+        public async Task<DataAccess.Entities.Apprenticeship.Apprenticeship> Get(Guid key)
         {
             return await DbContext.Apprenticeships
                 .Include(x => x.Approvals)
@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
                 .SingleAsync(x => x.Key == key);
         }
 
-        public async Task Update(Apprenticeship apprenticeship)
+        public async Task Update(DataAccess.Entities.Apprenticeship.Apprenticeship apprenticeship)
         {
             DbContext.Update(apprenticeship);
             await DbContext.SaveChangesAsync();

@@ -1,5 +1,5 @@
 ﻿using NServiceBus;
-using SFA.DAS.Apprenticeships.DataAccess.Repositories;
+using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
