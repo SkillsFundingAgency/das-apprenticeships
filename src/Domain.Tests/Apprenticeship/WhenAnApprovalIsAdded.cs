@@ -3,7 +3,7 @@ using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
@@ -25,12 +25,12 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         [Test]
         public void ThenTheApprovalIsAdded()
         {
-            var expectedModel = _fixture.Create<ApprovalModel>();
-            _apprenticeship.AddApproval(expectedModel.ApprovalsApprenticeshipId, expectedModel.UKPRN, expectedModel.EmployerAccountId, expectedModel.LegalEntityName, expectedModel.ActualStartDate, expectedModel.PlannedEndDate, expectedModel.AgreedPrice, expectedModel.FundingEmployerAccountId, expectedModel.FundingType, expectedModel.FundingBandMaximum, expectedModel.PlannedStartDate, expectedModel.FundingPlatform);
+            var expectedModel = _fixture.Create<ApprovalDomainModel>();
+            _apprenticeship.AddApproval(expectedModel.ApprovalsApprenticeshipId, expectedModel.Ukprn, expectedModel.EmployerAccountId, expectedModel.LegalEntityName, expectedModel.ActualStartDate, expectedModel.PlannedEndDate, expectedModel.AgreedPrice, expectedModel.FundingEmployerAccountId, expectedModel.FundingType, expectedModel.FundingBandMaximum, expectedModel.PlannedStartDate, expectedModel.FundingPlatform);
 
             var approval = _apprenticeship.GetEntity().Approvals.Single();
 
-            approval.Should().BeEquivalentTo(expectedModel, opts => opts.Excluding(x => x.Id));
+            approval.Should().BeEquivalentTo(expectedModel);
         }
     }
 }

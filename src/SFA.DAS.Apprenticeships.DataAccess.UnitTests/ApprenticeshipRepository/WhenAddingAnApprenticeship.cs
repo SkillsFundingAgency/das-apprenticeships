@@ -10,7 +10,6 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
@@ -68,10 +67,10 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         {
             // Arrange
             var testApprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            var expectedApproval = _fixture.Create<ApprovalModel>();
+            var expectedApproval = _fixture.Create<ApprovalDomainModel>();
 
             // Act
-            testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.UKPRN, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType, expectedApproval.FundingBandMaximum, expectedApproval.PlannedStartDate, expectedApproval.FundingPlatform);
+            testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.Ukprn, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType, expectedApproval.FundingBandMaximum, expectedApproval.PlannedStartDate, expectedApproval.FundingPlatform);
             await _sut.Add(testApprenticeship);
             
             // Assert
@@ -79,7 +78,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
 
             var storedApproval = _dbContext.Approvals.Single();
             
-            storedApproval.Should().BeEquivalentTo(expectedApproval, opts => opts.Excluding(x => x.Id));
+            storedApproval.Should().BeEquivalentTo(expectedApproval);
         }
 
         [Test]

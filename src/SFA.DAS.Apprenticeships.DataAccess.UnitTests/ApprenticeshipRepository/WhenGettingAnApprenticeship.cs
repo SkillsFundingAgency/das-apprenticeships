@@ -8,9 +8,9 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
@@ -51,7 +51,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
             // Arrange
             var expectedApprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
-            _apprenticeshipFactory.Setup(x => x.GetExisting(It.Is<ApprenticeshipModel>(y =>
+            _apprenticeshipFactory.Setup(x => x.GetExisting(It.Is<Apprenticeship>(y =>
                     y.Key == expectedApprenticeship.Key &&
                     y.TrainingCode == expectedApprenticeship.TrainingCode &&
                     y.Uln == expectedApprenticeship.Uln
