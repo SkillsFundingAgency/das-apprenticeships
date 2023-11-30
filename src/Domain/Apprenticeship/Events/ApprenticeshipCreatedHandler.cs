@@ -32,12 +32,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 EmployerAccountId = approval.EmployerAccountId,
                 LegalEntityName = approval.LegalEntityName,
                 PlannedEndDate = approval.PlannedEndDate,
-                UKPRN = approval.UKPRN,
+                UKPRN = approval.Ukprn,
                 FundingBandMaximum = approval.FundingBandMaximum,
                 DateOfBirth = apprenticeship.DateOfBirth,
                 FirstName = apprenticeship.FirstName, 
                 LastName = apprenticeship.LastName,
-                AgeAtStartOfApprenticeship = apprenticeship.,
+                AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
                 PlannedStartDate = approval.PlannedStartDate,
                 FundingPlatform = (FundingPlatform?)approval.FundingPlatform
             };

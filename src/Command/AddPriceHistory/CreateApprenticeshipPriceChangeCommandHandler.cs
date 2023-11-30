@@ -13,19 +13,16 @@ namespace SFA.DAS.Apprenticeships.Command.AddPriceHistory
     public class CreateApprenticeshipPriceChangeCommandHandler : ICommandHandler<CreateApprenticeshipPriceChangeRequest>
     {
         private readonly IApprenticeshipRepository _apprenticeshipRepository;
-        private readonly IApprenticeshipFactory _apprenticeshipFactory;
 
-        public CreateApprenticeshipPriceChangeCommandHandler(IApprenticeshipRepository apprenticeshipRepository, IApprenticeshipFactory apprenticeshipFactory)
+        public CreateApprenticeshipPriceChangeCommandHandler(IApprenticeshipRepository apprenticeshipRepository)
         {
             _apprenticeshipRepository = apprenticeshipRepository;
-            _apprenticeshipFactory = apprenticeshipFactory;
         }
 
         public async Task Handle(CreateApprenticeshipPriceChangeRequest command,
             CancellationToken cancellationToken = default)
         {
             var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
-            var model = new ApprenticeshipDomainModel.Get(apprenticeship);
             apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created);
             await _apprenticeshipRepository.Update(apprenticeship);
         }

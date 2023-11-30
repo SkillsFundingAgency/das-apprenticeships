@@ -13,7 +13,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public DateTime? ActualStartDate => _entity.ActualStartDate;
         public DateTime PlannedEndDate => _entity.PlannedEndDate;
         public decimal AgreedPrice => _entity.AgreedPrice;
-        public long? FunctionEmployerAccountId => _entity.FundingEmployerAccountId;
+        public long? FundingEmployerAccountId => _entity.FundingEmployerAccountId;
         public FundingType FundingType => _entity.FundingType;
         public int FundingBandMaximum => _entity.FundingBandMaximum;
         public DateTime? PlannedStartDate => _entity.PlannedStartDate;

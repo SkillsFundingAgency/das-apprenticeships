@@ -44,7 +44,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                 fundingBandMaximum.Value,
                 (!command.PlannedStartDate.HasValue) || (command.PlannedStartDate.GetValueOrDefault().Year == 1) ? null : command.PlannedStartDate.Value,
                 command.FundingPlatform);
-            await _apprenticeshipRepository.Add(apprenticeship.GetEntity());
+            await _apprenticeshipRepository.Add(apprenticeship);
         }
     }
 }
