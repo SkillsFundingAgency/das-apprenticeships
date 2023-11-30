@@ -3,13 +3,6 @@ using SFA.DAS.Apprenticeships.DataAccess;
 
 namespace SFA.DAS.Apprenticeships.Domain.Repositories
 {
-    public interface IApprenticeshipRepository
-    {
-        Task Add(DataAccess.Entities.Apprenticeship.Apprenticeship apprenticeship);
-        Task<DataAccess.Entities.Apprenticeship.Apprenticeship> Get(Guid key);
-        Task Update(DataAccess.Entities.Apprenticeship.Apprenticeship apprenticeship);
-    }
-    
     public class ApprenticeshipRepository : IApprenticeshipRepository
     {
         private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
