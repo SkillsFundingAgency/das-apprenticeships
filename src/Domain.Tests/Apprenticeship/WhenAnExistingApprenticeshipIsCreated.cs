@@ -24,7 +24,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         {
             var expectedModel = _fixture.Create<ApprenticeshipModel>();
             var apprenticeship = _apprenticeshipFactory.GetExisting(expectedModel);
-            apprenticeship.GetModel().Should().BeSameAs(expectedModel);
+            apprenticeship.GetEntity().Should().BeSameAs(expectedModel);
         }
     }
 }

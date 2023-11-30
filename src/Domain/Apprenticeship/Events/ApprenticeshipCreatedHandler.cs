@@ -1,5 +1,5 @@
 ﻿using NServiceBus;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.DataAccess.Repositories;
 using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
@@ -24,7 +24,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 ApprenticeshipKey = apprenticeship.Key, 
                 Uln = apprenticeship.Uln,
                 TrainingCode = apprenticeship.TrainingCode,
-                FundingEmployerAccountId = approval.FunctionEmployerAccountId,
+                FundingEmployerAccountId = approval.FundingEmployerAccountId,
                 AgreedPrice = approval.AgreedPrice,
                 FundingType = (FundingType)approval.FundingType,
                 ActualStartDate = approval.ActualStartDate,
@@ -32,12 +32,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 EmployerAccountId = approval.EmployerAccountId,
                 LegalEntityName = approval.LegalEntityName,
                 PlannedEndDate = approval.PlannedEndDate,
-                UKPRN = approval.Ukprn,
+                UKPRN = approval.UKPRN,
                 FundingBandMaximum = approval.FundingBandMaximum,
                 DateOfBirth = apprenticeship.DateOfBirth,
                 FirstName = apprenticeship.FirstName, 
                 LastName = apprenticeship.LastName,
-                AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
+                AgeAtStartOfApprenticeship = apprenticeship.,
                 PlannedStartDate = approval.PlannedStartDate,
                 FundingPlatform = (FundingPlatform?)approval.FundingPlatform
             };

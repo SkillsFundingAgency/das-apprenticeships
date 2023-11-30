@@ -1,10 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
 {
+    public interface IApprenticeshipQueryRepository
+    {
+        Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform);
+        Task<DataTransferObjects.ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey);
+        Task<IEnumerable<DataTransferObjects.ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey);
+        Task<Guid?> GetKey(string apprenticeshipHashedId);
+    }
     public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
     {
         private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
@@ -19,9 +25,9 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
         {
             var dataModels = await DbContext.Apprenticeships
                 .Include(x => x.Approvals)
-                .Where(x => x.Approvals.Any(x => x.UKPRN == ukprn && (fundingPlatform == null || x.FundingPlatform == fundingPlatform)))
+                .Where(a => a.Approvals.Any(c => c.UKPRN == ukprn && (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
                 .ToListAsync();
-
+        
             var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
             return result;
         }

@@ -49,7 +49,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_apprenticeship_is_added_to_the_data_store()
         {
             // Arrange
-            var testApprenticeship = _fixture.Create<Apprenticeship>();
+            var testApprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             
             // Act
             await _sut.Add(testApprenticeship);
@@ -57,8 +57,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
             // Assert
             _dbContext.Apprenticeships.Count().Should().Be(1);
 
-            var storedApprenticeship = _dbContext.Apprenticeships.Single();
-            var expectedModel = testApprenticeship.GetModel();
+            var storedApprenticeship = _dbContext.Apprenticeships.Include(x => x.Approvals).Include(x => x.PriceHistories).Single();
+            var expectedModel = testApprenticeship.GetEntity();
 
             expectedModel.Should().BeEquivalentTo(storedApprenticeship);
         }
@@ -67,7 +67,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_approval_is_added_to_the_data_store()
         {
             // Arrange
-            var testApprenticeship = _fixture.Create<Apprenticeship>();
+            var testApprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             var expectedApproval = _fixture.Create<ApprovalModel>();
 
             // Act
@@ -86,7 +86,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_domain_events_are_published()
         {
             // Arrange
-            var testApprenticeship = _fixture.Create<Apprenticeship>();
+            var testApprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             
             // Act
             await _sut.Add(testApprenticeship);

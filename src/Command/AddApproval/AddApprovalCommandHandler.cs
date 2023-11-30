@@ -1,5 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Factories;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Apprenticeships.DataAccess.Repositories;
+using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
@@ -44,7 +44,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                 fundingBandMaximum.Value,
                 (!command.PlannedStartDate.HasValue) || (command.PlannedStartDate.GetValueOrDefault().Year == 1) ? null : command.PlannedStartDate.Value,
                 command.FundingPlatform);
-            await _apprenticeshipRepository.Add(apprenticeship);
+            await _apprenticeshipRepository.Add(apprenticeship.GetEntity());
         }
     }
 }

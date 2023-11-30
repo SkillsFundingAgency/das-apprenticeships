@@ -11,7 +11,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 [TestFixture]
 public class WhenAPriceChangeIsCreated
 {
-    private Domain.Apprenticeship.Apprenticeship _apprenticeship;
+    private Domain.Apprenticeship.ApprenticeshipDomainModel _apprenticeship;
     private Fixture _fixture;
 
     [SetUp]
@@ -34,7 +34,7 @@ public class WhenAPriceChangeIsCreated
             expectedModel.CreatedDate,
             expectedModel.PriceChangeRequestStatus);
 
-        var priceHistory = _apprenticeship.GetModel().PriceHistories.Single(x => x.EffectiveFromDate == expectedModel.EffectiveFromDate);
+        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.EffectiveFromDate == expectedModel.EffectiveFromDate);
 
         priceHistory.Should()
             .BeEquivalentTo(expectedModel,

@@ -43,7 +43,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
-            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName, command.TrainingPrice, command.EndPointAssessmentPrice, command.AgreedPrice, command.ApprenticeshipHashedId, (int)Math.Ceiling(command.AgreedPrice))).Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
@@ -51,7 +51,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
 
             await _commandHandler.Handle(command);
 
-            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.Count == 1)));
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().Approvals.Count == 1)));
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
-            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             var fundingBandMaximum = _fixture.Create<int>();
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
@@ -70,7 +70,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
 
             await _commandHandler.Handle(command);
 
-            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.Single().FundingBandMaximum == fundingBandMaximum)));
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().Approvals.Single().FundingBandMaximum == fundingBandMaximum)));
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
-            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int?)null);
@@ -96,7 +96,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
-            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             command.PlannedStartDate = new DateTime();
 
             _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName, command.TrainingPrice, command.EndPointAssessmentPrice, command.AgreedPrice, command.ApprenticeshipHashedId, (int)Math.Ceiling(command.AgreedPrice))).Returns(apprenticeship);
@@ -105,7 +105,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
 
             await _commandHandler.Handle(command);
 
-            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.Single().PlannedStartDate == null)));
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().Approvals.Single().PlannedStartDate == null)));
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
-            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName, command.TrainingPrice, command.EndPointAssessmentPrice, command.AgreedPrice, command.ApprenticeshipHashedId, (int)Math.Ceiling(command.AgreedPrice))).Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
@@ -122,7 +122,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
 
             await _commandHandler.Handle(command);
 
-            _apprenticeshipRepository.Verify(x => x.Add(It.Is<Apprenticeship>(y => y.GetModel().Approvals.Single().PlannedStartDate == command.PlannedStartDate)));
+            _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().Approvals.Single().PlannedStartDate == command.PlannedStartDate)));
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
-            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             var fundingBandMaximum = _fixture.Create<int>();
             command.FundingPlatform = FundingPlatform.DAS;
 
@@ -151,7 +151,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
-            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             var fundingBandMaximum = _fixture.Create<int>();
             command.FundingPlatform = FundingPlatform.SLD;
 

@@ -10,7 +10,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
     [TestFixture]
     public class WhenCalculatingAgeAtStartOfApprenticeship
     {
-        private Domain.Apprenticeship.Apprenticeship _apprenticeship;
+        private Domain.Apprenticeship.ApprenticeshipDomainModel _apprenticeship;
         private Fixture _fixture;
 
         [SetUp]

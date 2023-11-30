@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataAccess\SFA.DAS.Apprenticeships.DataAccess.csproj" />
     <ProjectReference Include="..\SFA.DAS.Apprenticeships.DataTransferObjects\SFA.DAS.Apprenticeships.DataTransferObjects.csproj" />
     <ProjectReference Include="..\SFA.DAS.Apprenticeships.Enums\SFA.DAS.Apprenticeships.Enums.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Apprenticeships.Types.csproj" />

@@ -17,5 +17,6 @@
         public decimal TotalPrice { get; set; }
         public int? FundingBandMaximum { get; set; }
         public List<Approval> Approvals { get; set; }
+        public List<PriceHistory> PriceHistories { get; set; }
     }
 }

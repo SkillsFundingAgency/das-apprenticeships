@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+﻿using SFA.DAS.Apprenticeships.Enums;
+
+namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 
 [Table("dbo.PriceHistory")]
 [System.ComponentModel.DataAnnotations.Schema.Table("PriceHistory")]
@@ -17,5 +19,5 @@ public class PriceHistory
     public string? EmployerApprovedBy { get; set; }
     public DateTime? EmployerApprovedDate { get; set; }
     public DateTime CreatedDate { get; set; }
-    public string? PriceChangeRequestStatus { get; set; }
+    public PriceChangeRequestStatus? PriceChangeRequestStatus { get; set; }
 }
