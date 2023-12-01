@@ -6,12 +6,11 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
+namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
 {
     [TestFixture]
     public class WhenAPriceHistoryIsAdded
@@ -40,7 +39,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             
             await _commandHandler.Handle(command);
             
-            _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().PriceHistories.Count == 1)));
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().PriceHistories.Count == 1)));
         }
 
         [Test]
@@ -53,7 +52,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             
             await _commandHandler.Handle(command);
             
-            _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => 
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => 
                 y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
                 y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
                 y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
