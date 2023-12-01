@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
@@ -48,7 +50,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_apprenticeship_is_added_to_the_data_store()
         {
             // Arrange
-            var testApprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Apprenticeship>());
             
             // Act
             await _sut.Add(testApprenticeship);
@@ -66,8 +68,10 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_approval_is_added_to_the_data_store()
         {
             // Arrange
-            var testApprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            var expectedApproval = _fixture.Create<ApprovalDomainModel>();
+            var apprenticeshipEntity = _fixture.Create<Apprenticeship>();
+            apprenticeshipEntity.Approvals = new List<Approval>();
+            var testApprenticeship = ApprenticeshipDomainModel.Get(apprenticeshipEntity);
+            var expectedApproval = ApprovalDomainModel.Get(_fixture.Create<Approval>());
 
             // Act
             testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.Ukprn, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType, expectedApproval.FundingBandMaximum, expectedApproval.PlannedStartDate, expectedApproval.FundingPlatform);
@@ -78,14 +82,15 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
 
             var storedApproval = _dbContext.Approvals.Single();
             
-            storedApproval.Should().BeEquivalentTo(expectedApproval);
+            storedApproval.Should().BeEquivalentTo(expectedApproval, options => options
+                .WithMapping<Approval>(x => x.Ukprn, y => y.UKPRN));
         }
 
         [Test]
         public async Task Then_the_domain_events_are_published()
         {
             // Arrange
-            var testApprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Apprenticeship>());
             
             // Act
             await _sut.Add(testApprenticeship);
