@@ -3,6 +3,7 @@ using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 
@@ -25,7 +26,7 @@ public class WhenAPriceChangeIsCreated
     [Test]
     public void ThenThePriceHistoryRecordIsAdded()
     {
-        var expectedModel = _fixture.Create<PriceHistoryDomainModel>();
+        var expectedModel = PriceHistoryDomainModel.Get(_fixture.Create<PriceHistory>());
         _apprenticeship.AddPriceHistory(
             expectedModel.TrainingPrice,
             expectedModel.AssessmentPrice,
