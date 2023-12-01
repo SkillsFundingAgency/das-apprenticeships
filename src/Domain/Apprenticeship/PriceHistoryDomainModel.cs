@@ -47,7 +47,7 @@ public class PriceHistoryDomainModel
         _entity = entity;
     }
 
-    public DataAccess.Entities.Apprenticeship.PriceHistory GetModel()
+    public DataAccess.Entities.Apprenticeship.PriceHistory GetEntity()
     {
         return _entity;
     }
