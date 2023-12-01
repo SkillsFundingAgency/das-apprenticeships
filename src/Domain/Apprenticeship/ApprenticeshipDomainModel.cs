@@ -40,7 +40,20 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         internal static ApprenticeshipDomainModel New(string uln, string trainingCode, DateTime dateOfBirth, string firstName, string lastName, decimal? trainingPrice, decimal? endpointAssessmentPrice, decimal totalPrice, string apprenticeshipHashedId, int fundingBandMaximum)
         {
-            return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship());
+            return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
+            {
+                Key = Guid.NewGuid(),
+                Uln = uln,
+                TrainingCode = trainingCode,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dateOfBirth,
+                ApprenticeshipHashedId = apprenticeshipHashedId,
+                TrainingPrice = trainingPrice,
+                EndPointAssessmentPrice = endpointAssessmentPrice,
+                TotalPrice = totalPrice,
+                FundingBandMaximum = fundingBandMaximum
+            });
         }
 
         internal static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
