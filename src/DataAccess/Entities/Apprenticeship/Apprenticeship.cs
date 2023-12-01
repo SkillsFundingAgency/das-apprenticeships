@@ -4,14 +4,20 @@
     [System.ComponentModel.DataAnnotations.Schema.Table("Apprenticeship")]
     public class Apprenticeship
     {
+        public Apprenticeship()
+        {
+            Approvals = new List<Approval>();
+            PriceHistories = new List<PriceHistory>();
+        }
+        
         [Key]
         public Guid Key { get; set; }
-        public string Uln { get; set; }
-        public string TrainingCode { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string Uln { get; set; } = null!;
+        public string TrainingCode { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
         public DateTime DateOfBirth { get; set; }
-        public string ApprenticeshipHashedId { get; set; }
+        public string ApprenticeshipHashedId { get; set; } = null!;
         public decimal? TrainingPrice { get; set; }
         public decimal? EndPointAssessmentPrice { get; set; }
         public decimal TotalPrice { get; set; }
