@@ -49,7 +49,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_apprenticeship_is_retrieved()
         {
             // Arrange
-            var expectedApprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Apprenticeship>());
 
             _apprenticeshipFactory.Setup(x => x.GetExisting(It.Is<Apprenticeship>(y =>
                     y.Key == expectedApprenticeship.Key &&
