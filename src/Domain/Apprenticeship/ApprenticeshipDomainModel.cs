@@ -98,7 +98,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 priceChangeRequestStatus);
             
             _priceHistories.Add(priceHistory);
-            _entity.PriceHistories.Add(priceHistory.GetModel());
+            _entity.PriceHistories.Add(priceHistory.GetEntity());
         }
     }
 }
