@@ -6,7 +6,7 @@ public class PriceHistoryDomainModel
 {
     private readonly DataAccess.Entities.Apprenticeship.PriceHistory _entity;
 
-    public Guid Key => _entity.ApprenticeshipKey;
+    public Guid Key => _entity.Key;
     public Guid ApprenticeshipKey => _entity.ApprenticeshipKey;
     public long ApprenticeshipId => _entity.ApprenticeshipId;
     public decimal? TrainingPrice => _entity.TrainingPrice;
@@ -31,7 +31,7 @@ public class PriceHistoryDomainModel
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
-            Key = Guid.NewGuid(),
+            //Key = Guid.NewGuid(),
             ApprenticeshipKey = apprenticeshipKey,
             TrainingPrice = trainingPrice,
             AssessmentPrice = assessmentPrice,
