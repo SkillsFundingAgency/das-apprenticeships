@@ -43,14 +43,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         public async Task Update(ApprenticeshipDomainModel apprenticeship)
         {
             DbContext.Update(apprenticeship.GetEntity());
-            foreach (var priceHistory in apprenticeship.PriceHistories)
-            {
-                DbContext.Add(priceHistory.GetEntity());
-            }
-            // foreach (var approval in apprenticeship.Approvals)
-            // {
-            //     DbContext.Update(approval.GetEntity());
-            // }
+
             await DbContext.SaveChangesAsync();
             
             foreach (dynamic domainEvent in apprenticeship.FlushEvents())

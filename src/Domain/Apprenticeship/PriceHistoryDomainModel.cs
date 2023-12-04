@@ -31,7 +31,6 @@ public class PriceHistoryDomainModel
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
-            //Key = Guid.NewGuid(),
             ApprenticeshipKey = apprenticeshipKey,
             TrainingPrice = trainingPrice,
             AssessmentPrice = assessmentPrice,
