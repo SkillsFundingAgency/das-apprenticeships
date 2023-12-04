@@ -76,8 +76,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         public async Task<IActionResult> GetApprenticeshipPrice(Guid apprenticeshipKey)
         {
             var request = new GetApprenticeshipPriceRequest{ ApprenticeshipKey = apprenticeshipKey };
-            var response = await _queryDispatcher.Send<GetApprenticeshipPriceRequest, GetApprenticeshipPriceResponse>(request);
-            if (response.TotalPrice == null) return NotFound();
+            var response = await _queryDispatcher.Send<GetApprenticeshipPriceRequest, GetApprenticeshipPriceResponse?>(request);
+            if (response == null) return NotFound();
             return Ok(response);
         }
 

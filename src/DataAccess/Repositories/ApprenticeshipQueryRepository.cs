@@ -35,7 +35,9 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
                 TotalPrice = apprenticeship.TotalPrice,
                 AssessmentPrice = apprenticeship.EndPointAssessmentPrice,
                 TrainingPrice = apprenticeship.TrainingPrice,
-                FundingBandMaximum = apprenticeship.FundingBandMaximum
+                FundingBandMaximum = apprenticeship.FundingBandMaximum,
+                ApprenticeshipActualStartDate = apprenticeship.ActualStartDate,
+                ApprenticeshipPlannedEndDate = apprenticeship.PlannedEndDate
             };
         }
 
