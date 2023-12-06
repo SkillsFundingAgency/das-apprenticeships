@@ -39,4 +39,18 @@ public class WhenGetApprenticeshipPrice
         var okResult = (OkObjectResult)result;
         okResult.Value.Should().Be(expectedResult);
     }
+    
+    [Test]
+    public async Task ThenNotFoundIsReturnedWhenNoRecordExists()
+    {
+        var apprenticeshipKey = _fixture.Create<Guid>(); ;
+
+        _queryDispatcher
+            .Setup(x => x.Send<GetApprenticeshipPriceRequest, GetApprenticeshipPriceResponse>(It.Is<GetApprenticeshipPriceRequest>(r => r.ApprenticeshipKey == apprenticeshipKey)))
+            .ReturnsAsync((GetApprenticeshipPriceResponse)null!);
+
+        var result = await _sut.GetApprenticeshipPrice(apprenticeshipKey);
+
+        result.Should().BeOfType<NotFoundResult>();
+    }
 }
