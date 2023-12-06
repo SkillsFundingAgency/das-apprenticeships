@@ -38,7 +38,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             }
         }
 
-        internal static ApprenticeshipDomainModel New(string uln, string trainingCode, DateTime dateOfBirth, string firstName, string lastName, decimal? trainingPrice, decimal? endpointAssessmentPrice, decimal totalPrice, string apprenticeshipHashedId, int fundingBandMaximum)
+        internal static ApprenticeshipDomainModel New(string uln, string trainingCode, DateTime dateOfBirth, string firstName, string lastName, decimal? trainingPrice, decimal? endpointAssessmentPrice, decimal totalPrice, string apprenticeshipHashedId, int fundingBandMaximum, DateTime? actualStartDate, DateTime? plannedEndDate)
         {
             return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
             {
@@ -52,7 +52,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 TrainingPrice = trainingPrice,
                 EndPointAssessmentPrice = endpointAssessmentPrice,
                 TotalPrice = totalPrice,
-                FundingBandMaximum = fundingBandMaximum
+                FundingBandMaximum = fundingBandMaximum,
+                ActualStartDate = actualStartDate,
+                PlannedEndDate = plannedEndDate
             });
         }
 
