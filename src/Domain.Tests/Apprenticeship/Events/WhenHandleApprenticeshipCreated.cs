@@ -60,7 +60,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.ApprenticeshipKey == apprenticeship.Key &&
                     e.Uln == apprenticeship.Uln &&
                     e.TrainingCode == apprenticeship.TrainingCode &&
-                    e.FundingEmployerAccountId == approval.FunctionEmployerAccountId &&
+                    e.FundingEmployerAccountId == approval.FundingEmployerAccountId &&
                     e.AgreedPrice == approval.AgreedPrice &&
                     e.FundingType == (FundingType)approval.FundingType &&
                     e.ActualStartDate == approval.ActualStartDate &&

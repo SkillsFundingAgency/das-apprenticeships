@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,10 +8,10 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Models;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
@@ -18,7 +19,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
 {
     public class WhenAddingAnApprenticeship
     {
-        private Repositories.ApprenticeshipRepository _sut;
+        private Domain.Repositories.ApprenticeshipRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
         private Mock<IDomainEventDispatcher> _domainEventDispatcher;
@@ -36,7 +37,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
             _domainEventDispatcher = new Mock<IDomainEventDispatcher>();
             _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
 
-            _sut = new Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), _domainEventDispatcher.Object, _apprenticeshipFactory.Object);
+            _sut = new Domain.Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), _domainEventDispatcher.Object, _apprenticeshipFactory.Object);
         }
 
         [TearDown]
@@ -49,7 +50,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_apprenticeship_is_added_to_the_data_store()
         {
             // Arrange
-            var testApprenticeship = _fixture.Create<Apprenticeship>();
+            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Apprenticeship>());
             
             // Act
             await _sut.Add(testApprenticeship);
@@ -57,8 +58,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
             // Assert
             _dbContext.Apprenticeships.Count().Should().Be(1);
 
-            var storedApprenticeship = _dbContext.Apprenticeships.Single();
-            var expectedModel = testApprenticeship.GetModel();
+            var storedApprenticeship = _dbContext.Apprenticeships.Include(x => x.Approvals).Include(x => x.PriceHistories).Single();
+            var expectedModel = testApprenticeship.GetEntity();
 
             expectedModel.Should().BeEquivalentTo(storedApprenticeship);
         }
@@ -67,11 +68,13 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_approval_is_added_to_the_data_store()
         {
             // Arrange
-            var testApprenticeship = _fixture.Create<Apprenticeship>();
-            var expectedApproval = _fixture.Create<ApprovalModel>();
+            var apprenticeshipEntity = _fixture.Create<Apprenticeship>();
+            apprenticeshipEntity.Approvals = new List<Approval>();
+            var testApprenticeship = ApprenticeshipDomainModel.Get(apprenticeshipEntity);
+            var expectedApproval = ApprovalDomainModel.Get(_fixture.Create<Approval>());
 
             // Act
-            testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.UKPRN, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType, expectedApproval.FundingBandMaximum, expectedApproval.PlannedStartDate, expectedApproval.FundingPlatform);
+            testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.Ukprn, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType, expectedApproval.FundingBandMaximum, expectedApproval.PlannedStartDate, expectedApproval.FundingPlatform);
             await _sut.Add(testApprenticeship);
             
             // Assert
@@ -79,14 +82,15 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
 
             var storedApproval = _dbContext.Approvals.Single();
             
-            storedApproval.Should().BeEquivalentTo(expectedApproval, opts => opts.Excluding(x => x.Id));
+            storedApproval.Should().BeEquivalentTo(expectedApproval, options => options
+                .WithMapping<Approval>(x => x.Ukprn, y => y.UKPRN));
         }
 
         [Test]
         public async Task Then_the_domain_events_are_published()
         {
             // Arrange
-            var testApprenticeship = _fixture.Create<Apprenticeship>();
+            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Apprenticeship>());
             
             // Act
             await _sut.Add(testApprenticeship);

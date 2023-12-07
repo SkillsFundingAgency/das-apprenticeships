@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.10.4" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
+    <PackageReference Include="NServiceBus" Version="7.8.4" />
     <PackageReference Include="SFA.DAS.Approvals.EventHandlers.Messages" Version="1.1.6-prerelease-3" />
     <PackageReference Include="SFA.DAS.NServiceBus.AzureFunction" Version="17.0.49" />
 	<PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />

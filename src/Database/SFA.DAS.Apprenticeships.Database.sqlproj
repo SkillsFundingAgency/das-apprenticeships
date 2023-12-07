@@ -66,4 +66,7 @@
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.Apprenticeships.Database.refactorlog" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="SFA.DAS.Apprenticeships.Database.publish.xml" />
+  </ItemGroup>
 </Project>

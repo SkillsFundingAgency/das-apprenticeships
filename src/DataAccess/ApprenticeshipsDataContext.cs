@@ -29,6 +29,11 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                     v => (FundingType)Enum.Parse(typeof(FundingType), v));
             modelBuilder.Entity<PriceHistory>()
                 .HasKey(x => x.Key);
+            modelBuilder.Entity<PriceHistory>()
+                .Property(x => x.PriceChangeRequestStatus)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (PriceChangeRequestStatus)Enum.Parse(typeof(PriceChangeRequestStatus), v));
 
             base.OnModelCreating(modelBuilder);
         }

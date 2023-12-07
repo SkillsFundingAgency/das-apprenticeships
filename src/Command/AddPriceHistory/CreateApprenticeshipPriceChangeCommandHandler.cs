@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Command.AddPriceHistory
 {
-    internal class CreateApprenticeshipPriceChangeCommandHandler : ICommandHandler<CreateApprenticeshipPriceChangeRequest>
+    public class CreateApprenticeshipPriceChangeCommandHandler : ICommandHandler<CreateApprenticeshipPriceChangeRequest>
     {
         private readonly IApprenticeshipRepository _apprenticeshipRepository;
 
@@ -16,11 +19,12 @@ namespace SFA.DAS.Apprenticeships.Command.AddPriceHistory
             _apprenticeshipRepository = apprenticeshipRepository;
         }
 
-        public Task Handle(CreateApprenticeshipPriceChangeRequest command,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public async Task Handle(CreateApprenticeshipPriceChangeRequest command,
+            CancellationToken cancellationToken = default)
         {
-            //_apprenticeshipRepository.Get(command.ApprenticeshipId); //todo we need the key!
-            throw new NotImplementedException("todo we need the key!");
+            var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+            apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created);
+            await _apprenticeshipRepository.Update(apprenticeship);
         }
     }
 }

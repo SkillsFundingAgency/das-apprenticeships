@@ -3,6 +3,7 @@ using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
@@ -48,21 +49,14 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <summary>
         /// Create Apprenticeship Price Change Record
         /// </summary>
-        /// <param name="ukprn"></param>
-        /// <param name="employerId"></param>
-        /// <param name="apprenticeshipKey"></param>
-        /// <param name="userId"></param>
-        /// <param name="trainingPrice"></param>
-        /// <param name="assessmentPrice"></param>
-        /// <param name="totalPrice"></param>
-        /// <param name="reason"></param>
+        /// <param name="apprenticeshipKey">The apprenticeship key</param>
+        /// <param name="request">The request object with providerId, employerId, userId, trainingPrice, assessmentPrice, totalPrice, reason, effectiveFromDate</param>
         /// <response code="200">Apprenticeship Price Change Created</response>
-        [HttpPost("apprenticeshipPriceChange")]
+        [HttpPost("{apprenticeshipKey}/priceHistory")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> CreateApprenticeshipPriceChange(long? ukprn, long? employerId, Guid apprenticeshipKey,
-            string userId, decimal? trainingPrice, decimal? assessmentPrice, decimal totalPrice, string reason)
+        public async Task<IActionResult> CreateApprenticeshipPriceChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipPriceChangeRequest request)
         {
-            await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(ukprn, employerId, apprenticeshipKey, userId, trainingPrice, assessmentPrice, totalPrice, reason));
+            await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.ProviderId, request.EmployerId, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
             return Ok();
         }
 

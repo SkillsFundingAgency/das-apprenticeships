@@ -3,7 +3,8 @@
 public class CreateApprenticeshipPriceChangeRequest : ICommand
 {
     public CreateApprenticeshipPriceChangeRequest(long? providerId, long? employerId, Guid apprenticeshipKey,
-        string userId, decimal? trainingPrice, decimal? assessmentPrice, decimal totalPrice, string reason)
+        string userId, decimal? trainingPrice, decimal? assessmentPrice, decimal totalPrice, string reason,
+        DateTime effectiveFromDate)
     {
         ProviderId = providerId;
         EmployerId = employerId;
@@ -13,6 +14,7 @@ public class CreateApprenticeshipPriceChangeRequest : ICommand
         AssessmentPrice = assessmentPrice;
         TotalPrice = totalPrice;
         Reason = reason;
+        EffectiveFromDate = effectiveFromDate;
     }
 
     public long? ProviderId { get; set; }
@@ -23,4 +25,5 @@ public class CreateApprenticeshipPriceChangeRequest : ICommand
     public decimal? AssessmentPrice { get; set; }
     public decimal TotalPrice { get; set; }
     public string Reason { get; set; }
+    public DateTime EffectiveFromDate { get; set; }
 }

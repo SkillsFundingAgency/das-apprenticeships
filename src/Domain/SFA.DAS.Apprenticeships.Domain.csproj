@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.10.4" />
+    <PackageReference Include="NServiceBus" Version="7.8.4" />
     <PackageReference Include="Scrutor" Version="4.1.0" />
     <PackageReference Include="SFA.DAS.NServiceBus" Version="17.0.49" />
 	<PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />
@@ -14,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataAccess\SFA.DAS.Apprenticeships.DataAccess.csproj" />
     <ProjectReference Include="..\SFA.DAS.Apprenticeships.DataTransferObjects\SFA.DAS.Apprenticeships.DataTransferObjects.csproj" />
     <ProjectReference Include="..\SFA.DAS.Apprenticeships.Enums\SFA.DAS.Apprenticeships.Enums.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Apprenticeships.Types.csproj" />
@@ -23,6 +26,18 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.4\ref\net6.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>$(AssemblyName).UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>SFA.DAS.Apprenticeships.DataAccess.UnitTests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>
