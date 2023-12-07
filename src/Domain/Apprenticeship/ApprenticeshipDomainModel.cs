@@ -68,7 +68,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity = entity;
             _approvals = entity.Approvals.Select(ApprovalDomainModel.Get).ToList();
             _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
-            AddEvent(new ApprenticeshipCreated(_entity.Key)); //todo this is wrong
+            AddEvent(new ApprenticeshipCreated(_entity.Key));
         }
 
         public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
