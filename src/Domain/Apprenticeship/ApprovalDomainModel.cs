@@ -35,8 +35,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 UKPRN = ukprn,
                 FundingBandMaximum = fundingBandMaximum,
                 PlannedStartDate = plannedStartDate,
-                FundingPlatform = fundingPlatform,
-                //ApprenticeshipKey = //todo map this?
+                FundingPlatform = fundingPlatform
             });
         }
 
