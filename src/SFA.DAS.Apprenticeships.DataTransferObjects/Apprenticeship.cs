@@ -1,5 +1,8 @@
-﻿namespace SFA.DAS.Apprenticeships.DataTransferObjects
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace SFA.DAS.Apprenticeships.DataTransferObjects
 {
+    [ExcludeFromCodeCoverage]
     public class Apprenticeship
     {
         public string Uln { get; set; }
