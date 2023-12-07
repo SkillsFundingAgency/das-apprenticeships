@@ -23,5 +23,6 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
         public DateTime? PlannedStartDate { get; set; }
         public FundingPlatform? FundingPlatform { get; set; }
         public string ApprenticeshipHashedId { get; set; }
+        public long AccountLegalEntityId { get; set; }
     }
 }

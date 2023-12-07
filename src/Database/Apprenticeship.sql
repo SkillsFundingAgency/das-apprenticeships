@@ -12,5 +12,6 @@
     [TotalPrice] MONEY NULL, 
     [FundingBandMaximum] INT NULL,
     [ActualStartDate] DATETIME NULL,
-    [PlannedEndDate] DATETIME NULL
+    [PlannedEndDate] DATETIME NULL, 
+    [AccountLegalEntityId] BIGINT NULL
 )

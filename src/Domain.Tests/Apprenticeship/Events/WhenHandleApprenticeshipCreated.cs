@@ -46,7 +46,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                 _fixture.Create<string>(),
                 _fixture.Create<int>(),
                 _fixture.Create<DateTime>(),
-                _fixture.Create<DateTime>());
+                _fixture.Create<DateTime>(),
+                _fixture.Create<long>());
             apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
             var approval = apprenticeship.Approvals.Single();
             var command = _fixture.Create<ApprenticeshipCreated>();

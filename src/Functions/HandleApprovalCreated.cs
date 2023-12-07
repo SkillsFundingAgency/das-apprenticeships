@@ -41,8 +41,10 @@ namespace SFA.DAS.Apprenticeships.Functions
                 LastName = @event.LastName,
                 PlannedStartDate = @event.StartDate,
                 ApprenticeshipHashedId = @event.ApprenticeshipHashedId,
-                FundingPlatform = @event.IsOnFlexiPaymentPilot.HasValue ? (@event.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null
+                FundingPlatform = @event.IsOnFlexiPaymentPilot.HasValue ? (@event.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null,
+                AccountLegalEntityId = @event.AccountLegalEntityId
             });
         }
+
     }
 }

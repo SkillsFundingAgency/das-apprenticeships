@@ -19,5 +19,6 @@
         public DateTime? ActualStartDate { get; set; }
         public DateTime? PlannedEndDate { get; set; }
         public List<Approval> Approvals { get; set; }
+        public long? AccountLegalEntityId { get; set; }
     }
 }
