@@ -21,7 +21,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipC
         {
             _fixture = new Fixture();
             _queryDispatcher = new Mock<IQueryDispatcher>();
-            _sut = new ApprenticeshipController(_queryDispatcher.Object, Mock.Of<ICommandDispatcher>());
+            _sut = new ApprenticeshipController(_queryDispatcher.Object);
         }
 
         [TestCase(null)]

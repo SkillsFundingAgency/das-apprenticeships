@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -42,18 +44,34 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
             };
         }
 
-        public async Task<IEnumerable<DataTransferObjects.ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
+        public async Task<IEnumerable<ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
         {
             var dataModels = await DbContext.PriceHistories
                 .Where(x => x.Key == apprenticeshipKey)
+                .Select(PriceHistoryToApprenticeshipPrice())
                 .ToListAsync();
 
-            return dataModels.Select(x => new ApprenticeshipPrice
+            return dataModels;
+        }
+
+        public async Task<ApprenticeshipPrice?> GetPendingPriceChange(Guid apprenticeshipKey)
+        {
+            var pendingPriceChange = await DbContext.PriceHistories
+                .Where(x => x.Key == apprenticeshipKey && x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created)
+                .Select(PriceHistoryToApprenticeshipPrice())
+                .SingleOrDefaultAsync();
+
+            return pendingPriceChange;
+        }
+
+        private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
+        {
+            return x => new ApprenticeshipPrice
             {
                 TrainingPrice = x.TrainingPrice,
                 AssessmentPrice = x.AssessmentPrice,
                 TotalPrice = x.TotalPrice
-            });
+            };
         }
 
         public async Task<Guid?> GetKey(string apprenticeshipHashedId)
