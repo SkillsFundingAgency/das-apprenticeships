@@ -8,7 +8,6 @@ public class PriceHistoryDomainModel
 
     public Guid Key => _entity.Key;
     public Guid ApprenticeshipKey => _entity.ApprenticeshipKey;
-    public long ApprenticeshipId => _entity.ApprenticeshipId;
     public decimal? TrainingPrice => _entity.TrainingPrice;
     public decimal? AssessmentPrice => _entity.AssessmentPrice;
     public decimal TotalPrice => _entity.TotalPrice;

@@ -56,7 +56,6 @@ public class WhenAPriceChangeIsCreated
             .BeEquivalentTo(expectedModel,
                 opts => opts.Excluding(x => x.Key)
                     .Excluding(x => x.ApprenticeshipKey)
-                    .Excluding(x => x.ApprenticeshipId)
                     .Excluding(x => x.ProviderApprovedBy)
                     .Excluding(x => x.ProviderApprovedDate)
                     .Excluding(x => x.EmployerApprovedBy)

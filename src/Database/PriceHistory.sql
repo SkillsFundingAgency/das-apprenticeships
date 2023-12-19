@@ -2,7 +2,6 @@
 (
 	[Key] UNIQUEIDENTIFIER PRIMARY KEY,
     [ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL,
-    [ApprenticeshipId] BIGINT NOT NULL,
     [TrainingPrice] DECIMAL(18, 2) NULL,
     [AssessmentPrice] DECIMAL(18, 2) NULL,
     [TotalPrice] DECIMAL(18, 2) NOT NULL,
