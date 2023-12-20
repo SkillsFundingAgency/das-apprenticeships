@@ -27,7 +27,7 @@ public class WhenGetPendingPriceChange
     {
         //Arrange
         var query = _fixture.Create<GetPendingPriceChangeRequest>();
-        var expectedResult = _fixture.Create<ApprenticeshipPrice>();
+        var expectedResult = _fixture.Create<PendingPriceChange>();
 
         _apprenticeshipQueryRepository
             .Setup(x => x.GetPendingPriceChange(query.ApprenticeshipKey))

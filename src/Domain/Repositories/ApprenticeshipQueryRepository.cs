@@ -54,17 +54,33 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
             return dataModels;
         }
 
-        public async Task<ApprenticeshipPrice?> GetPendingPriceChange(Guid apprenticeshipKey)
+        public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
         {
-            var pendingPriceChange = await DbContext.PriceHistories
-                .Where(x => x.Key == apprenticeshipKey && x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created)
-                .Select(PriceHistoryToApprenticeshipPrice())
+            var pendingPriceChange = await DbContext.Apprenticeships
+	            .Include(x => x.PriceHistories)
+                .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
+                .Select(PriceHistoryToPendingPriceChange())
                 .SingleOrDefaultAsync();
 
             return pendingPriceChange;
         }
 
-        private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
+        private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingPriceChange>> PriceHistoryToPendingPriceChange()
+        {
+	        return x => new PendingPriceChange
+	        {
+		        OriginalTrainingPrice = x.TrainingPrice,
+                OriginalAssessmentPrice = x.EndPointAssessmentPrice,
+                OriginalTotalPrice = x.TotalPrice,
+                PendingTrainingPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).TrainingPrice,
+                PendingAssessmentPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).AssessmentPrice,
+                PendingTotalPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).TotalPrice,
+                EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EffectiveFromDate,
+                //Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).
+			};
+        }
+
+		private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
         {
             return x => new ApprenticeshipPrice
             {

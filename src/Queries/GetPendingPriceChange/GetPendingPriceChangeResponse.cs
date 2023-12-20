@@ -5,6 +5,6 @@ namespace SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange
     public class GetPendingPriceChangeResponse
     {
         public bool HasPendingPriceChange { get; set; }
-        public ApprenticeshipPrice PendingPriceChange { get; set; }
+        public PendingPriceChange PendingPriceChange { get; set; }
     }
 }
