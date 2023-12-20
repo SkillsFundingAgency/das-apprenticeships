@@ -3,6 +3,7 @@ using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 
@@ -70,5 +71,20 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             if (response.ApprenticeshipKey == null) return NotFound();
             return Ok(response.ApprenticeshipKey);
         }
-    }
+
+        /// <summary>
+        /// Get Apprenticeship Key
+        /// </summary>
+        /// <param name="apprenticeshipId">This should be the id for the apprenticeship not the commitment</param>
+        /// <returns>Apprenticeship Key</returns>
+        [HttpGet("{apprenticeshipId}/key2")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> GetApprenticeshipKeyByApprenticeshipId(long apprenticeshipId)
+        {
+	        var request = new GetApprenticeshipKeyByApprenticeshipIdRequest { ApprenticeshipId = apprenticeshipId };
+	        var response = await _queryDispatcher.Send<GetApprenticeshipKeyByApprenticeshipIdRequest, GetApprenticeshipKeyByApprenticeshipIdResponse>(request);
+	        if (response.ApprenticeshipKey == null) return NotFound();
+	        return Ok(response.ApprenticeshipKey);
+        }
+	}
 }

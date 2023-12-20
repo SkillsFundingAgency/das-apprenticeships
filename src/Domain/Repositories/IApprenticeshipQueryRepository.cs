@@ -10,4 +10,5 @@ public interface IApprenticeshipQueryRepository
     Task<IEnumerable<DataTransferObjects.ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey);
     Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey);
     Task<Guid?> GetKey(string apprenticeshipHashedId);
+    Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId);
 }
