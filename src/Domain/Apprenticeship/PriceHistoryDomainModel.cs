@@ -19,14 +19,15 @@ public class PriceHistoryDomainModel
     public DateTime CreatedDate => _entity.CreatedDate;
     public PriceChangeRequestStatus? PriceChangeRequestStatus => _entity.PriceChangeRequestStatus;
 
-    internal static PriceHistoryDomainModel New(
-        Guid apprenticeshipKey,
+    internal static PriceHistoryDomainModel New(Guid apprenticeshipKey,
         decimal? trainingPrice,
         decimal? assessmentPrice,
         decimal totalPrice,
         DateTime effectiveFromDate,
         DateTime createdDate,
-        PriceChangeRequestStatus? priceChangeRequestStatus)
+        PriceChangeRequestStatus? priceChangeRequestStatus,
+        string? providerApprovedBy,
+        DateTime? providerApprovedDate)
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
@@ -36,7 +37,9 @@ public class PriceHistoryDomainModel
             TotalPrice = totalPrice,
             EffectiveFromDate = effectiveFromDate,
             CreatedDate = createdDate,
-            PriceChangeRequestStatus = priceChangeRequestStatus
+            PriceChangeRequestStatus = priceChangeRequestStatus,
+            ProviderApprovedBy = providerApprovedBy,
+            ProviderApprovedDate = providerApprovedDate
         });
     }
 
