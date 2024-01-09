@@ -36,6 +36,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
                 _fixture.Create<int>(), 
                 _fixture.Create<DateTime>(), 
                 _fixture.Create<DateTime>(),
+                _fixture.Create<long>(),
                 _fixture.Create<long>());
             var events = apprenticeship.FlushEvents();
             events.Should().ContainSingle(x => x.GetType() == typeof(ApprenticeshipCreated));

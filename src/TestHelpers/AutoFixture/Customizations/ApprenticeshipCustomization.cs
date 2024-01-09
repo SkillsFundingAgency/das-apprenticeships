@@ -19,6 +19,7 @@ namespace SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations
                 fixture.Create<int>(),
                 fixture.Create<DateTime>(),
                 fixture.Create<DateTime>(),
+                fixture.Create<long>(),
                 fixture.Create<long>()));
         }
     }
