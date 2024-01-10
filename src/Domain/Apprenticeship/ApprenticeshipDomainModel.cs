@@ -120,10 +120,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public void CancelPendingPriceChange()
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
-            if (pendingPriceChange != null)
-            {
-                pendingPriceChange.Cancel();
-            }
+            pendingPriceChange?.Cancel();
+        }
+
+        public void RejectPendingPriceChange(string reason)
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange?.Reject(reason);
         }
     }
 }

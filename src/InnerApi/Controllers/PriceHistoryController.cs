@@ -2,6 +2,7 @@
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
 using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
+using SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
@@ -45,6 +46,15 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
             var request = new CancelPendingPriceChangeRequest(apprenticeshipKey);
             await _commandDispatcher.Send(request);
+
+            return Ok();
+        }
+
+        [HttpPatch("{apprenticeshipKey}/priceHistory/pending/reject")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> RejectPendingPriceChange(Guid apprenticeshipKey, [FromBody]PatchRejectPriceChangeRequest request)
+        {
+            await _commandDispatcher.Send(new RejectPendingPriceChangeRequest(apprenticeshipKey, request.Reason));
 
             return Ok();
         }

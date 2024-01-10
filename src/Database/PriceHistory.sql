@@ -12,7 +12,8 @@
     [EmployerApprovedBy] NVARCHAR(500) NULL,
     [EmployerApprovedDate] DATETIME NULL,
     [CreatedDate] DATETIME NOT NULL,
-    [PriceChangeRequestStatus] NVARCHAR(50) NULL
+    [PriceChangeRequestStatus] NVARCHAR(50) NULL,
+    [RejectReason] NVARCHAR(MAX) NULL
 )
 GO
 ALTER TABLE [dbo].[PriceHistory]

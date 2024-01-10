@@ -20,4 +20,5 @@ public class PriceHistory
     public DateTime? EmployerApprovedDate { get; set; }
     public DateTime CreatedDate { get; set; }
     public PriceChangeRequestStatus? PriceChangeRequestStatus { get; set; }
+    public string RejectReason { get; set; }
 }
