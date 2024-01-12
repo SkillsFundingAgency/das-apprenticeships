@@ -20,7 +20,7 @@ public class WhenGetApprenticeshipKey
     {
         _fixture = new Fixture();
         _queryDispatcher = new Mock<IQueryDispatcher>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object, Mock.Of<ICommandDispatcher>());
+        _sut = new ApprenticeshipController(_queryDispatcher.Object);
     }
 
     [Test]
