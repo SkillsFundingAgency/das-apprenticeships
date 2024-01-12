@@ -10,7 +10,6 @@ using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Authorization.Mvc.Extensions;
 
 namespace SFA.DAS.Apprenticeships.InnerApi
 {
