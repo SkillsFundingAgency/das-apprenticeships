@@ -4,18 +4,18 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
+using SFA.DAS.Apprenticeships.Command.CreatePriceChange;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
+namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
 {
     [TestFixture]
     public class WhenAPriceHistoryIsAdded
     {
-        private CreateApprenticeshipPriceChangeCommandHandler _commandHandler = null!;
+        private CreatePriceChangeCommandHandler _commandHandler = null!;
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
         private Fixture _fixture = null!;
 
@@ -23,7 +23,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
         public void SetUp()
         {
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
-            _commandHandler = new CreateApprenticeshipPriceChangeCommandHandler(_apprenticeshipRepository.Object);
+            _commandHandler = new CreatePriceChangeCommandHandler(_apprenticeshipRepository.Object);
 
             _fixture = new Fixture();
             _fixture.Customize(new ApprenticeshipCustomization());
@@ -32,7 +32,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
         [Test]
         public async Task ThenPriceHistoryIsAddedToApprenticeship()
         {
-            var command = _fixture.Create<CreateApprenticeshipPriceChangeRequest>();
+            var command = _fixture.Create<CreatePriceChangeCommand>();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
@@ -45,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
         [Test]
         public async Task ThenCorrectPriceHistoryValuesAreSet()
         {
-            var command = _fixture.Create<CreateApprenticeshipPriceChangeRequest>();
+            var command = _fixture.Create<CreatePriceChangeCommand>();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
