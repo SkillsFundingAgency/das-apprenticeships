@@ -13,7 +13,7 @@ using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
 {
     [TestFixture]
-    public class WhenAPriceHistoryIsAdded
+    public class WhenAPriceChangeIsCreated
     {
         private CreatePriceChangeCommandHandler _commandHandler = null!;
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
