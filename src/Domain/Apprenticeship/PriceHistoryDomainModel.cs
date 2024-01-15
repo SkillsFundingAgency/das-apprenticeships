@@ -57,4 +57,11 @@ public class PriceHistoryDomainModel
     {
         return new PriceHistoryDomainModel(entity);
     }
+
+    public void Approve(string? employerApprovedBy, DateTime employerApprovedDate)
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+        _entity.EmployerApprovedBy = employerApprovedBy;
+        _entity.EmployerApprovedDate = employerApprovedDate;
+    }
 }

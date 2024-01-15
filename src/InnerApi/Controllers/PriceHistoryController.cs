@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
+using SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
@@ -26,6 +27,14 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         public async Task<IActionResult> CreateApprenticeshipPriceChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipPriceChangeRequest request)
         {
             await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.ProviderId, request.EmployerId, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+            return Ok();
+        }
+
+        [HttpPatch("{apprenticeshipKey}/priceHistory")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> ApprovePriceChange(Guid apprenticeshipKey, [FromBody] ApprovePriceChangeRequest request)
+        {
+            await _commandDispatcher.Send(new ApprovePriceChangeCommand(apprenticeshipKey, request.UserId));
             return Ok();
         }
 
