@@ -2,6 +2,7 @@ using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
 using SFA.DAS.Apprenticeships.Queries;

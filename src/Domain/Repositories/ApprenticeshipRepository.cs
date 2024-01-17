@@ -1,16 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Apprenticeships.DataAccess.Mappers.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain;
+using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
+namespace SFA.DAS.Apprenticeships.Domain.Repositories
 {
     public class ApprenticeshipRepository : IApprenticeshipRepository
     {
         private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
-        private readonly IDomainEventDispatcher _domainEventDispatcher;
+        private IDomainEventDispatcher _domainEventDispatcher;
         private readonly IApprenticeshipFactory _apprenticeshipFactory;
         private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
 
@@ -21,24 +19,37 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Repositories
             _apprenticeshipFactory = apprenticeshipFactory;
         }
 
-        public async Task Add(Apprenticeship apprenticeship)
+        public async Task Add(ApprenticeshipDomainModel apprenticeship)
         {
-            var apprenticeshipDataModel = apprenticeship.GetModel().Map();
-            await DbContext.AddAsync(apprenticeshipDataModel);
+            await DbContext.AddAsync(apprenticeship.GetEntity());
             await DbContext.SaveChangesAsync();
-
+            
             foreach (dynamic domainEvent in apprenticeship.FlushEvents())
             {
                 await _domainEventDispatcher.Send(domainEvent);
             }
         }
 
-        public async Task<Apprenticeship> Get(Guid key)
+        public async Task<ApprenticeshipDomainModel> Get(Guid key)
         {
-            var apprenticeshipDataModel = await DbContext.Apprenticeships.Include(x => x.Approvals).SingleAsync(x => x.Key == key);
-            var domainModel = apprenticeshipDataModel.Map();
-            var domainObject = _apprenticeshipFactory.GetExisting(domainModel);
-            return domainObject;
+            var apprenticeship = await DbContext.Apprenticeships
+                .Include(x => x.Approvals)
+                .Include(x => x.PriceHistories)
+                .SingleAsync(x => x.Key == key);
+
+            return _apprenticeshipFactory.GetExisting(apprenticeship);
+        }
+
+        public async Task Update(ApprenticeshipDomainModel apprenticeship)
+        {
+            DbContext.Update(apprenticeship.GetEntity());
+
+            await DbContext.SaveChangesAsync();
+            
+            foreach (dynamic domainEvent in apprenticeship.FlushEvents())
+            {
+                await _domainEventDispatcher.Send(domainEvent);
+            }
         }
     }
 }

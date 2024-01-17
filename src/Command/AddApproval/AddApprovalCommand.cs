@@ -13,6 +13,8 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
         public DateTime? ActualStartDate { get; set; }
         public DateTime PlannedEndDate { get; set; }
         public decimal AgreedPrice { get; set; }
+        public decimal? TrainingPrice { get; set; } 
+        public decimal? EndPointAssessmentPrice { get; set; }
         public long? FundingEmployerAccountId { get; set; }
         public FundingType FundingType { get; set; }
         public string FirstName { get; set; }
@@ -20,5 +22,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
         public DateTime DateOfBirth { get; set; }
         public DateTime? PlannedStartDate { get; set; }
         public FundingPlatform? FundingPlatform { get; set; }
+        public string ApprenticeshipHashedId { get; set; }
+        public long AccountLegalEntityId { get; set; }
     }
 }
