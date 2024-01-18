@@ -13,8 +13,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 [TestFixture]
 public class WhenAPendingPriceChangeIsRejected
 {
-    private Domain.Apprenticeship.ApprenticeshipDomainModel _apprenticeship;
-    private Fixture _fixture;
+    private ApprenticeshipDomainModel _apprenticeship = null!;
+    private Fixture _fixture = null!;
 
     [SetUp]
     public void SetUp()

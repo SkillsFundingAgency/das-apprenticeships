@@ -9,6 +9,9 @@ using SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
 {
+    /// <summary>
+    /// Controller for handling requests related to price history
+    /// </summary>
     [Route("")]
     [ApiController]
     public class PriceHistoryController : ControllerBase
@@ -16,12 +19,21 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         private readonly IQueryDispatcher _queryDispatcher;
         private readonly ICommandDispatcher _commandDispatcher;
 
+        /// <summary>Initializes a new instance of the <see cref="PriceHistoryController"/> class.</summary>
+        /// <param name="queryDispatcher"></param>
+        /// <param name="commandDispatcher"></param>
         public PriceHistoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher)
         {
             _queryDispatcher = queryDispatcher;
             _commandDispatcher = commandDispatcher;
         }
 
+        /// <summary>
+        /// Create apprenticeship price change
+        /// </summary>
+        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+        /// <param name="request">Details of the requested price change</param>
+        /// <returns>Ok result</returns>
         [HttpPost("{apprenticeshipKey}/priceHistory")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> CreateApprenticeshipPriceChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipPriceChangeRequest request)
@@ -30,6 +42,11 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Gets the details of a pending price change
+        /// </summary>
+        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+        /// <returns>Details of the pending price change</returns>
         [HttpGet("{apprenticeshipKey}/priceHistory/pending")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetPendingPriceChange(Guid apprenticeshipKey)
@@ -40,6 +57,11 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Removes a pending price change
+        /// </summary>
+        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+        /// <returns>Ok result</returns>
         [HttpDelete("{apprenticeshipKey}/priceHistory/pending")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> CancelPendingPriceChange(Guid apprenticeshipKey)
@@ -50,6 +72,12 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Rejects a pending price change
+        /// </summary>
+        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+        /// <param name="request">Details of the rejection</param>
+        /// <returns>ok result</returns>
         [HttpPatch("{apprenticeshipKey}/priceHistory/pending/reject")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> RejectPendingPriceChange(Guid apprenticeshipKey, [FromBody]PatchRejectPriceChangeRequest request)

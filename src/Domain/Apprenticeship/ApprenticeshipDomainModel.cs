@@ -123,7 +123,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             pendingPriceChange?.Cancel();
         }
 
-        public void RejectPendingPriceChange(string reason)
+        public void RejectPendingPriceChange(string? reason)
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
             pendingPriceChange?.Reject(reason);

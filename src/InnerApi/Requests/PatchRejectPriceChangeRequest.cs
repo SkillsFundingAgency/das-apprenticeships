@@ -1,6 +1,12 @@
 ﻿namespace SFA.DAS.Apprenticeships.InnerApi.Requests;
 
+/// <summary>
+/// Request model for rejecting a price change.
+/// </summary>
 public class PatchRejectPriceChangeRequest
 {
-    public string Reason { get; set; }
+    /// <summary>
+    /// The reason for rejecting the price change
+    /// </summary>
+    public string? Reason { get; set; }
 }
