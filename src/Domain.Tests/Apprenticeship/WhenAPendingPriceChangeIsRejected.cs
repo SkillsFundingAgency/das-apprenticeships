@@ -45,7 +45,8 @@ public class WhenAPendingPriceChangeIsRejected
             priceHistory.TotalPrice,
             priceHistory.EffectiveFromDate,
             priceHistory.CreatedDate,
-            priceHistory.PriceChangeRequestStatus);
+            priceHistory.PriceChangeRequestStatus,
+            priceHistory.ChangeReason);
     }
 
     [Test]

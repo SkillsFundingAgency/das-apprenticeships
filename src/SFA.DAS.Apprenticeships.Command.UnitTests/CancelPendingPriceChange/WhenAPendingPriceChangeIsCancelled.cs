@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CancelPendingPriceChange
         {
             var command = _fixture.Create<CancelPendingPriceChangeRequest>();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeRequestStatus.Created);
+            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeRequestStatus.Created, _fixture.Create<string>());
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
             
