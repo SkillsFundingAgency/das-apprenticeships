@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Command;
+using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Queries;
@@ -14,6 +17,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
     /// </summary>
     [Route("")]
     [ApiController]
+    [Authorize]
     public class ApprenticeshipController : ControllerBase
     {
         private readonly IQueryDispatcher _queryDispatcher;

@@ -8,6 +8,8 @@ using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain;
+using SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
+using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 
 namespace SFA.DAS.Apprenticeships.InnerApi
 {
@@ -55,7 +57,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             builder.Services.AddNServiceBus(applicationSettings);
             builder.Services.AddCommandServices().AddEventServices();
             builder.Services.AddHealthChecks();
-            var app = builder.Build();
+            builder.Services.AddApiAuthentication(applicationSettings, builder.Environment.IsDevelopment());
+            builder.Services.AddApiAuthorization(builder.Environment.IsDevelopment());
+
+			var app = builder.Build();
 
             app.MapHealthChecks("/ping");
 
@@ -66,6 +71,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
