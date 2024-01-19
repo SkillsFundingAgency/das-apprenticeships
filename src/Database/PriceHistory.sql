@@ -12,7 +12,6 @@
     [EmployerApprovedBy] NVARCHAR(500) NULL,
     [EmployerApprovedDate] DATETIME NULL,
     [CreatedDate] DATETIME NOT NULL,
-    [ChangeReason] NVARCHAR(MAX) NULL,
     [PriceChangeRequestStatus] NVARCHAR(50) NULL,
     [RejectReason] NVARCHAR(MAX) NULL
 )

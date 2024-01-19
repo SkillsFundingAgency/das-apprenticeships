@@ -48,8 +48,7 @@ public class WhenAPriceChangeIsCreated
             expectedModel.TotalPrice,
             expectedModel.EffectiveFromDate,
             expectedModel.CreatedDate,
-            expectedModel.PriceChangeRequestStatus,
-            expectedModel.ChangeReason);
+            expectedModel.PriceChangeRequestStatus);
 
         var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.EffectiveFromDate == expectedModel.EffectiveFromDate);
 

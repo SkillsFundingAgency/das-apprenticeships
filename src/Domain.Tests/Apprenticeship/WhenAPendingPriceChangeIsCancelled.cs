@@ -45,8 +45,7 @@ public class WhenAPendingPriceChangeIsCancelled
             priceHistory.TotalPrice,
             priceHistory.EffectiveFromDate,
             priceHistory.CreatedDate,
-            priceHistory.PriceChangeRequestStatus,
-            priceHistory.ChangeReason);
+            priceHistory.PriceChangeRequestStatus);
     }
 
     [Test]

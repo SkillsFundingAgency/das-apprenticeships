@@ -103,8 +103,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             decimal totalPrice,
             DateTime effectiveFromDate,
             DateTime createdDate,
-            PriceChangeRequestStatus? priceChangeRequestStatus, 
-            string reason)
+            PriceChangeRequestStatus? priceChangeRequestStatus)
         {
             var priceHistory = PriceHistoryDomainModel.New(this.Key,
                 trainingPrice,
@@ -112,8 +111,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 totalPrice,
                 effectiveFromDate,
                 createdDate,
-                priceChangeRequestStatus,
-                reason);
+                priceChangeRequestStatus);
             
             _priceHistories.Add(priceHistory);
             _entity.PriceHistories.Add(priceHistory.GetEntity());
