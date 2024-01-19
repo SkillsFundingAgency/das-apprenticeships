@@ -57,4 +57,9 @@ public class PriceHistoryDomainModel
     {
         return new PriceHistoryDomainModel(entity);
     }
+
+    public void Cancel()
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Cancelled;
+    }
 }

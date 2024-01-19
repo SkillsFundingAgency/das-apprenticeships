@@ -119,5 +119,14 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _priceHistories.Add(priceHistory);
             _entity.PriceHistories.Add(priceHistory.GetEntity());
         }
+
+        public void CancelPendingPriceChange()
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            if (pendingPriceChange != null)
+            {
+                pendingPriceChange.Cancel();
+            }
+        }
     }
 }

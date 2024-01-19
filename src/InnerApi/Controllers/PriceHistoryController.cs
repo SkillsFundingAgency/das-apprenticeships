@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
+using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
@@ -39,6 +39,16 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             var response = await _queryDispatcher.Send<GetPendingPriceChangeRequest, GetPendingPriceChangeResponse>(request);
 
             return Ok(response);
+        }
+
+        [HttpDelete("{apprenticeshipKey}/priceHistory/pending")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> CancelPendingPriceChange(Guid apprenticeshipKey)
+        {
+            var request = new CancelPendingPriceChangeRequest(apprenticeshipKey);
+            await _commandDispatcher.Send(request);
+
+            return Ok();
         }
     }
 }
