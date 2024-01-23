@@ -18,7 +18,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
             int fundingBandMaximum, 
             DateTime? actualStartDate, 
             DateTime plannedEndDate,
-            long accountLegalEntityId);
+            long accountLegalEntityId,
+            long ukprn,
+            long employerAccountId);
         
         ApprenticeshipDomainModel GetExisting(DataAccess.Entities.Apprenticeship.Apprenticeship model);
 

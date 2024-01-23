@@ -20,8 +20,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
         {
             var dataModels = await DbContext.Apprenticeships
+                .Where(x => x.UKPRN == ukprn)
                 .Include(x => x.Approvals)
-                .Where(a => a.Approvals.Any(c => c.UKPRN == ukprn && (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
+                .Where(a => a.Approvals.Any(c => (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
                 .ToListAsync();
         
             var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });

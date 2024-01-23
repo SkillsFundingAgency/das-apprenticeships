@@ -7,14 +7,13 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
+namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipQueryRepository
 {
     public class WhenGettingAllApprenticeships
     {
-        private ApprenticeshipQueryRepository _sut;
+        private Domain.Repositories.ApprenticeshipQueryRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
 
@@ -26,7 +25,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
             var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("ApprenticeshipsDbContext" + Guid.NewGuid()).Options;
             _dbContext = new ApprenticeshipsDataContext(options);
 
-            _sut = new ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
         }
 
         [TearDown]
@@ -39,63 +38,74 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_correct_apprenticeships_for_the_ukprn_are_retrieved()
         {
             // Arrange
-            var ukprn1 = _fixture.Create<long>();
-            var ukprn2 = _fixture.Create<long>();
-
-            var apprenticeships = new Apprenticeship[]
+            var ukprns = _fixture.CreateMany<long>(2).ToList();
+            var ulns = _fixture.CreateMany<string>(3).ToList();
+            var apprenticeships = new[]
             {
-                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1001").With(x => x.FirstName, "Ron").With(x => x.LastName, "Swanson").With(x => x.Approvals, new List<Approval>() { new Approval() { UKPRN = ukprn1, LegalEntityName = "" } }).Create(),
-                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1002").With(x => x.FirstName, "Stepan").With(x => x.LastName, "Tominski").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn2, LegalEntityName = "" } }).Create(),
-                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1003").With(x => x.FirstName, "Lucy").With(x => x.LastName, "Rogers").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn1, LegalEntityName = "" }, new Approval() { UKPRN =  ukprn2, LegalEntityName = ""} }).Create(),
-                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1004").With(x => x.FirstName, "Shamil").With(x => x.LastName, "Ahmur").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn1, LegalEntityName = "" }, new Approval() { UKPRN = ukprn1, LegalEntityName = "" } }).Create(),
-                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1005").With(x => x.FirstName, "Tracey").With(x => x.LastName, "Smith").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn2, LegalEntityName = "" }, new Approval() { UKPRN = ukprn2, LegalEntityName = "" } }).Create(),
+                CreateApprenticeshipWithUkprn(ulns[0], ukprns[0]),
+                CreateApprenticeshipWithUkprn(ulns[1], ukprns[1]),
+                CreateApprenticeshipWithUkprn(ulns[2], ukprns[1]),
             };
-
             await _dbContext.AddRangeAsync(apprenticeships);
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _sut.GetAll(ukprn1, null);
+            var result = await _sut.GetAll(ukprns[1], null);
 
             // Assert
             result.Should().NotBeNull();
-            result.Count().Should().Be(3);
-            result.Any(x => x.Uln == apprenticeships[0].Uln && x.FirstName == apprenticeships[0].FirstName && x.LastName == apprenticeships[0].LastName).Should().BeTrue();
-            result.Any(x => x.Uln == apprenticeships[2].Uln && x.FirstName == apprenticeships[2].FirstName && x.LastName == apprenticeships[2].LastName).Should().BeTrue();
-            result.Any(x => x.Uln == apprenticeships[3].Uln && x.FirstName == apprenticeships[3].FirstName && x.LastName == apprenticeships[3].LastName).Should().BeTrue();
-            result.Any(x => x.Uln == apprenticeships[1].Uln && x.FirstName == apprenticeships[1].FirstName && x.LastName == apprenticeships[1].LastName).Should().BeFalse();
-            result.Any(x => x.Uln == apprenticeships[4].Uln && x.FirstName == apprenticeships[4].FirstName && x.LastName == apprenticeships[4].LastName).Should().BeFalse();
+            result.Count().Should().Be(2);
+            result.Should().NotContain(x => x.Uln == ulns[0]);
+            result.Should().Contain(x => x.Uln == ulns[1]);
+            result.Should().Contain(x => x.Uln == ulns[2]);
         }
-
 
         [Test]
         public async Task And_filtering_by_funding_platform_Then_the_correct_apprenticeships_are_retrieved()
         {
             // Arrange
-            var ukprn = _fixture.Create<long>();
-
-            var apprenticeships = new Apprenticeship[]
+            var ukprns = _fixture.CreateMany<long>(2).ToList();
+            var ulns = _fixture.CreateMany<string>(4).ToList();
+            var apprenticeships = new[]
             {
-                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1001").With(x => x.FirstName, "Ron").With(x => x.LastName, "Swanson").With(x => x.Approvals, new List<Approval>() { new Approval() { UKPRN = ukprn, FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" } }).Create(),
-                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1002").With(x => x.FirstName, "Stepan").With(x => x.LastName, "Tominski").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.SLD, LegalEntityName = "" } }).Create(),
-                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1003").With(x => x.FirstName, "Lucy").With(x => x.LastName, "Rogers").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.SLD, LegalEntityName = "" }, new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.SLD, LegalEntityName = ""} }).Create(),
-                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1004").With(x => x.FirstName, "Shamil").With(x => x.LastName, "Ahmur").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.SLD, LegalEntityName = "" }, new Approval() { UKPRN = ukprn, FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" } }).Create(),                _fixture.Build<Apprenticeship>().With(x => x.Uln, "1005").With(x => x.FirstName, "Tracey").With(x => x.LastName, "Smith").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" }, new Approval() { UKPRN = ukprn, FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" } }).Create(),
+                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[0], ukprns[0], FundingPlatform.DAS),
+                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[1], ukprns[1], FundingPlatform.SLD),
+                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[2], ukprns[1], FundingPlatform.DAS),
+                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[3], ukprns[1], FundingPlatform.SLD),
             };
-
             await _dbContext.AddRangeAsync(apprenticeships);
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _sut.GetAll(ukprn, FundingPlatform.DAS);
+            var result = await _sut.GetAll(ukprns[1], FundingPlatform.SLD);
 
             // Assert
             result.Should().NotBeNull();
-            result.Count().Should().Be(3);
-            result.Any(x => x.Uln == apprenticeships[0].Uln && x.FirstName == apprenticeships[0].FirstName && x.LastName == apprenticeships[0].LastName).Should().BeTrue();
-            result.Any(x => x.Uln == apprenticeships[3].Uln && x.FirstName == apprenticeships[3].FirstName && x.LastName == apprenticeships[3].LastName).Should().BeTrue();
-            result.Any(x => x.Uln == apprenticeships[4].Uln && x.FirstName == apprenticeships[4].FirstName && x.LastName == apprenticeships[4].LastName).Should().BeTrue();
-            result.Any(x => x.Uln == apprenticeships[1].Uln && x.FirstName == apprenticeships[1].FirstName && x.LastName == apprenticeships[1].LastName).Should().BeFalse();
-            result.Any(x => x.Uln == apprenticeships[2].Uln && x.FirstName == apprenticeships[2].FirstName && x.LastName == apprenticeships[2].LastName).Should().BeFalse();
+            result.Count().Should().Be(2);
+            result.Should().NotContain(x => x.Uln == ulns[0]);
+            result.Should().Contain(x => x.Uln == ulns[1]);
+            result.Should().NotContain(x => x.Uln == ulns[2]);
+            result.Should().Contain(x => x.Uln == ulns[3]);
+
+        }
+
+        private Apprenticeship CreateApprenticeshipWithUkprn(string uln, long ukprn)
+        {
+            return CreateApprenticeshipWithUkPrnAndFundingPlatform(uln, ukprn, _fixture.Create<FundingPlatform>());
+        }
+
+        private Apprenticeship CreateApprenticeshipWithUkPrnAndFundingPlatform(string uln, long ukprn, FundingPlatform fundingPlatform)
+        {
+            return _fixture
+                .Build<Apprenticeship>()
+                .With(x => x.Uln, uln)
+                .With(x => x.UKPRN, ukprn)
+                .With(x => x.Approvals, new List<Approval>() { new()
+                {
+                    FundingPlatform = fundingPlatform,
+                    LegalEntityName = "legalEntityName"
+                } })
+                .Create();
         }
     }
 }

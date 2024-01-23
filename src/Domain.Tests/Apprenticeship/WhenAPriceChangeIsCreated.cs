@@ -12,7 +12,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 [TestFixture]
 public class WhenAPriceChangeIsCreated
 {
-    private Domain.Apprenticeship.ApprenticeshipDomainModel _apprenticeship;
+    private ApprenticeshipDomainModel _apprenticeship;
     private Fixture _fixture;
 
     [SetUp]
@@ -35,6 +35,8 @@ public class WhenAPriceChangeIsCreated
             _fixture.Create<int>(),
             _fixture.Create<DateTime>(),
             _fixture.Create<DateTime>(),
+            _fixture.Create<long>(),
+            _fixture.Create<long>(),
             _fixture.Create<long>());
     }
 
