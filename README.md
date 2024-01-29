@@ -55,15 +55,3 @@ Whilst it might seem very odd, the Apprenticeships Functions App is dependant up
 * Deploy the database project to the database instance specified in config
 * Make sure Azure Storage Emulator (Azureite) is running
 * Run the application
-
-## Technologies
-
-* .NetCore 3.1
-* Azure Functions V3
-* CosmosDB
-* REDIS
-* NLog
-* Azure Table Storage
-* NUnit
-* Moq
-* FluentAssertions
