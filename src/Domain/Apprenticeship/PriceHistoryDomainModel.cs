@@ -65,4 +65,10 @@ public class PriceHistoryDomainModel
     {
         _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Cancelled;
     }
+
+    public void Reject(string? reason)
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Rejected;
+        _entity.RejectReason = reason;
+    }
 }
