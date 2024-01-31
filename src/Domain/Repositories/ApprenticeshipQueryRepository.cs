@@ -41,7 +41,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 FundingBandMaximum = apprenticeship.FundingBandMaximum,
                 ApprenticeshipActualStartDate = apprenticeship.ActualStartDate,
                 ApprenticeshipPlannedEndDate = apprenticeship.PlannedEndDate,
-                AccountLegalEntityId = apprenticeship.AccountLegalEntityId
+                AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
+                UKPRN = apprenticeship.UKPRN
             };
         }
 
