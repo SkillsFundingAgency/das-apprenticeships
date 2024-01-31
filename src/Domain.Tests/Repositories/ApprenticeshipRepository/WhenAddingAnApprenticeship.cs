@@ -8,14 +8,14 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
-namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
+namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRepository
 {
     public class WhenAddingAnApprenticeship
     {
@@ -50,7 +50,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_apprenticeship_is_added_to_the_data_store()
         {
             // Arrange
-            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Apprenticeship>());
+            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
             
             // Act
             await _sut.Add(testApprenticeship);
@@ -68,7 +68,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_approval_is_added_to_the_data_store()
         {
             // Arrange
-            var apprenticeshipEntity = _fixture.Create<Apprenticeship>();
+            var apprenticeshipEntity = _fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>();
             apprenticeshipEntity.Approvals = new List<Approval>();
             var testApprenticeship = ApprenticeshipDomainModel.Get(apprenticeshipEntity);
             var expectedApproval = ApprovalDomainModel.Get(_fixture.Create<Approval>());
@@ -90,7 +90,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_domain_events_are_published()
         {
             // Arrange
-            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Apprenticeship>());
+            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
             
             // Act
             await _sut.Add(testApprenticeship);
