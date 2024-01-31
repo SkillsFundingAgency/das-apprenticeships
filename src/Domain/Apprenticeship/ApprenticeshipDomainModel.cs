@@ -16,6 +16,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public string FirstName => _entity.FirstName;
         public string LastName => _entity.LastName;
         public DateTime DateOfBirth => _entity.DateOfBirth;
+        public long? Ukprn => _entity.Ukprn;
         public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
         public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
 
@@ -51,7 +52,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             int fundingBandMaximum,
             DateTime? actualStartDate,
             DateTime? plannedEndDate,
-            long accountLegalEntityId)
+            long accountLegalEntityId,
+            long ukprn)
         {
             return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
             {
@@ -68,7 +70,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 FundingBandMaximum = fundingBandMaximum,
                 ActualStartDate = actualStartDate,
                 PlannedEndDate = plannedEndDate,
-                AccountLegalEntityId = accountLegalEntityId
+                AccountLegalEntityId = accountLegalEntityId,
+                Ukprn = ukprn
             });
         }
 

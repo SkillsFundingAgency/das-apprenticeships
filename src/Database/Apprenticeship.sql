@@ -13,5 +13,6 @@
     [FundingBandMaximum] INT NULL,
     [ActualStartDate] DATETIME NULL,
     [PlannedEndDate] DATETIME NULL, 
-    [AccountLegalEntityId] BIGINT NULL
+    [AccountLegalEntityId] BIGINT NULL, 
+    [Ukprn] BIGINT NULL
 )
