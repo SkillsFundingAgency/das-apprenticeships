@@ -24,7 +24,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 ApprenticeshipKey = apprenticeship.Key, 
                 Uln = apprenticeship.Uln,
                 TrainingCode = apprenticeship.TrainingCode,
-                FundingEmployerAccountId = approval.FunctionEmployerAccountId,
+                FundingEmployerAccountId = approval.FundingEmployerAccountId,
                 AgreedPrice = approval.AgreedPrice,
                 FundingType = (FundingType)approval.FundingType,
                 ActualStartDate = approval.ActualStartDate,

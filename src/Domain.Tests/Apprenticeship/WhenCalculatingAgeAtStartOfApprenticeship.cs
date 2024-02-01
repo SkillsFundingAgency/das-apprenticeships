@@ -10,16 +10,28 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
     [TestFixture]
     public class WhenCalculatingAgeAtStartOfApprenticeship
     {
-        private Domain.Apprenticeship.Apprenticeship _apprenticeship;
+        private Domain.Apprenticeship.ApprenticeshipDomainModel _apprenticeship;
         private Fixture _fixture;
 
         [SetUp]
         public void SetUp()
         {
             var apprenticeshipFactory = new ApprenticeshipFactory();
-            _apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16), "Ron", "Swanson");
-
             _fixture = new Fixture();
+            _apprenticeship = apprenticeshipFactory.CreateNew(
+                "1234435", 
+                "TRN", 
+                new DateTime(2000, 10, 16), 
+                "Ron",
+                "Swanson", 
+                _fixture.Create<decimal?>(), 
+                _fixture.Create<decimal?>(), 
+                _fixture.Create<decimal>(),
+                _fixture.Create<string>(), 
+                _fixture.Create<int>(), 
+                _fixture.Create<DateTime>(), 
+                _fixture.Create<DateTime>(),
+                _fixture.Create<long>());
         }
 
         [Test]

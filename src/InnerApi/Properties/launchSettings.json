@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "SFA.DAS.ProviderEarnings.InnerApi": {
+    "SFA.DAS.Apprenticeships.InnerApi": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

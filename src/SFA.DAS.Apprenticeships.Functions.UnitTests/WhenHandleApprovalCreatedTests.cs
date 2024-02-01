@@ -28,26 +28,28 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
         [Test]
         public async Task ThenApprovalIsAdded()
         {
-            var command = _fixture.Create<ApprovalCreatedEvent>();
-            command.FundingType = FundingType.Transfer;
-            await _handler.HandleCommand(command);
+            var @event = _fixture.Create<ApprovalCreatedEvent>();
+            @event.FundingType = FundingType.Transfer;
+            await _handler.HandleCommand(@event);
 
             _commandDispatcher.Verify(x =>
                 x.Send<AddApprovalCommand>(It.Is<AddApprovalCommand>(c =>
-                        c.TrainingCode == command.TrainingCode &&
-                        c.ActualStartDate == command.ActualStartDate &&
-                        c.AgreedPrice == command.AgreedPrice &&
-                        c.ApprovalsApprenticeshipId == command.ApprovalsApprenticeshipId &&
-                        c.EmployerAccountId == command.EmployerAccountId &&
-                        c.FundingEmployerAccountId == command.FundingEmployerAccountId &&
+                        c.TrainingCode == @event.TrainingCode &&
+                        c.ActualStartDate == @event.ActualStartDate &&
+                        c.AgreedPrice == @event.AgreedPrice &&
+                        c.TrainingPrice == @event.TrainingPrice &&
+                        c.EndPointAssessmentPrice == @event.EndPointAssessmentPrice &&
+                        c.ApprovalsApprenticeshipId == @event.ApprovalsApprenticeshipId &&
+                        c.EmployerAccountId == @event.EmployerAccountId &&
+                        c.FundingEmployerAccountId == @event.FundingEmployerAccountId &&
                         c.FundingType == Enums.FundingType.Transfer &&
-                        c.LegalEntityName == command.LegalEntityName &&
-                        c.PlannedEndDate == command.PlannedEndDate &&
-                        c.UKPRN == command.UKPRN &&
-                        c.Uln == command.Uln &&
-                        c.DateOfBirth == command.DateOfBirth &&
-                        c.PlannedStartDate == command.StartDate &&
-                        c.FundingPlatform == (command.IsOnFlexiPaymentPilot.HasValue ? (command.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null)
+                        c.LegalEntityName == @event.LegalEntityName &&
+                        c.PlannedEndDate == @event.PlannedEndDate &&
+                        c.UKPRN == @event.UKPRN &&
+                        c.Uln == @event.Uln &&
+                        c.DateOfBirth == @event.DateOfBirth &&
+                        c.PlannedStartDate == @event.StartDate &&
+                        c.FundingPlatform == (@event.IsOnFlexiPaymentPilot.HasValue ? (@event.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null)
                     ),
                     It.IsAny<CancellationToken>()));
         }

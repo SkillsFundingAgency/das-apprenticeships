@@ -32,7 +32,22 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         public async Task ThenApprenticeshipCreatedEventIsPublished()
         {
             var apprenticeshipFactory = new ApprenticeshipFactory();
-            var apprenticeship = apprenticeshipFactory.CreateNew("1234435", "TRN", new DateTime(2000, 10, 16), "Ron", "Swanson");
+            var apprenticeship = apprenticeshipFactory.CreateNew(
+                "1234435",
+                "TRN",
+                new DateTime(2000,
+                    10,
+                    16),
+                "Ron",
+                "Swanson",
+                _fixture.Create<decimal?>(),
+                _fixture.Create<decimal?>(),
+                _fixture.Create<decimal>(),
+                _fixture.Create<string>(),
+                _fixture.Create<int>(),
+                _fixture.Create<DateTime>(),
+                _fixture.Create<DateTime>(),
+                _fixture.Create<long>());
             apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
             var approval = apprenticeship.Approvals.Single();
             var command = _fixture.Create<ApprenticeshipCreated>();
@@ -45,7 +60,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.ApprenticeshipKey == apprenticeship.Key &&
                     e.Uln == apprenticeship.Uln &&
                     e.TrainingCode == apprenticeship.TrainingCode &&
-                    e.FundingEmployerAccountId == approval.FunctionEmployerAccountId &&
+                    e.FundingEmployerAccountId == approval.FundingEmployerAccountId &&
                     e.AgreedPrice == approval.AgreedPrice &&
                     e.FundingType == (FundingType)approval.FundingType &&
                     e.ActualStartDate == approval.ActualStartDate &&
