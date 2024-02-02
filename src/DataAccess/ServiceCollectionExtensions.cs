@@ -4,10 +4,10 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure
+namespace SFA.DAS.Apprenticeships.DataAccess
 {
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
@@ -19,17 +19,16 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
             services.AddSingleton<ISqlAzureIdentityTokenProvider, SqlAzureIdentityTokenProvider>();
 
             services.AddSingleton(provider => new SqlAzureIdentityAuthenticationDbConnectionInterceptor(provider.GetService<ILogger<SqlAzureIdentityAuthenticationDbConnectionInterceptor>>(), provider.GetService<ISqlAzureIdentityTokenProvider>(), connectionNeedsAccessToken));
-
-            services.AddScoped(p =>
-            {
-                var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>()
-                    .UseSqlServer(new SqlConnection(settings.DbConnectionString), optionsBuilder => optionsBuilder.CommandTimeout(7200)) //7200=2hours
-                    .AddInterceptors(p.GetRequiredService<SqlAzureIdentityAuthenticationDbConnectionInterceptor>())
-                    .Options;
-                return new ApprenticeshipsDataContext(options);
-            });
-
-            return services.AddScoped(provider => new Lazy<ApprenticeshipsDataContext>(provider.GetService<ApprenticeshipsDataContext>));
+            services.AddDbContext<ApprenticeshipsDataContext>((provider, options) =>
+                options
+                    .UseSqlServer(new SqlConnection(settings.DbConnectionString),
+                        optionsBuilder => optionsBuilder.CommandTimeout(7200)) //7200=2hours
+                    .AddInterceptors(provider.GetRequiredService<SqlAzureIdentityAuthenticationDbConnectionInterceptor>()));
+            services.AddScoped(provider => new Lazy<ApprenticeshipsDataContext>(provider.GetService<ApprenticeshipsDataContext>));
+            
+            return services;
         }
     }
+
+    
 }

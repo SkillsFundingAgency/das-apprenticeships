@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Logging;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure;
+namespace SFA.DAS.Apprenticeships.DataAccess;
 
 public class SqlAzureIdentityTokenProvider : ISqlAzureIdentityTokenProvider
 {
