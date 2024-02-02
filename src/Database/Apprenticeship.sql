@@ -17,3 +17,10 @@
     [UKPRN] BIGINT NOT NULL DEFAULT(0),
     [EmployerAccountId] BIGINT NOT NULL DEFAULT(0)
 )
+GO
+
+CREATE INDEX IX_Ukprn ON [dbo].[Apprenticeship] (UKPRN);
+GO
+
+CREATE INDEX IX_EmployerAccountId ON [dbo].[Apprenticeship] (EmployerAccountId);
+GO
