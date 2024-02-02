@@ -45,16 +45,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
             };
         }
 
-        public async Task<IEnumerable<ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
-        {
-            var dataModels = await DbContext.PriceHistories
-                .Where(x => x.ApprenticeshipKey == apprenticeshipKey)
-                .Select(PriceHistoryToApprenticeshipPrice())
-                .ToListAsync();
-
-            return dataModels;
-        }
-
         public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
         {
             var pendingPriceChange = await DbContext.Apprenticeships
