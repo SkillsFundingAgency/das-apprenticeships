@@ -24,7 +24,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 .Include(x => x.Approvals)
                 .Where(a => a.Approvals.Any(c => (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
                 .ToListAsync();
-        
+
             var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
             return result;
         }
@@ -48,7 +48,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         public async Task<IEnumerable<ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
         {
             var dataModels = await DbContext.PriceHistories
-                .Where(x => x.Key == apprenticeshipKey)
+                .Where(x => x.ApprenticeshipKey == apprenticeshipKey)
                 .Select(PriceHistoryToApprenticeshipPrice())
                 .ToListAsync();
 

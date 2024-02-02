@@ -4,7 +4,6 @@ using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
