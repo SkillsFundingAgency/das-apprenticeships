@@ -8,6 +8,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship
     {
         public Guid Id { get; set; }
         public Guid ApprenticeshipKey { get; set; }
+        public Apprenticeship Apprenticeship { get; set; }
         public long ApprovalsApprenticeshipId { get; set; }
         public string LegalEntityName { get; set; }
         public DateTime? ActualStartDate { get; set; }

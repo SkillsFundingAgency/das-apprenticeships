@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
+using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.Infrastructure;
+using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using AccountIdClaims = SFA.DAS.Apprenticeships.TestHelpers.AccountIdClaims;
 
 namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
 {
@@ -23,20 +23,14 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         private ApprenticeshipsDataContext _dbContext;
         private Mock<IDomainEventDispatcher> _domainEventDispatcher;
         private Mock<IApprenticeshipFactory> _apprenticeshipFactory;
+        private Mock<IAccountIdClaimsHandler> _accountIdClaimsHandler;
+        private Mock<IAccountIdValidator> _accountIdValidator;
 
         [SetUp]
         public void Arrange()
         {
             _fixture = new Fixture();
             _fixture.Customize(new ApprenticeshipCustomization());
-
-            var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("EmployerIncentivesDbContext" + Guid.NewGuid()).Options;
-            _dbContext = new ApprenticeshipsDataContext(options);
-
-            _domainEventDispatcher = new Mock<IDomainEventDispatcher>();
-            _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
-
-            _sut = new Domain.Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), _domainEventDispatcher.Object, _apprenticeshipFactory.Object);
         }
 
         [TearDown]
@@ -50,7 +44,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         {
             // Arrange
             var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Apprenticeship>());
-
+            SetUpApprenticeshipRepository(expectedApprenticeship);
             _apprenticeshipFactory.Setup(x => x.GetExisting(It.Is<Apprenticeship>(y =>
                     y.Key == expectedApprenticeship.Key &&
                     y.TrainingCode == expectedApprenticeship.TrainingCode &&
@@ -63,6 +57,19 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
 
             // Assert
             actualApprenticeship.Should().BeEquivalentTo(expectedApprenticeship);
+        }
+
+        private void SetUpApprenticeshipRepository(ApprenticeshipDomainModel testApprenticeship)
+        {
+            _domainEventDispatcher = new Mock<IDomainEventDispatcher>();
+            _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
+            _accountIdValidator = new Mock<IAccountIdValidator>();
+            _accountIdClaimsHandler =
+                AccountIdClaims.MockAccountIdClaimsHandler(testApprenticeship.Ukprn, AccountIdClaimsType.Provider);
+            _dbContext =
+                InMemoryDbContextCreator.SetUpInMemoryDbContext(_accountIdClaimsHandler.Object);
+            _sut = new Domain.Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext),
+                _domainEventDispatcher.Object, _apprenticeshipFactory.Object, _accountIdValidator.Object);
         }
     }
 }

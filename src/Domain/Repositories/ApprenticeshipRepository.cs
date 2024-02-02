@@ -10,17 +10,25 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
         private IDomainEventDispatcher _domainEventDispatcher;
         private readonly IApprenticeshipFactory _apprenticeshipFactory;
+        private readonly IAccountIdValidator _accountIdValidator;
         private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
 
-        public ApprenticeshipRepository(Lazy<ApprenticeshipsDataContext> dbContext, IDomainEventDispatcher domainEventDispatcher, IApprenticeshipFactory apprenticeshipFactory)
+        public ApprenticeshipRepository(
+            Lazy<ApprenticeshipsDataContext> dbContext, 
+            IDomainEventDispatcher domainEventDispatcher, 
+            IApprenticeshipFactory apprenticeshipFactory,
+            IAccountIdValidator accountIdValidator)
         {
             _lazyContext = dbContext;
             _domainEventDispatcher = domainEventDispatcher;
             _apprenticeshipFactory = apprenticeshipFactory;
+            _accountIdValidator = accountIdValidator;
         }
 
         public async Task Add(ApprenticeshipDomainModel apprenticeship)
         {
+            _accountIdValidator.ValidateAccountId(apprenticeship);
+            
             await DbContext.AddAsync(apprenticeship.GetEntity());
             await DbContext.SaveChangesAsync();
             
@@ -42,8 +50,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 
         public async Task Update(ApprenticeshipDomainModel apprenticeship)
         {
+            _accountIdValidator.ValidateAccountId(apprenticeship);
+            
             DbContext.Update(apprenticeship.GetEntity());
-
             await DbContext.SaveChangesAsync();
             
             foreach (dynamic domainEvent in apprenticeship.FlushEvents())

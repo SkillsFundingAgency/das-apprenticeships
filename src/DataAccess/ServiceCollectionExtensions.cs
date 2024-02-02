@@ -19,6 +19,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             services.AddSingleton<ISqlAzureIdentityTokenProvider, SqlAzureIdentityTokenProvider>();
 
             services.AddSingleton(provider => new SqlAzureIdentityAuthenticationDbConnectionInterceptor(provider.GetService<ILogger<SqlAzureIdentityAuthenticationDbConnectionInterceptor>>(), provider.GetService<ISqlAzureIdentityTokenProvider>(), connectionNeedsAccessToken));
+            services.AddScoped<AccountIdClaimsHandler>();
             services.AddDbContext<ApprenticeshipsDataContext>((provider, options) =>
                 options
                     .UseSqlServer(new SqlConnection(settings.DbConnectionString),

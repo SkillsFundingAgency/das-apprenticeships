@@ -4,10 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.TestHelpers;
+using SFA.DAS.Apprenticeships.Infrastructure;
+using AccountIdClaims = SFA.DAS.Apprenticeships.TestHelpers.AccountIdClaims;
 
 namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipQueryRepository
 {
@@ -16,16 +19,12 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipQueryReposi
         private Domain.Repositories.ApprenticeshipQueryRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
+        private Mock<IAccountIdClaimsHandler> _accountIdClaimsHandler;
 
         [SetUp]
         public void Arrange()
         {
             _fixture = new Fixture();
-
-            var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("ApprenticeshipsDbContext" + Guid.NewGuid()).Options;
-            _dbContext = new ApprenticeshipsDataContext(options);
-
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
         }
 
         [TearDown]
@@ -40,17 +39,20 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipQueryReposi
             // Arrange
             var ukprns = _fixture.CreateMany<long>(2).ToList();
             var ulns = _fixture.CreateMany<string>(3).ToList();
+            var providerInTest = ukprns[1];
+            SetUpApprenticeshipQueryRepository(providerInTest);
+
             var apprenticeships = new[]
             {
                 CreateApprenticeshipWithUkprn(ulns[0], ukprns[0]),
-                CreateApprenticeshipWithUkprn(ulns[1], ukprns[1]),
-                CreateApprenticeshipWithUkprn(ulns[2], ukprns[1]),
+                CreateApprenticeshipWithUkprn(ulns[1], providerInTest),
+                CreateApprenticeshipWithUkprn(ulns[2], providerInTest),
             };
             await _dbContext.AddRangeAsync(apprenticeships);
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _sut.GetAll(ukprns[1], null);
+            var result = await _sut.GetAll(providerInTest, null);
 
             // Assert
             result.Should().NotBeNull();
@@ -66,12 +68,15 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipQueryReposi
             // Arrange
             var ukprns = _fixture.CreateMany<long>(2).ToList();
             var ulns = _fixture.CreateMany<string>(4).ToList();
+            var providerInTest = ukprns[1];
+            SetUpApprenticeshipQueryRepository(providerInTest);
+
             var apprenticeships = new[]
             {
                 CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[0], ukprns[0], FundingPlatform.DAS),
-                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[1], ukprns[1], FundingPlatform.SLD),
-                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[2], ukprns[1], FundingPlatform.DAS),
-                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[3], ukprns[1], FundingPlatform.SLD),
+                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[1], providerInTest, FundingPlatform.SLD),
+                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[2], providerInTest, FundingPlatform.DAS),
+                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[3], providerInTest, FundingPlatform.SLD),
             };
             await _dbContext.AddRangeAsync(apprenticeships);
             await _dbContext.SaveChangesAsync();
@@ -87,6 +92,15 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipQueryReposi
             result.Should().NotContain(x => x.Uln == ulns[2]);
             result.Should().Contain(x => x.Uln == ulns[3]);
 
+        }
+        
+        private void SetUpApprenticeshipQueryRepository(long ukprn)
+        {
+            _accountIdClaimsHandler =
+                AccountIdClaims.MockAccountIdClaimsHandler(ukprn, AccountIdClaimsType.Provider);
+            _dbContext =
+                InMemoryDbContextCreator.SetUpInMemoryDbContext(_accountIdClaimsHandler.Object);
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
         }
 
         private Apprenticeship CreateApprenticeshipWithUkprn(string uln, long ukprn)
