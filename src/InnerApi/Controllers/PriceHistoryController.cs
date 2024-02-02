@@ -29,7 +29,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             return Ok();
         }
 
-        [HttpPatch("{apprenticeshipKey}/priceHistory")]
+        [HttpPatch("{apprenticeshipKey}/priceHistory/pending")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> ApprovePriceChange(Guid apprenticeshipKey, [FromBody] ApprovePriceChangeRequest request)
         {
