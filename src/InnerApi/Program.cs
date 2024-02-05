@@ -1,11 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
+using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.Domain;
+using SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
+using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 
 namespace SFA.DAS.Apprenticeships.InnerApi
 {
@@ -25,6 +29,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi
                 options.EnvironmentName = builder.Configuration["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
             });
+
+            builder.Services.AddApplicationInsightsTelemetry();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -47,8 +53,14 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocal(builder.Configuration));
             builder.Services.AddSingleton(x => applicationSettings);
             builder.Services.AddQueryServices();
+            builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
+            builder.Services.AddNServiceBus(applicationSettings);
+            builder.Services.AddCommandServices().AddEventServices();
             builder.Services.AddHealthChecks();
-            var app = builder.Build();
+            builder.Services.AddApiAuthentication(applicationSettings, builder.Environment.IsDevelopment());
+            builder.Services.AddApiAuthorization(builder.Environment.IsDevelopment());
+
+			var app = builder.Build();
 
             app.MapHealthChecks("/ping");
 
@@ -59,6 +71,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
