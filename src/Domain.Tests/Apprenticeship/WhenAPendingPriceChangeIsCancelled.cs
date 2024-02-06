@@ -55,9 +55,6 @@ public class WhenAPendingPriceChangeIsCancelled
     public void ThenThePriceHistoryRecordIsCancelled()
     {
         _apprenticeship.CancelPendingPriceChange();
-
-        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Cancelled);
-
-        priceHistory.Should().NotBeNull();
+        _apprenticeship.GetEntity().PriceHistories.Should().BeEmpty();
     }
 }

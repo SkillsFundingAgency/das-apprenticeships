@@ -128,7 +128,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public void CancelPendingPriceChange()
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
-            pendingPriceChange?.Cancel();
+
+            if(pendingPriceChange == null)
+            {
+                throw new InvalidOperationException("No pending price change to cancel");
+            }
+            _priceHistories.Remove(pendingPriceChange);
+            _entity.PriceHistories.Remove(pendingPriceChange.GetEntity());
         }
 
         public void RejectPendingPriceChange(string? reason)

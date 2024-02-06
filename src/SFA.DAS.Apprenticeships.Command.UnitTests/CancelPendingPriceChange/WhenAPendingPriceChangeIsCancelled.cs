@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
@@ -22,8 +23,9 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CancelPendingPriceChange
         [SetUp]
         public void SetUp()
         {
+            var logger = new Mock<ILogger<CancelPendingPriceChangeCommandHandler>>();
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
-            _commandHandler = new CancelPendingPriceChangeCommandHandler(_apprenticeshipRepository.Object);
+            _commandHandler = new CancelPendingPriceChangeCommandHandler(_apprenticeshipRepository.Object, logger.Object);
 
             _fixture = new Fixture();
             _fixture.Customize(new ApprenticeshipCustomization());
@@ -40,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CancelPendingPriceChange
             
             await _commandHandler.Handle(command);
             
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().PriceHistories.Count(z => z.PriceChangeRequestStatus == PriceChangeRequestStatus.Cancelled) == 1)));
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().PriceHistories.Count() == 0)));
         }
     }
 }
