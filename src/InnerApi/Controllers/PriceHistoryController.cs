@@ -34,13 +34,21 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// Create apprenticeship price change
         /// </summary>
         /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
-        /// <param name="request">Details of the requested price change</param>
-        /// <returns>Ok result</returns>
+        /// <param name="request">Details of the requested price change. NB one of either employer or provider id should be included to indicate the initiator of the request</param>
+        /// <returns>Ok on success, Bad Request if both or neither employer & provider id are provided</returns>
         [HttpPost("{apprenticeshipKey}/priceHistory")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> CreateApprenticeshipPriceChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipPriceChangeRequest request)
         {
-            await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.ProviderId, request.EmployerId, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+            try
+            {
+                await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.ProviderId, request.EmployerId, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest();
+            }
+
             return Ok();
         }
 

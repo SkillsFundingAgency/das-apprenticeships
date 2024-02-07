@@ -23,7 +23,17 @@ namespace SFA.DAS.Apprenticeships.Command.AddPriceHistory
             CancellationToken cancellationToken = default)
         {
             var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
-            apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, command.UserId, command.Reason);
+            switch (command)
+            {
+                case { ProviderId: not null, EmployerId: null }:
+                    apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, command.UserId, command.Reason, null);
+                    break;
+                case { ProviderId: null, EmployerId: not null }:
+                    apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, null, command.Reason, command.UserId);
+                    break;
+                default:
+                    throw new ArgumentException("CreateApprenticeshipPriceChangeRequest should have a single initiator value set (ProviderId OR EmployerId)");
+            }
             await _apprenticeshipRepository.Update(apprenticeship);
         }
     }

@@ -48,7 +48,8 @@ public class WhenAPendingPriceChangeIsCancelled
             priceHistory.CreatedDate,
             priceHistory.PriceChangeRequestStatus,
             priceHistory.ProviderApprovedBy,
-            priceHistory.ChangeReason);
+            priceHistory.ChangeReason!,
+            null);
     }
 
     [Test]
