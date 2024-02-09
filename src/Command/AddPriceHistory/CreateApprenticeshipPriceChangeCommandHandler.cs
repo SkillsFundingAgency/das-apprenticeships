@@ -23,6 +23,9 @@ namespace SFA.DAS.Apprenticeships.Command.AddPriceHistory
             CancellationToken cancellationToken = default)
         {
             var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+
+
+
             apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, command.UserId, command.Reason);
             await _apprenticeshipRepository.Update(apprenticeship);
         }
