@@ -20,7 +20,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
         {
             var dataModels = await DbContext.Apprenticeships
-                .Where(x => x.UKPRN == ukprn)
+                .Where(x => x.Ukprn == ukprn)
                 .Include(x => x.Approvals)
                 .Where(a => a.Approvals.Any(c => (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
                 .ToListAsync();
@@ -42,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 ApprenticeshipActualStartDate = apprenticeship.ActualStartDate,
                 ApprenticeshipPlannedEndDate = apprenticeship.PlannedEndDate,
                 AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
-                UKPRN = apprenticeship.UKPRN
+                UKPRN = apprenticeship.Ukprn
             };
         }
 

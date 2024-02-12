@@ -95,7 +95,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             apprenticeship.FirstName.Should().Be(ApprovalCreatedEvent.FirstName);
             apprenticeship.LastName.Should().Be(ApprovalCreatedEvent.LastName);
             apprenticeship.EmployerAccountId.Should().Be(ApprovalCreatedEvent.EmployerAccountId);
-            apprenticeship.UKPRN.Should().Be(ApprovalCreatedEvent.UKPRN);
+            apprenticeship.Ukprn.Should().Be(ApprovalCreatedEvent.UKPRN);
             int.Parse(apprenticeship.TrainingCode).Should().Be(int.Parse(ApprovalCreatedEvent.TrainingCode));
             apprenticeship.Key.Should().NotBe(Guid.Empty);
            
@@ -154,7 +154,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.FundingEmployerAccountId.Should().Be(Approval.FundingEmployerAccountId);
             publishedEvent.FundingType.ToString().Should().Be(Approval.FundingType.ToString());
             publishedEvent.LegalEntityName.Should().Be(Approval.LegalEntityName);
-            publishedEvent.UKPRN.Should().Be(Apprenticeship.UKPRN);
+            publishedEvent.UKPRN.Should().Be(Apprenticeship.Ukprn);
             publishedEvent.FirstName.Should().Be(Apprenticeship.FirstName);
             publishedEvent.LastName.Should().Be(Apprenticeship.LastName);
             publishedEvent.PlannedStartDate.Should().BeSameDateAs(Approval.PlannedStartDate!.Value);
