@@ -19,11 +19,11 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
     [TestFixture]
     public class WhenAnApprovalIsAdded
     {
-        private AddApprovalCommandHandler _commandHandler;
-        private Mock<IApprenticeshipFactory> _apprenticeshipFactory;
-        private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
-        private Mock<IFundingBandMaximumService> _fundingBandMaximumService;
-        private Fixture _fixture;
+        private AddApprovalCommandHandler _commandHandler = null!;
+        private Mock<IApprenticeshipFactory> _apprenticeshipFactory = null!;
+        private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
+        private Mock<IFundingBandMaximumService> _fundingBandMaximumService = null!;
+        private Fixture _fixture = null!;
 
         [SetUp]
         public void SetUp()
@@ -111,7 +111,6 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var command = _fixture.Create<AddApprovalCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int?)null);

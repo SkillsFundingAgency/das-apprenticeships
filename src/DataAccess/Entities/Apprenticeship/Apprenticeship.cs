@@ -29,5 +29,6 @@
         public List<Approval> Approvals { get; set; }
         public long? AccountLegalEntityId { get; set; }
         public List<PriceHistory> PriceHistories { get; set; }
+        public long? Ukprn { get; set; }
     }
 }

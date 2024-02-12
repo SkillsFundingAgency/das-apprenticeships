@@ -12,6 +12,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
     [TestFixture]
     public class WhenAnApprovalIsAdded
     {
+        private ApprenticeshipDomainModel _apprenticeship;
         private Fixture _fixture;
 
         [SetUp]

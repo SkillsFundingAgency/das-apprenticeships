@@ -16,8 +16,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public string FirstName => _entity.FirstName;
         public string LastName => _entity.LastName;
         public DateTime DateOfBirth => _entity.DateOfBirth;
-        public long Ukprn => _entity.UKPRN;
         public long EmployerAccountId => _entity.EmployerAccountId;
+        public long Ukprn => _entity.Ukprn;
         public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
         public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
 
@@ -74,7 +74,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 PlannedEndDate = plannedEndDate,
                 AccountLegalEntityId = accountLegalEntityId,
                 EmployerAccountId = employerAccountId,
-                UKPRN = ukprn
+                Ukprn = ukprn
             });
         }
 
@@ -110,7 +110,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             DateTime effectiveFromDate,
             DateTime createdDate,
             PriceChangeRequestStatus? priceChangeRequestStatus,
-            string? providerApprovedBy)
+            string? providerApprovedBy,
+            string changeReason)
         {
             var priceHistory = PriceHistoryDomainModel.New(this.Key,
                 trainingPrice,
@@ -120,10 +121,23 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 createdDate,
                 priceChangeRequestStatus,
                 providerApprovedBy,
-                DateTime.Now);
+                DateTime.Now,
+                changeReason);
             
             _priceHistories.Add(priceHistory);
             _entity.PriceHistories.Add(priceHistory.GetEntity());
+        }
+
+        public void CancelPendingPriceChange()
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange?.Cancel();
+        }
+
+        public void RejectPendingPriceChange(string? reason)
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange?.Reject(reason);
         }
     }
 }

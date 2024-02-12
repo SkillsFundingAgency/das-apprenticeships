@@ -5,7 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
+namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 {
     [TestFixture]
     public class WhenAnApprenticeshipIsCreated
@@ -24,17 +24,17 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         public void ThenAnApprenticeshipCreatedEventIsAdded()
         {
             var apprenticeship = _apprenticeshipFactory.CreateNew(
-                "1234435", 
-                "TRN", 
-                new DateTime(2000, 10, 16), 
+                "1234435",
+                "TRN",
+                new DateTime(2000, 10, 16),
                 "Ron",
-                "Swanson", 
-                _fixture.Create<decimal?>(), 
-                _fixture.Create<decimal?>(), 
+                "Swanson",
+                _fixture.Create<decimal?>(),
+                _fixture.Create<decimal?>(),
                 _fixture.Create<decimal>(),
-                _fixture.Create<string>(), 
-                _fixture.Create<int>(), 
-                _fixture.Create<DateTime>(), 
+                _fixture.Create<string>(),
+                _fixture.Create<int>(),
+                _fixture.Create<DateTime>(),
                 _fixture.Create<DateTime>(),
                 _fixture.Create<long>(),
                 _fixture.Create<long>(),

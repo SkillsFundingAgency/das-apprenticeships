@@ -2,5 +2,7 @@
 
 public enum PriceChangeRequestStatus
 {
-    Created = 0
+    Created = 0,
+    Cancelled = 1,
+    Rejected = 2
 }

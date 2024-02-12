@@ -14,6 +14,6 @@
     [ActualStartDate] DATETIME NULL,
     [PlannedEndDate] DATETIME NULL, 
     [AccountLegalEntityId] BIGINT NULL,
-    [UKPRN] BIGINT NOT NULL, 
+    [Ukprn] BIGINT NOT NULL, 
     [EmployerAccountId] BIGINT NOT NULL
 )
