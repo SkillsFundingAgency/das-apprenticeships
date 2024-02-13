@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
@@ -10,11 +11,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
     public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
     {
         private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
+        private readonly ILogger<ApprenticeshipQueryRepository> _logger;
         private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
 
-        public ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext)
+        public ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext, ILogger<ApprenticeshipQueryRepository> logger)
         {
             _lazyContext = dbContext;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
@@ -56,11 +59,22 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 
         public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
         {
-            var pendingPriceChange = await DbContext.Apprenticeships
-	            .Include(x => x.PriceHistories)
+            _logger.LogInformation($"Getting pending price change for apprenticeship {apprenticeshipKey}");
+
+            PendingPriceChange? pendingPriceChange = null;
+
+            try
+            {
+                pendingPriceChange = await DbContext.Apprenticeships
+                .Include(x => x.PriceHistories)
                 .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
                 .Select(PriceHistoryToPendingPriceChange())
                 .SingleOrDefaultAsync();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e, $"Error getting pending price change for apprenticeship {apprenticeshipKey}");
+            }
 
             return pendingPriceChange;
         }

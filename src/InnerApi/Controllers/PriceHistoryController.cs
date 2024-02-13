@@ -56,6 +56,11 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             var request = new GetPendingPriceChangeRequest(apprenticeshipKey);
             var response = await _queryDispatcher.Send<GetPendingPriceChangeRequest, GetPendingPriceChangeResponse>(request);
 
+            if(!response.HasPendingPriceChange)
+            {
+                return NotFound(response.PendingPriceChange);
+            }
+
             return Ok(response);
         }
 
