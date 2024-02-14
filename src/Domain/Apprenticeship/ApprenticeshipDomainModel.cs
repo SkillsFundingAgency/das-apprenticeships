@@ -109,7 +109,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             DateTime createdDate,
             PriceChangeRequestStatus? priceChangeRequestStatus,
             string? providerApprovedBy,
-            string changeReason)
+            string? changeReason)
         {
             var priceHistory = PriceHistoryDomainModel.New(this.Key,
                 trainingPrice,

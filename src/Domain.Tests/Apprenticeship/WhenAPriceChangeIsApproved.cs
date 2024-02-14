@@ -47,7 +47,8 @@ public class WhenAPriceChangeIsApproved
             priceHistory.EffectiveFromDate,
             priceHistory.CreatedDate,
             priceHistory.PriceChangeRequestStatus,
-            priceHistory.ProviderApprovedBy);
+            priceHistory.ProviderApprovedBy,
+            priceHistory.ChangeReason);
     }
 
     [Test]
