@@ -108,7 +108,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             DateTime effectiveFromDate,
             DateTime createdDate,
             PriceChangeRequestStatus? priceChangeRequestStatus,
-            string? providerApprovedBy)
+            string? providerApprovedBy,
+            string changeReason)
         {
             var priceHistory = PriceHistoryDomainModel.New(this.Key,
                 trainingPrice,
@@ -118,7 +119,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 createdDate,
                 priceChangeRequestStatus,
                 providerApprovedBy,
-                DateTime.Now);
+                DateTime.Now,
+                changeReason);
             
             _priceHistories.Add(priceHistory);
             _entity.PriceHistories.Add(priceHistory.GetEntity());
@@ -128,6 +130,18 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
             pendingPriceChange?.Approve(employerApprovedBy, DateTime.Now);
+        }
+        
+        public void CancelPendingPriceChange()
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange?.Cancel();
+        }
+
+        public void RejectPendingPriceChange(string? reason)
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange?.Reject(reason);
         }
     }
 }

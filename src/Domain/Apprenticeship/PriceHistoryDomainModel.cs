@@ -18,6 +18,7 @@ public class PriceHistoryDomainModel
     public DateTime? EmployerApprovedDate => _entity.EmployerApprovedDate;
     public DateTime CreatedDate => _entity.CreatedDate;
     public PriceChangeRequestStatus? PriceChangeRequestStatus => _entity.PriceChangeRequestStatus;
+    public string? ChangeReason => _entity.ChangeReason;
 
     internal static PriceHistoryDomainModel New(Guid apprenticeshipKey,
         decimal? trainingPrice,
@@ -27,7 +28,8 @@ public class PriceHistoryDomainModel
         DateTime createdDate,
         PriceChangeRequestStatus? priceChangeRequestStatus,
         string? providerApprovedBy,
-        DateTime? providerApprovedDate)
+        DateTime? providerApprovedDate,
+        string changeReason)
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
@@ -39,7 +41,8 @@ public class PriceHistoryDomainModel
             CreatedDate = createdDate,
             PriceChangeRequestStatus = priceChangeRequestStatus,
             ProviderApprovedBy = providerApprovedBy,
-            ProviderApprovedDate = providerApprovedDate
+            ProviderApprovedDate = providerApprovedDate,
+            ChangeReason = changeReason
         });
     }
 
@@ -56,6 +59,17 @@ public class PriceHistoryDomainModel
     internal static PriceHistoryDomainModel Get(DataAccess.Entities.Apprenticeship.PriceHistory entity)
     {
         return new PriceHistoryDomainModel(entity);
+    }
+
+    public void Cancel()
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Cancelled;
+    }
+
+    public void Reject(string? reason)
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Rejected;
+        _entity.RejectReason = reason;
     }
 
     public void Approve(string? employerApprovedBy, DateTime employerApprovedDate)
