@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -66,5 +67,18 @@ public class WhenAPriceChangeIsApproved
         priceHistory.Should().NotBeNull();
         priceHistory.EmployerApprovedBy.Should().Be(employerUserId);
         priceHistory.EmployerApprovedDate.Should().NotBeNull();
+    }
+
+    [Test]
+    public void ThenAPriceChangeApprovedEventIsAdded()
+    {
+        //Arrange
+        var employerUserId = _fixture.Create<string>();
+
+        //Act
+        _apprenticeship.ApprovePriceChange(employerUserId);
+
+        var events = _apprenticeship.FlushEvents();
+        events.Should().ContainSingle(x => x.GetType() == typeof(PriceChangeApproved));
     }
 }

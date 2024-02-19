@@ -130,6 +130,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
             pendingPriceChange?.Approve(employerApprovedBy, DateTime.Now);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
         }
         
         public void CancelPendingPriceChange()
