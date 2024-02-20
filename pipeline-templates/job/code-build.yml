@@ -55,4 +55,4 @@ jobs:
   - template: azure-pipelines-templates/build/step/nuget-pack.yml@das-platform-building-blocks
     parameters:
       DotNetStandardPackagesToPack: |
-        src/Types/${{ parameters.SolutionBaseName }}.Types.csproj;src/Types/${{ parameters.SolutionBaseName }}.Enums.csproj;
+        src/Types/${{ parameters.SolutionBaseName }}.Types.csproj;src/SFA.DAS.Apprenticeships.Enums/${{ parameters.SolutionBaseName }}.Enums.csproj;
