@@ -19,9 +19,6 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
         private Fixture _fixture = null!;
 
-        private const string Provider = "Provider";
-        private const string Employer = "Employer";
-
         [SetUp]
         public void SetUp()
         {
@@ -36,7 +33,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
         public async Task ThenPriceHistoryIsAddedToApprenticeship()
         {
             var command = _fixture.Create<CreateApprenticeshipPriceChangeRequest>();
-            command.EmployerId = null;
+            command.Requester = PriceChangeRequester.Provider.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
@@ -46,15 +43,12 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
             _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().PriceHistories.Count == 1)));
         }
 
-        [TestCase(Provider)]
-        [TestCase(Employer)]
-        public async Task ThenCorrectPriceHistoryValuesAreSet(string initiator)
+        [TestCase("Provider")]
+        [TestCase("Employer")]
+        public async Task ThenCorrectPriceHistoryValuesAreSet(string requester)
         {
             var command = _fixture.Create<CreateApprenticeshipPriceChangeRequest>();
-            if (initiator == Provider)
-                command.EmployerId = null;
-            else
-                command.ProviderId = null;
+            command.Requester = requester;
             
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
@@ -62,7 +56,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
             
             await _commandHandler.Handle(command);
 
-            if (initiator == Provider)
+            if (requester == PriceChangeRequester.Provider.ToString())
                 _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
                     y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
                     y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
@@ -86,16 +80,11 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AppPriceHistory
                 )));
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void ThenAnExceptionIsThrownIfTheRequestIsNotInitiatedByASingleUserType(bool valuesSet)
+        [Test]
+        public void ThenAnExceptionIsThrownIfTheRequesterIsNotSet()
         {
             var command = _fixture.Create<CreateApprenticeshipPriceChangeRequest>();
-            if (!valuesSet)
-            {
-                command.EmployerId = null;
-                command.ProviderId = null;
-            }
+            command.Requester = string.Empty;
                 
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 

@@ -109,7 +109,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             PriceChangeRequestStatus? priceChangeRequestStatus,
             string? providerApprovedBy,
             string changeReason,
-            string? employerApprovedBy)
+            string? employerApprovedBy,
+            DateTime? providerApprovedDate,
+            DateTime? employerApprovedDate)
         {
             var priceHistory = PriceHistoryDomainModel.New(this.Key,
                 trainingPrice,
@@ -119,9 +121,10 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 createdDate,
                 priceChangeRequestStatus,
                 providerApprovedBy,
-                DateTime.Now,
+                providerApprovedDate,
                 changeReason,
-                employerApprovedBy);
+                employerApprovedBy,
+                employerApprovedDate);
             
             _priceHistories.Add(priceHistory);
             _entity.PriceHistories.Add(priceHistory.GetEntity());

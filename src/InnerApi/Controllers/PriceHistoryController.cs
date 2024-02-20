@@ -42,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
             try
             {
-                await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.ProviderId, request.EmployerId, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+                await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.Requester, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
             }
             catch (ArgumentException)
             {

@@ -49,7 +49,9 @@ public class WhenAPendingPriceChangeIsRejected
             priceHistory.PriceChangeRequestStatus,
             priceHistory.ProviderApprovedBy,
             priceHistory.ChangeReason!,
-            null);
+            null,
+            priceHistory.ProviderApprovedDate,
+            priceHistory.EmployerApprovedDate);
     }
 
     [Test]

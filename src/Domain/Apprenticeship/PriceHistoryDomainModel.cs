@@ -30,7 +30,8 @@ public class PriceHistoryDomainModel
         string? providerApprovedBy,
         DateTime? providerApprovedDate,
         string changeReason,
-        string? employerApprovedBy)
+        string? employerApprovedBy,
+        DateTime? employerApprovedDate)
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
@@ -44,7 +45,8 @@ public class PriceHistoryDomainModel
             ProviderApprovedBy = providerApprovedBy,
             ProviderApprovedDate = providerApprovedDate,
             ChangeReason = changeReason,
-            EmployerApprovedBy = employerApprovedBy
+            EmployerApprovedBy = employerApprovedBy,
+            EmployerApprovedDate = employerApprovedDate
         });
     }
 
