@@ -20,14 +20,16 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
     {
         private readonly IQueryDispatcher _queryDispatcher;
         private readonly ICommandDispatcher _commandDispatcher;
+        private readonly ILogger<PriceHistoryController> _logger;
 
         /// <summary>Initializes a new instance of the <see cref="PriceHistoryController"/> class.</summary>
         /// <param name="queryDispatcher"></param>
         /// <param name="commandDispatcher"></param>
-        public PriceHistoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher)
+        public PriceHistoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<PriceHistoryController> logger)
         {
             _queryDispatcher = queryDispatcher;
             _commandDispatcher = commandDispatcher;
+            _logger = logger;
         }
 
         /// <summary>
@@ -44,8 +46,9 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             {
                 await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.Requester, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
             }
-            catch (ArgumentException)
+            catch (ArgumentException exception)
             {
+                _logger.LogError(exception, $"Bad Request, missing or invalid: {exception.ParamName}");
                 return BadRequest();
             }
 
