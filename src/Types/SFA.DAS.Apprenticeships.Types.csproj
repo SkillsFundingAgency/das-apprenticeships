@@ -10,4 +10,8 @@
     <PackageReference Include="Azure.Identity" Version="1.10.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.Apprenticeships.Enums\SFA.DAS.Apprenticeships.Enums.csproj" />
+  </ItemGroup>
+
 </Project>

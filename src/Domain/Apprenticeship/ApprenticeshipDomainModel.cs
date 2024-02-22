@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -108,7 +109,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             DateTime createdDate,
             PriceChangeRequestStatus? priceChangeRequestStatus,
             string? providerApprovedBy,
-            string changeReason)
+            string? changeReason)
         {
             var priceHistory = PriceHistoryDomainModel.New(this.Key,
                 trainingPrice,
@@ -125,6 +126,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity.PriceHistories.Add(priceHistory.GetEntity());
         }
 
+        public void ApprovePriceChange(string? employerApprovedBy)
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange?.Approve(employerApprovedBy, DateTime.Now);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
+        }
+        
         public void CancelPendingPriceChange()
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);

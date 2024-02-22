@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
+using SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
+using SFA.DAS.Apprenticeships.Command.CreatePriceChange;
 using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
 using SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
@@ -40,7 +41,15 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         [ProducesResponseType(200)]
         public async Task<IActionResult> CreateApprenticeshipPriceChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipPriceChangeRequest request)
         {
-            await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.ProviderId, request.EmployerId, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+            await _commandDispatcher.Send(new CreatePriceChangeCommand(apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+            return Ok();
+        }
+
+        [HttpPatch("{apprenticeshipKey}/priceHistory/pending")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> ApprovePriceChange(Guid apprenticeshipKey, [FromBody] ApprovePriceChangeRequest request)
+        {
+            await _commandDispatcher.Send(new ApprovePriceChangeCommand(apprenticeshipKey, request.UserId));
             return Ok();
         }
 
