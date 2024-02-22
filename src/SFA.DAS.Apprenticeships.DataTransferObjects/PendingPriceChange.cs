@@ -5,7 +5,9 @@ namespace SFA.DAS.Apprenticeships.DataTransferObjects;
 [ExcludeFromCodeCoverage]
 public class PendingPriceChange
 {
-	public decimal? OriginalTrainingPrice { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public decimal? OriginalTrainingPrice { get; set; }
 	public decimal? OriginalAssessmentPrice { get; set; }
 	public decimal OriginalTotalPrice { get; set; }
 	public decimal? PendingTrainingPrice { get; set; }
