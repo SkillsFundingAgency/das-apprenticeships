@@ -90,8 +90,22 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         public async Task Then_the_domain_events_are_published()
         {
             // Arrange
-            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
-            
+            var testApprenticeship = ApprenticeshipDomainModel.New(
+                "1234435",
+                "TRN",
+                new DateTime(2000, 10, 16),
+                "Ron",
+                "Swanson",
+                _fixture.Create<decimal?>(),
+                _fixture.Create<decimal?>(),
+                _fixture.Create<decimal>(),
+                _fixture.Create<string>(),
+                _fixture.Create<int>(),
+                _fixture.Create<DateTime>(),
+                _fixture.Create<DateTime>(),
+                _fixture.Create<long>(),
+                _fixture.Create<long>());
+
             // Act
             await _sut.Add(testApprenticeship);
             
