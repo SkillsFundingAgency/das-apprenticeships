@@ -78,15 +78,18 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         internal static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
         {
-            return new ApprenticeshipDomainModel(entity);
+            return new ApprenticeshipDomainModel(entity, false);
         }
 
-        private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+        private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity, bool newApprenticeship = true)
         {
             _entity = entity;
             _approvals = entity.Approvals.Select(ApprovalDomainModel.Get).ToList();
             _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
-            AddEvent(new ApprenticeshipCreated(_entity.Key));
+            if (newApprenticeship)
+            {
+                AddEvent(new ApprenticeshipCreated(_entity.Key));
+            }
         }
 
         public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
