@@ -29,7 +29,9 @@ public class PriceHistoryDomainModel
         PriceChangeRequestStatus? priceChangeRequestStatus,
         string? providerApprovedBy,
         DateTime? providerApprovedDate,
-        string? changeReason)
+        string changeReason,
+        string? employerApprovedBy,
+        DateTime? employerApprovedDate)
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
@@ -42,7 +44,9 @@ public class PriceHistoryDomainModel
             PriceChangeRequestStatus = priceChangeRequestStatus,
             ProviderApprovedBy = providerApprovedBy,
             ProviderApprovedDate = providerApprovedDate,
-            ChangeReason = changeReason
+            ChangeReason = changeReason,
+            EmployerApprovedBy = employerApprovedBy,
+            EmployerApprovedDate = employerApprovedDate
         });
     }
 

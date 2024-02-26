@@ -21,35 +21,38 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
     {
         private readonly IQueryDispatcher _queryDispatcher;
         private readonly ICommandDispatcher _commandDispatcher;
+        private readonly ILogger<PriceHistoryController> _logger;
 
         /// <summary>Initializes a new instance of the <see cref="PriceHistoryController"/> class.</summary>
         /// <param name="queryDispatcher"></param>
         /// <param name="commandDispatcher"></param>
-        public PriceHistoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher)
+        public PriceHistoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<PriceHistoryController> logger)
         {
             _queryDispatcher = queryDispatcher;
             _commandDispatcher = commandDispatcher;
+            _logger = logger;
         }
 
         /// <summary>
         /// Create apprenticeship price change
         /// </summary>
         /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
-        /// <param name="request">Details of the requested price change</param>
-        /// <returns>Ok result</returns>
+        /// <param name="request">Details of the requested price change.</param>
+        /// <returns>Ok on success, Bad Request if neither employer or provider are set for requester</returns>
         [HttpPost("{apprenticeshipKey}/priceHistory")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> CreateApprenticeshipPriceChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipPriceChangeRequest request)
         {
-            await _commandDispatcher.Send(new CreatePriceChangeCommand(apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
-            return Ok();
-        }
+            try
+            {
+                await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.Requester, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+            }
+            catch (ArgumentException exception)
+            {
+                _logger.LogError(exception, $"Bad Request, missing or invalid: {exception.ParamName}");
+                return BadRequest();
+            }
 
-        [HttpPatch("{apprenticeshipKey}/priceHistory/pending")]
-        [ProducesResponseType(200)]
-        public async Task<IActionResult> ApprovePriceChange(Guid apprenticeshipKey, [FromBody] ApprovePriceChangeRequest request)
-        {
-            await _commandDispatcher.Send(new ApprovePriceChangeCommand(apprenticeshipKey, request.UserId));
             return Ok();
         }
 
