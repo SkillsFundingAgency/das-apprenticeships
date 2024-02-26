@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -77,15 +78,18 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         internal static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
         {
-            return new ApprenticeshipDomainModel(entity);
+            return new ApprenticeshipDomainModel(entity, false);
         }
 
-        private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+        private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity, bool newApprenticeship = true)
         {
             _entity = entity;
             _approvals = entity.Approvals.Select(ApprovalDomainModel.Get).ToList();
             _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
-            AddEvent(new ApprenticeshipCreated(_entity.Key));
+            if (newApprenticeship)
+            {
+                AddEvent(new ApprenticeshipCreated(_entity.Key));
+            }
         }
 
         public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
@@ -108,7 +112,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             DateTime createdDate,
             PriceChangeRequestStatus? priceChangeRequestStatus,
             string? providerApprovedBy,
-            string changeReason)
+            string? changeReason)
         {
 			if(_priceHistories.Any(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
             {
@@ -130,6 +134,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity.PriceHistories.Add(priceHistory.GetEntity());
         }
 
+        public void ApprovePriceChange(string? employerApprovedBy)
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange?.Approve(employerApprovedBy, DateTime.Now);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
+        }
+        
         public void CancelPendingPriceChange()
         {
             var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);

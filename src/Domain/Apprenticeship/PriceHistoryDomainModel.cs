@@ -29,7 +29,7 @@ public class PriceHistoryDomainModel
         PriceChangeRequestStatus? priceChangeRequestStatus,
         string? providerApprovedBy,
         DateTime? providerApprovedDate,
-        string changeReason)
+        string? changeReason)
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
@@ -70,5 +70,12 @@ public class PriceHistoryDomainModel
     {
         _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Rejected;
         _entity.RejectReason = reason;
+    }
+
+    public void Approve(string? employerApprovedBy, DateTime employerApprovedDate)
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+        _entity.EmployerApprovedBy = employerApprovedBy;
+        _entity.EmployerApprovedDate = employerApprovedDate;
     }
 }
