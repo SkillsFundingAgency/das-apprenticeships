@@ -114,7 +114,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             string? providerApprovedBy,
             string? changeReason)
         {
-            var priceHistory = PriceHistoryDomainModel.New(this.Key,
+			if(_priceHistories.Any(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
+            {
+                throw new InvalidOperationException("There is already a pending price change");
+            }
+
+			var priceHistory = PriceHistoryDomainModel.New(this.Key,
                 trainingPrice,
                 assessmentPrice,
                 totalPrice,
@@ -138,14 +143,14 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         
         public void CancelPendingPriceChange()
         {
-            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
-            pendingPriceChange?.Cancel();
+            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange.Cancel();
         }
 
         public void RejectPendingPriceChange(string? reason)
         {
-            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
-            pendingPriceChange?.Reject(reason);
+            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange.Reject(reason);
         }
     }
 }
