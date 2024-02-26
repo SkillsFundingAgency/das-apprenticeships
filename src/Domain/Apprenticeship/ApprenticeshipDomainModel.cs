@@ -17,7 +17,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public string FirstName => _entity.FirstName;
         public string LastName => _entity.LastName;
         public DateTime DateOfBirth => _entity.DateOfBirth;
-        public long? Ukprn => _entity.Ukprn;
+        public long EmployerAccountId => _entity.EmployerAccountId;
+        public long Ukprn => _entity.Ukprn;
         public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
         public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
 
@@ -54,7 +55,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             DateTime? actualStartDate,
             DateTime? plannedEndDate,
             long accountLegalEntityId,
-            long ukprn)
+            long ukprn,
+            long employerAccountId)
         {
             return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
             {
@@ -72,6 +74,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 ActualStartDate = actualStartDate,
                 PlannedEndDate = plannedEndDate,
                 AccountLegalEntityId = accountLegalEntityId,
+                EmployerAccountId = employerAccountId,
                 Ukprn = ukprn
             });
         }
@@ -92,9 +95,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             }
         }
 
-        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
+        public void AddApproval(long approvalsApprenticeshipId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
         {
-            var approval = ApprovalDomainModel.New(approvalsApprenticeshipId, ukprn, employerAccountId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType, fundingBandMaximum, plannedStartDate, fundingPlatform);
+            var approval = ApprovalDomainModel.New(approvalsApprenticeshipId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType, fundingBandMaximum, plannedStartDate, fundingPlatform);
             _approvals.Add(approval);
             _entity.Approvals.Add(approval.GetEntity());
         }

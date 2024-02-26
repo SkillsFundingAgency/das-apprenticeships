@@ -48,8 +48,8 @@ public class WhenGetPendingPriceChange
         var query = _fixture.Create<GetPendingPriceChangeRequest>();
 
         _apprenticeshipQueryRepository
-            .Setup(x => x.GetPrice(query.ApprenticeshipKey))
-            .ReturnsAsync((ApprenticeshipPrice)null!);
+            .Setup(x => x.GetPendingPriceChange(query.ApprenticeshipKey))
+            .ReturnsAsync((PendingPriceChange)null!);
 
         //Act
         var actualResult = await _sut.Handle(query);

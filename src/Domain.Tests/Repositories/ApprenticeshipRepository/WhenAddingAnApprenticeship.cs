@@ -74,16 +74,23 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             var expectedApproval = ApprovalDomainModel.Get(_fixture.Create<Approval>());
 
             // Act
-            testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.Ukprn, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType, expectedApproval.FundingBandMaximum, expectedApproval.PlannedStartDate, expectedApproval.FundingPlatform);
+            testApprenticeship.AddApproval(
+                expectedApproval.ApprovalsApprenticeshipId, 
+                expectedApproval.LegalEntityName, 
+                expectedApproval.ActualStartDate, 
+                expectedApproval.PlannedEndDate, 
+                expectedApproval.AgreedPrice, 
+                expectedApproval.FundingEmployerAccountId, 
+                expectedApproval.FundingType, 
+                expectedApproval.FundingBandMaximum, 
+                expectedApproval.PlannedStartDate, 
+                expectedApproval.FundingPlatform);
             await _sut.Add(testApprenticeship);
             
             // Assert
             _dbContext.Approvals.Count().Should().Be(1);
-
             var storedApproval = _dbContext.Approvals.Single();
-            
-            storedApproval.Should().BeEquivalentTo(expectedApproval, options => options
-                .WithMapping<Approval>(x => x.Ukprn, y => y.UKPRN));
+            storedApproval.Should().BeEquivalentTo(expectedApproval);
         }
 
         [Test]

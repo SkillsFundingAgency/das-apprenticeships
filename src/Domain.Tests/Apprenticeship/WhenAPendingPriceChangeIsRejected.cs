@@ -37,6 +37,7 @@ public class WhenAPendingPriceChangeIsRejected
             _fixture.Create<DateTime>(),
             _fixture.Create<DateTime>(),
             _fixture.Create<long>(),
+            _fixture.Create<long>(),
             _fixture.Create<long>());
 
         var priceHistory = PriceHistoryDomainModel.Get(_fixture.Create<PriceHistory>());
