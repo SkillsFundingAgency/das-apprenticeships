@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.AddPriceHistory;
+using SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
+using SFA.DAS.Apprenticeships.Command.CreatePriceChange;
 using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
 using SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
@@ -66,6 +67,11 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
             var request = new GetPendingPriceChangeRequest(apprenticeshipKey);
             var response = await _queryDispatcher.Send<GetPendingPriceChangeRequest, GetPendingPriceChangeResponse>(request);
+
+            if(!response.HasPendingPriceChange)
+            {
+                return NotFound(response.PendingPriceChange);
+            }
 
             return Ok(response);
         }

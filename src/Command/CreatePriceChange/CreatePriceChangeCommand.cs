@@ -1,12 +1,11 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.AddPriceHistory;
+﻿namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange;
 
-public class CreateApprenticeshipPriceChangeRequest : ICommand
+public class CreatePriceChangeCommand : ICommand
 {
-    public CreateApprenticeshipPriceChangeRequest(string requester, Guid apprenticeshipKey,
+    public CreatePriceChangeCommand(Guid apprenticeshipKey,
         string userId, decimal? trainingPrice, decimal? assessmentPrice, decimal totalPrice, string reason,
         DateTime effectiveFromDate)
     {
-        Requester = requester;
         ApprenticeshipKey = apprenticeshipKey;
         UserId = userId;
         TrainingPrice = trainingPrice;
@@ -16,7 +15,6 @@ public class CreateApprenticeshipPriceChangeRequest : ICommand
         EffectiveFromDate = effectiveFromDate;
     }
 
-    public string Requester { get; set; }
     public Guid ApprenticeshipKey { get; set; }
     public string UserId { get; set; }
     public decimal? TrainingPrice { get; set; }

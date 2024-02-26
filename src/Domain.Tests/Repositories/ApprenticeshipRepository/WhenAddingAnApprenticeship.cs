@@ -74,24 +74,45 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             var expectedApproval = ApprovalDomainModel.Get(_fixture.Create<Approval>());
 
             // Act
-            testApprenticeship.AddApproval(expectedApproval.ApprovalsApprenticeshipId, expectedApproval.Ukprn, expectedApproval.EmployerAccountId, expectedApproval.LegalEntityName, expectedApproval.ActualStartDate, expectedApproval.PlannedEndDate, expectedApproval.AgreedPrice, expectedApproval.FundingEmployerAccountId, expectedApproval.FundingType, expectedApproval.FundingBandMaximum, expectedApproval.PlannedStartDate, expectedApproval.FundingPlatform);
+            testApprenticeship.AddApproval(
+                expectedApproval.ApprovalsApprenticeshipId, 
+                expectedApproval.LegalEntityName, 
+                expectedApproval.ActualStartDate, 
+                expectedApproval.PlannedEndDate, 
+                expectedApproval.AgreedPrice, 
+                expectedApproval.FundingEmployerAccountId, 
+                expectedApproval.FundingType, 
+                expectedApproval.FundingBandMaximum, 
+                expectedApproval.PlannedStartDate, 
+                expectedApproval.FundingPlatform);
             await _sut.Add(testApprenticeship);
             
             // Assert
             _dbContext.Approvals.Count().Should().Be(1);
-
             var storedApproval = _dbContext.Approvals.Single();
-            
-            storedApproval.Should().BeEquivalentTo(expectedApproval, options => options
-                .WithMapping<Approval>(x => x.Ukprn, y => y.UKPRN));
+            storedApproval.Should().BeEquivalentTo(expectedApproval);
         }
 
         [Test]
         public async Task Then_the_domain_events_are_published()
         {
             // Arrange
-            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
-            
+            var testApprenticeship = ApprenticeshipDomainModel.New(
+                "1234435",
+                "TRN",
+                new DateTime(2000, 10, 16),
+                "Ron",
+                "Swanson",
+                _fixture.Create<decimal?>(),
+                _fixture.Create<decimal?>(),
+                _fixture.Create<decimal>(),
+                _fixture.Create<string>(),
+                _fixture.Create<int>(),
+                _fixture.Create<DateTime>(),
+                _fixture.Create<DateTime>(),
+                _fixture.Create<long>(),
+                _fixture.Create<long>());
+
             // Act
             await _sut.Add(testApprenticeship);
             

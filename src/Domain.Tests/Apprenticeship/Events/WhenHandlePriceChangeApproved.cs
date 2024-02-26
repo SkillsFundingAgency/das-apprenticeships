@@ -8,15 +8,16 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 {
-    public class WhenHandleApprenticeshipCreated
+    public class WhenHandlePriceChangeApproved
     {
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
         private Mock<IMessageSession> _messageSession;
-        private ApprenticeshipCreatedHandler _handler;
+        private PriceChangeApprovedHandler _handler;
         private Fixture _fixture;
 
         [SetUp]
@@ -25,7 +26,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
             _fixture = new Fixture();
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
             _messageSession = new Mock<IMessageSession>();
-            _handler = new ApprenticeshipCreatedHandler(_apprenticeshipRepository.Object, _messageSession.Object);
+            _handler = new PriceChangeApprovedHandler(_apprenticeshipRepository.Object, _messageSession.Object);
         }
 
         [Test]
@@ -48,35 +49,30 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                 _fixture.Create<DateTime>(),
                 _fixture.Create<DateTime>(),
                 _fixture.Create<long>(),
-                _fixture.Create<long>(),
                 _fixture.Create<long>());
-            apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
+            apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
+            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeRequestStatus.Created, null, _fixture.Create<string>());
+            apprenticeship.ApprovePriceChange("Bob");
             var approval = apprenticeship.Approvals.Single();
-            var command = _fixture.Create<ApprenticeshipCreated>();
+            var priceChange = apprenticeship.PriceHistories.Single();
+            var command = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Employer);
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
             await _handler.Handle(command);
 
-            _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipCreatedEvent>(e =>
+            _messageSession.Verify(x => x.Publish(It.Is<PriceChangeApprovedEvent>(e =>
                     e.ApprenticeshipKey == apprenticeship.Key &&
-                    e.Uln == apprenticeship.Uln &&
-                    e.TrainingCode == apprenticeship.TrainingCode &&
-                    e.FundingEmployerAccountId == approval.FundingEmployerAccountId &&
-                    e.AgreedPrice == approval.AgreedPrice &&
-                    e.FundingType == (FundingType)approval.FundingType &&
-                    e.ActualStartDate == approval.ActualStartDate &&
-                    e.ApprovalsApprenticeshipId == approval.ApprovalsApprenticeshipId &&
-                    e.EmployerAccountId == apprenticeship.EmployerAccountId &&
-                    e.LegalEntityName == approval.LegalEntityName &&
-                    e.PlannedEndDate == approval.PlannedEndDate &&
-                    e.UKPRN == apprenticeship.Ukprn &&
-                    e.DateOfBirth == apprenticeship.DateOfBirth &&
-                    e.FirstName == apprenticeship.FirstName &&
-                    e.LastName== apprenticeship.LastName &&
-                    e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship &&
-                    e.PlannedStartDate == approval.PlannedStartDate &&
-                    e.FundingPlatform == (FundingPlatform?)approval.FundingPlatform
+                    e.EmployerAccountId == approval.EmployerAccountId &&
+                    e.ApprenticeshipKey == apprenticeship.Key &&
+                    e.ApprenticeshipId == approval.ApprovalsApprenticeshipId &&
+                    e.EmployerAccountId == approval.EmployerAccountId &&
+                    e.ApprovedDate == priceChange.EmployerApprovedDate!.Value &&
+                    e.ApprovedBy == ApprovedBy.Employer &&
+                    e.AssessmentPrice == priceChange.AssessmentPrice!.Value &&
+                    e.TrainingPrice == priceChange.TrainingPrice!.Value &&
+                    e.EffectiveFromDate == priceChange.EffectiveFromDate &&
+                    e.ProviderId == apprenticeship.Ukprn!.Value
                 ), It.IsAny<PublishOptions>()));
         }
     }

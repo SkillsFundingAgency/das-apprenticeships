@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -16,7 +17,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public string FirstName => _entity.FirstName;
         public string LastName => _entity.LastName;
         public DateTime DateOfBirth => _entity.DateOfBirth;
-        public long? Ukprn => _entity.Ukprn;
+        public long EmployerAccountId => _entity.EmployerAccountId;
+        public long Ukprn => _entity.Ukprn;
         public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
         public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
 
@@ -53,7 +55,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             DateTime? actualStartDate,
             DateTime? plannedEndDate,
             long accountLegalEntityId,
-            long ukprn)
+            long ukprn,
+            long employerAccountId)
         {
             return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
             {
@@ -71,26 +74,30 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 ActualStartDate = actualStartDate,
                 PlannedEndDate = plannedEndDate,
                 AccountLegalEntityId = accountLegalEntityId,
+                EmployerAccountId = employerAccountId,
                 Ukprn = ukprn
             });
         }
 
         internal static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
         {
-            return new ApprenticeshipDomainModel(entity);
+            return new ApprenticeshipDomainModel(entity, false);
         }
 
-        private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+        private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity, bool newApprenticeship = true)
         {
             _entity = entity;
             _approvals = entity.Approvals.Select(ApprovalDomainModel.Get).ToList();
             _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
-            AddEvent(new ApprenticeshipCreated(_entity.Key));
+            if (newApprenticeship)
+            {
+                AddEvent(new ApprenticeshipCreated(_entity.Key));
+            }
         }
 
-        public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
+        public void AddApproval(long approvalsApprenticeshipId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
         {
-            var approval = ApprovalDomainModel.New(approvalsApprenticeshipId, ukprn, employerAccountId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType, fundingBandMaximum, plannedStartDate, fundingPlatform);
+            var approval = ApprovalDomainModel.New(approvalsApprenticeshipId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType, fundingBandMaximum, plannedStartDate, fundingPlatform);
             _approvals.Add(approval);
             _entity.Approvals.Add(approval.GetEntity());
         }
@@ -113,7 +120,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             DateTime? providerApprovedDate,
             DateTime? employerApprovedDate)
         {
-            var priceHistory = PriceHistoryDomainModel.New(this.Key,
+			if(_priceHistories.Any(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
+            {
+                throw new InvalidOperationException("There is already a pending price change");
+            }
+
+			var priceHistory = PriceHistoryDomainModel.New(this.Key,
                 trainingPrice,
                 assessmentPrice,
                 totalPrice,
@@ -130,16 +142,23 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity.PriceHistories.Add(priceHistory.GetEntity());
         }
 
-        public void CancelPendingPriceChange()
+        public void ApprovePriceChange(string? employerApprovedBy)
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
-            pendingPriceChange?.Cancel();
+            pendingPriceChange?.Approve(employerApprovedBy, DateTime.Now);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
+        }
+        
+        public void CancelPendingPriceChange()
+        {
+            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange.Cancel();
         }
 
         public void RejectPendingPriceChange(string? reason)
         {
-            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
-            pendingPriceChange?.Reject(reason);
+            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange.Reject(reason);
         }
     }
 }

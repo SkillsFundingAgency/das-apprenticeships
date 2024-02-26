@@ -75,4 +75,11 @@ public class PriceHistoryDomainModel
         _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Rejected;
         _entity.RejectReason = reason;
     }
+
+    public void Approve(string? employerApprovedBy, DateTime employerApprovedDate)
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+        _entity.EmployerApprovedBy = employerApprovedBy;
+        _entity.EmployerApprovedDate = employerApprovedDate;
+    }
 }
