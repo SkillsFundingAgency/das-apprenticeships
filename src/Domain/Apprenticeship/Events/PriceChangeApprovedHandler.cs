@@ -25,13 +25,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
             {
                 ApprenticeshipKey = apprenticeship.Key, 
                 ApprenticeshipId = approval.ApprovalsApprenticeshipId,
-                EmployerAccountId = approval.EmployerAccountId,
+                EmployerAccountId = apprenticeship.EmployerAccountId,
                 ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? priceChange.EmployerApprovedDate!.Value : priceChange.ProviderApprovedDate!.Value,
                 ApprovedBy = @event.ApprovedBy,
                 AssessmentPrice = priceChange.AssessmentPrice!.Value,
                 TrainingPrice = priceChange.TrainingPrice!.Value,
                 EffectiveFromDate = priceChange.EffectiveFromDate,
-                ProviderId = apprenticeship.Ukprn!.Value
+                ProviderId = apprenticeship.Ukprn
             };
 
             await _messageSession.Publish(apprenticeshipCreatedEvent);

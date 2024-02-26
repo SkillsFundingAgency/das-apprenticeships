@@ -2,10 +2,17 @@
 
 public class CreatePriceChangeCommand : ICommand
 {
-    public CreatePriceChangeCommand(Guid apprenticeshipKey,
-        string userId, decimal? trainingPrice, decimal? assessmentPrice, decimal totalPrice, string reason,
+    public CreatePriceChangeCommand(
+		string requester,
+		Guid apprenticeshipKey,
+        string userId, 
+        decimal? trainingPrice, 
+        decimal? assessmentPrice, 
+        decimal totalPrice, 
+        string reason,
         DateTime effectiveFromDate)
     {
+        Requester = requester;
         ApprenticeshipKey = apprenticeshipKey;
         UserId = userId;
         TrainingPrice = trainingPrice;
@@ -14,7 +21,7 @@ public class CreatePriceChangeCommand : ICommand
         Reason = reason;
         EffectiveFromDate = effectiveFromDate;
     }
-
+    public string Requester { get; set; }
     public Guid ApprenticeshipKey { get; set; }
     public string UserId { get; set; }
     public decimal? TrainingPrice { get; set; }

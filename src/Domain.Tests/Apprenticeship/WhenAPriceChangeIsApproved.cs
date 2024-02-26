@@ -38,7 +38,8 @@ public class WhenAPriceChangeIsApproved
             _fixture.Create<DateTime>(),
             _fixture.Create<DateTime>(),
             _fixture.Create<long>(),
-            _fixture.Create<long>());
+            _fixture.Create<long>(),
+			_fixture.Create<long>());
 
         var priceHistory = PriceHistoryDomainModel.Get(_fixture.Create<PriceHistory>());
         _apprenticeship.AddPriceHistory(
@@ -49,7 +50,10 @@ public class WhenAPriceChangeIsApproved
             priceHistory.CreatedDate,
             priceHistory.PriceChangeRequestStatus,
             priceHistory.ProviderApprovedBy,
-            priceHistory.ChangeReason);
+            priceHistory.ChangeReason,
+            priceHistory.EmployerApprovedBy,
+            priceHistory.ProviderApprovedDate,
+            priceHistory.EmployerApprovedDate);
     }
 
     [Test]
