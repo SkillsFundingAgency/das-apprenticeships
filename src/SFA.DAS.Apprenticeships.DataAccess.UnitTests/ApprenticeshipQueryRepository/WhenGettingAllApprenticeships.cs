@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
+using Castle.Core.Logging;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
@@ -24,8 +27,9 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipQueryReposi
 
             var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("ApprenticeshipsDbContext" + Guid.NewGuid()).Options;
             _dbContext = new ApprenticeshipsDataContext(options);
+            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
 
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
 
         [TearDown]
@@ -99,7 +103,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipQueryReposi
             return _fixture
                 .Build<Apprenticeship>()
                 .With(x => x.Uln, uln)
-                .With(x => x.UKPRN, ukprn)
+                .With(x => x.Ukprn, ukprn)
                 .With(x => x.Approvals, new List<Approval>() { new()
                 {
                     FundingPlatform = fundingPlatform,

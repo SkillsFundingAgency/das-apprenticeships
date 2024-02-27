@@ -45,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
             try
             {
-                await _commandDispatcher.Send(new CreateApprenticeshipPriceChangeRequest(request.Requester, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+                await _commandDispatcher.Send(new CreatePriceChangeCommand(request.Requester, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
             }
             catch (ArgumentException exception)
             {
@@ -76,12 +76,24 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             return Ok(response);
         }
 
-        /// <summary>
-        /// Removes a pending price change
-        /// </summary>
-        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
-        /// <returns>Ok result</returns>
-        [HttpDelete("{apprenticeshipKey}/priceHistory/pending")]
+		/// <summary>
+		/// Approves a pending price change
+		/// </summary>
+		/// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+		[HttpPatch("{apprenticeshipKey}/priceHistory/pending")]
+		[ProducesResponseType(200)]
+		public async Task<IActionResult> ApprovePriceChange(Guid apprenticeshipKey, [FromBody] ApprovePriceChangeRequest request)
+		{
+			await _commandDispatcher.Send(new ApprovePriceChangeCommand(apprenticeshipKey, request.UserId));
+			return Ok();
+		}
+
+		/// <summary>
+		/// Removes a pending price change
+		/// </summary>
+		/// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+		/// <returns>Ok result</returns>
+		[HttpDelete("{apprenticeshipKey}/priceHistory/pending")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> CancelPendingPriceChange(Guid apprenticeshipKey)
         {
