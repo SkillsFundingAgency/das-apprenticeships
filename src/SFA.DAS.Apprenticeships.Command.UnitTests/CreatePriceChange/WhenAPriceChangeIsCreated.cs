@@ -32,7 +32,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         [Test]
         public async Task ThenPriceHistoryIsAddedToApprenticeship()
         {
-            var command = _fixture.Create<CreateApprenticeshipPriceChangeRequest>();
+            var command = _fixture.Create<CreatePriceChangeCommand>();
             command.Requester = PriceChangeRequester.Provider.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
@@ -47,7 +47,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         [TestCase("Employer")]
         public async Task ThenCorrectPriceHistoryValuesAreSet(string requester)
         {
-            var command = _fixture.Create<CreateApprenticeshipPriceChangeRequest>();
+            var command = _fixture.Create<CreatePriceChangeCommand>();
             command.Requester = requester;
             
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -83,7 +83,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         [Test]
         public void ThenAnExceptionIsThrownIfTheRequesterIsNotSet()
         {
-            var command = _fixture.Create<CreateApprenticeshipPriceChangeRequest>();
+            var command = _fixture.Create<CreatePriceChangeCommand>();
             command.Requester = string.Empty;
                 
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
