@@ -12,7 +12,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
     [TestFixture]
     public class WhenAnApprovalIsAdded
     {
-        private Domain.Apprenticeship.ApprenticeshipDomainModel _apprenticeship;
+        private ApprenticeshipDomainModel _apprenticeship;
         private Fixture _fixture;
 
         [SetUp]
@@ -35,6 +35,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
                 _fixture.Create<int>(),
                 _fixture.Create<DateTime>(),
                 _fixture.Create<DateTime>(),
+                _fixture.Create<long>(),
                 _fixture.Create<long>());
         }
 

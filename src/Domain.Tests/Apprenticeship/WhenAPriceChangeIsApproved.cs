@@ -5,16 +5,17 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 
 [TestFixture]
-public class WhenAPendingPriceChangeIsCancelled
+public class WhenAPriceChangeIsApproved
 {
-    private ApprenticeshipDomainModel _apprenticeship = null!;
-    private Fixture _fixture = null!;
+    private ApprenticeshipDomainModel _apprenticeship;
+    private Fixture _fixture;
 
     [SetUp]
     public void SetUp()
@@ -52,12 +53,32 @@ public class WhenAPendingPriceChangeIsCancelled
     }
 
     [Test]
-    public void ThenThePriceHistoryRecordIsCancelled()
+    public void ThenThePriceHistoryRecordIsUpdated()
     {
-        _apprenticeship.CancelPendingPriceChange();
+        //Arrange
+        var employerUserId = _fixture.Create<string>();
+        
+        //Act
+        _apprenticeship.ApprovePriceChange(employerUserId);
 
-        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Cancelled);
-
+        //Assert
+        _apprenticeship.GetEntity().PriceHistories.Any(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).Should().BeFalse();
+        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Approved);
         priceHistory.Should().NotBeNull();
+        priceHistory.EmployerApprovedBy.Should().Be(employerUserId);
+        priceHistory.EmployerApprovedDate.Should().NotBeNull();
+    }
+
+    [Test]
+    public void ThenAPriceChangeApprovedEventIsAdded()
+    {
+        //Arrange
+        var employerUserId = _fixture.Create<string>();
+
+        //Act
+        _apprenticeship.ApprovePriceChange(employerUserId);
+
+        var events = _apprenticeship.FlushEvents();
+        events.Should().ContainSingle(x => x.GetType() == typeof(PriceChangeApproved));
     }
 }

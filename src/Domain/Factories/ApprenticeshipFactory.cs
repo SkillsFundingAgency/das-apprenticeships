@@ -18,7 +18,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
             int fundingBandMaximum, 
             DateTime? actualStartDate,
             DateTime plannedEndDate,
-            long accountLegalEntityId)
+            long accountLegalEntityId,
+            long ukprn)
         {
             return ApprenticeshipDomainModel.New(
                 uln,
@@ -33,7 +34,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
                 fundingBandMaximum,
                 actualStartDate,
                 plannedEndDate,
-                accountLegalEntityId);
+                accountLegalEntityId,
+                ukprn);
         }
 
         public ApprenticeshipDomainModel GetExisting(DataAccess.Entities.Apprenticeship.Apprenticeship entity)

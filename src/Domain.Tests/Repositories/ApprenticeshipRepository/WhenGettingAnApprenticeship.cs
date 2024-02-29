@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain;
+using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
-namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
+namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRepository
 {
     public class WhenGettingAnApprenticeship
     {
@@ -49,9 +45,9 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests.ApprenticeshipRepository
         public async Task Then_the_apprenticeship_is_retrieved()
         {
             // Arrange
-            var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Apprenticeship>());
+            var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
 
-            _apprenticeshipFactory.Setup(x => x.GetExisting(It.Is<Apprenticeship>(y =>
+            _apprenticeshipFactory.Setup(x => x.GetExisting(It.Is<DataAccess.Entities.Apprenticeship.Apprenticeship>(y =>
                     y.Key == expectedApprenticeship.Key &&
                     y.TrainingCode == expectedApprenticeship.TrainingCode &&
                     y.Uln == expectedApprenticeship.Uln

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -16,6 +17,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public string FirstName => _entity.FirstName;
         public string LastName => _entity.LastName;
         public DateTime DateOfBirth => _entity.DateOfBirth;
+        public long? Ukprn => _entity.Ukprn;
         public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
         public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
 
@@ -51,7 +53,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             int fundingBandMaximum,
             DateTime? actualStartDate,
             DateTime? plannedEndDate,
-            long accountLegalEntityId)
+            long accountLegalEntityId,
+            long ukprn)
         {
             return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
             {
@@ -68,21 +71,25 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 FundingBandMaximum = fundingBandMaximum,
                 ActualStartDate = actualStartDate,
                 PlannedEndDate = plannedEndDate,
-                AccountLegalEntityId = accountLegalEntityId
+                AccountLegalEntityId = accountLegalEntityId,
+                Ukprn = ukprn
             });
         }
 
         internal static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
         {
-            return new ApprenticeshipDomainModel(entity);
+            return new ApprenticeshipDomainModel(entity, false);
         }
 
-        private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+        private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity, bool newApprenticeship = true)
         {
             _entity = entity;
             _approvals = entity.Approvals.Select(ApprovalDomainModel.Get).ToList();
             _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
-            AddEvent(new ApprenticeshipCreated(_entity.Key));
+            if (newApprenticeship)
+            {
+                AddEvent(new ApprenticeshipCreated(_entity.Key));
+            }
         }
 
         public void AddApproval(long approvalsApprenticeshipId, long ukprn, long employerAccountId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
@@ -105,7 +112,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             DateTime createdDate,
             PriceChangeRequestStatus? priceChangeRequestStatus,
             string? providerApprovedBy,
-            string changeReason)
+            string? changeReason)
         {
             var priceHistory = PriceHistoryDomainModel.New(this.Key,
                 trainingPrice,
@@ -122,13 +129,23 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity.PriceHistories.Add(priceHistory.GetEntity());
         }
 
+        public void ApprovePriceChange(string? employerApprovedBy)
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange?.Approve(employerApprovedBy, DateTime.Now);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
+        }
+        
         public void CancelPendingPriceChange()
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
-            if (pendingPriceChange != null)
-            {
-                pendingPriceChange.Cancel();
-            }
+            pendingPriceChange?.Cancel();
+        }
+
+        public void RejectPendingPriceChange(string? reason)
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            pendingPriceChange?.Reject(reason);
         }
     }
 }

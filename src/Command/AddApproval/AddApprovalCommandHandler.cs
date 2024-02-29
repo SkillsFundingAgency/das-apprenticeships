@@ -40,7 +40,8 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                 fundingBandMaximum.Value,
                 command.ActualStartDate,
                 command.PlannedEndDate,
-                command.AccountLegalEntityId);
+                command.AccountLegalEntityId,
+                command.UKPRN);
 
             
 
