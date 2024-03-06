@@ -85,6 +85,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         {
 	        return x => new PendingPriceChange
 	        {
+                FirstName = x.FirstName,
+                LastName = x.LastName,
 		        OriginalTrainingPrice = x.TrainingPrice,
                 OriginalAssessmentPrice = x.EndPointAssessmentPrice,
                 OriginalTotalPrice = x.TotalPrice,
