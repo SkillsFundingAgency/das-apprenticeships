@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
@@ -10,18 +11,21 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
     public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
     {
         private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
+        private readonly ILogger<ApprenticeshipQueryRepository> _logger;
         private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
 
-        public ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext)
+        public ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext, ILogger<ApprenticeshipQueryRepository> logger)
         {
             _lazyContext = dbContext;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
         {
             var dataModels = await DbContext.Apprenticeships
+                .Where(x => x.Ukprn == ukprn)
                 .Include(x => x.Approvals)
-                .Where(a => a.Approvals.Any(c => c.UKPRN == ukprn && (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
+                .Where(a => a.Approvals.Any(c => (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
                 .ToListAsync();
         
             var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
@@ -40,7 +44,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 FundingBandMaximum = apprenticeship.FundingBandMaximum,
                 ApprenticeshipActualStartDate = apprenticeship.ActualStartDate,
                 ApprenticeshipPlannedEndDate = apprenticeship.PlannedEndDate,
-                AccountLegalEntityId = apprenticeship.AccountLegalEntityId
+                AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
+                UKPRN = apprenticeship.Ukprn
             };
         }
 
@@ -56,11 +61,22 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 
         public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
         {
-            var pendingPriceChange = await DbContext.Apprenticeships
-	            .Include(x => x.PriceHistories)
+            _logger.LogInformation($"Getting pending price change for apprenticeship {apprenticeshipKey}");
+
+            PendingPriceChange? pendingPriceChange = null;
+
+            try
+            {
+                pendingPriceChange = await DbContext.Apprenticeships
+                .Include(x => x.PriceHistories)
                 .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
                 .Select(PriceHistoryToPendingPriceChange())
                 .SingleOrDefaultAsync();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e, $"Error getting pending price change for apprenticeship {apprenticeshipKey}");
+            }
 
             return pendingPriceChange;
         }
@@ -69,6 +85,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         {
 	        return x => new PendingPriceChange
 	        {
+                FirstName = x.FirstName,
+                LastName = x.LastName,
 		        OriginalTrainingPrice = x.TrainingPrice,
                 OriginalAssessmentPrice = x.EndPointAssessmentPrice,
                 OriginalTotalPrice = x.TotalPrice,
@@ -78,6 +96,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EffectiveFromDate,
                 Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ChangeReason,
                 Ukprn = x.Ukprn,
+                ProviderApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ProviderApprovedDate,
+                EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EmployerApprovedDate,
                 AccountLegalEntityId = x.AccountLegalEntityId,
                 //this line can be replaced with a simple call to the DB if/when we agree to store the requester field on the price history table
                 Requester = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ProviderApprovedDate.HasValue ? "Provider" : "Employer"

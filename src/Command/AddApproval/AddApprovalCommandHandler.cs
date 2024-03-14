@@ -41,14 +41,11 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                 command.ActualStartDate,
                 command.PlannedEndDate,
                 command.AccountLegalEntityId,
-                command.UKPRN);
-
-            
+                command.UKPRN,
+                command.EmployerAccountId);
 
             apprenticeship.AddApproval(
                 command.ApprovalsApprenticeshipId,
-                command.UKPRN,
-                command.EmployerAccountId,
                 command.LegalEntityName,
                 command.ActualStartDate,
                 command.PlannedEndDate,
