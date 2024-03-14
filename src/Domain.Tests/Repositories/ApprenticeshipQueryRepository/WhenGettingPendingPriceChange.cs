@@ -114,15 +114,15 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
 
             // Assert
             result.Should().NotBeNull();
-            result.OriginalTrainingPrice = apprenticeships[0].TrainingPrice;
-            result.OriginalAssessmentPrice = apprenticeships[0].EndPointAssessmentPrice;
-            result.OriginalTotalPrice = apprenticeships[0].TotalPrice;
-            result.PendingTrainingPrice = 10000;
-            result.PendingAssessmentPrice = 3000;
-            result.PendingTotalPrice = 13000;
-            result.EffectiveFrom = effectiveFromDate;
-            result.Reason = "testReason";
-            result.Ukprn = apprenticeships[0].Ukprn;
+            result.OriginalTrainingPrice.Should().Be(apprenticeships[0].TrainingPrice);
+            result.OriginalAssessmentPrice.Should().Be(apprenticeships[0].EndPointAssessmentPrice);
+            result.OriginalTotalPrice.Should().Be(apprenticeships[0].TotalPrice);
+            result.PendingTrainingPrice.Should().Be(10000);
+            result.PendingAssessmentPrice.Should().Be(3000);
+            result.PendingTotalPrice.Should().Be(13000);
+            result.EffectiveFrom.Should().Be(effectiveFromDate);
+            result.Reason.Should().Be("testReason");
+            result.Ukprn.Should().Be(apprenticeships[0].Ukprn);
             result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
         }
     }
