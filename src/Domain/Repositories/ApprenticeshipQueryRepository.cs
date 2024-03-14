@@ -78,10 +78,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EffectiveFromDate,
                 Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ChangeReason,
                 Ukprn = x.Ukprn,
-                AccountLegalEntityId = x.AccountLegalEntityId
+                AccountLegalEntityId = x.AccountLegalEntityId,
+                //this line can be replaced with a simple call to the DB if/when we agree to store the requester field on the price history table
+                Requester = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ProviderApprovedDate.HasValue ? "Provider" : "Employer"
             };
         }
-
+        
 		private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
         {
             return x => new ApprenticeshipPrice

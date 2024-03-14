@@ -15,4 +15,5 @@ public class PendingPriceChange
     public string? Reason { get; set; }
     public long? Ukprn { get; set; }
     public long? AccountLegalEntityId { get; set; }
+    public string Requester { get; set; }
 }

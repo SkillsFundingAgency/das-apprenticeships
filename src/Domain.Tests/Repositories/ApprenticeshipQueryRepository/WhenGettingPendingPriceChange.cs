@@ -74,8 +74,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.Should().BeNull();
         }
 
-        [Test]
-        public async Task ThenTheCorrectPendingPriceChangeIsReturned()
+        [TestCase("Employer")]
+        [TestCase("Provider")]
+        public async Task ThenTheCorrectPendingPriceChangeIsReturned(string requester)
         {
             //Act
             var apprenticeshipKey = _fixture.Create<Guid>();
@@ -96,7 +97,11 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                             AssessmentPrice = 3000,
                             TotalPrice = 13000,
                             EffectiveFromDate = effectiveFromDate,
-                            ChangeReason = "testReason"
+                            ChangeReason = "testReason",
+                            ProviderApprovedDate = requester == "Provider" ? DateTime.Now : null,
+                            ProviderApprovedBy = requester == "Provider" ? "Mr Provider" : null,
+                            EmployerApprovedDate = requester == "Employer" ? DateTime.Now : null,
+                            EmployerApprovedBy = requester == "Employer" ? "Mr Employer" : null,
                         }
                     })
                     .Create(), 
@@ -124,6 +129,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.Reason.Should().Be("testReason");
             result.Ukprn.Should().Be(apprenticeships[0].Ukprn);
             result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
+            result.Requester.Should().Be(requester);
         }
     }
 }
