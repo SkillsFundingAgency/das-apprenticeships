@@ -14,4 +14,5 @@ public class PendingPriceChange
     public DateTime EffectiveFrom { get; set; }
     public string? Reason { get; set; }
     public long? Ukprn { get; set; }
+    public long? AccountLegalEntityId { get; set; }
 }

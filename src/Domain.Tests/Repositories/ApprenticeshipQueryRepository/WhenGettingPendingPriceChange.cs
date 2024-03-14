@@ -123,6 +123,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.EffectiveFrom = effectiveFromDate;
             result.Reason = "testReason";
             result.Ukprn = apprenticeships[0].Ukprn;
+            result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
         }
     }
 }
