@@ -86,8 +86,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             var otherApprenticeshipKey = _fixture.Create<Guid>();
             var priceHistoryKey = _fixture.Create<Guid>();
             var effectiveFromDate = DateTime.UtcNow.AddDays(-5).Date;
-            var providerApprovedDate = _fixture.Create<DateTime?>();
-            var employerApprovedDate = _fixture.Create<DateTime?>();
+            var providerApprovedDate = requester == "Provider" ? _fixture.Create<DateTime>() : (DateTime?)null;
+            var employerApprovedDate = requester == "Employer" ? _fixture.Create<DateTime>() : (DateTime?)null;
 
             var apprenticeships = new[]
             {
@@ -104,11 +104,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                             EffectiveFromDate = effectiveFromDate,
                             ChangeReason = "testReason",
                             ProviderApprovedDate = providerApprovedDate,
-                            EmployerApprovedDate = employerApprovedDate
-                            ProviderApprovedDate = requester == "Provider" ? DateTime.Now : null,
+                            EmployerApprovedDate = employerApprovedDate,
                             ProviderApprovedBy = requester == "Provider" ? "Mr Provider" : null,
-                            EmployerApprovedDate = requester == "Employer" ? DateTime.Now : null,
-                            EmployerApprovedBy = requester == "Employer" ? "Mr Employer" : null,
+                            EmployerApprovedBy = requester == "Employer" ? "Mr Employer" : null
                         }
                     })
                     .Create(), 
