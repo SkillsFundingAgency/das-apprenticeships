@@ -79,15 +79,15 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
 
         [TestCase("Employer")]
         [TestCase("Provider")]
-        public async Task ThenTheCorrectPendingPriceChangeIsReturned(string requester)
+        public async Task ThenTheCorrectPendingPriceChangeIsReturned(string initiator)
         {
             //Act
             var apprenticeshipKey = _fixture.Create<Guid>();
             var otherApprenticeshipKey = _fixture.Create<Guid>();
             var priceHistoryKey = _fixture.Create<Guid>();
             var effectiveFromDate = DateTime.UtcNow.AddDays(-5).Date;
-            var providerApprovedDate = requester == "Provider" ? _fixture.Create<DateTime>() : (DateTime?)null;
-            var employerApprovedDate = requester == "Employer" ? _fixture.Create<DateTime>() : (DateTime?)null;
+            var providerApprovedDate = initiator == "Provider" ? _fixture.Create<DateTime>() : (DateTime?)null;
+            var employerApprovedDate = initiator == "Employer" ? _fixture.Create<DateTime>() : (DateTime?)null;
 
             var apprenticeships = new[]
             {
@@ -105,8 +105,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                             ChangeReason = "testReason",
                             ProviderApprovedDate = providerApprovedDate,
                             EmployerApprovedDate = employerApprovedDate,
-                            ProviderApprovedBy = requester == "Provider" ? "Mr Provider" : null,
-                            EmployerApprovedBy = requester == "Employer" ? "Mr Employer" : null
+                            ProviderApprovedBy = initiator == "Provider" ? "Mr Provider" : null,
+                            EmployerApprovedBy = initiator == "Employer" ? "Mr Employer" : null,
+                            Initiator = initiator == "Employer" ? PriceChangeInitiator.Employer : PriceChangeInitiator.Provider
                         }
                     })
                     .Create(), 
@@ -136,7 +137,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.ProviderApprovedDate.Should().Be(providerApprovedDate);
             result.EmployerApprovedDate.Should().Be(employerApprovedDate);
             result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
-            result.Requester.Should().Be(requester);
+            result.Initiator.Should().Be(initiator);
         }
     }
 }

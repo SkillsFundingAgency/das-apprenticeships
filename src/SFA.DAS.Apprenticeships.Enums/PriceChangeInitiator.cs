@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Apprenticeships.Enums;
 
-public enum PriceChangeRequester
+public enum PriceChangeInitiator
 {
     Provider = 0,
     Employer = 1

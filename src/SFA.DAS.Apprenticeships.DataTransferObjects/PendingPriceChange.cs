@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.DataTransferObjects;
 
@@ -17,7 +18,7 @@ public class PendingPriceChange
     public string? Reason { get; set; }
     public long? Ukprn { get; set; }
     public long? AccountLegalEntityId { get; set; }
-    public string Requester { get; set; }
+    public string? Initiator { get; set; }
     public DateTime? ProviderApprovedDate { get; set; }
     public DateTime? EmployerApprovedDate { get; set; }
 }

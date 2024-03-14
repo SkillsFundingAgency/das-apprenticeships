@@ -99,8 +99,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 ProviderApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ProviderApprovedDate,
                 EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EmployerApprovedDate,
                 AccountLegalEntityId = x.AccountLegalEntityId,
-                //this line can be replaced with a simple call to the DB if/when we agree to store the requester field on the price history table
-                Requester = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ProviderApprovedDate.HasValue ? "Provider" : "Employer"
+                Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).Initiator.ToString()
             };
         }
         
