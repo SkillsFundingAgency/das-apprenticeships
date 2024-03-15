@@ -14,5 +14,4 @@ public class ApprovePriceChangeCommand : ICommand
     public string UserId { get; set; }
     public decimal? TrainingPrice { get; set; }// Only used when a provider is approving a employer initiated price change
     public decimal? AssessmentPrice { get; set; }// Only used when a provider is approving a employer initiated price change
-    public bool IsProviderApproving { get { return (TrainingPrice.HasValue && AssessmentPrice.HasValue); } }
 }
