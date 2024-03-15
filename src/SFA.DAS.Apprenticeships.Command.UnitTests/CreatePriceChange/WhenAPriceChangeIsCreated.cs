@@ -33,7 +33,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         public async Task ThenPriceHistoryIsAddedToApprenticeship()
         {
             var command = _fixture.Create<CreatePriceChangeCommand>();
-            command.Requester = PriceChangeRequester.Provider.ToString();
+            command.Initiator = PriceChangeInitiator.Provider.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
@@ -45,10 +45,10 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
 
         [TestCase("Provider")]
         [TestCase("Employer")]
-        public async Task ThenCorrectPriceHistoryValuesAreSet(string requester)
+        public async Task ThenCorrectPriceHistoryValuesAreSet(string initiator)
         {
             var command = _fixture.Create<CreatePriceChangeCommand>();
-            command.Requester = requester;
+            command.Initiator = initiator;
             
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
@@ -56,7 +56,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
             
             await _commandHandler.Handle(command);
 
-            if (requester == PriceChangeRequester.Provider.ToString())
+            if (initiator == PriceChangeInitiator.Provider.ToString())
                 _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
                     y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
                     y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
@@ -65,7 +65,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
                     y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
                     y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Created &&
                     y.GetEntity().PriceHistories.Single().ProviderApprovedBy == command.UserId &&
-                    y.GetEntity().PriceHistories.Single().EmployerApprovedBy == null
+                    y.GetEntity().PriceHistories.Single().EmployerApprovedBy == null &&
+                    y.GetEntity().PriceHistories.Single().Initiator == PriceChangeInitiator.Provider
                 )));
             else
                 _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
@@ -76,7 +77,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
                     y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
                     y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Created &&
                     y.GetEntity().PriceHistories.Single().ProviderApprovedBy == null &&
-                    y.GetEntity().PriceHistories.Single().EmployerApprovedBy == command.UserId
+                    y.GetEntity().PriceHistories.Single().EmployerApprovedBy == command.UserId &&
+                    y.GetEntity().PriceHistories.Single().Initiator == PriceChangeInitiator.Employer
                 )));
         }
 
@@ -84,7 +86,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         public void ThenAnExceptionIsThrownIfTheRequesterIsNotSet()
         {
             var command = _fixture.Create<CreatePriceChangeCommand>();
-            command.Requester = string.Empty;
+            command.Initiator = string.Empty;
                 
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 

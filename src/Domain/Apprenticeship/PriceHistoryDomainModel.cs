@@ -19,6 +19,7 @@ public class PriceHistoryDomainModel
     public DateTime CreatedDate => _entity.CreatedDate;
     public PriceChangeRequestStatus? PriceChangeRequestStatus => _entity.PriceChangeRequestStatus;
     public string? ChangeReason => _entity.ChangeReason;
+    public PriceChangeInitiator? Initiator => _entity.Initiator;
 
     internal static PriceHistoryDomainModel New(Guid apprenticeshipKey,
         decimal? trainingPrice,
@@ -31,7 +32,8 @@ public class PriceHistoryDomainModel
         DateTime? providerApprovedDate,
         string changeReason,
         string? employerApprovedBy,
-        DateTime? employerApprovedDate)
+        DateTime? employerApprovedDate,
+        PriceChangeInitiator? initiator)
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
@@ -46,7 +48,8 @@ public class PriceHistoryDomainModel
             ProviderApprovedDate = providerApprovedDate,
             ChangeReason = changeReason,
             EmployerApprovedBy = employerApprovedBy,
-            EmployerApprovedDate = employerApprovedDate
+            EmployerApprovedDate = employerApprovedDate,
+            Initiator = initiator
         });
     }
 

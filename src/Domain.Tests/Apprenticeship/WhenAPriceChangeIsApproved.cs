@@ -53,7 +53,8 @@ public class WhenAPriceChangeIsApproved
             priceHistory.ChangeReason,
             priceHistory.EmployerApprovedBy,
             priceHistory.ProviderApprovedDate,
-            priceHistory.EmployerApprovedDate);
+            priceHistory.EmployerApprovedDate,
+            priceHistory.Initiator);
     }
 
     [Test]

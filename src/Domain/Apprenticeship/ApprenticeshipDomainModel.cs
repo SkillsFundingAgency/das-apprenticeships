@@ -118,7 +118,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             string changeReason,
             string? employerApprovedBy,
             DateTime? providerApprovedDate,
-            DateTime? employerApprovedDate)
+            DateTime? employerApprovedDate,
+            PriceChangeInitiator? initiator)
         {
 			if(_priceHistories.Any(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
             {
@@ -136,7 +137,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 providerApprovedDate,
                 changeReason,
                 employerApprovedBy,
-                employerApprovedDate);
+                employerApprovedDate,
+                initiator);
             
             _priceHistories.Add(priceHistory);
             _entity.PriceHistories.Add(priceHistory.GetEntity());
