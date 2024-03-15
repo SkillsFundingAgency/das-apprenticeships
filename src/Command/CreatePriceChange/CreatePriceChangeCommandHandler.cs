@@ -16,17 +16,18 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
             CancellationToken cancellationToken = default)
         {
             var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
-            if (string.Equals(command.Initiator, PriceChangeInitiator.Provider.ToString(), StringComparison.CurrentCultureIgnoreCase))
+
+            if (!Enum.TryParse(command.Initiator, out PriceChangeInitiator initiator))
+                throw new ArgumentException("CreateApprenticeshipPriceChangeRequest should have a valid initiator value set (Provider or Employer)", nameof(command));
+            
+
+            if (initiator == PriceChangeInitiator.Provider)
             {
-                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, command.UserId, command.Reason, null, DateTime.Now, null);
-            }
-            else if (string.Equals(command.Initiator, PriceChangeInitiator.Employer.ToString(), StringComparison.CurrentCultureIgnoreCase))
-            {
-                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, null, command.Reason, command.UserId, null, DateTime.Now);
+                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, command.UserId, command.Reason, null, DateTime.Now, null, initiator);
             }
             else
             {
-                throw new ArgumentException("CreateApprenticeshipPriceChangeRequest should have a valid initiator value set (Provider or Employer)", nameof(command));
+                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, null, command.Reason, command.UserId, null, DateTime.Now, initiator);
             }
 
             await _apprenticeshipRepository.Update(apprenticeship);

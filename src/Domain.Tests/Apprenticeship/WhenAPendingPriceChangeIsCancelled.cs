@@ -52,7 +52,8 @@ public class WhenAPendingPriceChangeIsCancelled
             priceHistory.ChangeReason!,
             null,
             priceHistory.ProviderApprovedDate,
-            priceHistory.EmployerApprovedDate);
+            priceHistory.EmployerApprovedDate,
+            priceHistory.Initiator);
     }
 
     [Test]
