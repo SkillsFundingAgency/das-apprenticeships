@@ -13,7 +13,7 @@ using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
 {
     [TestFixture]
-    public class WhenAPriceChangeIsApproved
+    public class WhenAPriceChangeIsApprovedByProvider
     {
         private ApprovePriceChangeCommandHandler _commandHandler = null!;
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
@@ -35,7 +35,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
             //Arrange
             var command = _fixture.Create<ApprovePriceChangeCommand>();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<PriceChangeInitiator>());
+            var totalPrice = command.TrainingPrice!.Value + command.AssessmentPrice!.Value;
+            apprenticeship.AddPriceHistory(null, null, totalPrice, _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<PriceChangeInitiator>());
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
             //Act
@@ -47,8 +48,9 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
                         .GetEntity()
                         .PriceHistories
                         .Count(z => z.PriceChangeRequestStatus == PriceChangeRequestStatus.Approved 
-                                    && z.EmployerApprovedBy == command.UserId
-                                    && z.EmployerApprovedBy != null) == 1)));
+                                    && z.ProviderApprovedBy == command.UserId
+                                    && z.TrainingPrice == command.TrainingPrice
+                                    && z.AssessmentPrice == command.AssessmentPrice) == 1)));
         }
     }
 }

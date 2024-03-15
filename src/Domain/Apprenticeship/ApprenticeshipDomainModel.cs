@@ -150,7 +150,25 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             pendingPriceChange?.Approve(employerApprovedBy, DateTime.Now);
             AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
         }
-        
+
+        public void ApprovePriceChange(string? providerApprovedBy, decimal trainingPrice, decimal assementPrice)
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+
+            if(pendingPriceChange == null)
+            {
+                throw new InvalidOperationException("There is no pendingPriceChange to Approve");
+            }
+
+            if(pendingPriceChange.TotalPrice != trainingPrice + assementPrice)
+            {
+                throw new InvalidOperationException("The total price does not match the sum of the training and assessment prices");
+            }
+
+            pendingPriceChange?.Approve(providerApprovedBy, DateTime.Now, trainingPrice, assementPrice);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
+        }
+
         public void CancelPendingPriceChange()
         {
             var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);

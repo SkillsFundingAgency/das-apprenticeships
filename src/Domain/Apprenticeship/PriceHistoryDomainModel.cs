@@ -85,4 +85,13 @@ public class PriceHistoryDomainModel
         _entity.EmployerApprovedBy = employerApprovedBy;
         _entity.EmployerApprovedDate = employerApprovedDate;
     }
+
+    public void Approve(string? providerApprovedBy, DateTime providerApprovedDate, decimal trainingPrice, decimal assementPrice)
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+        _entity.ProviderApprovedBy = providerApprovedBy;
+        _entity.ProviderApprovedDate = providerApprovedDate;
+        _entity.TrainingPrice = trainingPrice;
+        _entity.AssessmentPrice = assementPrice;
+    }
 }
