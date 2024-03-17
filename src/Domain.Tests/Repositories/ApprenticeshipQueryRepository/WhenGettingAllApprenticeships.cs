@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
@@ -22,11 +24,12 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         public void Arrange()
         {
             _fixture = new Fixture();
+            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
 
             var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("ApprenticeshipsDbContext" + Guid.NewGuid()).Options;
             _dbContext = new ApprenticeshipsDataContext(options);
 
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
 
         [TearDown]
@@ -44,11 +47,11 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
 
             var apprenticeships = new DataAccess.Entities.Apprenticeship.Apprenticeship[]
             {
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1001").With(x => x.FirstName, "Ron").With(x => x.LastName, "Swanson").With(x => x.Approvals, new List<Approval>() { new Approval() { UKPRN = ukprn1, LegalEntityName = "" } }).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1002").With(x => x.FirstName, "Stepan").With(x => x.LastName, "Tominski").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn2, LegalEntityName = "" } }).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1003").With(x => x.FirstName, "Lucy").With(x => x.LastName, "Rogers").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn1, LegalEntityName = "" }, new Approval() { UKPRN =  ukprn2, LegalEntityName = ""} }).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1004").With(x => x.FirstName, "Shamil").With(x => x.LastName, "Ahmur").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn1, LegalEntityName = "" }, new Approval() { UKPRN = ukprn1, LegalEntityName = "" } }).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1005").With(x => x.FirstName, "Tracey").With(x => x.LastName, "Smith").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn2, LegalEntityName = "" }, new Approval() { UKPRN = ukprn2, LegalEntityName = "" } }).Create(),
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1001").With(x => x.FirstName, "Ron").With(x => x.LastName, "Swanson").With(x => x.Ukprn, ukprn1).Create(),
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1002").With(x => x.FirstName, "Stepan").With(x => x.LastName, "Tominski").With(x => x.Ukprn, ukprn2).Create(),
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1003").With(x => x.FirstName, "Lucy").With(x => x.LastName, "Rogers").With(x => x.Ukprn, ukprn1).Create(),
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1004").With(x => x.FirstName, "Shamil").With(x => x.LastName, "Ahmur").With(x => x.Ukprn, ukprn1).Create(),
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1005").With(x => x.FirstName, "Tracey").With(x => x.LastName, "Smith").With(x => x.Ukprn, ukprn2).Create(),
             };
 
             await _dbContext.AddRangeAsync(apprenticeships);
@@ -76,10 +79,11 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
 
             var apprenticeships = new DataAccess.Entities.Apprenticeship.Apprenticeship[]
             {
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1001").With(x => x.FirstName, "Ron").With(x => x.LastName, "Swanson").With(x => x.Approvals, new List<Approval>() { new Approval() { UKPRN = ukprn, FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" } }).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1002").With(x => x.FirstName, "Stepan").With(x => x.LastName, "Tominski").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.SLD, LegalEntityName = "" } }).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1003").With(x => x.FirstName, "Lucy").With(x => x.LastName, "Rogers").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.SLD, LegalEntityName = "" }, new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.SLD, LegalEntityName = ""} }).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1004").With(x => x.FirstName, "Shamil").With(x => x.LastName, "Ahmur").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.SLD, LegalEntityName = "" }, new Approval() { UKPRN = ukprn, FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" } }).Create(),                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1005").With(x => x.FirstName, "Tracey").With(x => x.LastName, "Smith").With(x => x.Approvals, new List<Approval>(){ new Approval() { UKPRN =  ukprn, FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" }, new Approval() { UKPRN = ukprn, FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" } }).Create(),
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1001").With(x => x.FirstName, "Ron").With(x => x.LastName, "Swanson").With(x => x.Ukprn, ukprn).With(x => x.Approvals, new List<Approval>() { new Approval() { FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" } }).Create(),
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1002").With(x => x.FirstName, "Stepan").With(x => x.LastName, "Tominski").With(x => x.Ukprn, ukprn).With(x => x.Approvals, new List<Approval>(){ new Approval() { FundingPlatform = FundingPlatform.SLD, LegalEntityName = "" } }).Create(),
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1003").With(x => x.FirstName, "Lucy").With(x => x.LastName, "Rogers").With(x => x.Ukprn, ukprn).With(x => x.Approvals, new List<Approval>(){ new Approval() { FundingPlatform = FundingPlatform.SLD, LegalEntityName = "" }, new Approval() { FundingPlatform = FundingPlatform.SLD, LegalEntityName = ""} }).Create(),
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1004").With(x => x.FirstName, "Shamil").With(x => x.LastName, "Ahmur").With(x => x.Ukprn, ukprn).With(x => x.Approvals, new List<Approval>(){ new Approval() { FundingPlatform = FundingPlatform.SLD, LegalEntityName = "" }, new Approval() { FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" } }).Create(),   
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Uln, "1005").With(x => x.FirstName, "Tracey").With(x => x.LastName, "Smith").With(x => x.Ukprn, ukprn).With(x => x.Approvals, new List<Approval>(){ new Approval() { FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" }, new Approval() { FundingPlatform = FundingPlatform.DAS, LegalEntityName = "" } }).Create(),
             };
 
             await _dbContext.AddRangeAsync(apprenticeships);

@@ -1,6 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
@@ -23,7 +24,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryCon
             _fixture = new Fixture();
             _queryDispatcher = new Mock<IQueryDispatcher>();
             _commandDispatcher = new Mock<ICommandDispatcher>();
-            _sut = new PriceHistoryController(_queryDispatcher.Object, _commandDispatcher.Object);
+            var logger = Mock.Of<ILogger<PriceHistoryController>>();
+            _sut = new PriceHistoryController(_queryDispatcher.Object, _commandDispatcher.Object, logger);
         }
 
         [Test]

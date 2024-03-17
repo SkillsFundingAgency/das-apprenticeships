@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
@@ -21,11 +23,12 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         public void Arrange()
         {
             _fixture = new Fixture();
+            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
 
             var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("ApprenticeshipsDbContext" + Guid.NewGuid()).Options;
             _dbContext = new ApprenticeshipsDataContext(options);
 
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
 
         [TearDown]
@@ -82,7 +85,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             var otherApprenticeshipKey = _fixture.Create<Guid>();
             var priceHistoryKey = _fixture.Create<Guid>();
             var effectiveFromDate = DateTime.UtcNow.AddDays(-5).Date;
-            
+            var providerApprovedDate = _fixture.Create<DateTime?>();
+            var employerApprovedDate = _fixture.Create<DateTime?>();
+
             var apprenticeships = new[]
             {
                 _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
@@ -96,7 +101,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                             AssessmentPrice = 3000,
                             TotalPrice = 13000,
                             EffectiveFromDate = effectiveFromDate,
-                            ChangeReason = "testReason"
+                            ChangeReason = "testReason",
+                            ProviderApprovedDate = providerApprovedDate,
+                            EmployerApprovedDate = employerApprovedDate
                         }
                     })
                     .Create(), 
@@ -114,15 +121,17 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
 
             // Assert
             result.Should().NotBeNull();
-            result.OriginalTrainingPrice = apprenticeships[0].TrainingPrice;
-            result.OriginalAssessmentPrice = apprenticeships[0].EndPointAssessmentPrice;
-            result.OriginalTotalPrice = apprenticeships[0].TotalPrice;
-            result.PendingTrainingPrice = 10000;
-            result.PendingAssessmentPrice = 3000;
-            result.PendingTotalPrice = 13000;
-            result.EffectiveFrom = effectiveFromDate;
-            result.Reason = "testReason";
-            result.Ukprn = apprenticeships[0].Ukprn;
+            result.OriginalTrainingPrice.Should().Be(apprenticeships[0].TrainingPrice);
+            result.OriginalAssessmentPrice.Should().Be(apprenticeships[0].EndPointAssessmentPrice);
+            result.OriginalTotalPrice.Should().Be(apprenticeships[0].TotalPrice);
+            result.PendingTrainingPrice.Should().Be(10000);
+            result.PendingAssessmentPrice.Should().Be(3000);
+            result.PendingTotalPrice.Should().Be(13000);
+            result.EffectiveFrom.Should().Be(effectiveFromDate);
+            result.Reason.Should().Be("testReason");
+            result.Ukprn.Should().Be(apprenticeships[0].Ukprn);
+            result.ProviderApprovedDate.Should().Be(providerApprovedDate);
+            result.EmployerApprovedDate.Should().Be(employerApprovedDate);
         }
     }
 }

@@ -33,6 +33,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         public async Task ThenPriceHistoryIsAddedToApprenticeship()
         {
             var command = _fixture.Create<CreatePriceChangeCommand>();
+            command.Requester = PriceChangeRequester.Provider.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
@@ -42,24 +43,54 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
             _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().PriceHistories.Count == 1)));
         }
 
-        [Test]
-        public async Task ThenCorrectPriceHistoryValuesAreSet()
+        [TestCase("Provider")]
+        [TestCase("Employer")]
+        public async Task ThenCorrectPriceHistoryValuesAreSet(string requester)
         {
             var command = _fixture.Create<CreatePriceChangeCommand>();
+            command.Requester = requester;
+            
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
             
             await _commandHandler.Handle(command);
-            
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => 
-                y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
-                y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
-                y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
-                y.GetEntity().PriceHistories.Single().EffectiveFromDate == command.EffectiveFromDate &&
-                y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
-                y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Created
-            )));
+
+            if (requester == PriceChangeRequester.Provider.ToString())
+                _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+                    y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
+                    y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
+                    y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
+                    y.GetEntity().PriceHistories.Single().EffectiveFromDate == command.EffectiveFromDate &&
+                    y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
+                    y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Created &&
+                    y.GetEntity().PriceHistories.Single().ProviderApprovedBy == command.UserId &&
+                    y.GetEntity().PriceHistories.Single().EmployerApprovedBy == null
+                )));
+            else
+                _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+                    y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
+                    y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
+                    y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
+                    y.GetEntity().PriceHistories.Single().EffectiveFromDate == command.EffectiveFromDate &&
+                    y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
+                    y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Created &&
+                    y.GetEntity().PriceHistories.Single().ProviderApprovedBy == null &&
+                    y.GetEntity().PriceHistories.Single().EmployerApprovedBy == command.UserId
+                )));
+        }
+
+        [Test]
+        public void ThenAnExceptionIsThrownIfTheRequesterIsNotSet()
+        {
+            var command = _fixture.Create<CreatePriceChangeCommand>();
+            command.Requester = string.Empty;
+                
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+
+            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+
+            Assert.ThrowsAsync<ArgumentException>(() => _commandHandler.Handle(command));
         }
     }
 }

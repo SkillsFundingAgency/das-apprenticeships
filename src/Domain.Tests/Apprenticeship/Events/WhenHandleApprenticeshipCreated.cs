@@ -48,8 +48,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                 _fixture.Create<DateTime>(),
                 _fixture.Create<DateTime>(),
                 _fixture.Create<long>(),
+                _fixture.Create<long>(),
                 _fixture.Create<long>());
-            apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
+            apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
             var approval = apprenticeship.Approvals.Single();
             var command = _fixture.Create<ApprenticeshipCreated>();
 
@@ -66,10 +67,10 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.FundingType == (FundingType)approval.FundingType &&
                     e.ActualStartDate == approval.ActualStartDate &&
                     e.ApprovalsApprenticeshipId == approval.ApprovalsApprenticeshipId &&
-                    e.EmployerAccountId == approval.EmployerAccountId &&
+                    e.EmployerAccountId == apprenticeship.EmployerAccountId &&
                     e.LegalEntityName == approval.LegalEntityName &&
                     e.PlannedEndDate == approval.PlannedEndDate &&
-                    e.UKPRN == approval.Ukprn &&
+                    e.UKPRN == apprenticeship.Ukprn &&
                     e.DateOfBirth == apprenticeship.DateOfBirth &&
                     e.FirstName == apprenticeship.FirstName &&
                     e.LastName== apprenticeship.LastName &&
