@@ -144,13 +144,33 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity.PriceHistories.Add(priceHistory.GetEntity());
         }
 
-        public void ApprovePriceChange(string? employerApprovedBy)
+        public void ApprovePriceChange(string? providerApprovedBy, decimal? trainingPrice, decimal? assementPrice)
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
-            pendingPriceChange?.Approve(employerApprovedBy, DateTime.Now);
-            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
+
+            if(pendingPriceChange == null)
+                throw new InvalidOperationException("There is no pendingPriceChange to Approve");
+
+            if(pendingPriceChange.Initiator == PriceChangeInitiator.Provider)
+            {
+                // Employer Approving
+                pendingPriceChange?.Approve(providerApprovedBy, DateTime.Now);
+                AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
+                return;
+            }
+
+            // Provider Approving
+            if (trainingPrice == null || assementPrice == null)
+                throw new InvalidOperationException("Training and assessment prices must be provided when approving an employer initiated price change");
+
+            if (pendingPriceChange.TotalPrice != trainingPrice + assementPrice)
+                throw new InvalidOperationException("The total price does not match the sum of the training and assessment prices");
+
+            pendingPriceChange?.Approve(providerApprovedBy, DateTime.Now, trainingPrice.Value, assementPrice.Value);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
+
         }
-        
+
         public void CancelPendingPriceChange()
         {
             var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);

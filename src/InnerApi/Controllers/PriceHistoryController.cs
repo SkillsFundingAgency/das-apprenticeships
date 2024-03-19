@@ -84,7 +84,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
 		[ProducesResponseType(200)]
 		public async Task<IActionResult> ApprovePriceChange(Guid apprenticeshipKey, [FromBody] ApprovePriceChangeRequest request)
 		{
-			await _commandDispatcher.Send(new ApprovePriceChangeCommand(apprenticeshipKey, request.UserId));
+			await _commandDispatcher.Send(new ApprovePriceChangeCommand(apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice));
 			return Ok();
 		}
 
