@@ -8,6 +8,8 @@ using SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
+using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.InnerApi.Responses;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
 {
@@ -45,7 +47,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
             try
             {
-                await _commandDispatcher.Send(new CreatePriceChangeCommand(request.Initiator, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+                var priceChangeStatus = await _commandDispatcher.Send<CreatePriceChangeCommand, PriceChangeRequestStatus>(new CreatePriceChangeCommand(request.Initiator, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+                return Ok(new CreatePriceChangeResponse { PriceChangeStatus = priceChangeStatus.ToString()});
             }
             catch (ArgumentException exception)
             {
@@ -53,7 +56,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
                 return BadRequest();
             }
 
-            return Ok();
         }
 
         /// <summary>

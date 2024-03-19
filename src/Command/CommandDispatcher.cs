@@ -22,5 +22,17 @@ namespace SFA.DAS.Apprenticeships.Command
 
             return handler.Handle(command, cancellationToken);
         }
+
+        public Task<TReturnType> Send<TCommand, TReturnType>(TCommand command, CancellationToken cancellationToken = default) where TCommand : ICommand
+        {
+            var handler = _serviceProvider.GetService<ICommandHandler<TCommand, TReturnType>>();
+
+            if (handler == null)
+            {
+                throw new CommandDispatcherException($"Unable to dispatch command '{command.GetType().Name}'. No matching handler found.");
+            }
+
+            return handler.Handle(command, cancellationToken);
+        }
     }
 }

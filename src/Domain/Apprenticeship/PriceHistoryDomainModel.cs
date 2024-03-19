@@ -79,6 +79,18 @@ public class PriceHistoryDomainModel
         _entity.RejectReason = reason;
     }
 
+    /// <summary>
+    /// Price change set to approved when approval by the employer is not required 
+    /// (Provider initiates a price change to a lower price)
+    /// </summary>
+    public void Approve()
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+    }
+
+    /// <summary>
+    /// Employer Approving Provider Initiated Price Change
+    /// </summary>
     public void Approve(string? employerApprovedBy, DateTime employerApprovedDate)
     {
         _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
@@ -86,6 +98,9 @@ public class PriceHistoryDomainModel
         _entity.EmployerApprovedDate = employerApprovedDate;
     }
 
+    /// <summary>
+    /// Provider Approving Employer Initiated Price Change
+    /// </summary>
     public void Approve(string? providerApprovedBy, DateTime providerApprovedDate, decimal trainingPrice, decimal assementPrice)
     {
         _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;

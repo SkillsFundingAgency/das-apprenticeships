@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.CreatePriceChange;
+using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
@@ -32,9 +33,9 @@ public class WhenCreatePending
         var request = _fixture.Create<PostCreateApprenticeshipPriceChangeRequest>();
         var result = await _sut.CreateApprenticeshipPriceChange(apprenticeshipKey, request);
 
-        result.Should().BeOfType<OkResult>();
+        result.Should().BeOfType<OkObjectResult>();
 
-        _commandDispatcher.Verify(x => x.Send(It.Is<CreatePriceChangeCommand>(r =>
+        _commandDispatcher.Verify(x => x.Send<CreatePriceChangeCommand, PriceChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
             r.Initiator == request.Initiator &&
             r.ApprenticeshipKey == apprenticeshipKey &&
             r.UserId == request.UserId &&
@@ -52,7 +53,7 @@ public class WhenCreatePending
         var apprenticeshipKey = _fixture.Create<Guid>();
         var request = _fixture.Create<PostCreateApprenticeshipPriceChangeRequest>();
 
-        _commandDispatcher.Setup(x => x.Send(It.Is<CreatePriceChangeCommand>(r =>
+        _commandDispatcher.Setup(x => x.Send<CreatePriceChangeCommand, PriceChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
             r.Initiator == request.Initiator &&
             r.ApprenticeshipKey == apprenticeshipKey &&
             r.UserId == request.UserId &&

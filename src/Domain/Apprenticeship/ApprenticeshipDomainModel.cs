@@ -171,6 +171,24 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         }
 
+        /// <summary>
+        /// If provider initiates a price change at a lower price than the current price, 
+        /// then the employer does not need to approve the price change and its status can be set to Approved.
+        /// </summary>
+        public void ProviderSelfApprovePriceChange()
+        {
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+
+            if (pendingPriceChange == null)
+                throw new InvalidOperationException("There is no pendingPriceChange to Approve");
+
+            if (pendingPriceChange.Initiator != PriceChangeInitiator.Provider)
+                throw new InvalidOperationException("ProviderSelfApprovePriceChange is only valid for provider initiated changes");
+
+            pendingPriceChange?.Approve();
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange!.Key, ApprovedBy.Provider));
+        }
+
         public void CancelPendingPriceChange()
         {
             var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
