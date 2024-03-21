@@ -183,7 +183,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 throw new InvalidOperationException("There is no pendingPriceChange to Approve");
 
             if (pendingPriceChange.Initiator != PriceChangeInitiator.Provider)
-                throw new InvalidOperationException("ProviderSelfApprovePriceChange is only valid for provider initiated changes");
+                throw new InvalidOperationException($"{nameof(ProviderSelfApprovePriceChange)} is only valid for provider initiated changes");
 
             pendingPriceChange?.Approve();
             AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange!.Key, ApprovedBy.Provider));
