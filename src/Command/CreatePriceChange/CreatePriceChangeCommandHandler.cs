@@ -26,11 +26,6 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
             if (initiator == PriceChangeInitiator.Provider)
             {
                 apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, command.UserId, command.Reason, null, DateTime.Now, null, initiator);
-                if(EmployerApprovalNotRequired(apprenticeship, command))
-                {
-                    apprenticeship.ProviderSelfApprovePriceChange();
-                    returnStatus = PriceChangeRequestStatus.Approved;
-                }
             }
             else
             {
@@ -38,6 +33,14 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
             }
 
             await _apprenticeshipRepository.Update(apprenticeship);
+
+            if (initiator == PriceChangeInitiator.Provider && EmployerApprovalNotRequired(apprenticeship, command))
+            {
+	            apprenticeship.ProviderSelfApprovePriceChange();
+	            returnStatus = PriceChangeRequestStatus.Approved;
+	            await _apprenticeshipRepository.Update(apprenticeship);
+			}
+
             return returnStatus;
         }
 
