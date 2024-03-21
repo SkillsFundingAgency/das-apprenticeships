@@ -46,11 +46,13 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         [TestCase("Provider")]
         [TestCase("Employer")]
         public async Task ThenCorrectPriceHistoryValuesAreSet(string initiator)
-        {
+        {           
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             var command = _fixture.Create<CreatePriceChangeCommand>();
             command.Initiator = initiator;
-            
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            command.AssessmentPrice = apprenticeship.GetEntity().EndPointAssessmentPrice + 1;
+            command.TrainingPrice = apprenticeship.GetEntity().TrainingPrice + 1;
+            command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
             

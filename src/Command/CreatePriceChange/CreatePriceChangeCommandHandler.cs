@@ -1,9 +1,10 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
 {
-    public class CreatePriceChangeCommandHandler : ICommandHandler<CreatePriceChangeCommand>
+    public class CreatePriceChangeCommandHandler : ICommandHandler<CreatePriceChangeCommand, PriceChangeRequestStatus>
     {
         private readonly IApprenticeshipRepository _apprenticeshipRepository;
 
@@ -12,9 +13,10 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
             _apprenticeshipRepository = apprenticeshipRepository;
         }
 
-        public async Task Handle(CreatePriceChangeCommand command,
+        public async Task<PriceChangeRequestStatus> Handle(CreatePriceChangeCommand command,
             CancellationToken cancellationToken = default)
         {
+            var returnStatus = PriceChangeRequestStatus.Created;
             var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
 
             if (!Enum.TryParse(command.Initiator, out PriceChangeInitiator initiator))
@@ -31,6 +33,27 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
             }
 
             await _apprenticeshipRepository.Update(apprenticeship);
+
+            if (initiator == PriceChangeInitiator.Provider && EmployerApprovalNotRequired(apprenticeship, command))
+            {
+	            apprenticeship.ProviderSelfApprovePriceChange();
+	            returnStatus = PriceChangeRequestStatus.Approved;
+	            await _apprenticeshipRepository.Update(apprenticeship);
+			}
+
+            return returnStatus;
+        }
+
+        private static bool EmployerApprovalNotRequired(ApprenticeshipDomainModel apprenticeshipDomainModel, CreatePriceChangeCommand command)
+        {
+            var apprenticeship = apprenticeshipDomainModel.GetEntity();
+
+            if (apprenticeship.TotalPrice > command.TotalPrice)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

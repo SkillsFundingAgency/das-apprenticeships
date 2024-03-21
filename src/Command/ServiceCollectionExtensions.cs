@@ -33,6 +33,11 @@ namespace SFA.DAS.Apprenticeships.Command
                     .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime();
+
+                scan.FromAssembliesOf(typeof(ServiceCollectionExtensions))
+                    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)))
+                    .AsImplementedInterfaces()
+                    .WithTransientLifetime();
             });
 
             if (addDecorators != null)
