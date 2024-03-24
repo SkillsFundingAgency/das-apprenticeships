@@ -3,7 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure;
+namespace SFA.DAS.Apprenticeships.DataAccess;
 
 public class SqlAzureIdentityAuthenticationDbConnectionInterceptor : DbConnectionInterceptor
 {
@@ -11,7 +11,7 @@ public class SqlAzureIdentityAuthenticationDbConnectionInterceptor : DbConnectio
     private readonly ISqlAzureIdentityTokenProvider _tokenProvider;
     private static bool _connectionNeedsAccessToken = true;
 
-    public SqlAzureIdentityAuthenticationDbConnectionInterceptor(ILogger<SqlAzureIdentityAuthenticationDbConnectionInterceptor> logger, ISqlAzureIdentityTokenProvider tokenProvider, bool connectionNeedsAccessToken)
+    public SqlAzureIdentityAuthenticationDbConnectionInterceptor(ILogger<SqlAzureIdentityAuthenticationDbConnectionInterceptor> logger, ISqlAzureIdentityTokenProvider? tokenProvider, bool connectionNeedsAccessToken)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));

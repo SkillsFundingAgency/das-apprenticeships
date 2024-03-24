@@ -9,5 +9,4 @@ public interface IApprenticeshipQueryRepository
     Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey);
     Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey);
     Task<Guid?> GetKey(string apprenticeshipHashedId);
-    Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId);
 }
