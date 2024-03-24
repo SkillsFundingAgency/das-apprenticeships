@@ -70,11 +70,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi
                 app.UseSwaggerUI();
             }
 
+            app.UseMiddleware<BearerTokenMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthentication();
-
             app.UseAuthorization();
-
             app.MapControllers();
 
             app.Run();
