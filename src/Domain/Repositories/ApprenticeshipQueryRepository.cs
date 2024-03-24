@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -90,16 +89,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EmployerApprovedDate,
                 AccountLegalEntityId = x.AccountLegalEntityId,
                 Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).Initiator.ToString()
-            };
-        }
-        
-		private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
-        {
-            return x => new ApprenticeshipPrice
-            {
-                TrainingPrice = x.TrainingPrice,
-                AssessmentPrice = x.AssessmentPrice,
-                TotalPrice = x.TotalPrice
             };
         }
 
