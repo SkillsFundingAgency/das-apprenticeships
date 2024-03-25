@@ -21,7 +21,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 
         public async Task Invoke(HttpContext context)
         {
-            bool.TryParse(_configuration["ApplicationSettings:DisableAccountAuthorisation"], out var disableAccountAuthorisation);
+            bool.TryParse(_configuration["DisableAccountAuthorisation"], out var disableAccountAuthorisation);
             if (disableAccountAuthorisation)
             {
                 await _next(context);
