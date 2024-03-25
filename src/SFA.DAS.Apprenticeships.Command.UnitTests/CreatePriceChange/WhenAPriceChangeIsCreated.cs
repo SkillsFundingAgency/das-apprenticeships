@@ -54,6 +54,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
             command.TrainingPrice = apprenticeship.GetEntity().TrainingPrice + 1;
             command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
 
+            apprenticeship.GetEntity().TotalPrice = command.TotalPrice - 1;
+
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
             
             await _commandHandler.Handle(command);
@@ -84,7 +86,33 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
                 )));
         }
 
-        [Test]
+		[TestCase(5000, 5001, false)]
+		[TestCase(5000, 5000, true)]
+		[TestCase(5000, 4999, true)]
+		public async Task ThenPriceChangeIsAutoApprovedCorrectly(decimal oldTotal, decimal newTotal, bool expectAutoApprove)
+		{
+			var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+			var command = _fixture.Create<CreatePriceChangeCommand>();
+			command.Initiator = PriceChangeInitiator.Provider.ToString();
+			command.AssessmentPrice = newTotal*0.25m;
+			command.TrainingPrice = newTotal - command.AssessmentPrice;
+			command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
+
+			apprenticeship.GetEntity().TotalPrice = oldTotal;
+
+			_apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+
+			await _commandHandler.Handle(command);
+
+            if(expectAutoApprove)
+				_apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+					y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Approved)));
+            else
+	            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+		            y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Approved)), Times.Never);
+		}
+
+		[Test]
         public void ThenAnExceptionIsThrownIfTheRequesterIsNotSet()
         {
             var command = _fixture.Create<CreatePriceChangeCommand>();

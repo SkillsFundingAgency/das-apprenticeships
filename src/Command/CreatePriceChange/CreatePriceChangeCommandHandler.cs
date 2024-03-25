@@ -48,7 +48,7 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
         {
             var apprenticeship = apprenticeshipDomainModel.GetEntity();
 
-            if (apprenticeship.TotalPrice > command.TotalPrice)
+            if (apprenticeship.TotalPrice >= command.TotalPrice)
             {
                 return true;
             }
