@@ -1,4 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 {
@@ -19,28 +22,26 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
         public async Task Invoke(HttpContext context)
         {
             bool.TryParse(_configuration["ApplicationSettings:DisableAccountAuthorisation"], out var disableAccountAuthorisation);
-            if (!disableAccountAuthorisation)
+            if (disableAccountAuthorisation)
             {
-                RequireClaimsValidation(context);
-                var token = ReadTokenFromAuthHeader(context);
-
-                var providerAccountClaimHandled = HandleProviderAccountClaim(context, token);
-                if (providerAccountClaimHandled)
-                {
-                    await _next(context);
-                    return;
-                }
-                var employerAccountClaimHandled = HandleEmployerAccountClaim(context, token);
-                if (employerAccountClaimHandled)
-                {
-                    await _next(context);
-                    return;
-                }
-
-                throw new UnauthorizedAccessException();
+                await _next(context);
+                return;
             }
+
+            RequireClaimsValidation(context);
+            var token = ReadTokenFromAuthHeader(context);
+            var principal = ValidateToken(token);
+
+            var providerAccountClaimHandled = HandleProviderAccountClaim(context, principal);
+            if (providerAccountClaimHandled)
+            {
+                await _next(context);
+                return;
+            }
+            var employerAccountClaimHandled = HandleEmployerAccountClaim(context, principal);
+            if (!employerAccountClaimHandled) throw new UnauthorizedAccessException();
+                
             await _next(context);
-            return;
         }
 
         private static void RequireClaimsValidation(HttpContext context)
@@ -48,41 +49,53 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             context.Items["IsClaimsValidationRequired"] = true;
         }
 
-        private static JwtSecurityToken ReadTokenFromAuthHeader(HttpContext context)
+        private static string ReadTokenFromAuthHeader(HttpContext context)
         {
             var bearerToken = context.Request.Headers["Authorization"]; 
             if (string.IsNullOrEmpty(bearerToken))
             {
                 throw new UnauthorizedAccessException();
             }
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(bearerToken);
-            return token;
+            return bearerToken;
         }
 
-        private static bool HandleProviderAccountClaim(HttpContext context, JwtSecurityToken token)
+        private ClaimsPrincipal ValidateToken(string token)
+        {
+            var signingKey = _configuration["UserBearerTokenSigningKey"];
+            if (string.IsNullOrEmpty(signingKey))
+            {
+                throw new Exception("Signing key must be set before a token can be retrieved. This should ideally be done in startup");
+            }
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateLifetime = true,
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(signingKey))
+            };
+
+            var principal = new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
+
+            return principal;
+        }
+
+        private static bool HandleProviderAccountClaim(HttpContext context, ClaimsPrincipal claimsPrincipal)
         {
             var ukprnClaimName = "http://schemas.portal.com/ukprn";
-            var ukprn = token.Claims.FirstOrDefault(c => c.Type == ukprnClaimName)?.Value;
-            if (!string.IsNullOrEmpty(ukprn))
-            {
-                context.Items["Ukprn"] = ukprn;
-                return true;
-            }
-            return false;
+            var ukprn = claimsPrincipal.FindFirst(ukprnClaimName)?.Value;
+            if (string.IsNullOrEmpty(ukprn)){ return false;}
+            context.Items["Ukprn"] = ukprn;
+            return true;
         }
 
-        private static bool HandleEmployerAccountClaim(HttpContext context, JwtSecurityToken token)
+        private static bool HandleEmployerAccountClaim(HttpContext context, ClaimsPrincipal claimsPrincipal)
         {
             var employerAccountIdClaimName = "http://das/employer/identity/claims/account";
-            var employerAccountId = token.Claims.FirstOrDefault(c => c.Type == employerAccountIdClaimName)?.Value;
-            if (!string.IsNullOrEmpty(employerAccountId))
-            {
-                context.Items["EmployerAccountId"] = employerAccountId;
-                return true;
-            }
-            return false;
+            var employerAccountId = claimsPrincipal.FindFirst(employerAccountIdClaimName)?.Value;
+            if (string.IsNullOrEmpty(employerAccountId)) return false;
+            context.Items["EmployerAccountId"] = employerAccountId;
+            return true;
         }
     }
 }
