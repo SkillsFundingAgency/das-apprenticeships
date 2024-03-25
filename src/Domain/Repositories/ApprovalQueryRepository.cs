@@ -3,12 +3,12 @@ using SFA.DAS.Apprenticeships.DataAccess;
 
 namespace SFA.DAS.Apprenticeships.Domain.Repositories
 {
-    public class ApprovalRepository : IApprovalRepository
+    public class ApprovalQueryRepository : IApprovalQueryRepository
     {
         private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
         private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
 
-        public ApprovalRepository(Lazy<ApprenticeshipsDataContext> dbContext)
+        public ApprovalQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext)
         {
             _lazyContext = dbContext;
         }

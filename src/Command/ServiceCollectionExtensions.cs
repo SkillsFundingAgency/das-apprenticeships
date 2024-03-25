@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Apprenticeships.Command.Decorators;
-using SFA.DAS.Apprenticeships.Domain;
+using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure;
@@ -55,7 +55,7 @@ namespace SFA.DAS.Apprenticeships.Command
             serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.AddScoped<IApprenticeshipRepository, ApprenticeshipRepository>();
             serviceCollection.AddScoped<IAccountIdClaimsHandler, AccountIdClaimsHandler>();
-            serviceCollection.AddScoped<IAccountIdValidator, AccountIdValidator>();
+            serviceCollection.AddScoped<IAccountIdAuthorizer, AccountIdAuthorizer>();
             return serviceCollection;
         }
 

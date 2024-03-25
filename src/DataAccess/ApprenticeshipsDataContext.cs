@@ -2,21 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Infrastructure;
 
 namespace SFA.DAS.Apprenticeships.DataAccess
 {
     [ExcludeFromCodeCoverage]
     public class ApprenticeshipsDataContext : DbContext
     {
-        private readonly IAccountIdClaimsHandler _accountIdClaimsHandler;
-        private readonly AccountIdClaims _accountIdClaims;
+        private readonly IAccountIdAuthorizer _accountIdAuthorizer;
         public ApprenticeshipsDataContext(
             DbContextOptions<ApprenticeshipsDataContext> options, 
-            IAccountIdClaimsHandler accountIdClaimsHandler) : base(options)
+            IAccountIdAuthorizer accountIdAuthorizer) : base(options)
         {
-            _accountIdClaimsHandler = accountIdClaimsHandler;
-            _accountIdClaims = _accountIdClaimsHandler.GetAccountIdClaims();
+            _accountIdAuthorizer = accountIdAuthorizer;
         }
 
         public virtual DbSet<Apprenticeship> Apprenticeships { get; set; }
@@ -32,11 +29,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 .HasForeignKey(fk => fk.ApprenticeshipKey);
             modelBuilder.Entity<Apprenticeship>()
                 .HasKey(a => new { a.Key });
-            
-            if (_accountIdClaims.IsClaimsValidationRequired)
-            {
-                ApplyFiltersOnAccountId(modelBuilder);
-            }
+            _accountIdAuthorizer.AuthorizeApprenticeshipQueries(modelBuilder);
             
             // Approval
             modelBuilder.Entity<Approval>()
@@ -60,21 +53,6 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                     v => (PriceChangeInitiator)Enum.Parse(typeof(PriceChangeInitiator), v));
 
             base.OnModelCreating(modelBuilder);
-        }
-
-        private void ApplyFiltersOnAccountId(ModelBuilder modelBuilder)
-        {
-            switch (_accountIdClaims.AccountIdClaimsType)
-            {
-                case AccountIdClaimsType.Provider:
-                    modelBuilder.Entity<Apprenticeship>()
-                        .HasQueryFilter(x => x.Ukprn == _accountIdClaims.AccountId);
-                    break;
-                case AccountIdClaimsType.Employer:
-                    modelBuilder.Entity<Apprenticeship>()
-                        .HasQueryFilter(x => x.EmployerAccountId == _accountIdClaims.AccountId);
-                    break;
-            }
         }
     }
 }

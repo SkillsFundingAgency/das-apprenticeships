@@ -4,16 +4,16 @@ namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId
 
 public class GetApprenticeshipKeyRequestQueryHandler : IQueryHandler<GetApprenticeshipKeyByApprenticeshipIdRequest, GetApprenticeshipKeyByApprenticeshipIdResponse>
 {
-    private readonly IApprovalRepository _approvalRepository;
+    private readonly IApprovalQueryRepository _approvalQueryRepository;
 
-    public GetApprenticeshipKeyRequestQueryHandler(IApprovalRepository apprenticeshipQueryRepository)
+    public GetApprenticeshipKeyRequestQueryHandler(IApprovalQueryRepository apprenticeshipQueryRepository)
     {
-        _approvalRepository = apprenticeshipQueryRepository;
+        _approvalQueryRepository = apprenticeshipQueryRepository;
     }
 
     public async Task<GetApprenticeshipKeyByApprenticeshipIdResponse> Handle(GetApprenticeshipKeyByApprenticeshipIdRequest query, CancellationToken cancellationToken = default)
     {
-        var key = await _approvalRepository.GetKeyByApprenticeshipId(query.ApprenticeshipId);
+        var key = await _approvalQueryRepository.GetKeyByApprenticeshipId(query.ApprenticeshipId);
         return new GetApprenticeshipKeyByApprenticeshipIdResponse { ApprenticeshipKey = key };
     }
 }

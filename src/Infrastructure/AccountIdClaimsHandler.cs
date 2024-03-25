@@ -39,8 +39,8 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
 
         private static bool VerifyIfValidationRequired(IDictionary<object, object> httpContextItems, AccountIdClaims accountIdClaims)
         {
-            var valueExists = httpContextItems.TryGetValue("IsClaimsValidationRequired", out var validationRequiredValue);
-            var validationRequired = validationRequiredValue is bool ? (bool)validationRequiredValue : false;
+            httpContextItems.TryGetValue("IsClaimsValidationRequired", out var validationRequiredValue);
+            var validationRequired = validationRequiredValue is bool && (bool)validationRequiredValue;
 
             accountIdClaims.IsClaimsValidationRequired = validationRequired;
             return validationRequired;

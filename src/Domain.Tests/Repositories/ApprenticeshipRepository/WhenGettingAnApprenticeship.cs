@@ -7,8 +7,6 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
@@ -21,8 +19,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         private ApprenticeshipsDataContext _dbContext;
         private Mock<IDomainEventDispatcher> _domainEventDispatcher;
         private Mock<IApprenticeshipFactory> _apprenticeshipFactory;
-        private Mock<IAccountIdClaimsHandler> _accountIdClaimsHandler;
-        private Mock<IAccountIdValidator> _accountIdValidator;
+        private Mock<IAccountIdAuthorizer> _accountIdAuthorizer;
 
         [SetUp]
         public void Arrange()
@@ -61,12 +58,11 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         {
             _domainEventDispatcher = new Mock<IDomainEventDispatcher>();
             _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
-            _accountIdValidator = new Mock<IAccountIdValidator>();
-            _accountIdClaimsHandler = AuthorizationHelper.MockAccountIdClaimsHandler(testApprenticeship.Ukprn, AccountIdClaimsType.Provider);
+            _accountIdAuthorizer = new Mock<IAccountIdAuthorizer>();
             _dbContext =
-                InMemoryDbContextCreator.SetUpInMemoryDbContext(_accountIdClaimsHandler.Object);
+                InMemoryDbContextCreator.SetUpInMemoryDbContext();
             _sut = new Domain.Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext),
-                _domainEventDispatcher.Object, _apprenticeshipFactory.Object, _accountIdValidator.Object);
+                _domainEventDispatcher.Object, _apprenticeshipFactory.Object, _accountIdAuthorizer.Object);
         }
     }
 }

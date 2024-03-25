@@ -103,7 +103,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         private void SetUpApprenticeshipQueryRepository(long ukprn)
         {
             _accountIdClaimsHandler = AuthorizationHelper.MockAccountIdClaimsHandler(ukprn, AccountIdClaimsType.Provider);
-            _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext(_accountIdClaimsHandler.Object);
+            _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
             var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
             _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }

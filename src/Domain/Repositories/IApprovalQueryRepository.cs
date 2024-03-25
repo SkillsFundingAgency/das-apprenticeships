@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 
-public interface IApprovalRepository
+public interface IApprovalQueryRepository
 {
     Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId);
 }

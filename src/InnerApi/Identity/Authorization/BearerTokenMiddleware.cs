@@ -8,35 +8,42 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
     public class BearerTokenMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IConfiguration _configuration;
 
-        public BearerTokenMiddleware(RequestDelegate next)
+        public BearerTokenMiddleware(RequestDelegate next, IConfiguration configuration)
         {
             _next = next;
+            _configuration = configuration;
         }
 
         public async Task Invoke(HttpContext context)
         {
-            EnsureClaimsAreValidated(context);
-
-            var token = ReadTokenFromAuthHeader(context);
-
-            var providerAccountClaimHandled = HandleProviderAccountClaim(context, token);
-            if (providerAccountClaimHandled)
+            bool.TryParse(_configuration["ApplicationSettings:DisableAccountAuthorisation"], out var disableAccountAuthorisation);
+            if (!disableAccountAuthorisation)
             {
-                await _next(context);
-                return;
-            }
-            var employerAccountClaimHandled = HandleEmployerAccountClaim(context, token);
-            if (employerAccountClaimHandled)
-            {
-                await _next(context);
-                return;
-            }
+                RequireClaimsValidation(context);
+                var token = ReadTokenFromAuthHeader(context);
 
-            throw new UnauthorizedAccessException();
+                var providerAccountClaimHandled = HandleProviderAccountClaim(context, token);
+                if (providerAccountClaimHandled)
+                {
+                    await _next(context);
+                    return;
+                }
+                var employerAccountClaimHandled = HandleEmployerAccountClaim(context, token);
+                if (employerAccountClaimHandled)
+                {
+                    await _next(context);
+                    return;
+                }
+
+                throw new UnauthorizedAccessException();
+            }
+            await _next(context);
+            return;
         }
 
-        private static void EnsureClaimsAreValidated(HttpContext context)
+        private static void RequireClaimsValidation(HttpContext context)
         {
             context.Items["IsClaimsValidationRequired"] = true;
         }

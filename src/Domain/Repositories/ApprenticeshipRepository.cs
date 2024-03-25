@@ -10,21 +10,22 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
         private IDomainEventDispatcher _domainEventDispatcher;
         private readonly IApprenticeshipFactory _apprenticeshipFactory;
-        private readonly IAccountIdValidator _accountIdValidator;
+        private readonly IAccountIdAuthorizer _accountIdAuthorizer;
         private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
 
-        public ApprenticeshipRepository(Lazy<ApprenticeshipsDataContext> dbContext, IDomainEventDispatcher domainEventDispatcher, IApprenticeshipFactory apprenticeshipFactory, IAccountIdValidator accountIdValidator)
+        public ApprenticeshipRepository(Lazy<ApprenticeshipsDataContext> dbContext, IDomainEventDispatcher domainEventDispatcher, IApprenticeshipFactory apprenticeshipFactory, IAccountIdAuthorizer accountIdAuthorizer)
         {
             _lazyContext = dbContext;
             _domainEventDispatcher = domainEventDispatcher;
             _apprenticeshipFactory = apprenticeshipFactory;
-            _accountIdValidator = accountIdValidator;
+            _accountIdAuthorizer = accountIdAuthorizer;
         }
 
         public async Task Add(ApprenticeshipDomainModel apprenticeship)
         {
-            _accountIdValidator.ValidateAccountId(apprenticeship);
-            await DbContext.AddAsync(apprenticeship.GetEntity());
+            var entity = apprenticeship.GetEntity();
+            _accountIdAuthorizer.ValidateAccountIds(entity);
+            await DbContext.AddAsync(entity);
             await DbContext.SaveChangesAsync();
             
             foreach (dynamic domainEvent in apprenticeship.FlushEvents())
@@ -45,8 +46,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 
         public async Task Update(ApprenticeshipDomainModel apprenticeship)
         {
-            _accountIdValidator.ValidateAccountId(apprenticeship);
-            DbContext.Update(apprenticeship.GetEntity());
+            var entity = apprenticeship.GetEntity();
+            _accountIdAuthorizer.ValidateAccountIds(entity);
+            DbContext.Update(entity);
 
             await DbContext.SaveChangesAsync();
             
