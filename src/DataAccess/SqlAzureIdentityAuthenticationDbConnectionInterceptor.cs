@@ -1,10 +1,12 @@
 ﻿using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.Apprenticeships.DataAccess;
 
+[ExcludeFromCodeCoverage]
 public class SqlAzureIdentityAuthenticationDbConnectionInterceptor : DbConnectionInterceptor
 {
     private readonly ILogger<SqlAzureIdentityAuthenticationDbConnectionInterceptor> _logger;
