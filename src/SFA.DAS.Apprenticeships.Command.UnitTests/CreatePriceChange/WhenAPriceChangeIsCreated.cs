@@ -54,6 +54,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
             command.TrainingPrice = apprenticeship.GetEntity().TrainingPrice + 1;
             command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
 
+            apprenticeship.GetEntity().TotalPrice = command.TotalPrice - 1;
+
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
             
             await _commandHandler.Handle(command);
