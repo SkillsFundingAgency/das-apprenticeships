@@ -25,14 +25,20 @@ namespace SFA.DAS.Apprenticeships.DataAccess
 
             switch (_accountIdClaims.AccountIdClaimsType)
             {
-                case AccountIdClaimsType.Provider when
-                    apprenticeship.Ukprn != _accountIdClaims.AccountId:
-                    throw new UnauthorizedAccessException(
-                        InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn),apprenticeship.Ukprn, _accountIdClaims.AccountId));
-                case AccountIdClaimsType.Employer when
-                    apprenticeship.EmployerAccountId != _accountIdClaims.AccountId:
-                    throw new UnauthorizedAccessException(
-                        InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId, _accountIdClaims.AccountId));
+                case AccountIdClaimsType.Provider:
+                    if (apprenticeship.Ukprn != _accountIdClaims.AccountId)
+                    {
+                        throw new UnauthorizedAccessException(
+                            InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn),apprenticeship.Ukprn, _accountIdClaims.AccountId));
+                    }
+                    break;
+                case AccountIdClaimsType.Employer:
+                    if (apprenticeship.EmployerAccountId != _accountIdClaims.AccountId)
+                    {
+                        throw new UnauthorizedAccessException(
+                            InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId, _accountIdClaims.AccountId));
+                    }
+                    break;
                 case null:
                     break;
                 default:
