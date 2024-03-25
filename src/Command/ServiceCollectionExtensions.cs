@@ -18,18 +18,17 @@ namespace SFA.DAS.Apprenticeships.Command
         {
             serviceCollection
                 .AddCommandHandlers(AddCommandHandlerDecorators)
-                .AddScoped<ICommandDispatcher, CommandDispatcher>();
-
-            serviceCollection.AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>();
-            serviceCollection.AddScoped<IFundingBandMaximumService, FundingBandMaximumService>();
-            serviceCollection.AddPersistenceServices();
+                .AddScoped<ICommandDispatcher, CommandDispatcher>()
+                .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
+                .AddScoped<IFundingBandMaximumService, FundingBandMaximumService>()
+                .AddPersistenceServices();
 
             return serviceCollection;
         }
 
         private static IServiceCollection AddCommandHandlers(this IServiceCollection serviceCollection, Func<IServiceCollection, IServiceCollection> addDecorators = null)
         {
-            // set up the command handlers and command validators
+            // Set up the command handlers and command validators
             serviceCollection.Scan(scan =>
             {
                 scan.FromAssembliesOf(typeof(ServiceCollectionExtensions))

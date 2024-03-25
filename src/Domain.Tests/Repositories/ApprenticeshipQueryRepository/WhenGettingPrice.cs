@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.Infrastructure;
+using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
 {
@@ -15,17 +17,12 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         private Domain.Repositories.ApprenticeshipQueryRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
+        private Mock<IAccountIdClaimsHandler> _accountIdClaimsHandler;
 
         [SetUp]
         public void Arrange()
         {
             _fixture = new Fixture();
-            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
-
-            var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("ApprenticeshipsDbContext" + Guid.NewGuid()).Options;
-            _dbContext = new ApprenticeshipsDataContext(options);
-
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
 
         [TearDown]
@@ -37,6 +34,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         [Test]
         public async Task ThenReturnNullWhenNoApprenticeshipFoundWithApprenticeshipKey()
         {
+            //Arrange
+            SetUpApprenticeshipQueryRepository(_fixture.Create<long>());
+            
             //Act
             var result = await _sut.GetPrice(_fixture.Create<Guid>());
 
@@ -47,7 +47,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         [Test]
         public async Task ThenTheCorrectPriceIsReturned()
         {
-            // Arrange
+            //Arrange
+            SetUpApprenticeshipQueryRepository(_fixture.Create<long>());
             var apprenticeshipKey = _fixture.Create<Guid>();
 
             var apprenticeships = new[]
@@ -73,6 +74,14 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.ApprenticeshipActualStartDate = apprenticeships[0].ActualStartDate;
             result.ApprenticeshipPlannedEndDate = apprenticeships[0].PlannedEndDate;
             result.AccountLegalEntityId = apprenticeships[0].AccountLegalEntityId;
+        }
+
+        private void SetUpApprenticeshipQueryRepository(long ukprn)
+        {
+            _accountIdClaimsHandler = AuthorizationHelper.MockAccountIdClaimsHandler(ukprn, AccountIdClaimsType.Provider);
+            _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext(_accountIdClaimsHandler.Object);
+            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
     }
 }

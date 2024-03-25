@@ -12,7 +12,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess
         private readonly IAccountIdClaimsHandler _accountIdClaimsHandler;
         private readonly AccountIdClaims _accountIdClaims;
         public ApprenticeshipsDataContext(
-            DbContextOptions<ApprenticeshipsDataContext> options, IAccountIdClaimsHandler accountIdClaimsHandler) : base(options)
+            DbContextOptions<ApprenticeshipsDataContext> options, 
+            IAccountIdClaimsHandler accountIdClaimsHandler) : base(options)
         {
             _accountIdClaimsHandler = accountIdClaimsHandler;
             _accountIdClaims = _accountIdClaimsHandler.GetAccountIdClaims();
