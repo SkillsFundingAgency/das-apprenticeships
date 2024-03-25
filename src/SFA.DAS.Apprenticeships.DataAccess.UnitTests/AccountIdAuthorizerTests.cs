@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoFixture;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
@@ -26,8 +27,11 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             apprenticeship.Ukprn = 12345;
             var authorizer = SetUpAuthorizer(true, 54321, AccountIdClaimsType.Provider);
 
-            // Act & Assert
-            Assert.Throws<UnauthorizedAccessException>(() => authorizer.ValidateAccountIds(apprenticeship));
+            // Act 
+            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+            
+            // Assert
+            act.Should().Throw<UnauthorizedAccessException>();
         }
 
         [Test]
@@ -37,8 +41,11 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             var apprenticeship = new Apprenticeship { EmployerAccountId = 98765 };
             var authorizer = SetUpAuthorizer(true, 56789, AccountIdClaimsType.Employer);
 
-            // Act & Assert
-            Assert.Throws<UnauthorizedAccessException>(() => authorizer.ValidateAccountIds(apprenticeship));
+            // Act 
+            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+            
+            // Assert
+            act.Should().Throw<UnauthorizedAccessException>();
         }
 
         [Test]
@@ -48,8 +55,11 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             var apprenticeship = new Apprenticeship();
             var authorizer = SetUpAuthorizer(false);
 
-            // Act & Assert
-            Assert.DoesNotThrow(() => authorizer.ValidateAccountIds(apprenticeship));
+            // Act 
+            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+            
+            // Assert
+            act.Should().NotThrow();
         }
         
         private AccountIdAuthorizer SetUpAuthorizer(bool isClaimsValidationRequired, long? accountId = null, AccountIdClaimsType? accountIdClaimsType = null)
