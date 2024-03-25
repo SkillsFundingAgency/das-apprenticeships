@@ -21,8 +21,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 
         public async Task Invoke(HttpContext context)
         {
-            bool.TryParse(_configuration["DisableAccountAuthorisation"], out var disableAccountAuthorisation);
-            if (disableAccountAuthorisation)
+            if (DisableAccountAuthorisation())
             {
                 await _next(context);
                 return;
@@ -32,16 +31,17 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             var token = ReadTokenFromAuthHeader(context);
             var principal = ValidateToken(token);
 
-            var providerAccountClaimHandled = HandleProviderAccountClaim(context, principal);
-            if (providerAccountClaimHandled)
+            if (!HandleProviderAccountClaim(context, principal) && !HandleEmployerAccountClaim(context, principal))
             {
-                await _next(context);
-                return;
+                throw new UnauthorizedAccessException();
             }
-            var employerAccountClaimHandled = HandleEmployerAccountClaim(context, principal);
-            if (!employerAccountClaimHandled) throw new UnauthorizedAccessException();
-                
+
             await _next(context);
+        }
+
+        private bool DisableAccountAuthorisation()
+        {
+            return bool.TryParse(_configuration["DisableAccountAuthorisation"], out var disableAccountAuthorisation) && disableAccountAuthorisation;
         }
 
         private static void RequireClaimsValidation(HttpContext context)
@@ -51,7 +51,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 
         private static string ReadTokenFromAuthHeader(HttpContext context)
         {
-            var bearerToken = context.Request.Headers["Authorization"]; 
+            var bearerToken = context.Request.Headers["Authorization"];
             if (string.IsNullOrEmpty(bearerToken))
             {
                 throw new UnauthorizedAccessException();
@@ -75,16 +75,17 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(signingKey))
             };
 
-            var principal = new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
-
-            return principal;
+            return new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
         }
 
         private static bool HandleProviderAccountClaim(HttpContext context, ClaimsPrincipal claimsPrincipal)
         {
             var ukprnClaimName = "http://schemas.portal.com/ukprn";
             var ukprn = claimsPrincipal.FindFirst(ukprnClaimName)?.Value;
-            if (string.IsNullOrEmpty(ukprn)){ return false;}
+            if (string.IsNullOrEmpty(ukprn))
+            {
+                return false;
+            }
             context.Items["Ukprn"] = ukprn;
             return true;
         }
@@ -93,7 +94,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
         {
             var employerAccountIdClaimName = "http://das/employer/identity/claims/account";
             var employerAccountId = claimsPrincipal.FindFirst(employerAccountIdClaimName)?.Value;
-            if (string.IsNullOrEmpty(employerAccountId)) return false;
+            if (string.IsNullOrEmpty(employerAccountId))
+            {
+                return false;
+            }
             context.Items["EmployerAccountId"] = employerAccountId;
             return true;
         }
