@@ -62,7 +62,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             act.Should().NotThrow();
         }
 
-        private AccountIdAuthorizer SetUpAuthorizer(bool isClaimsValidationRequired, long? accountId = null, AccountIdClaimsType? accountIdClaimsType = null)
+        private static AccountIdAuthorizer SetUpAuthorizer(bool isClaimsValidationRequired, long? accountId = null, AccountIdClaimsType? accountIdClaimsType = null)
         {
             var mockClaimsHandler = new Mock<IAccountIdClaimsHandler>();
             mockClaimsHandler

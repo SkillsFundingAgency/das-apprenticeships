@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 {
     /// <summary>
-    /// Middleware that handles the claim values from bearer tokens in incoming requests
+    /// Middleware that handles the claim values from bearer tokens in incoming API requests
     /// </summary>
     public class BearerTokenMiddleware
     {
@@ -19,6 +19,9 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Handles the claim values from bearer tokens in incoming API requests
+        /// </summary>
         public async Task Invoke(HttpContext context)
         {
             if (DisableAccountAuthorisation())
@@ -64,7 +67,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             var signingKey = _configuration["UserBearerTokenSigningKey"];
             if (string.IsNullOrEmpty(signingKey))
             {
-                throw new Exception("Signing key must be set before a token can be retrieved. This should ideally be done in startup");
+                throw new ArgumentNullException($"{nameof(signingKey)}", "Signing key must be set before a token can be retrieved. This should ideally be done in startup");
             }
 
             var validationParameters = new TokenValidationParameters

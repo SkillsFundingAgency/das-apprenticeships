@@ -7,13 +7,11 @@ namespace SFA.DAS.Apprenticeships.DataAccess
 {
     public class AccountIdAuthorizer : IAccountIdAuthorizer
     {
-        private readonly IAccountIdClaimsHandler _accountIdClaimsHandler;
         private readonly AccountIdClaims _accountIdClaims;
 
         public AccountIdAuthorizer(IAccountIdClaimsHandler accountIdClaimsHandler)
         {
-            _accountIdClaimsHandler = accountIdClaimsHandler;
-            _accountIdClaims = _accountIdClaimsHandler.GetAccountIdClaims();
+            _accountIdClaims = accountIdClaimsHandler.GetAccountIdClaims();
         }
         
         public void ValidateAccountIds(Apprenticeship apprenticeship)
