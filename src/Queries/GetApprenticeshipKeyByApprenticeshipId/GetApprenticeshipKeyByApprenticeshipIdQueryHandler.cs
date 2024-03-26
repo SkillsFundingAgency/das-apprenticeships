@@ -2,11 +2,11 @@
 
 namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 
-public class GetApprenticeshipKeyRequestQueryHandler : IQueryHandler<GetApprenticeshipKeyByApprenticeshipIdRequest, GetApprenticeshipKeyByApprenticeshipIdResponse>
+public class GetApprenticeshipKeyByApprenticeshipIdQueryHandler : IQueryHandler<GetApprenticeshipKeyByApprenticeshipIdRequest, GetApprenticeshipKeyByApprenticeshipIdResponse>
 {
     private readonly IApprovalQueryRepository _approvalQueryRepository;
 
-    public GetApprenticeshipKeyRequestQueryHandler(IApprovalQueryRepository apprenticeshipQueryRepository)
+    public GetApprenticeshipKeyByApprenticeshipIdQueryHandler(IApprovalQueryRepository apprenticeshipQueryRepository)
     {
         _approvalQueryRepository = apprenticeshipQueryRepository;
     }
