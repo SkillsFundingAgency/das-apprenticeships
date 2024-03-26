@@ -16,7 +16,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
         {
             var accountIdClaims = new AccountIdClaims();
 
-            if (_httpContext != null)
+            if (_httpContext != null && _httpContext.Items != null)
             {
                 if (TryGetAccountId(_httpContext.Items, out var accountId, out var accountType))
                 {
@@ -38,13 +38,13 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
             accountId = 0;
             accountType = default;
 
-            if (httpContextItems != null && httpContextItems.TryGetValue("Ukprn", out var ukprnValue) && long.TryParse(ukprnValue as string, out var ukprn))
+            if (httpContextItems.TryGetValue("Ukprn", out var ukprnValue) && long.TryParse(ukprnValue as string, out var ukprn))
             {
                 accountId = ukprn;
                 accountType = AccountIdClaimsType.Provider;
                 return true;
             }
-            else if (httpContextItems != null && httpContextItems.TryGetValue("EmployerAccountId", out var employerAccountIdValue) && long.TryParse(employerAccountIdValue as string, out var employerAccountId))
+            else if (httpContextItems.TryGetValue("EmployerAccountId", out var employerAccountIdValue) && long.TryParse(employerAccountIdValue as string, out var employerAccountId))
             {
                 accountId = employerAccountId;
                 accountType = AccountIdClaimsType.Employer;
@@ -58,7 +58,7 @@ namespace SFA.DAS.Apprenticeships.Infrastructure
         {
             validationRequired = false;
 
-            if (httpContextItems != null && httpContextItems.TryGetValue("IsClaimsValidationRequired", out var validationRequiredValue) && validationRequiredValue is bool)
+            if (httpContextItems.TryGetValue("IsClaimsValidationRequired", out var validationRequiredValue) && validationRequiredValue is bool)
             {
                 validationRequired = (bool)validationRequiredValue;
                 return true;
