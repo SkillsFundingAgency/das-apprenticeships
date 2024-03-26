@@ -9,7 +9,7 @@ using SFA.DAS.Apprenticeships.Infrastructure;
 
 namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
 {
-    public class AccountIdAuthorizerTests
+    public class WhenValidatingAccountIds
     {
         private Fixture _fixture;
 
@@ -20,7 +20,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
         }
 
         [Test]
-        public void ValidateAccountIds_ProviderAccountIdMismatch_ThrowsUnauthorizedAccessException()
+        public void ProviderAccountIdMismatch_ThrowsUnauthorizedAccessException()
         {
             // Arrange
             var apprenticeship = _fixture.Create<Apprenticeship>();
@@ -35,7 +35,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
         }
 
         [Test]
-        public void ValidateAccountIds_EmployerAccountIdMismatch_ThrowsUnauthorizedAccessException()
+        public void EmployerAccountIdMismatch_ThrowsUnauthorizedAccessException()
         {
             // Arrange
             var apprenticeship = new Apprenticeship { EmployerAccountId = 98765 };
@@ -49,7 +49,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
         }
 
         [Test]
-        public void ValidateAccountIds_NoClaimsValidationRequired_DoesNotThrowException()
+        public void NoClaimsValidationRequired_DoesNotThrowException()
         {
             // Arrange
             var apprenticeship = new Apprenticeship();
@@ -61,7 +61,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             // Assert
             act.Should().NotThrow();
         }
-        
+
         private AccountIdAuthorizer SetUpAuthorizer(bool isClaimsValidationRequired, long? accountId = null, AccountIdClaimsType? accountIdClaimsType = null)
         {
             var mockClaimsHandler = new Mock<IAccountIdClaimsHandler>();
@@ -73,6 +73,5 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
                 });
             return new AccountIdAuthorizer(mockClaimsHandler.Object);
         }
-
     }
 }
