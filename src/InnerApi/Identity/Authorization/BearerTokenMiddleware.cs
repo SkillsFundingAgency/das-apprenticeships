@@ -24,7 +24,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
         /// </summary>
         public async Task Invoke(HttpContext context)
         {
-            if (DisableAccountAuthorisation())
+            if (DisableAccountAuthorization())
             {
                 await _next(context);
                 return;
@@ -42,9 +42,9 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             await _next(context);
         }
 
-        private bool DisableAccountAuthorisation()
+        private bool DisableAccountAuthorization()
         {
-            return bool.TryParse(_configuration["DisableAccountAuthorisation"], out var disableAccountAuthorisation) && disableAccountAuthorisation;
+            return bool.TryParse(_configuration["DisableAccountAuthorization"], out var disableAccountAuthorization) && disableAccountAuthorization;
         }
 
         private static void RequireClaimsValidation(HttpContext context)

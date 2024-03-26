@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
 {
-    internal class BearerTokenMiddlewareTests
+    public class BearerTokenMiddlewareTests
     {
         private BearerTokenMiddleware _middleware;
         private Mock<IConfiguration> _mockConfiguration;
@@ -26,10 +26,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         }
 
         [Test]
-        public async Task Invoke_WhenDisableAccountAuthorisationTrue_ShouldNotThrowException()
+        public async Task Invoke_WhenDisableAccountAuthorizationTrue_ShouldNotThrowException()
         {
             // Arrange
-            _mockConfiguration.Setup(x => x["DisableAccountAuthorisation"]).Returns("true");
+            _mockConfiguration.Setup(x => x["DisableAccountAuthorization"]).Returns("true");
 
             // Act & Assert
             Func<Task> action = async () => await _middleware.Invoke(_httpContext);
@@ -40,7 +40,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         public async Task Invoke_WhenTokenMissing_ShouldThrowUnauthorizedAccessException()
         {
             // Arrange
-            _mockConfiguration.Setup(x => x["DisableAccountAuthorisation"]).Returns("false");
+            _mockConfiguration.Setup(x => x["DisableAccountAuthorization"]).Returns("false");
 
             // Act & Assert
             Func<Task> action = async () => await _middleware.Invoke(_httpContext);
