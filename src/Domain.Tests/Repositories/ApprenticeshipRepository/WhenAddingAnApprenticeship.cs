@@ -41,11 +41,26 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         }
 
         [Test]
-        public async Task Then_the_apprenticeship_is_added_to_the_data_store()
+        public async Task ThenAccountIdValidationIsPerformed()
+        {
+            // Arrange
+            var apprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
+            SetUpApprenticeshipRepository();
+
+            // Act
+            await _sut.Add(apprenticeship);
+            
+            // Assert
+            var entity = apprenticeship.GetEntity();
+            _accountIdAuthorizer.Verify(x => x.ValidateAccountIds(entity), Times.Once());
+        }
+
+        [Test]
+        public async Task ThenApprenticeshipAddedToDataStore()
         {
             // Arrange
             var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
-            SetUpApprenticeshipRepository(testApprenticeship);
+            SetUpApprenticeshipRepository();
 
             // Act
             await _sut.Add(testApprenticeship);
@@ -60,13 +75,13 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         }
 
         [Test]
-        public async Task Then_the_approval_is_added_to_the_data_store()
+        public async Task ThenApprovalAddedToDataStore()
         {
             // Arrange
             var apprenticeshipEntity = _fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>();
             apprenticeshipEntity.Approvals = new List<Approval>();
             var testApprenticeship = ApprenticeshipDomainModel.Get(apprenticeshipEntity);
-            SetUpApprenticeshipRepository(testApprenticeship);
+            SetUpApprenticeshipRepository();
             var expectedApproval = ApprovalDomainModel.Get(_fixture.Create<Approval>());
 
             // Act
@@ -90,7 +105,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         }
 
         [Test]
-        public async Task Then_the_domain_events_are_published()
+        public async Task ThenDomainEventsPublished()
         {
             // Arrange
             var testApprenticeship = ApprenticeshipDomainModel.New(
@@ -109,14 +124,14 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
                 _fixture.Create<long>(),     //  long accountLegalEntityId,
 				_fixture.Create<long>(),     //  long ukprn,
 				_fixture.Create<long>());    //  long employerAccountId
-            SetUpApprenticeshipRepository(testApprenticeship);
+            SetUpApprenticeshipRepository();
 			await _sut.Add(testApprenticeship);
             
             // Assert
             _domainEventDispatcher.Verify(x => x.Send(It.Is<ApprenticeshipCreated>(e => e.ApprenticeshipKey == testApprenticeship.Key), It.IsAny<CancellationToken>()), Times.Once());
         }
 
-        private void SetUpApprenticeshipRepository(ApprenticeshipDomainModel testApprenticeship)
+        private void SetUpApprenticeshipRepository()
         {
             _domainEventDispatcher = new Mock<IDomainEventDispatcher>();
             _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
