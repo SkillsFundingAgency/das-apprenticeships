@@ -15,9 +15,10 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 
         public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
         {
-            var approval = await DbContext.Approvals.FirstOrDefaultAsync(x =>
-                x.ApprovalsApprenticeshipId == apprenticeshipId);
-            return approval?.ApprenticeshipKey;
+            var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
+                .Include(x => x.Approvals)
+                .SingleOrDefaultAsync(x => x.Approvals.Any(x => x.ApprovalsApprenticeshipId == apprenticeshipId));
+            return apprenticeshipWithMatchingId?.Approvals.FirstOrDefault()?.ApprenticeshipKey;
         }
     }
 }
