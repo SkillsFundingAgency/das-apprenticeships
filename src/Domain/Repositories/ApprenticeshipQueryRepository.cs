@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -49,19 +48,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
             };
         }
 
-        public async Task<IEnumerable<ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
-        {
-            var dataModels = await DbContext.PriceHistories
-                .Where(x => x.Key == apprenticeshipKey)
-                .Select(PriceHistoryToApprenticeshipPrice())
-                .ToListAsync();
-
-            return dataModels;
-        }
-
         public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
         {
-            _logger.LogInformation($"Getting pending price change for apprenticeship {apprenticeshipKey}");
+            _logger.LogInformation("Getting pending price change for apprenticeship {p1}", apprenticeshipKey);
 
             PendingPriceChange? pendingPriceChange = null;
 
@@ -75,7 +64,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
             }
             catch(Exception e)
             {
-                _logger.LogError(e, $"Error getting pending price change for apprenticeship {apprenticeshipKey}");
+                _logger.LogError(e, "Error getting pending price change for apprenticeship {p1}", apprenticeshipKey);
             }
 
             return pendingPriceChange;
@@ -102,29 +91,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).Initiator.ToString()
             };
         }
-        
-		private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
-        {
-            return x => new ApprenticeshipPrice
-            {
-                TrainingPrice = x.TrainingPrice,
-                AssessmentPrice = x.AssessmentPrice,
-                TotalPrice = x.TotalPrice
-            };
-        }
 
         public async Task<Guid?> GetKey(string apprenticeshipHashedId)
         {
             var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
                 x.ApprenticeshipHashedId == apprenticeshipHashedId);
             return apprenticeship?.Key;
-        }
-
-        public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
-        {
-	        var approval = await DbContext.Approvals.FirstOrDefaultAsync(x =>
-		        x.ApprovalsApprenticeshipId == apprenticeshipId);
-	        return approval?.ApprenticeshipKey;
         }
 	}
 }

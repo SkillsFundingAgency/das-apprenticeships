@@ -12,7 +12,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Configuration;
+using SFA.DAS.Apprenticeships.DataAccess;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Apprenticeships.Functions

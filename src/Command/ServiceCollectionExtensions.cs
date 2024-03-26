@@ -1,8 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Apprenticeships.Command.Decorators;
+using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
@@ -15,18 +18,17 @@ namespace SFA.DAS.Apprenticeships.Command
         {
             serviceCollection
                 .AddCommandHandlers(AddCommandHandlerDecorators)
-                .AddScoped<ICommandDispatcher, CommandDispatcher>();
-
-            serviceCollection.AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>();
-            serviceCollection.AddScoped<IFundingBandMaximumService, FundingBandMaximumService>();
-            serviceCollection.AddPersistenceServices();
+                .AddScoped<ICommandDispatcher, CommandDispatcher>()
+                .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
+                .AddScoped<IFundingBandMaximumService, FundingBandMaximumService>()
+                .AddPersistenceServices();
 
             return serviceCollection;
         }
 
         private static IServiceCollection AddCommandHandlers(this IServiceCollection serviceCollection, Func<IServiceCollection, IServiceCollection> addDecorators = null)
         {
-            // set up the command handlers and command validators
+            // Set up the command handlers and command validators
             serviceCollection.Scan(scan =>
             {
                 scan.FromAssembliesOf(typeof(ServiceCollectionExtensions))
@@ -50,7 +52,10 @@ namespace SFA.DAS.Apprenticeships.Command
         
         private static IServiceCollection AddPersistenceServices(this IServiceCollection serviceCollection)
         {
+            serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.AddScoped<IApprenticeshipRepository, ApprenticeshipRepository>();
+            serviceCollection.AddScoped<IAccountIdClaimsHandler, AccountIdClaimsHandler>();
+            serviceCollection.AddScoped<IAccountIdAuthorizer, AccountIdAuthorizer>();
             return serviceCollection;
         }
 

@@ -23,7 +23,8 @@ namespace SFA.DAS.Apprenticeships.Queries
                         .AsImplementedInterfaces()
                         .WithTransientLifetime();
                 })
-                .AddTransient<IApprenticeshipQueryRepository, ApprenticeshipQueryRepository>()
+                .AddScoped<IApprenticeshipQueryRepository, ApprenticeshipQueryRepository>()
+                .AddScoped<IApprovalQueryRepository, ApprovalQueryRepository>()
                 .AddScoped<IQueryDispatcher, QueryDispatcher>();
 
             return serviceCollection;

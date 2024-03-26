@@ -49,7 +49,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi
 
             var applicationSettings = new ApplicationSettings();
             builder.Configuration.Bind(nameof(ApplicationSettings), applicationSettings);
-            builder.Services.AddDbContext<ApprenticeshipsDataContext>();
             builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocal(builder.Configuration));
             builder.Services.AddSingleton(x => applicationSettings);
             builder.Services.AddQueryServices();
@@ -70,11 +69,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi
                 app.UseSwaggerUI();
             }
 
+            app.UseMiddleware<BearerTokenMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthentication();
-
             app.UseAuthorization();
-
             app.MapControllers();
 
             app.Run();
