@@ -23,8 +23,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
         public void ProviderAccountIdMismatch_ThrowsUnauthorizedAccessException()
         {
             // Arrange
-            var apprenticeship = _fixture.Create<Apprenticeship>();
-            apprenticeship.Ukprn = 12345;
+            var apprenticeship = _fixture.Build<Apprenticeship>().With(x => x.Ukprn, 12345).Create();
             var authorizer = SetUpAuthorizer(true, 54321, AccountIdClaimsType.Provider);
 
             // Act 
@@ -58,6 +57,34 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             // Act 
             var act = () => authorizer.ValidateAccountIds(apprenticeship);
             
+            // Assert
+            act.Should().NotThrow();
+        }
+
+        [TestCase()]
+        public void ValidEmployerAccountId_DoesNothing()
+        {
+            // Arrange
+            var apprenticeship = new Apprenticeship { EmployerAccountId = 98765 };
+            var authorizer = SetUpAuthorizer(true, 98765, AccountIdClaimsType.Employer);
+
+            // Act 
+            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+    
+            // Assert
+            act.Should().NotThrow();
+        }
+
+        [Test]
+        public void ValidUkPrn_DoesNothing()
+        {
+            // Arrange
+            var apprenticeship = new Apprenticeship { Ukprn = 54321 };
+            var authorizer = SetUpAuthorizer(true, 54321, AccountIdClaimsType.Provider);
+
+            // Act 
+            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+    
             // Assert
             act.Should().NotThrow();
         }
