@@ -13,7 +13,8 @@
     [ChangeReason] NVARCHAR(MAX) NULL,
     [CreatedDate] DATETIME NOT NULL,
     [PriceChangeRequestStatus] NVARCHAR(50) NULL,
-    [RejectReason] NVARCHAR(MAX) NULL
+    [RejectReason] NVARCHAR(MAX) NULL, 
+    [Initiator] CHAR(8) NULL
 )
 GO
 ALTER TABLE [dbo].[PriceHistory]

@@ -15,7 +15,7 @@ namespace SFA.DAS.Apprenticeships.Command.ApprovePriceChange
             CancellationToken cancellationToken = default)
         {
             var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
-            apprenticeship.ApprovePriceChange(command.UserId);
+            apprenticeship.ApprovePriceChange(command.UserId, command.TrainingPrice, command.AssessmentPrice);
             await _apprenticeshipRepository.Update(apprenticeship);
         }
     }

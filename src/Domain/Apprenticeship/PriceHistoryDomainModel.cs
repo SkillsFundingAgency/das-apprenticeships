@@ -19,6 +19,7 @@ public class PriceHistoryDomainModel
     public DateTime CreatedDate => _entity.CreatedDate;
     public PriceChangeRequestStatus? PriceChangeRequestStatus => _entity.PriceChangeRequestStatus;
     public string? ChangeReason => _entity.ChangeReason;
+    public PriceChangeInitiator? Initiator => _entity.Initiator;
 
     internal static PriceHistoryDomainModel New(Guid apprenticeshipKey,
         decimal? trainingPrice,
@@ -31,7 +32,8 @@ public class PriceHistoryDomainModel
         DateTime? providerApprovedDate,
         string changeReason,
         string? employerApprovedBy,
-        DateTime? employerApprovedDate)
+        DateTime? employerApprovedDate,
+        PriceChangeInitiator? initiator)
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
@@ -46,7 +48,8 @@ public class PriceHistoryDomainModel
             ProviderApprovedDate = providerApprovedDate,
             ChangeReason = changeReason,
             EmployerApprovedBy = employerApprovedBy,
-            EmployerApprovedDate = employerApprovedDate
+            EmployerApprovedDate = employerApprovedDate,
+            Initiator = initiator
         });
     }
 
@@ -76,10 +79,28 @@ public class PriceHistoryDomainModel
         _entity.RejectReason = reason;
     }
 
+    // Price change set to approved when approval by the employer is not required 
+    // (Provider initiates a price change to a lower price)
+    public void Approve()
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+    }
+
+    // Employer Approving Provider Initiated Price Change
     public void Approve(string? employerApprovedBy, DateTime employerApprovedDate)
     {
         _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
         _entity.EmployerApprovedBy = employerApprovedBy;
         _entity.EmployerApprovedDate = employerApprovedDate;
+    }
+
+    // Provider Approving Employer Initiated Price Change
+    public void Approve(string? providerApprovedBy, DateTime providerApprovedDate, decimal trainingPrice, decimal assementPrice)
+    {
+        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+        _entity.ProviderApprovedBy = providerApprovedBy;
+        _entity.ProviderApprovedDate = providerApprovedDate;
+        _entity.TrainingPrice = trainingPrice;
+        _entity.AssessmentPrice = assementPrice;
     }
 }

@@ -97,10 +97,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ChangeReason,
                 Ukprn = x.Ukprn,
                 ProviderApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ProviderApprovedDate,
-                EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EmployerApprovedDate
+                EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EmployerApprovedDate,
+                AccountLegalEntityId = x.AccountLegalEntityId,
+                Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).Initiator.ToString()
             };
         }
-
+        
 		private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
         {
             return x => new ApprenticeshipPrice

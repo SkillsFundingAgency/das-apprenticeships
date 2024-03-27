@@ -77,16 +77,17 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.Should().BeNull();
         }
 
-        [Test]
-        public async Task ThenTheCorrectPendingPriceChangeIsReturned()
+        [TestCase("Employer")]
+        [TestCase("Provider")]
+        public async Task ThenTheCorrectPendingPriceChangeIsReturned(string initiator)
         {
             //Act
             var apprenticeshipKey = _fixture.Create<Guid>();
             var otherApprenticeshipKey = _fixture.Create<Guid>();
             var priceHistoryKey = _fixture.Create<Guid>();
             var effectiveFromDate = DateTime.UtcNow.AddDays(-5).Date;
-            var providerApprovedDate = _fixture.Create<DateTime?>();
-            var employerApprovedDate = _fixture.Create<DateTime?>();
+            var providerApprovedDate = initiator == "Provider" ? _fixture.Create<DateTime>() : (DateTime?)null;
+            var employerApprovedDate = initiator == "Employer" ? _fixture.Create<DateTime>() : (DateTime?)null;
 
             var apprenticeships = new[]
             {
@@ -103,7 +104,10 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                             EffectiveFromDate = effectiveFromDate,
                             ChangeReason = "testReason",
                             ProviderApprovedDate = providerApprovedDate,
-                            EmployerApprovedDate = employerApprovedDate
+                            EmployerApprovedDate = employerApprovedDate,
+                            ProviderApprovedBy = initiator == "Provider" ? "Mr Provider" : null,
+                            EmployerApprovedBy = initiator == "Employer" ? "Mr Employer" : null,
+                            Initiator = initiator == "Employer" ? PriceChangeInitiator.Employer : PriceChangeInitiator.Provider
                         }
                     })
                     .Create(), 
@@ -132,6 +136,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.Ukprn.Should().Be(apprenticeships[0].Ukprn);
             result.ProviderApprovedDate.Should().Be(providerApprovedDate);
             result.EmployerApprovedDate.Should().Be(employerApprovedDate);
+            result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
+            result.Initiator.Should().Be(initiator);
         }
     }
 }

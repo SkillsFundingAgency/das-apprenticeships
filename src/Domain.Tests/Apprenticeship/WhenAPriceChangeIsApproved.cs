@@ -53,7 +53,8 @@ public class WhenAPriceChangeIsApproved
             priceHistory.ChangeReason,
             priceHistory.EmployerApprovedBy,
             priceHistory.ProviderApprovedDate,
-            priceHistory.EmployerApprovedDate);
+            priceHistory.EmployerApprovedDate,
+            priceHistory.Initiator);
     }
 
     [Test]
@@ -63,7 +64,7 @@ public class WhenAPriceChangeIsApproved
         var employerUserId = _fixture.Create<string>();
         
         //Act
-        _apprenticeship.ApprovePriceChange(employerUserId);
+        _apprenticeship.ApprovePriceChange(employerUserId, null, null);
 
         //Assert
         _apprenticeship.GetEntity().PriceHistories.Any(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).Should().BeFalse();
@@ -80,7 +81,7 @@ public class WhenAPriceChangeIsApproved
         var employerUserId = _fixture.Create<string>();
 
         //Act
-        _apprenticeship.ApprovePriceChange(employerUserId);
+        _apprenticeship.ApprovePriceChange(employerUserId, null, null);
 
         var events = _apprenticeship.FlushEvents();
         events.Should().ContainSingle(x => x.GetType() == typeof(PriceChangeApproved));

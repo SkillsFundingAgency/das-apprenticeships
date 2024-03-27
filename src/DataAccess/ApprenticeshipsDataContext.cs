@@ -34,6 +34,11 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 .HasConversion(
                     v => v.ToString(),
                     v => (PriceChangeRequestStatus)Enum.Parse(typeof(PriceChangeRequestStatus), v));
+            modelBuilder.Entity<PriceHistory>()
+                .Property(x => x.Initiator)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (PriceChangeInitiator)Enum.Parse(typeof(PriceChangeInitiator), v));
 
             base.OnModelCreating(modelBuilder);
         }

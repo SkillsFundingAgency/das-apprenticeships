@@ -2,7 +2,7 @@
 
 public class PostCreateApprenticeshipPriceChangeRequest
 {
-    public string Requester { get; set; }
+    public string Initiator { get; set; }
     public string UserId { get; set; }
     public decimal? TrainingPrice { get; set; }
     public decimal? AssessmentPrice { get; set; }

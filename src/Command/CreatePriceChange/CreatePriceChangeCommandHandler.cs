@@ -1,9 +1,10 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
 {
-    public class CreatePriceChangeCommandHandler : ICommandHandler<CreatePriceChangeCommand>
+    public class CreatePriceChangeCommandHandler : ICommandHandler<CreatePriceChangeCommand, PriceChangeRequestStatus>
     {
         private readonly IApprenticeshipRepository _apprenticeshipRepository;
 
@@ -12,24 +13,47 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
             _apprenticeshipRepository = apprenticeshipRepository;
         }
 
-        public async Task Handle(CreatePriceChangeCommand command,
+        public async Task<PriceChangeRequestStatus> Handle(CreatePriceChangeCommand command,
             CancellationToken cancellationToken = default)
         {
+            var returnStatus = PriceChangeRequestStatus.Created;
             var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
-            if (string.Equals(command.Requester, PriceChangeRequester.Provider.ToString(), StringComparison.CurrentCultureIgnoreCase))
+
+            if (!Enum.TryParse(command.Initiator, out PriceChangeInitiator initiator))
+                throw new ArgumentException("CreateApprenticeshipPriceChangeRequest should have a valid initiator value set (Provider or Employer)", nameof(command));
+            
+
+            if (initiator == PriceChangeInitiator.Provider)
             {
-                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, command.UserId, command.Reason, null, DateTime.Now, null);
-            }
-            else if (string.Equals(command.Requester, PriceChangeRequester.Employer.ToString(), StringComparison.CurrentCultureIgnoreCase))
-            {
-                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, null, command.Reason, command.UserId, null, DateTime.Now);
+                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, command.UserId, command.Reason, null, DateTime.Now, null, initiator);
             }
             else
             {
-                throw new ArgumentException("CreateApprenticeshipPriceChangeRequest should have a valid requester value set (Provider or Employer)", nameof(command));
+                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, DateTime.Now, PriceChangeRequestStatus.Created, null, command.Reason, command.UserId, null, DateTime.Now, initiator);
             }
 
             await _apprenticeshipRepository.Update(apprenticeship);
+
+            if (initiator == PriceChangeInitiator.Provider && EmployerApprovalNotRequired(apprenticeship, command))
+            {
+	            apprenticeship.ProviderSelfApprovePriceChange();
+	            returnStatus = PriceChangeRequestStatus.Approved;
+	            await _apprenticeshipRepository.Update(apprenticeship);
+			}
+
+            return returnStatus;
+        }
+
+        private static bool EmployerApprovalNotRequired(ApprenticeshipDomainModel apprenticeshipDomainModel, CreatePriceChangeCommand command)
+        {
+            var apprenticeship = apprenticeshipDomainModel.GetEntity();
+
+            if (apprenticeship.TotalPrice >= command.TotalPrice)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
