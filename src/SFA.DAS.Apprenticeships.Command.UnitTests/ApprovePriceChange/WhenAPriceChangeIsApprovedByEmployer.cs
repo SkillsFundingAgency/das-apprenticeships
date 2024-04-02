@@ -13,7 +13,7 @@ using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
 {
     [TestFixture]
-    public class WhenAPriceChangeIsApproved
+    public class WhenAPriceChangeIsApprovedByEmployer
     {
         private ApprovePriceChangeCommandHandler _commandHandler = null!;
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
@@ -34,8 +34,10 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
         {
             //Arrange
             var command = _fixture.Create<ApprovePriceChangeCommand>();
+            command.AssessmentPrice = null;
+            command.TrainingPrice = null;
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>());
+            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeInitiator.Provider);
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
             //Act
