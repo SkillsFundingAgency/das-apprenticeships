@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
 {
@@ -56,6 +57,21 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             var request = new GetApprenticeshipPriceRequest{ ApprenticeshipKey = apprenticeshipKey };
             var response = await _queryDispatcher.Send<GetApprenticeshipPriceRequest, GetApprenticeshipPriceResponse?>(request);
             if (response == null) return NotFound();
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Get Apprenticeship Start Date
+        /// </summary>
+        /// <param name="apprenticeshipKey"></param>
+        /// <returns>Apprenticeship Start Date</returns>
+        [HttpGet("{apprenticeshipKey}/startDate")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> GetStartDate(Guid apprenticeshipKey)
+        {
+            var request = new GetApprenticeshipStartDateRequest { ApprenticeshipKey = apprenticeshipKey };
+            var response = await _queryDispatcher.Send<GetApprenticeshipStartDateRequest, GetApprenticeshipStartDateResponse?>(request);
+            if (response == null || response.ApprenticeshipStartDate == null) return NotFound();
             return Ok(response);
         }
 
