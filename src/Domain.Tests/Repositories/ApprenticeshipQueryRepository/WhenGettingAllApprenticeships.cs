@@ -10,7 +10,6 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
@@ -20,7 +19,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         private Domain.Repositories.ApprenticeshipQueryRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
-        private Mock<IAccountIdClaimsHandler> _accountIdClaimsHandler;
 
         [SetUp]
         public void Arrange()
@@ -41,7 +39,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             var ukprns = _fixture.CreateMany<long>(2).ToList();
             var ulns = _fixture.CreateMany<string>(3).ToList();
             var providerInTest = ukprns[1];
-            SetUpApprenticeshipQueryRepository(providerInTest);
+            SetUpApprenticeshipQueryRepository();
             var apprenticeships = new[]
             {
                 CreateApprenticeshipWithUkprn(ulns[0], ukprns[0]),
@@ -69,7 +67,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             var ukprns = _fixture.CreateMany<long>(2).ToList();
             var ulns = _fixture.CreateMany<string>(4).ToList();
             var providerInTest = ukprns[1];
-            SetUpApprenticeshipQueryRepository(providerInTest);
+            SetUpApprenticeshipQueryRepository();
             var apprenticeships = new[]
             {
                 CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[0], ukprns[0], FundingPlatform.DAS),
@@ -81,7 +79,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _sut.GetAll(ukprns[1], FundingPlatform.SLD);
+            var result = await _sut.GetAll(providerInTest, FundingPlatform.SLD);
 
             // Assert
             result.Should().NotBeNull();
@@ -92,9 +90,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.Should().Contain(x => x.Uln == ulns[3]);
         }
 
-        private void SetUpApprenticeshipQueryRepository(long ukprn)
+        private void SetUpApprenticeshipQueryRepository()
         {
-            _accountIdClaimsHandler = AuthorizationHelper.MockAccountIdClaimsHandler(ukprn, AccountIdClaimsType.Provider);
             _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
             var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
             _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);

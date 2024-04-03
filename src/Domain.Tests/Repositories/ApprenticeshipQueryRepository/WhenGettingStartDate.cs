@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
 {
@@ -20,12 +20,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         public void Arrange()
         {
             _fixture = new Fixture();
-            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
-
-            var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("ApprenticeshipsDbContext" + Guid.NewGuid()).Options;
-            _dbContext = new ApprenticeshipsDataContext(options);
-
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
 
         [TearDown]
@@ -37,6 +31,10 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         [Test]
         public async Task ThenReturnNullWhenNoApprenticeshipFoundWithApprenticeshipKey()
         {
+            // Arrange
+            var apprenticeshipKey = _fixture.Create<Guid>();
+            SetUpApprenticeshipQueryRepository();
+
             //Act
             var result = await _sut.GetStartDate(_fixture.Create<Guid>());
 
@@ -49,6 +47,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         {
             // Arrange
             var apprenticeshipKey = _fixture.Create<Guid>();
+            SetUpApprenticeshipQueryRepository();
 
             var apprenticeships = new[]
             {
@@ -69,6 +68,13 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.ActualStartDate = apprenticeships[0].ActualStartDate;
             result.PlannedEndDate = apprenticeships[0].PlannedEndDate;
             result.AccountLegalEntityId = apprenticeships[0].AccountLegalEntityId;
+        }
+
+        private void SetUpApprenticeshipQueryRepository()
+        {
+            _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
+            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
     }
 }
