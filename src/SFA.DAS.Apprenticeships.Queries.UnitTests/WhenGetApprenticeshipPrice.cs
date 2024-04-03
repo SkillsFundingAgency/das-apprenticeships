@@ -3,15 +3,15 @@ using FluentAssertions;
 using Moq;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
 
-public class WhenGetApprenticeshipStartDate
+public class WhenGetApprenticeshipPrice
 {
     private Fixture _fixture;
     private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
-    private GetApprenticeshipStartDateQueryHandler _sut;
+    private GetApprenticeshipPriceRequestQueryHandler _sut;
 
     [SetUp]
     public void Setup()
@@ -19,19 +19,19 @@ public class WhenGetApprenticeshipStartDate
 
         _fixture = new Fixture();
         _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
-        _sut = new GetApprenticeshipStartDateQueryHandler(_apprenticeshipQueryRepository.Object);
+        _sut = new GetApprenticeshipPriceRequestQueryHandler(_apprenticeshipQueryRepository.Object);
     }
 
     [Test]
-    public async Task ThenApprenticeshipStartDateIsReturned()
+    public async Task ThenApprenticeshipPriceIsReturned()
     {
         //Arrange
-        var query = _fixture.Create<GetApprenticeshipStartDateRequest>();
-        var expectedResult = _fixture.Create<GetApprenticeshipStartDateResponse>();
+        var query = _fixture.Create<GetApprenticeshipPriceRequest>();
+        var expectedResult = _fixture.Create<ApprenticeshipPrice>();
 
         _apprenticeshipQueryRepository
-            .Setup(x => x.GetStartDate(query.ApprenticeshipKey))
-            .ReturnsAsync(expectedResult.ApprenticeshipStartDate);
+            .Setup(x => x.GetPrice(query.ApprenticeshipKey))
+            .ReturnsAsync(expectedResult);
 
         //Act
         var actualResult = await _sut.Handle(query);
@@ -44,16 +44,16 @@ public class WhenGetApprenticeshipStartDate
     public async Task ThenNullIsReturnedWhenNoRecordExists()
     {
         //Arrange
-        var query = _fixture.Create<GetApprenticeshipStartDateRequest>();
+        var query = _fixture.Create<GetApprenticeshipPriceRequest>();
 
         _apprenticeshipQueryRepository
-            .Setup(x => x.GetStartDate(query.ApprenticeshipKey))
-            .ReturnsAsync((ApprenticeshipStartDate)null!);
+            .Setup(x => x.GetPrice(query.ApprenticeshipKey))
+            .ReturnsAsync((ApprenticeshipPrice)null!);
 
         //Act
         var actualResult = await _sut.Handle(query);
 
         //Assert
-        actualResult!.ApprenticeshipStartDate.Should().BeNull();
+        actualResult.Should().BeNull();
     }
 }

@@ -63,8 +63,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <summary>
         /// Get Apprenticeship Start Date
         /// </summary>
-        /// <param name="apprenticeshipKey"></param>
-        /// <returns>Apprenticeship Start Date</returns>
+        /// <param name="apprenticeshipKey">Guid</param>
+        /// <returns>Apprenticeship Start Date or NotFound</returns>
         [HttpGet("{apprenticeshipKey}/startDate")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetStartDate(Guid apprenticeshipKey)
