@@ -72,7 +72,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             var request = new GetApprenticeshipStartDateRequest { ApprenticeshipKey = apprenticeshipKey };
             var response = await _queryDispatcher.Send<GetApprenticeshipStartDateRequest, GetApprenticeshipStartDateResponse?>(request);
             if (response == null || response.ApprenticeshipStartDate == null) return NotFound();
-            return Ok(response);
+            return Ok(response.ApprenticeshipStartDate);
         }
 
         /// <summary>
