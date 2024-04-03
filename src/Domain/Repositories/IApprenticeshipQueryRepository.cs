@@ -7,6 +7,7 @@ public interface IApprenticeshipQueryRepository
 {
     Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform);
     Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey);
+    Task<ApprenticeshipStartDate?> GetStartDate(Guid apprenticeshipKey);
     Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey);
     Task<Guid?> GetKey(string apprenticeshipHashedId);
 }

@@ -47,6 +47,20 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 UKPRN = apprenticeship.Ukprn
             };
         }
+        public async Task<ApprenticeshipStartDate?> GetStartDate(Guid apprenticeshipKey)
+        {
+            var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
+                x.Key == apprenticeshipKey);
+
+            return apprenticeship == null ? null : new ApprenticeshipStartDate
+            {
+                ApprenticeshipKey = apprenticeship.Key,
+                ActualStartDate = apprenticeship.ActualStartDate,
+                PlannedEndDate = apprenticeship.PlannedEndDate,
+                AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
+                UKPRN = apprenticeship.Ukprn
+            };
+        }
 
         public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
         {
