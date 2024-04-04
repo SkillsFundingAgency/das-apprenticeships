@@ -54,7 +54,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 
         private static string ReadTokenFromAuthHeader(HttpContext context)
         {
-            var bearerToken = context.Request.Headers["Authorization"];
+            var bearerToken = context.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", string.Empty);;
             if (string.IsNullOrEmpty(bearerToken))
             {
                 throw new UnauthorizedAccessException();
