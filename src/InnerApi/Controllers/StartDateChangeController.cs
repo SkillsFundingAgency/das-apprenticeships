@@ -38,7 +38,7 @@ public class StartDateChangeController : ControllerBase
     /// </summary>
     /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
     /// <param name="request">Details of the requested start date change.</param>
-    /// <returns>Ok on success, Bad Request if neither employer or provider are set for intiator</returns>
+    /// <returns>Ok on success, Bad Request if neither employer or provider are set for initiator</returns>
     [HttpPost("{apprenticeshipKey}/startDateChange")]
     [ProducesResponseType(200)]
     public async Task<IActionResult> CreateApprenticeshipStartDateChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipStartDateChangeRequest request)
