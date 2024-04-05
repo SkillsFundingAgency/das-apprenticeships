@@ -57,7 +57,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             builder.Services.AddNServiceBus(applicationSettings);
             builder.Services.AddCommandServices().AddEventServices();
             builder.Services.AddHealthChecks();
-            builder.Services.AddApiAuthentication(applicationSettings, builder.Environment.IsDevelopment());
+            builder.Services.AddApiAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
             builder.Services.AddApiAuthorization(builder.Environment.IsDevelopment());
 
 			var app = builder.Build();
