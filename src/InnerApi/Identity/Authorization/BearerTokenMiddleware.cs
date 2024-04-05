@@ -12,11 +12,13 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
     {
         private readonly RequestDelegate _next;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<BearerTokenMiddleware> _logger;
 
-        public BearerTokenMiddleware(RequestDelegate next, IConfiguration configuration)
+        public BearerTokenMiddleware(RequestDelegate next, IConfiguration configuration, ILogger<BearerTokenMiddleware> logger)
         {
             _next = next;
             _configuration = configuration;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,10 +34,14 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 
             RequireClaimsValidation(context);
             var token = ReadTokenFromAuthHeader(context);
+            _logger.LogInformation("Read token from auth header: {p1}", token);
             var principal = ValidateToken(token);
+            _logger.LogInformation("Token validated.");
+
 
             if (!HandleProviderAccountClaim(context, principal) && !HandleEmployerAccountClaim(context, principal))
             {
+                _logger.LogInformation("Account id claim not found in bearer token.");
                 throw new UnauthorizedAccessException();
             }
 
@@ -81,7 +87,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             return new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
         }
 
-        private static bool HandleProviderAccountClaim(HttpContext context, ClaimsPrincipal claimsPrincipal)
+        private bool HandleProviderAccountClaim(HttpContext context, ClaimsPrincipal claimsPrincipal)
         {
             var ukprnClaimName = "http://schemas.portal.com/ukprn";
             var ukprn = claimsPrincipal.FindFirst(ukprnClaimName)?.Value;
@@ -90,10 +96,11 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
                 return false;
             }
             context.Items["Ukprn"] = ukprn;
+            _logger.LogInformation("Ukprn claim found and stored in HttpContext");
             return true;
         }
 
-        private static bool HandleEmployerAccountClaim(HttpContext context, ClaimsPrincipal claimsPrincipal)
+        private bool HandleEmployerAccountClaim(HttpContext context, ClaimsPrincipal claimsPrincipal)
         {
             var employerAccountIdClaimName = "http://das/employer/identity/claims/account";
             var employerAccountId = claimsPrincipal.FindFirst(employerAccountIdClaimName)?.Value;
@@ -102,6 +109,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
                 return false;
             }
             context.Items["EmployerAccountId"] = employerAccountId;
+            _logger.LogInformation("EmployerAccountId claim found and stored in HttpContext");
             return true;
         }
     }

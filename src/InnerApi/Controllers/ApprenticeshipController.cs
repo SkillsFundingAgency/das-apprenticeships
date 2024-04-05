@@ -20,12 +20,14 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
     public class ApprenticeshipController : ControllerBase
     {
         private readonly IQueryDispatcher _queryDispatcher;
+        private readonly ILogger<ApprenticeshipController> _logger;
 
         /// <summary>Initializes a new instance of the <see cref="ApprenticeshipController"/> class.</summary>
         /// <param name="queryDispatcher"></param>
-        public ApprenticeshipController(IQueryDispatcher queryDispatcher)
+        public ApprenticeshipController(IQueryDispatcher queryDispatcher, ILogger<ApprenticeshipController> logger)
         {
             _queryDispatcher = queryDispatcher;
+            _logger = logger;
         }
 
         /// <summary>
@@ -101,7 +103,11 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
 	        var request = new GetApprenticeshipKeyByApprenticeshipIdRequest { ApprenticeshipId = apprenticeshipId };
 	        var response = await _queryDispatcher.Send<GetApprenticeshipKeyByApprenticeshipIdRequest, GetApprenticeshipKeyByApprenticeshipIdResponse>(request);
-	        if (response.ApprenticeshipKey == null) return NotFound();
+            if (response.ApprenticeshipKey == null)
+            {
+                _logger.LogInformation("{p1} could not be found.", nameof(response.ApprenticeshipKey));
+                return NotFound();
+            }
 	        return Ok(response.ApprenticeshipKey);
         }
 	}

@@ -6,6 +6,7 @@ using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
@@ -15,13 +16,15 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         private BearerTokenMiddleware _middleware;
         private Mock<IConfiguration> _mockConfiguration;
         private HttpContext _httpContext;
+        private Mock<ILogger<BearerTokenMiddleware>> _mockLogger;
         private const string ValidSigningKey = "abcdefghijklmnopqrstuv123456789==";
 
         [SetUp]
         public void SetUp()
         {
             _mockConfiguration = new Mock<IConfiguration>();
-            _middleware = new BearerTokenMiddleware(Next, _mockConfiguration.Object);
+            _mockLogger = new Mock<ILogger<BearerTokenMiddleware>>();
+            _middleware = new BearerTokenMiddleware(Next, _mockConfiguration.Object, _mockLogger.Object);
             _httpContext = new DefaultHttpContext();
         }
 

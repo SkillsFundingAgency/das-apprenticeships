@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
@@ -98,7 +99,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
                 {
                     IsClaimsValidationRequired = isClaimsValidationRequired, AccountId = accountId, AccountIdClaimsType = accountIdClaimsType
                 });
-            return new AccountIdAuthorizer(mockClaimsHandler.Object);
+            var mockLogger = new Mock<ILogger<AccountIdAuthorizer>>();
+            return new AccountIdAuthorizer(mockClaimsHandler.Object, mockLogger.Object);
         }
     }
 }

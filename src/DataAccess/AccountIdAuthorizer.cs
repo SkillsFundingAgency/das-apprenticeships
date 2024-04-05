@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Infrastructure;
@@ -7,10 +8,12 @@ namespace SFA.DAS.Apprenticeships.DataAccess
 {
     public class AccountIdAuthorizer : IAccountIdAuthorizer
     {
+        private readonly ILogger<AccountIdAuthorizer> _logger;
         private readonly AccountIdClaims _accountIdClaims;
 
-        public AccountIdAuthorizer(IAccountIdClaimsHandler accountIdClaimsHandler)
+        public AccountIdAuthorizer(IAccountIdClaimsHandler accountIdClaimsHandler, ILogger<AccountIdAuthorizer> logger)
         {
+            _logger = logger;
             _accountIdClaims = accountIdClaimsHandler.GetAccountIdClaims();
         }
         
@@ -54,10 +57,12 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             switch (_accountIdClaims.AccountIdClaimsType)
             {
                 case AccountIdClaimsType.Provider:
+                    _logger.LogInformation("Applying global query filter for Ukprn values on Apprenticeship records.");
                     modelBuilder.Entity<Apprenticeship>()
                         .HasQueryFilter(x => x.Ukprn == _accountIdClaims.AccountId);
                     break;
                 case AccountIdClaimsType.Employer:
+                    _logger.LogInformation("Applying global query filter for EmployerAccountId values on Apprenticeship records.");
                     modelBuilder.Entity<Apprenticeship>()
                         .HasQueryFilter(x => x.EmployerAccountId == _accountIdClaims.AccountId);
                     break;
