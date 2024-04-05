@@ -29,18 +29,18 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 case AccountIdClaimsType.Provider:
                     if (apprenticeship.Ukprn != _accountIdClaims.AccountId)
                     {
-                        throw new UnauthorizedAccessException(
-                            InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn),apprenticeship.Ukprn, _accountIdClaims.AccountId));
+                        var errorMessage = InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn), apprenticeship.Ukprn, _accountIdClaims.AccountId);
+                        _logger.LogError(errorMessage);
+                        throw new UnauthorizedAccessException(errorMessage);
                     }
                     break;
                 case AccountIdClaimsType.Employer:
                     if (apprenticeship.EmployerAccountId != _accountIdClaims.AccountId)
                     {
-                        throw new UnauthorizedAccessException(
-                            InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId, _accountIdClaims.AccountId));
+                        var errorMessage = InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId, _accountIdClaims.AccountId);
+                        _logger.LogError(errorMessage);
+                        throw new UnauthorizedAccessException(errorMessage);
                     }
-                    break;
-                case null:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
@@ -65,7 +65,9 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 case AccountIdClaimsType.Employer:
                     return apprenticeships.Where(x => x.EmployerAccountId == _accountIdClaims.AccountId);
                 default:
-                    throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
+                    var errorMessage = InvalidAccountIdClaimsTypeErrorMessage();
+                    _logger.LogError(errorMessage);
+                    throw new ArgumentOutOfRangeException(errorMessage);
             }
         }
 
