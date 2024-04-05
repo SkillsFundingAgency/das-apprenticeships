@@ -11,9 +11,9 @@ public class StartDateChange
     public Guid ApprenticeshipKey { get; set; }
     public DateTime ActualStartDate { get; set; }
     public string Reason { get; set; }
-    public string ProviderApprovedBy { get; set; }
+    public string? ProviderApprovedBy { get; set; }
     public DateTime? ProviderApprovedDate { get; set; }
-    public string EmployerApprovedBy { get; set; }
+    public string? EmployerApprovedBy { get; set; }
     public DateTime? EmployerApprovedDate { get; set; }
     public DateTime CreatedDate { get; set; }
     public ChangeRequestStatus RequestStatus { get; set; }

@@ -10,6 +10,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         private readonly DataAccess.Entities.Apprenticeship.Apprenticeship _entity;
         private readonly List<ApprovalDomainModel> _approvals;
         private readonly List<PriceHistoryDomainModel> _priceHistories;
+        private readonly List<StartDateChangeDomainModel> _startDateChanges;
 
         public Guid Key => _entity.Key;
         public string TrainingCode => _entity.TrainingCode;
@@ -21,6 +22,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public long Ukprn => _entity.Ukprn;
         public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
         public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
+        public IReadOnlyCollection<StartDateChangeDomainModel> StartDateChanges => new ReadOnlyCollection<StartDateChangeDomainModel>(_startDateChanges);
 
         public int? AgeAtStartOfApprenticeship
         {
@@ -89,6 +91,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity = entity;
             _approvals = entity.Approvals.Select(ApprovalDomainModel.Get).ToList();
             _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
+            _startDateChanges = entity.StartDateChanges.Select(StartDateChangeDomainModel.Get).ToList();
             if (newApprenticeship)
             {
                 AddEvent(new ApprenticeshipCreated(_entity.Key));
@@ -200,5 +203,37 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
             pendingPriceChange.Reject(reason);
         }
+
+        public void AddStartDateChange(
+            DateTime actualStartDate,
+            string reason,
+            string? providerApprovedBy,
+            DateTime? providerApprovedDate,
+            string? employerApprovedBy,
+            DateTime? employerApprovedDate,
+            DateTime createdDate,
+            ChangeRequestStatus requestStatus,
+            ChangeInitiator? initiator)
+        {
+            if (_startDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created))
+            {
+                throw new InvalidOperationException("There is already a pending start date change");
+            }
+
+            var startDateChange = StartDateChangeDomainModel.New(this.Key,
+                actualStartDate,
+                reason,
+                providerApprovedBy,
+                providerApprovedDate,
+                employerApprovedBy,
+                employerApprovedDate,
+                createdDate,
+                requestStatus,
+                initiator);
+
+            _startDateChanges.Add(startDateChange);
+            _entity.StartDateChanges.Add(startDateChange.GetEntity());
+        }
+
     }
 }

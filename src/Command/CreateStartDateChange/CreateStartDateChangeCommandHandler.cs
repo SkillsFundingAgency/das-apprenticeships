@@ -1,0 +1,34 @@
+﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Enums;
+
+namespace SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
+
+public class CreateStartDateChangeCommandHandler : ICommandHandler<CreateStartDateChangeCommand>
+{
+    private readonly IApprenticeshipRepository _apprenticeshipRepository;
+
+    public CreateStartDateChangeCommandHandler(IApprenticeshipRepository apprenticeshipRepository)
+    {
+        _apprenticeshipRepository = apprenticeshipRepository;
+    }
+
+    public async Task Handle(CreateStartDateChangeCommand command, CancellationToken cancellationToken = default)
+    {
+        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+
+        if (!Enum.TryParse(command.Initiator, out ChangeInitiator initiator))
+            throw new ArgumentException("CreateApprenticeshipStartDateChangeRequest should have a valid initiator value set (Provider or Employer)", nameof(command));
+            
+
+        if (initiator == ChangeInitiator.Provider)
+        {
+            apprenticeship.AddStartDateChange(command.ActualStartDate, command.Reason, command.UserId, DateTime.Now, null, null, DateTime.Now, ChangeRequestStatus.Created, ChangeInitiator.Provider);
+        }
+        else
+        {
+            apprenticeship.AddStartDateChange(command.ActualStartDate, command.Reason, null, null, command.UserId, DateTime.Now, DateTime.Now, ChangeRequestStatus.Created, ChangeInitiator.Employer);
+        }
+
+        await _apprenticeshipRepository.Update(apprenticeship);
+    }
+}
