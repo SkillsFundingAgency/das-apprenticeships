@@ -28,6 +28,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <summary>Initializes a new instance of the <see cref="PriceHistoryController"/> class.</summary>
         /// <param name="queryDispatcher"></param>
         /// <param name="commandDispatcher"></param>
+        /// <param name="logger"></param>
         public PriceHistoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<PriceHistoryController> logger)
         {
             _queryDispatcher = queryDispatcher;
@@ -40,7 +41,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// </summary>
         /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
         /// <param name="request">Details of the requested price change.</param>
-        /// <returns>Ok on success, Bad Request if neither employer or provider are set for requester</returns>
+        /// <returns>Ok on success, Bad Request if neither employer or provider are set for initiator</returns>
         [HttpPost("{apprenticeshipKey}/priceHistory")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> CreateApprenticeshipPriceChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipPriceChangeRequest request)
