@@ -22,7 +22,7 @@ public class WhenGetApprenticeshipKey
     }
 
     [Test]
-    public async Task ThenApprenticeshipPriceIsReturned()
+    public async Task ThenApprenticeshipKeyIsReturned()
     {
         //Arrange
         var query = _fixture.Create<GetApprenticeshipKeyRequest>();

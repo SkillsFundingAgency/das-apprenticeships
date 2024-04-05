@@ -24,7 +24,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         public async Task Add(ApprenticeshipDomainModel apprenticeship)
         {
             var entity = apprenticeship.GetEntity();
-            _accountIdAuthorizer.ValidateAccountIds(entity);
+            _accountIdAuthorizer.AuthorizeAccountId(entity);
             await DbContext.AddAsync(entity);
             await DbContext.SaveChangesAsync();
             
@@ -47,7 +47,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
         public async Task Update(ApprenticeshipDomainModel apprenticeship)
         {
             var entity = apprenticeship.GetEntity();
-            _accountIdAuthorizer.ValidateAccountIds(entity);
+            _accountIdAuthorizer.AuthorizeAccountId(entity);
             DbContext.Update(entity);
 
             await DbContext.SaveChangesAsync();

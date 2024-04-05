@@ -5,7 +5,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
 {
     public interface IAccountIdAuthorizer
     {
-        void ValidateAccountIds(Apprenticeship apprenticeship);
-        void AuthorizeApprenticeshipQueries(ModelBuilder modelBuilder);
+        void AuthorizeAccountId(Apprenticeship apprenticeship);
+        IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(DbSet<Apprenticeship> apprenticeships);
     }
 }

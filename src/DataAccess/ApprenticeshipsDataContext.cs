@@ -16,7 +16,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             _accountIdAuthorizer = accountIdAuthorizer;
         }
 
-        public virtual DbSet<Apprenticeship> Apprenticeships { get; set; }
+        public IQueryable<Apprenticeship> Apprenticeships => _accountIdAuthorizer.ApplyAuthorizationFilterOnQueries(ApprenticeshipsDbSet);
+        public virtual DbSet<Apprenticeship> ApprenticeshipsDbSet { get; set; }
         public virtual DbSet<Approval> Approvals { get; set; }
         public virtual DbSet<PriceHistory> PriceHistories { get; set; }
 
@@ -29,7 +30,6 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 .HasForeignKey(fk => fk.ApprenticeshipKey);
             modelBuilder.Entity<Apprenticeship>()
                 .HasKey(a => new { a.Key });
-            _accountIdAuthorizer.AuthorizeApprenticeshipQueries(modelBuilder);
             
             // Approval
             modelBuilder.Entity<Approval>()

@@ -28,7 +28,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             var authorizer = SetUpAuthorizer(true, 54321, AccountIdClaimsType.Provider);
 
             // Act 
-            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
             
             // Assert
             act.Should().Throw<UnauthorizedAccessException>();
@@ -42,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             var authorizer = SetUpAuthorizer(true, 56789, AccountIdClaimsType.Employer);
 
             // Act 
-            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
             
             // Assert
             act.Should().Throw<UnauthorizedAccessException>();
@@ -56,7 +56,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             var authorizer = SetUpAuthorizer(false);
 
             // Act 
-            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
             
             // Assert
             act.Should().NotThrow();
@@ -70,7 +70,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             var authorizer = SetUpAuthorizer(true, 98765, AccountIdClaimsType.Employer);
 
             // Act 
-            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
     
             // Assert
             act.Should().NotThrow();
@@ -84,7 +84,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             var authorizer = SetUpAuthorizer(true, 54321, AccountIdClaimsType.Provider);
 
             // Act 
-            var act = () => authorizer.ValidateAccountIds(apprenticeship);
+            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
     
             // Assert
             act.Should().NotThrow();

@@ -17,7 +17,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             _accountIdClaims = accountIdClaimsHandler.GetAccountIdClaims();
         }
         
-        public void ValidateAccountIds(Apprenticeship apprenticeship)
+        public void AuthorizeAccountId(Apprenticeship apprenticeship)
         {
             if (!_accountIdClaims.IsClaimsValidationRequired)
             {
@@ -47,35 +47,31 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             }
         }
             
-        public void AuthorizeApprenticeshipQueries(ModelBuilder modelBuilder)
+        public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(DbSet<Apprenticeship> apprenticeships)
         {
+            if (!apprenticeships.Any())
+            {
+                return apprenticeships;
+            }
             if (!_accountIdClaims.IsClaimsValidationRequired)
             {
-                return;
+                return apprenticeships;
             }
 
             switch (_accountIdClaims.AccountIdClaimsType)
             {
                 case AccountIdClaimsType.Provider:
-                    _logger.LogInformation("Applying global query filter for Ukprn values on Apprenticeship records.");
-                    modelBuilder.Entity<Apprenticeship>()
-                        .HasQueryFilter(x => x.Ukprn == _accountIdClaims.AccountId);
-                    break;
+                    return apprenticeships.Where(x => x.Ukprn == _accountIdClaims.AccountId);
                 case AccountIdClaimsType.Employer:
-                    _logger.LogInformation("Applying global query filter for EmployerAccountId values on Apprenticeship records.");
-                    modelBuilder.Entity<Apprenticeship>()
-                        .HasQueryFilter(x => x.EmployerAccountId == _accountIdClaims.AccountId);
-                    break;
-                case null:
-                    break;
+                    return apprenticeships.Where(x => x.EmployerAccountId == _accountIdClaims.AccountId);
                 default:
                     throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
             }
         }
-        
+
         private string InvalidAccountIdClaimsTypeErrorMessage()
         {
-            return $"The {nameof(_accountIdClaims.AccountIdClaimsType)} found ({_accountIdClaims.AccountIdClaimsType}) is not in a valid range (Provider or Employer)";
+            return $"The {nameof(_accountIdClaims.AccountIdClaimsType)} found ('{_accountIdClaims.AccountIdClaimsType}') is not in a valid range (Provider or Employer)";
         }
 
         private static string InvalidAccountIdErrorMessage(string accountIdName, long accountIdRequestedValue, long? accountIdClaimValue)

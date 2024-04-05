@@ -39,7 +39,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         {
             // Arrange
             var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
-            SetUpApprenticeshipRepository(expectedApprenticeship);
+            SetUpApprenticeshipRepository();
             _apprenticeshipFactory.Setup(x => x.GetExisting(It.Is<DataAccess.Entities.Apprenticeship.Apprenticeship>(y =>
                     y.Key == expectedApprenticeship.Key &&
                     y.TrainingCode == expectedApprenticeship.TrainingCode &&
@@ -54,7 +54,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             actualApprenticeship.Should().BeEquivalentTo(expectedApprenticeship);
         }
 
-        private void SetUpApprenticeshipRepository(ApprenticeshipDomainModel testApprenticeship)
+        private void SetUpApprenticeshipRepository()
         {
             _domainEventDispatcher = new Mock<IDomainEventDispatcher>();
             _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();

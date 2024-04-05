@@ -50,7 +50,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             await _sut.Update(apprenticeshipDomainModel);
             
             // Assert
-            _accountIdAuthorizer.Verify(x => x.ValidateAccountIds(apprenticeshipEntity), Times.Once());
+            _accountIdAuthorizer.Verify(x => x.AuthorizeAccountId(apprenticeshipEntity), Times.Once());
         }
 
         [Test]
@@ -66,8 +66,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             await _sut.Update(domainModel);
             
             // Assert
-            _dbContext.Apprenticeships.Count().Should().Be(1);
-            var storedApprenticeship = _dbContext.Apprenticeships.Include(x => x.Approvals).Include(x => x.PriceHistories).Single();
+            _dbContext.ApprenticeshipsDbSet.Count().Should().Be(1);
+            var storedApprenticeship = _dbContext.ApprenticeshipsDbSet.Include(x => x.Approvals).Include(x => x.PriceHistories).Single();
             apprenticeshipEntity.Should().BeEquivalentTo(storedApprenticeship);
         }
 
@@ -87,7 +87,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             await _sut.Update(domainModel);
             
             // Assert
-            _dbContext.Apprenticeships.Count().Should().Be(1);
+            _dbContext.ApprenticeshipsDbSet.Count().Should().Be(1);
             _dbContext.Approvals.Count().Should().Be(1);
             apprenticeshipEntity.Approvals.Single().ApprovalsApprenticeshipId.Should().Be(12345);
         }
@@ -101,7 +101,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
                 InMemoryDbContextCreator.SetUpInMemoryDbContext();
             if (existingApprenticeship != null)
             {
-                await _dbContext.Apprenticeships.AddAsync(existingApprenticeship);
+                await _dbContext.ApprenticeshipsDbSet.AddAsync(existingApprenticeship);
                 await _dbContext.SaveChangesAsync();
             }
             _sut = new Domain.Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext),

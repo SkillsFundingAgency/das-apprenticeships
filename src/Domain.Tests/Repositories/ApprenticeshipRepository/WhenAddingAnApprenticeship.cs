@@ -52,7 +52,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             
             // Assert
             var entity = apprenticeship.GetEntity();
-            _accountIdAuthorizer.Verify(x => x.ValidateAccountIds(entity), Times.Once());
+            _accountIdAuthorizer.Verify(x => x.AuthorizeAccountId(entity), Times.Once());
         }
 
         [Test]
@@ -66,9 +66,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             await _sut.Add(testApprenticeship);
             
             // Assert
-            _dbContext.Apprenticeships.Count().Should().Be(1);
+            _dbContext.ApprenticeshipsDbSet.Count().Should().Be(1);
 
-            var storedApprenticeship = _dbContext.Apprenticeships.Include(x => x.Approvals).Include(x => x.PriceHistories).Single();
+            var storedApprenticeship = _dbContext.ApprenticeshipsDbSet.Include(x => x.Approvals).Include(x => x.PriceHistories).Single();
             var expectedModel = testApprenticeship.GetEntity();
 
             expectedModel.Should().BeEquivalentTo(storedApprenticeship);
