@@ -113,15 +113,15 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             decimal totalPrice,
             DateTime effectiveFromDate,
             DateTime createdDate,
-            PriceChangeRequestStatus? priceChangeRequestStatus,
+            ChangeRequestStatus? priceChangeRequestStatus,
             string? providerApprovedBy,
             string changeReason,
             string? employerApprovedBy,
             DateTime? providerApprovedDate,
             DateTime? employerApprovedDate,
-            PriceChangeInitiator? initiator)
+            ChangeInitiator? initiator)
         {
-			if(_priceHistories.Any(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
+			if(_priceHistories.Any(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created))
             {
                 throw new InvalidOperationException("There is already a pending price change");
             }
@@ -146,12 +146,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         public void ApprovePriceChange(string? providerApprovedBy, decimal? trainingPrice, decimal? assementPrice)
         {
-            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
             if(pendingPriceChange == null)
                 throw new InvalidOperationException("There is no pendingPriceChange to Approve");
 
-            if(pendingPriceChange.Initiator == PriceChangeInitiator.Provider)
+            if(pendingPriceChange.Initiator == ChangeInitiator.Provider)
             {
                 // Employer Approving
                 pendingPriceChange?.Approve(providerApprovedBy, DateTime.Now);
@@ -177,12 +177,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         /// </summary>
         public void ProviderSelfApprovePriceChange()
         {
-            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
             if (pendingPriceChange == null)
                 throw new InvalidOperationException("There is no pendingPriceChange to Approve");
 
-            if (pendingPriceChange.Initiator != PriceChangeInitiator.Provider)
+            if (pendingPriceChange.Initiator != ChangeInitiator.Provider)
                 throw new InvalidOperationException($"{nameof(ProviderSelfApprovePriceChange)} is only valid for provider initiated changes");
 
             pendingPriceChange?.Approve();
@@ -191,13 +191,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         public void CancelPendingPriceChange()
         {
-            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
             pendingPriceChange.Cancel();
         }
 
         public void RejectPendingPriceChange(string? reason)
         {
-            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
             pendingPriceChange.Reject(reason);
         }
     }

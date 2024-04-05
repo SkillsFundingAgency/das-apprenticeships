@@ -83,7 +83,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
             {
                 pendingPriceChange = await DbContext.Apprenticeships
                 .Include(x => x.PriceHistories)
-                .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
+                .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created))
                 .Select(PriceHistoryToPendingPriceChange())
                 .SingleOrDefaultAsync();
             }
@@ -104,16 +104,16 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 		        OriginalTrainingPrice = x.TrainingPrice,
                 OriginalAssessmentPrice = x.EndPointAssessmentPrice,
                 OriginalTotalPrice = x.TotalPrice,
-                PendingTrainingPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).TrainingPrice,
-                PendingAssessmentPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).AssessmentPrice,
-                PendingTotalPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).TotalPrice,
-                EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EffectiveFromDate,
-                Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ChangeReason,
+                PendingTrainingPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).TrainingPrice,
+                PendingAssessmentPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).AssessmentPrice,
+                PendingTotalPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).TotalPrice,
+                EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).EffectiveFromDate,
+                Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).ChangeReason,
                 Ukprn = x.Ukprn,
-                ProviderApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ProviderApprovedDate,
-                EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EmployerApprovedDate,
+                ProviderApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).ProviderApprovedDate,
+                EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).EmployerApprovedDate,
                 AccountLegalEntityId = x.AccountLegalEntityId,
-                Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).Initiator.ToString()
+                Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).Initiator.ToString()
             };
         }
         

@@ -47,7 +47,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
             try
             {
-                var priceChangeStatus = await _commandDispatcher.Send<CreatePriceChangeCommand, PriceChangeRequestStatus>(new CreatePriceChangeCommand(request.Initiator, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+                var priceChangeStatus = await _commandDispatcher.Send<CreatePriceChangeCommand, ChangeRequestStatus>(new CreatePriceChangeCommand(request.Initiator, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
                 return Ok(new CreatePriceChangeResponse { PriceChangeStatus = priceChangeStatus.ToString()});
             }
             catch (ArgumentException exception)

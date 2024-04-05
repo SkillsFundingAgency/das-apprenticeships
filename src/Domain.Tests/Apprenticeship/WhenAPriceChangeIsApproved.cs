@@ -67,8 +67,8 @@ public class WhenAPriceChangeIsApproved
         _apprenticeship.ApprovePriceChange(employerUserId, null, null);
 
         //Assert
-        _apprenticeship.GetEntity().PriceHistories.Any(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).Should().BeFalse();
-        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Approved);
+        _apprenticeship.GetEntity().PriceHistories.Any(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
+        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Approved);
         priceHistory.Should().NotBeNull();
         priceHistory.EmployerApprovedBy.Should().Be(employerUserId);
         priceHistory.EmployerApprovedDate.Should().NotBeNull();
