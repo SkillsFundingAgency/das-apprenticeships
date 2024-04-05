@@ -4,6 +4,7 @@ using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Apprenticeships.Queries.GetPendingStartDateChange;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 
@@ -53,5 +54,25 @@ public class StartDateChangeController : ControllerBase
             return BadRequest();
         }
 
+    }
+
+    /// <summary>
+    /// Gets the details of a pending start date change
+    /// </summary>
+    /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+    /// <returns>Details of the pending start date change</returns>
+    [HttpGet("{apprenticeshipKey}/startDateChange/pending")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetPendingStartDateChange(Guid apprenticeshipKey)
+    {
+        var request = new GetPendingStartDateChangeRequest(apprenticeshipKey);
+        var response = await _queryDispatcher.Send<GetPendingStartDateChangeRequest, GetPendingStartDateChangeResponse>(request);
+
+        if (!response.HasPendingStartDateChange)
+        {
+            return NotFound(response.PendingStartDateChange);
+        }
+
+        return Ok(response);
     }
 }

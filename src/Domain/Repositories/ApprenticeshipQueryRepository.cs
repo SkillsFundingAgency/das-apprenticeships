@@ -141,5 +141,41 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 	        return approval?.ApprenticeshipKey;
         }
 
+        public async Task<PendingStartDateChange?> GetPendingStartDateChange(Guid apprenticeshipKey)
+        {
+            _logger.LogInformation($"Getting pending start date change for apprenticeship {apprenticeshipKey}");
+
+            PendingStartDateChange? pendingStartDateChange = null;
+
+            try
+            {
+                pendingStartDateChange = await DbContext.Apprenticeships
+                    .Include(x => x.StartDateChanges)
+                    .Where(x => x.Key == apprenticeshipKey && x.StartDateChanges.Any(y => y.RequestStatus == ChangeRequestStatus.Created))
+                    .Select(StartDateChangeToPendingStartDateChange())
+                    .SingleOrDefaultAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Error getting pending start date change for apprenticeship {apprenticeshipKey}");
+            }
+
+            return pendingStartDateChange;
+        }
+
+        private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingStartDateChange>> StartDateChangeToPendingStartDateChange()
+        {
+            return x => new PendingStartDateChange
+            {
+                Reason = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Reason,
+                Ukprn = x.Ukprn,
+                ProviderApprovedDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ProviderApprovedDate,
+                EmployerApprovedDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).EmployerApprovedDate,
+                AccountLegalEntityId = x.AccountLegalEntityId,
+                Initiator = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Initiator.ToString(),
+                OriginalActualStartDate = x.ActualStartDate.GetValueOrDefault(),
+                PendingActualStartDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ActualStartDate
+            };
+        }
     }
 }
