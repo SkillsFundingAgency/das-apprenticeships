@@ -10,7 +10,7 @@ public class StartDateChange
     public Guid Key { get; set; }
     public Guid ApprenticeshipKey { get; set; }
     public DateTime ActualStartDate { get; set; }
-    public string Reason { get; set; }
+    public string Reason { get; set; } = null!;
     public string? ProviderApprovedBy { get; set; }
     public DateTime? ProviderApprovedDate { get; set; }
     public string? EmployerApprovedBy { get; set; }

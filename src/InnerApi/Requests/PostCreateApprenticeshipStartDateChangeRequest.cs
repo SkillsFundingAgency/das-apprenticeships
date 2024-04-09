@@ -2,8 +2,8 @@
 
 public class PostCreateApprenticeshipStartDateChangeRequest
 {
-    public string Initiator { get; set; }
-    public string UserId { get; set; }
+    public string Initiator { get; set; } = null!;
+    public string UserId { get; set; } = null!;
     public DateTime ActualStartDate { get; set; }
-    public string Reason { get; set; }
+    public string Reason { get; set; } = null!;
 }

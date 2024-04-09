@@ -45,7 +45,7 @@ public class StartDateChangeController : ControllerBase
     {
         try
         {
-            await _commandDispatcher.Send<CreateStartDateChangeCommand>(new CreateStartDateChangeCommand(request.Initiator, apprenticeshipKey, request.UserId, request.ActualStartDate, request.Reason));
+            await _commandDispatcher.Send(new CreateStartDateChangeCommand(request.Initiator, apprenticeshipKey, request.UserId, request.ActualStartDate, request.Reason));
             return Ok();
         }
         catch (ArgumentException exception)

@@ -14,11 +14,10 @@ public class CreateStartDateChangeCommandHandler : ICommandHandler<CreateStartDa
 
     public async Task Handle(CreateStartDateChangeCommand command, CancellationToken cancellationToken = default)
     {
-        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
-
         if (!Enum.TryParse(command.Initiator, out ChangeInitiator initiator))
             throw new ArgumentException("CreateApprenticeshipStartDateChangeRequest should have a valid initiator value set (Provider or Employer)", nameof(command));
-            
+
+        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
 
         if (initiator == ChangeInitiator.Provider)
         {
