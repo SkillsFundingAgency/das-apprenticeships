@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 {
@@ -34,12 +33,11 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 
             RequireClaimsValidation(context);
             var token = ReadTokenFromAuthHeader(context);
-            _logger.LogInformation("Read token from auth header: {p1}", token);
-            var principal = ValidateToken(token);
-            _logger.LogInformation("Token validated.");
+            _logger.LogInformation("Token retrieved from auth header: {p1}", token);
+            var claims = new JwtSecurityTokenHandler().ReadJwtToken(token).Claims;
+            _logger.LogInformation("Claims.");
 
-
-            if (!HandleProviderAccountClaim(context, principal) && !HandleEmployerAccountClaim(context, principal))
+            if (!HandleProviderAccountClaim(context, claims) && !HandleEmployerAccountClaim(context, claims))
             {
                 _logger.LogInformation("Account id claim not found in bearer token.");
                 throw new UnauthorizedAccessException();
@@ -60,7 +58,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
 
         private static string ReadTokenFromAuthHeader(HttpContext context)
         {
-            var bearerToken = context.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", string.Empty);;
+            var bearerToken = context.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", string.Empty);
             if (string.IsNullOrEmpty(bearerToken))
             {
                 throw new UnauthorizedAccessException();
@@ -68,29 +66,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             return bearerToken;
         }
 
-        private ClaimsPrincipal ValidateToken(string token)
-        {
-            var signingKey = _configuration["UserBearerTokenSigningKey"];
-            if (string.IsNullOrEmpty(signingKey))
-            {
-                throw new ArgumentNullException($"{nameof(signingKey)}", "Signing key must be set before a token can be retrieved. This should ideally be done in startup");
-            }
-
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateLifetime = true,
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(signingKey))
-            };
-
-            return new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out _);
-        }
-
-        private bool HandleProviderAccountClaim(HttpContext context, ClaimsPrincipal claimsPrincipal)
+        private bool HandleProviderAccountClaim(HttpContext context, IEnumerable<Claim> claims)
         {
             var ukprnClaimName = "http://schemas.portal.com/ukprn";
-            var ukprn = claimsPrincipal.FindFirst(ukprnClaimName)?.Value;
+            var ukprn = claims.FirstOrDefault(x => x.Type == ukprnClaimName)?.Value;
             if (string.IsNullOrEmpty(ukprn))
             {
                 return false;
@@ -100,10 +79,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             return true;
         }
 
-        private bool HandleEmployerAccountClaim(HttpContext context, ClaimsPrincipal claimsPrincipal)
+        private bool HandleEmployerAccountClaim(HttpContext context, IEnumerable<Claim> claims)
         {
             var employerAccountIdClaimName = "http://das/employer/identity/claims/account";
-            var employerAccountId = claimsPrincipal.FindFirst(employerAccountIdClaimName)?.Value;
+            var employerAccountId = claims.FirstOrDefault(x => x.Type == employerAccountIdClaimName)?.Value;
             if (string.IsNullOrEmpty(employerAccountId))
             {
                 return false;

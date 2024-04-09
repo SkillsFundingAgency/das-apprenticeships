@@ -110,25 +110,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
             // Assert
             await action.Should().ThrowAsync<UnauthorizedAccessException>();
         }
-
-        [TestCase("")]
-        [TestCase(null)]
-        public async Task WhenNoSigningKey_ThrowArgumentNullException(string? signingKey)
-        {
-            // Arrange
-            var claims = new List<Claim> { new ("http://das/employer/identity/claims/account", "98765") };
-            var token = CreateValidToken(ValidSigningKey, claims);
-            _httpContext.Request.Headers["Authorization"] = $"{token}";
-            SetUserBearerTokenSigningKeyConfig(ValidSigningKey);
-            SetDisableAccountAuthorisationConfig(false);
-            SetUserBearerTokenSigningKeyConfig("");
-
-            // Act
-            var action = async () => await _middleware.Invoke(_httpContext);
-
-            // Assert
-            await action.Should().ThrowAsync<ArgumentNullException>();
-        }
         
         private Task Next(HttpContext context)
         {
