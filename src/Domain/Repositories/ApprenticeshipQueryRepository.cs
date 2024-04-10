@@ -59,7 +59,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
                 ActualStartDate = apprenticeship.ActualStartDate,
                 PlannedEndDate = apprenticeship.PlannedEndDate,
                 AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
-                UKPRN = apprenticeship.Ukprn
+                UKPRN = apprenticeship.Ukprn,
+                ApprenticeDateOfBirth = apprenticeship.DateOfBirth
             };
         }
 

@@ -66,9 +66,10 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
 
             // Assert
             result.Should().NotBeNull();
-            result.ActualStartDate = apprenticeships[0].ActualStartDate;
-            result.PlannedEndDate = apprenticeships[0].PlannedEndDate;
-            result.AccountLegalEntityId = apprenticeships[0].AccountLegalEntityId;
+            result.ActualStartDate.Should().Be(apprenticeships[0].ActualStartDate);
+            result.PlannedEndDate.Should().Be(apprenticeships[0].PlannedEndDate);
+            result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
+            result.ApprenticeDateOfBirth.Should().Be(apprenticeships[0].DateOfBirth);
         }
     }
 }
