@@ -10,6 +10,8 @@ using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+using Microsoft.ApplicationInsights.Extensibility;
+using SFA.DAS.Apprenticeships.InnerApi.TelemetryInitializers;
 
 namespace SFA.DAS.Apprenticeships.InnerApi
 {
@@ -31,6 +33,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi
             });
 
             builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddSingleton<ITelemetryInitializer, RequestHeaderTelemetryInitializer>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

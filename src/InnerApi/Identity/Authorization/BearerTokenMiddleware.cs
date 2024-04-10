@@ -56,11 +56,12 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             context.Items["IsClaimsValidationRequired"] = true;
         }
 
-        private static string ReadTokenFromAuthHeader(HttpContext context)
+        private string ReadTokenFromAuthHeader(HttpContext context)
         {
             var bearerToken = context.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", string.Empty);
             if (string.IsNullOrEmpty(bearerToken))
             {
+                _logger.LogInformation("Bearer token is null or empty.");
                 throw new UnauthorizedAccessException();
             }
             return bearerToken;
