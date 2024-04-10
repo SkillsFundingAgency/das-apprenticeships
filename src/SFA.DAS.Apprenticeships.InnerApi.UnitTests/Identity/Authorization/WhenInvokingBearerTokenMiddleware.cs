@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -6,8 +7,13 @@ using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using System.Net.Http.Headers;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
 {
@@ -26,28 +32,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
             _mockLogger = new Mock<ILogger<BearerTokenMiddleware>>();
             _middleware = new BearerTokenMiddleware(Next, _mockConfiguration.Object, _mockLogger.Object);
             _httpContext = new DefaultHttpContext();
-        }
-
-        [Test]
-        public async Task WhenDisableAccountAuthorizationTrue_ShouldNotThrowException()
-        {
-            // Arrange
-            _mockConfiguration.Setup(x => x["DisableAccountAuthorization"]).Returns("true");
-
-            // Act & Assert
-            Func<Task> action = async () => await _middleware.Invoke(_httpContext);
-            await action.Should().NotThrowAsync<UnauthorizedAccessException>();
-        }
-
-        [Test]
-        public async Task WhenTokenMissing_ShouldThrowUnauthorizedAccessException()
-        {
-            // Arrange
-            _mockConfiguration.Setup(x => x["DisableAccountAuthorization"]).Returns("false");
-
-            // Act & Assert
-            Func<Task> action = async () => await _middleware.Invoke(_httpContext);
-            await action.Should().ThrowAsync<UnauthorizedAccessException>();
         }
 
         [Test]
@@ -87,30 +71,49 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         }
 
         [Test]
-        public async Task WhenInvalidToken_ThrowSecurityTokenArgumentException()
+        public async Task WhenInvalidToken_ReturnUnauthorizedStatus()
         {
             // Arrange
-            _httpContext.Request.Headers["Authorization"] = "invalid_token";
             SetDisableAccountAuthorisationConfig(false);
             SetUserBearerTokenSigningKeyConfig(ValidSigningKey);
 
             // Act
-            var action = async () => await _middleware.Invoke(_httpContext);
+            var response = await SendGetRequestToTestClient("invalid_token");
 
             // Assert
-            await action.Should().ThrowAsync<SecurityTokenArgumentException>();
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
         [Test]
-        public async Task WhenNoTokenProvided_ThrowUnauthorizedAccessException()
+        public async Task WhenTokenMissing_ReturnUnauthorizedStatus()
         {
-            // Act
-            var action = async () => await _middleware.Invoke(_httpContext);
+            // Arrange & Act
+            var response = await SendGetRequestToTestClient();
 
             // Assert
-            await action.Should().ThrowAsync<UnauthorizedAccessException>();
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
-        
+
+        private static async Task<HttpResponseMessage> SendGetRequestToTestClient(string bearerToken = null)
+        {
+            using var host = await new HostBuilder()
+                .ConfigureWebHost(webBuilder =>
+                {
+                    webBuilder
+                        .UseTestServer()
+                        .Configure(app => { app.UseMiddleware<BearerTokenMiddleware>(); });
+                })
+                .StartAsync();
+
+            var client = host.GetTestClient();
+            if (bearerToken != null)
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+            }
+            var response = await host.GetTestClient().GetAsync("/");
+            return response;
+        }
+
         private Task Next(HttpContext context)
         {
             return Task.CompletedTask;
