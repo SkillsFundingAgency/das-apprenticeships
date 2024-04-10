@@ -31,19 +31,46 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
                 return;
             }
 
-            RequireClaimsValidation(context);
-            var token = ReadTokenFromAuthHeader(context);
+            RequireAccountIdClaimsValidation(context);
+            
+            var token = ReadTokenFromRequestHeader(context);
+            if (string.IsNullOrEmpty(token))
+            {
+                _logger.LogInformation("Bearer token is null or empty.");
+                await Write401Response(context, "Bearer token not present.");
+                return;
+            }
             _logger.LogInformation("Token retrieved from auth header: {p1}", token);
-            var claims = new JwtSecurityTokenHandler().ReadJwtToken(token).Claims;
-            _logger.LogInformation("Claims.");
 
+            var claims = GetClaimsFromToken(token);
             if (!HandleProviderAccountClaim(context, claims) && !HandleEmployerAccountClaim(context, claims))
             {
-                _logger.LogInformation("Account id claim not found in bearer token.");
-                throw new UnauthorizedAccessException();
+                _logger.LogInformation("Invalid bearer token. Account id claim not found in bearer token.");
+                await Write401Response(context, "Invalid bearer token.");
+                return;
             }
 
             await _next(context);
+        }
+
+        private static IEnumerable<Claim> GetClaimsFromToken(string token)
+        {
+            var claims = new JwtSecurityTokenHandler().ReadJwtToken(token).Claims;
+            return claims;
+        }
+
+        private static string? ReadTokenFromRequestHeader(HttpContext context)
+        {
+            var token = context.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", string.Empty);
+            return token;
+        }
+
+        private static async Task Write401Response(HttpContext context, string errorMessage)
+        {
+            var response = context.Response;
+            response.ContentType = "application/json";
+            response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            await response.WriteAsync(errorMessage);
         }
 
         private bool DisableAccountAuthorization()
@@ -51,20 +78,9 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
             return bool.TryParse(_configuration["DisableAccountAuthorization"], out var disableAccountAuthorization) && disableAccountAuthorization;
         }
 
-        private static void RequireClaimsValidation(HttpContext context)
+        private static void RequireAccountIdClaimsValidation(HttpContext context)
         {
             context.Items["IsClaimsValidationRequired"] = true;
-        }
-
-        private string ReadTokenFromAuthHeader(HttpContext context)
-        {
-            var bearerToken = context.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", string.Empty);
-            if (string.IsNullOrEmpty(bearerToken))
-            {
-                _logger.LogInformation("Bearer token is null or empty.");
-                throw new UnauthorizedAccessException();
-            }
-            return bearerToken;
         }
 
         private bool HandleProviderAccountClaim(HttpContext context, IEnumerable<Claim> claims)
