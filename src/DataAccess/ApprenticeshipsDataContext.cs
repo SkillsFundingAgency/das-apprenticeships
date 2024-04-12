@@ -3,56 +3,55 @@ using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.DataAccess
+namespace SFA.DAS.Apprenticeships.DataAccess;
+
+[ExcludeFromCodeCoverage]
+public class ApprenticeshipsDataContext : DbContext
 {
-    [ExcludeFromCodeCoverage]
-    public class ApprenticeshipsDataContext : DbContext
+    private readonly IAccountIdAuthorizer _accountIdAuthorizer;
+    public ApprenticeshipsDataContext(
+        DbContextOptions<ApprenticeshipsDataContext> options, 
+        IAccountIdAuthorizer accountIdAuthorizer) : base(options)
     {
-        private readonly IAccountIdAuthorizer _accountIdAuthorizer;
-        public ApprenticeshipsDataContext(
-            DbContextOptions<ApprenticeshipsDataContext> options, 
-            IAccountIdAuthorizer accountIdAuthorizer) : base(options)
-        {
-            _accountIdAuthorizer = accountIdAuthorizer;
-        }
+        _accountIdAuthorizer = accountIdAuthorizer;
+    }
 
-        public IQueryable<Apprenticeship> Apprenticeships => _accountIdAuthorizer.ApplyAuthorizationFilterOnQueries(ApprenticeshipsDbSet);
-        public virtual DbSet<Apprenticeship> ApprenticeshipsDbSet { get; set; }
-        public virtual DbSet<Approval> Approvals { get; set; }
-        public virtual DbSet<PriceHistory> PriceHistories { get; set; }
+    public IQueryable<Apprenticeship> Apprenticeships => _accountIdAuthorizer.ApplyAuthorizationFilterOnQueries(ApprenticeshipsDbSet);
+    public virtual DbSet<Apprenticeship> ApprenticeshipsDbSet { get; set; }
+    public virtual DbSet<Approval> Approvals { get; set; }
+    public virtual DbSet<PriceHistory> PriceHistories { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // Apprenticeship
-            modelBuilder.Entity<Apprenticeship>()
-                .HasMany(x => x.Approvals)
-                .WithOne()
-                .HasForeignKey(fk => fk.ApprenticeshipKey);
-            modelBuilder.Entity<Apprenticeship>()
-                .HasKey(a => new { a.Key });
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Apprenticeship
+        modelBuilder.Entity<Apprenticeship>()
+            .HasMany(x => x.Approvals)
+            .WithOne()
+            .HasForeignKey(fk => fk.ApprenticeshipKey);
+        modelBuilder.Entity<Apprenticeship>()
+            .HasKey(a => new { a.Key });
             
-            // Approval
-            modelBuilder.Entity<Approval>()
-                .Property(p => p.FundingType)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => (FundingType)Enum.Parse(typeof(FundingType), v));
+        // Approval
+        modelBuilder.Entity<Approval>()
+            .Property(p => p.FundingType)
+            .HasConversion(
+                v => v.ToString(),
+                v => (FundingType)Enum.Parse(typeof(FundingType), v));
             
-            // Price History
-            modelBuilder.Entity<PriceHistory>()
-                .HasKey(x => x.Key);
-            modelBuilder.Entity<PriceHistory>()
-                .Property(x => x.PriceChangeRequestStatus)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => (PriceChangeRequestStatus)Enum.Parse(typeof(PriceChangeRequestStatus), v));
-            modelBuilder.Entity<PriceHistory>()
-                .Property(x => x.Initiator)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => (PriceChangeInitiator)Enum.Parse(typeof(PriceChangeInitiator), v));
+        // Price History
+        modelBuilder.Entity<PriceHistory>()
+            .HasKey(x => x.Key);
+        modelBuilder.Entity<PriceHistory>()
+            .Property(x => x.PriceChangeRequestStatus)
+            .HasConversion(
+                v => v.ToString(),
+                v => (PriceChangeRequestStatus)Enum.Parse(typeof(PriceChangeRequestStatus), v));
+        modelBuilder.Entity<PriceHistory>()
+            .Property(x => x.Initiator)
+            .HasConversion(
+                v => v.ToString(),
+                v => (PriceChangeInitiator)Enum.Parse(typeof(PriceChangeInitiator), v));
 
-            base.OnModelCreating(modelBuilder);
-        }
+        base.OnModelCreating(modelBuilder);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure
+namespace SFA.DAS.Apprenticeships.Infrastructure;
+
+public interface IAccountIdClaimsHandler
 {
-    public interface IAccountIdClaimsHandler
-    {
-        AccountIdClaims GetAccountIdClaims();
-    }
+    AccountIdClaims GetAccountIdClaims();
 }
