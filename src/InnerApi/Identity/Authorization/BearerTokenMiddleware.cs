@@ -40,12 +40,11 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
                 await Write401Response(context, "Bearer token not present.");
                 return;
             }
-            _logger.LogInformation("Token retrieved from auth header: {p1}", token);
 
             var claims = GetClaimsFromToken(token);
             if (!HandleProviderAccountClaim(context, claims) && !HandleEmployerAccountClaim(context, claims))
             {
-                _logger.LogInformation("Invalid bearer token. Account id claim not found in bearer token.");
+                _logger.LogError("Invalid bearer token. An account id claim was not found for a provider or employer in the token.");
                 await Write401Response(context, "Invalid bearer token.");
                 return;
             }
@@ -92,7 +91,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
                 return false;
             }
             context.Items["Ukprn"] = ukprn;
-            _logger.LogInformation("Ukprn claim found and stored in HttpContext");
             return true;
         }
 
@@ -105,7 +103,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization
                 return false;
             }
             context.Items["EmployerAccountId"] = employerAccountId;
-            _logger.LogInformation("EmployerAccountId claim found and stored in HttpContext");
             return true;
         }
     }
