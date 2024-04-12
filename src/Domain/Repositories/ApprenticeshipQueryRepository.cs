@@ -64,7 +64,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 
         public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
         {
-            _logger.LogInformation("Getting pending price change for apprenticeship {p1}", apprenticeshipKey);
+            _logger.LogInformation("Getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
 
             PendingPriceChange? pendingPriceChange = null;
 
@@ -78,7 +78,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
             }
             catch(Exception e)
             {
-                _logger.LogError(e, "Error getting pending price change for apprenticeship {p1}", apprenticeshipKey);
+                _logger.LogError(e, "Error getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
             }
 
             return pendingPriceChange;
