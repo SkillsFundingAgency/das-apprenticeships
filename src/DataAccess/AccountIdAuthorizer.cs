@@ -16,10 +16,12 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         _logger = logger;
         _logger.LogInformation("AccountIdAuthorizer controller instantiation");
         _accountIdClaims = accountIdClaimsHandler.GetAccountIdClaims();
+        _logger.LogInformation("Claims fetched in AccountIdAuthorizer:... Type: {p1}, Id: {p2}", _accountIdClaims.AccountIdClaimsType, _accountIdClaims.AccountIds);
     }
         
     public void AuthorizeAccountId(Apprenticeship apprenticeship)
     {
+        _logger.LogInformation("Starting method AuthorizeAccountId... Claims being handled at the time = Type: {p1}, Id: {p2}", _accountIdClaims.AccountIdClaimsType, _accountIdClaims.AccountIds);
         if (!_accountIdClaims.IsClaimsValidationRequired)
         {
             _logger.LogInformation("Account ID claims validation is not flagged as required.");
@@ -45,6 +47,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             
     public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(DbSet<Apprenticeship> apprenticeships)
     {
+        _logger.LogInformation("Starting method ApplyAuthorizationFilterOnQueries... Claims being handled at the time = Type: {p1}, Id: {p2}", _accountIdClaims.AccountIdClaimsType, _accountIdClaims.AccountIds);
         if (!apprenticeships.Any())
         {
             _logger.LogInformation("No apprenticeships Account ID claims validation is not flagged as required.");

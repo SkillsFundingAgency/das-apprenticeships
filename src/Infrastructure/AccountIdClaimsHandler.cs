@@ -17,18 +17,23 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
 
     public AccountIdClaims GetAccountIdClaims()
     {
+        _logger.LogInformation("Fetching the relevant claim values from HttpContext....");
         var accountIdClaims = new AccountIdClaims();
 
         if (_httpContext == null || _httpContext.Items == null)
         {
+            _logger.LogWarning("Unexpected error. HttpContext or HttpContext.Items is null.");
             return accountIdClaims;
         }
+        _logger.LogInformation("HttpContext.Items:... {p1}", string.Join(", ", _httpContext.Items));
 
         TryGetValidationRequired(_httpContext.Items, out var validationRequired);
+        _logger.LogInformation("Account ID validation flag found in HttpContext: {p1}", validationRequired.ToString());
         accountIdClaims.IsClaimsValidationRequired = validationRequired;
 
         if (!TryGetAccountIds(_httpContext.Items, out var accountIds, out var accountType))
         {
+            _logger.LogWarning("Unexpected error. No account id found for either Ukprn or EmployerAccountId.");
             return accountIdClaims;
         }
 
@@ -59,6 +64,7 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
         if (httpContextItems.TryGetValue(key, out var values))
         {
             claim = values.ToString();
+            _logger.LogInformation("{0} claims found in HttpContext (before trying to parse). Value: {1}", key, claim);
             accountType = key == "Ukprn" ? AccountIdClaimsType.Provider : AccountIdClaimsType.Employer;
             return true;
         }
@@ -72,10 +78,12 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
         {
             if (!long.TryParse(claimValue, out var accountId))
             {
+                _logger.LogWarning("{0} claim ({1}) could not be successfully parsed to long value.", type, claimValue);
                 return false;
             }
 
             accountIds.Add(accountId);
+            _logger.LogInformation("{0} claim value ({1) parsed successfully... account Ids: {1}", type, accountId.ToString());
         }
 
         return true;
@@ -90,6 +98,7 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
             validationRequired = (bool)validationRequiredValue;
             return true;
         }
+        _logger.LogWarning("Unexpected error. Value for IsClaimsValidationRequired was not found in HttpContext.Items");
         return false;
     }
 }
