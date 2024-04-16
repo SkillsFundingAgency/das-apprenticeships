@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.Identity.Client;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 
@@ -27,6 +28,7 @@ public class BearerTokenMiddleware
     {
         if (DisableAccountAuthorization())
         {
+            _logger.LogInformation("Account-level authorization has been disabled.");
             await _next(context);
             return;
         }
@@ -36,12 +38,13 @@ public class BearerTokenMiddleware
         var token = ReadTokenFromRequestHeader(context);
         if (string.IsNullOrEmpty(token))
         {
-            _logger.LogInformation("Bearer token is null or empty.");
+            _logger.LogWarning("Bearer token is null or empty.");
             await Write401Response(context, "Bearer token not present.");
             return;
         }
 
         var claims = GetClaimsFromToken(token);
+        _logger.LogInformation("Claims:... {p1}", string.Join(", ", claims.Select(x => x.ToString())));
         if (!HandleProviderAccountClaim(context, claims) && !HandleEmployerAccountClaim(context, claims))
         {
             _logger.LogError("Invalid bearer token. An account id claim was not found for a provider or employer in the token.");
@@ -90,7 +93,9 @@ public class BearerTokenMiddleware
         {
             return false;
         }
+        _logger.LogInformation("Ukprn claim found. {p1}", ukprn);
         context.Items["Ukprn"] = ukprn;
+        _logger.LogInformation("Ukprn claim stored in HttpContext. Value stored: {p1}", context.Items["Ukprn"]);
         return true;
     }
 
@@ -102,7 +107,9 @@ public class BearerTokenMiddleware
         {
             return false;
         }
+        _logger.LogInformation("EmployerAccountId claim found. {p1}", employerAccountId);
         context.Items["EmployerAccountId"] = employerAccountId;
+        _logger.LogInformation("EmployerAccountId claim stored in HttpContext. Value stored: {p1}", context.Items["EmployerAccountId"]);
         return true;
     }
 }

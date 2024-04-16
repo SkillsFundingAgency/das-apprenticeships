@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Enums;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
 {
@@ -33,7 +34,8 @@ namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
         {
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             mockHttpContextAccessor.Setup(x => x.HttpContext.Items).Returns(httpContextItems);
-            return new AccountIdClaimsHandler(mockHttpContextAccessor.Object);
+            var mockLogger = new Mock<ILogger<AccountIdClaimsHandler>>();
+            return new AccountIdClaimsHandler(mockHttpContextAccessor.Object, mockLogger.Object);
         }
 
         [Test]
