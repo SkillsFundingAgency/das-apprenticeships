@@ -17,9 +17,9 @@ public class PriceHistoryDomainModel
     public string? EmployerApprovedBy => _entity.EmployerApprovedBy;
     public DateTime? EmployerApprovedDate => _entity.EmployerApprovedDate;
     public DateTime CreatedDate => _entity.CreatedDate;
-    public PriceChangeRequestStatus? PriceChangeRequestStatus => _entity.PriceChangeRequestStatus;
+    public ChangeRequestStatus? PriceChangeRequestStatus => _entity.PriceChangeRequestStatus;
     public string? ChangeReason => _entity.ChangeReason;
-    public PriceChangeInitiator? Initiator => _entity.Initiator;
+    public ChangeInitiator? Initiator => _entity.Initiator;
 
     internal static PriceHistoryDomainModel New(Guid apprenticeshipKey,
         decimal? trainingPrice,
@@ -27,13 +27,13 @@ public class PriceHistoryDomainModel
         decimal totalPrice,
         DateTime effectiveFromDate,
         DateTime createdDate,
-        PriceChangeRequestStatus? priceChangeRequestStatus,
+        ChangeRequestStatus? priceChangeRequestStatus,
         string? providerApprovedBy,
         DateTime? providerApprovedDate,
         string changeReason,
         string? employerApprovedBy,
         DateTime? employerApprovedDate,
-        PriceChangeInitiator? initiator)
+        ChangeInitiator? initiator)
     {
         return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
         {
@@ -70,12 +70,12 @@ public class PriceHistoryDomainModel
 
     public void Cancel()
     {
-        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Cancelled;
+        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Cancelled;
     }
 
     public void Reject(string? reason)
     {
-        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Rejected;
+        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Rejected;
         _entity.RejectReason = reason;
     }
 
@@ -83,13 +83,13 @@ public class PriceHistoryDomainModel
     // (Provider initiates a price change to a lower price)
     public void Approve()
     {
-        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Approved;
     }
 
     // Employer Approving Provider Initiated Price Change
     public void Approve(string? employerApprovedBy, DateTime employerApprovedDate)
     {
-        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Approved;
         _entity.EmployerApprovedBy = employerApprovedBy;
         _entity.EmployerApprovedDate = employerApprovedDate;
     }
@@ -97,7 +97,7 @@ public class PriceHistoryDomainModel
     // Provider Approving Employer Initiated Price Change
     public void Approve(string? providerApprovedBy, DateTime providerApprovedDate, decimal trainingPrice, decimal assementPrice)
     {
-        _entity.PriceChangeRequestStatus = Enums.PriceChangeRequestStatus.Approved;
+        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Approved;
         _entity.ProviderApprovedBy = providerApprovedBy;
         _entity.ProviderApprovedDate = providerApprovedDate;
         _entity.TrainingPrice = trainingPrice;
