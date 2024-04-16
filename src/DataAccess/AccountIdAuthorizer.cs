@@ -16,12 +16,10 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         _logger = logger;
         _logger.LogInformation("AccountIdAuthorizer controller instantiation");
         _accountIdClaims = accountIdClaimsHandler.GetAccountIdClaims();
-        _logger.LogInformation("Claims fetched in AccountIdAuthorizer:... Type: {p1}, Id: {p2}", _accountIdClaims.AccountIdClaimsType, _accountIdClaims.AccountId);
     }
         
     public void AuthorizeAccountId(Apprenticeship apprenticeship)
     {
-        _logger.LogInformation("Starting method AuthorizeAccountId... Claims being handled at the time = Type: {p1}, Id: {p2}", _accountIdClaims.AccountIdClaimsType, _accountIdClaims.AccountId);
         if (!_accountIdClaims.IsClaimsValidationRequired)
         {
             _logger.LogInformation("Account ID claims validation is not flagged as required.");
@@ -31,19 +29,13 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         switch (_accountIdClaims.AccountIdClaimsType)
         {
             case AccountIdClaimsType.Provider:
-                if (apprenticeship.Ukprn != _accountIdClaims.AccountId)
-                {
-                    var errorMessage = InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn), apprenticeship.Ukprn, _accountIdClaims.AccountId);
-                    _logger.LogError(errorMessage);
-                    throw new UnauthorizedAccessException(errorMessage);
+                if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.Ukprn)) {
+                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn), apprenticeship.Ukprn));
                 }
                 break;
             case AccountIdClaimsType.Employer:
-                if (apprenticeship.EmployerAccountId != _accountIdClaims.AccountId)
-                {
-                    var errorMessage = InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId, _accountIdClaims.AccountId);
-                    _logger.LogError(errorMessage);
-                    throw new UnauthorizedAccessException(errorMessage);
+                if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.EmployerAccountId)) {
+                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId));
                 }
                 break;
             default:
@@ -53,7 +45,6 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             
     public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(DbSet<Apprenticeship> apprenticeships)
     {
-        _logger.LogInformation("Starting method ApplyAuthorizationFilterOnQueries... Claims being handled at the time = Type: {p1}, Id: {p2}", _accountIdClaims.AccountIdClaimsType, _accountIdClaims.AccountId);
         if (!apprenticeships.Any())
         {
             _logger.LogInformation("No apprenticeships Account ID claims validation is not flagged as required.");
@@ -68,13 +59,11 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         switch (_accountIdClaims.AccountIdClaimsType)
         {
             case AccountIdClaimsType.Provider:
-                return apprenticeships.Where(x => x.Ukprn == _accountIdClaims.AccountId);
+                return apprenticeships.Where(x => _accountIdClaims.AccountIds.Contains(x.Ukprn));
             case AccountIdClaimsType.Employer:
-                return apprenticeships.Where(x => x.EmployerAccountId == _accountIdClaims.AccountId);
+                return apprenticeships.Where(x => _accountIdClaims.AccountIds.Contains(x.EmployerAccountId));
             default:
-                var errorMessage = InvalidAccountIdClaimsTypeErrorMessage();
-                _logger.LogError(errorMessage);
-                throw new ArgumentOutOfRangeException(errorMessage);
+                throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
         }
     }
 
@@ -83,8 +72,9 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         return $"The {nameof(_accountIdClaims.AccountIdClaimsType)} found ('{_accountIdClaims.AccountIdClaimsType}') is not in a valid range (Provider or Employer)";
     }
 
-    private static string InvalidAccountIdErrorMessage(string accountIdName, long accountIdRequestedValue, long? accountIdClaimValue)
+    private string InvalidAccountIdErrorMessage(string accountIdName, long accountIdRequestedValue)
     {
-        return $"The account id ({accountIdName}) in the requested record ({accountIdRequestedValue}) does not match the account id in the claim ({accountIdClaimValue}).";
+        var ids = _accountIdClaims.AccountIds == null ? "" : string.Join(";", _accountIdClaims.AccountIds);
+        return $"The account id ({accountIdName}) in the requested record ({accountIdRequestedValue}) does not match any of the account ids in the claim ({ids}).";
     }
 }

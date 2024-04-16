@@ -9,6 +9,6 @@ public enum AccountIdClaimsType
 public class AccountIdClaims
 {
     public bool IsClaimsValidationRequired { get; set; }
-    public long? AccountId { get; set; }
+    public IEnumerable<long>? AccountIds { get; set; }
     public AccountIdClaimsType? AccountIdClaimsType { get; set; }
 }

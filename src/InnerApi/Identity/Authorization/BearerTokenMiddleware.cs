@@ -1,5 +1,4 @@
-﻿using Microsoft.Identity.Client;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 
@@ -87,29 +86,32 @@ public class BearerTokenMiddleware
 
     private bool HandleProviderAccountClaim(HttpContext context, IEnumerable<Claim> claims)
     {
-        var ukprnClaimName = "http://schemas.portal.com/ukprn";
-        var ukprn = claims.FirstOrDefault(x => x.Type == ukprnClaimName)?.Value;
-        if (string.IsNullOrEmpty(ukprn))
+        const string ukprnClaimName = "http://schemas.portal.com/ukprn";
+        var ukprns = claims.Where(x => x.Type == ukprnClaimName).Select(x => x.Value).ToArray();
+        if (!ukprns.Any())
         {
             return false;
         }
         _logger.LogInformation("Ukprn claim found. {p1}", ukprn);
-        context.Items["Ukprn"] = ukprn;
         _logger.LogInformation("Ukprn claim stored in HttpContext. Value stored: {p1}", context.Items["Ukprn"]);
+        var accountIds = string.Join(";", ukprns);
+        context.Items["Ukprn"] = accountIds;
         return true;
     }
 
     private bool HandleEmployerAccountClaim(HttpContext context, IEnumerable<Claim> claims)
     {
-        var employerAccountIdClaimName = "http://das/employer/identity/claims/account";
-        var employerAccountId = claims.FirstOrDefault(x => x.Type == employerAccountIdClaimName)?.Value;
-        if (string.IsNullOrEmpty(employerAccountId))
+        const string employerAccountIdClaimName = "http://das/employer/identity/claims/account";
+        var employerAccountIds = claims.Where(x => x.Type == employerAccountIdClaimName).Select(x => x.Value).ToArray();
+        if (!employerAccountIds.Any())
         {
             return false;
         }
         _logger.LogInformation("EmployerAccountId claim found. {p1}", employerAccountId);
-        context.Items["EmployerAccountId"] = employerAccountId;
         _logger.LogInformation("EmployerAccountId claim stored in HttpContext. Value stored: {p1}", context.Items["EmployerAccountId"]);
+
+        var accountIds = string.Join(";", employerAccountIds);
+        context.Items["EmployerAccountId"] = accountIds;
         return true;
     }
 }

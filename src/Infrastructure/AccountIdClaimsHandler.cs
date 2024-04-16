@@ -19,59 +19,69 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
     {
         var accountIdClaims = new AccountIdClaims();
 
-        _logger.LogInformation("Fetching the account ID claim values from HttpContext.");
-        if (_httpContext != null && _httpContext.Items != null)
+        if (_httpContext == null || _httpContext.Items == null)
         {
-            _logger.LogInformation("HttpContext.Items:... {p1}", string.Join(", ", _httpContext.Items));
-            if (TryGetAccountId(_httpContext.Items, out var accountId, out var accountType))
-            {
-                _logger.LogInformation("Account ID claims found. {accountType}: {accountId}", accountType, accountId);
-                accountIdClaims.AccountId = accountId;
-                accountIdClaims.AccountIdClaimsType = accountType;
-            }
-
-            if (TryGetValidationRequired(_httpContext.Items, out var validationRequired))
-            {
-                _logger.LogInformation("Account ID validation flag found in HttpContext: {p1}", validationRequired.ToString());
-                accountIdClaims.IsClaimsValidationRequired = validationRequired;
-            }
-        }
-        else
-        {
-            _logger.LogWarning("Unexpected error. HttpContext or HttpContext.Items is null.");
+            return accountIdClaims;
         }
 
+        TryGetValidationRequired(_httpContext.Items, out var validationRequired);
+        accountIdClaims.IsClaimsValidationRequired = validationRequired;
+
+        if (!TryGetAccountIds(_httpContext.Items, out var accountIds, out var accountType))
+        {
+            return accountIdClaims;
+        }
+
+        accountIdClaims.AccountIds = accountIds;
+        accountIdClaims.AccountIdClaimsType = accountType;
         return accountIdClaims;
     }
 
-    private bool TryGetAccountId(IDictionary<object, object> httpContextItems, out long accountId, out AccountIdClaimsType accountType)
+    private bool TryGetAccountIds(IDictionary<object, object> httpContextItems, out List<long> accountIds, out AccountIdClaimsType accountType)
     {
-        accountId = 0;
+        accountIds = new List<long>();
         accountType = default;
 
-        if (httpContextItems.TryGetValue("Ukprn", out var ukprnValue) && long.TryParse(ukprnValue as string, out var ukprn))
-        {
-            _logger.LogInformation("Ukprn claim found in HttpContext (before trying to parse). Value: {p1}", ukprnValue.ToString());
-            accountId = ukprn;
-            accountType = AccountIdClaimsType.Provider;
-            _logger.LogInformation("Ukprn claim found in HttpContext. Account type: {p1}, account Id: {p2}", accountType, accountId);
-            return true;
-        }
-        
-        if (httpContextItems.TryGetValue("EmployerAccountId", out var employerAccountIdValue) && long.TryParse(employerAccountIdValue as string, out var employerAccountId))
-        {
-            _logger.LogInformation("EmployerAccountId claim found in HttpContext (before trying to parse). Value: {p1}", employerAccountIdValue.ToString());
-            accountId = employerAccountId;
-            accountType = AccountIdClaimsType.Employer;
-            _logger.LogInformation("EmployerAccountId claim found in HttpContext. Account type: {p1}, account Id: {p2}", accountType, accountId);
-            return true;
-        }
+        if (TryGetClaims(httpContextItems, "Ukprn", out var ukprnValues, out accountType))
+            return ParseClaims(ukprnValues, AccountIdClaimsType.Provider, accountIds);
 
-        _logger.LogWarning("Unexpected error. No account id found for either Ukprn or EmployerAccountId.");
+        if (TryGetClaims(httpContextItems, "EmployerAccountId", out var employerAccountIdValues, out accountType))
+            return ParseClaims(employerAccountIdValues, AccountIdClaimsType.Employer, accountIds);
+
         return false;
     }
 
-    private static bool TryGetValidationRequired(IDictionary<object, object> httpContextItems, out bool validationRequired)
+    private bool TryGetClaims(IDictionary<object, object> httpContextItems, string key, out string? claim, out AccountIdClaimsType accountType)
+    {
+        claim = null;
+        accountType = default;
+
+        if (httpContextItems.TryGetValue(key, out var values))
+        {
+            claim = values.ToString();
+            accountType = key == "Ukprn" ? AccountIdClaimsType.Provider : AccountIdClaimsType.Employer;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool ParseClaims(string values, AccountIdClaimsType type, List<long> accountIds)
+    {
+        foreach (var claimValue in values.Split(";"))
+        {
+            if (!long.TryParse(claimValue, out var accountId))
+            {
+                return false;
+            }
+
+            accountIds.Add(accountId);
+        }
+
+        return true;
+    }
+
+    private bool TryGetValidationRequired(IDictionary<object, object> httpContextItems, out bool validationRequired)
     {
         validationRequired = false;
 
@@ -80,7 +90,6 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
             validationRequired = (bool)validationRequiredValue;
             return true;
         }
-
         return false;
     }
 }
