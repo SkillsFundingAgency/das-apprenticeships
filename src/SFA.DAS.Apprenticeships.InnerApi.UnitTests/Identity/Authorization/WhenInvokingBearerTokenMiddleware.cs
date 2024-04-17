@@ -6,7 +6,6 @@ using Moq;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -130,7 +129,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         }
         private static string CreateValidToken(string signingKey, List<Claim> claims)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
+            var securityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(signingKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             
             var token = new JwtSecurityToken(

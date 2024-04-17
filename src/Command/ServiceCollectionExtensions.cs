@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Command.Decorators;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain.Factories;
@@ -8,19 +10,21 @@ using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
+using SFA.DAS.Encoding;
 
 namespace SFA.DAS.Apprenticeships.Command;
 
 [ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCommandServices(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddCommandServices(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection
             .AddCommandHandlers(AddCommandHandlerDecorators)
             .AddScoped<ICommandDispatcher, CommandDispatcher>()
             .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
             .AddScoped<IFundingBandMaximumService, FundingBandMaximumService>()
+            .AddEncodingServices(configuration)
             .AddPersistenceServices();
 
         return serviceCollection;
@@ -28,7 +32,6 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddCommandHandlers(this IServiceCollection serviceCollection, Func<IServiceCollection, IServiceCollection> addDecorators = null)
     {
-        // Set up the command handlers and command validators
         serviceCollection.Scan(scan =>
         {
             scan.FromAssembliesOf(typeof(ServiceCollectionExtensions))
@@ -56,6 +59,15 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IApprenticeshipRepository, ApprenticeshipRepository>();
         serviceCollection.AddScoped<IAccountIdClaimsHandler, AccountIdClaimsHandler>();
         serviceCollection.AddScoped<IAccountIdAuthorizer, AccountIdAuthorizer>();
+        return serviceCollection;
+    }
+
+    private static IServiceCollection AddEncodingServices(this IServiceCollection serviceCollection, IConfiguration configuration)
+    {
+        var encodingConfigJson = configuration.GetSection("SFA.DAS.Encoding").Value;
+        var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
+        serviceCollection.AddSingleton(encodingConfig);
+        serviceCollection.AddSingleton<IEncodingService, EncodingService>();
         return serviceCollection;
     }
 

@@ -25,10 +25,11 @@ public static class Program
 
         builder.Configuration.AddAzureTableStorage(options =>
         {
-            options.ConfigurationKeys = new[] { "SFA.DAS.Apprenticeships" };
+            options.ConfigurationKeys = new[] { "SFA.DAS.Apprenticeships", "SFA.DAS.Encoding" };
             options.StorageConnectionString = builder.Configuration["ConfigurationStorageConnectionString"];
             options.EnvironmentName = builder.Configuration["EnvironmentName"];
             options.PreFixConfigurationKeys = false;
+            options.ConfigurationKeysRawJsonResult = new[] { "SFA.DAS.Encoding" };
         });
 
         builder.Services.AddApplicationInsightsTelemetry();
@@ -56,7 +57,7 @@ public static class Program
         builder.Services.AddQueryServices();
         builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
         builder.Services.AddNServiceBus(applicationSettings);
-        builder.Services.AddCommandServices().AddEventServices();
+        builder.Services.AddCommandServices(builder.Configuration).AddEventServices();
         builder.Services.AddHealthChecks();
         builder.Services.AddApiAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
         builder.Services.AddApiAuthorization(builder.Environment.IsDevelopment());

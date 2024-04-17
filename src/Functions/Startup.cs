@@ -30,8 +30,7 @@ public class Startup : FunctionsStartup
         var configBuilder = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddEnvironmentVariables()
-            ;
+                .AddEnvironmentVariables();
 
         if (NotAcceptanceTests(configuration))
         {
@@ -41,6 +40,7 @@ public class Startup : FunctionsStartup
                 options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
                 options.EnvironmentName = configuration["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
+                options.ConfigurationKeysRawJsonResult = new[] { "SFA.DAS.Encoding" };
             });
             configBuilder.AddJsonFile("local.settings.json", optional: true);
         }
@@ -57,7 +57,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddNServiceBus(applicationSettings);
         builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(configuration));
 
-        builder.Services.AddCommandServices().AddEventServices();
+        builder.Services.AddCommandServices(Configuration).AddEventServices();
 
         if(NotAcceptanceTests(configuration))
             builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);

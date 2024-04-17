@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Encoding;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure;
 
@@ -8,10 +9,12 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
 {
     private readonly ILogger<AccountIdClaimsHandler> _logger;
     private readonly HttpContext _httpContext;
+    private readonly IEncodingService _encodingService;
 
-    public AccountIdClaimsHandler(IHttpContextAccessor httpContextAccessor, ILogger<AccountIdClaimsHandler> _logger)
+    public AccountIdClaimsHandler(IHttpContextAccessor httpContextAccessor, ILogger<AccountIdClaimsHandler> _logger, IEncodingService encodingService)
     {
         this._logger = _logger;
+        _encodingService = encodingService;
         _httpContext = httpContextAccessor.HttpContext;
     }
 
@@ -27,13 +30,13 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
         }
         _logger.LogInformation("HttpContext.Items:... {p1}", string.Join(", ", _httpContext.Items));
 
-        TryGetValidationRequired(_httpContext.Items, out var validationRequired);
+        var validationRequired = IsValidationRequired();
         _logger.LogInformation("Account ID validation flag found in HttpContext: {p1}", validationRequired.ToString());
         accountIdClaims.IsClaimsValidationRequired = validationRequired;
 
-        if (!TryGetAccountIds(_httpContext.Items, out var accountIds, out var accountType))
+        if (!TryGetAccountIds(out var accountIds, out var accountType))
         {
-            _logger.LogWarning("Unexpected error. No account id found for either Ukprn or EmployerAccountId.");
+            _logger.LogWarning("Unexpected error. No valid account id found for either Ukprn or EmployerAccountId.");
             return accountIdClaims;
         }
 
@@ -42,16 +45,31 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
         return accountIdClaims;
     }
 
-    private bool TryGetAccountIds(IDictionary<object, object> httpContextItems, out List<long> accountIds, out AccountIdClaimsType accountType)
+    private bool TryGetAccountIds(out List<long> accountIds, out AccountIdClaimsType accountType)
     {
         accountIds = new List<long>();
         accountType = default;
 
-        if (TryGetClaims(httpContextItems, "Ukprn", out var ukprnValues, out accountType))
+        if (TryGetClaims(_httpContext.Items, "Ukprn", out var ukprnValues, out accountType))
             return ParseClaims(ukprnValues, AccountIdClaimsType.Provider, accountIds);
 
-        if (TryGetClaims(httpContextItems, "EmployerAccountId", out var employerAccountIdValues, out accountType))
-            return ParseClaims(employerAccountIdValues, AccountIdClaimsType.Employer, accountIds);
+        if (TryGetClaims(_httpContext.Items, "EmployerAccountId", out var employerAccountIdValues, out accountType) && !string.IsNullOrEmpty(employerAccountIdValues))
+        {
+            foreach (var claimValue in employerAccountIdValues.Split(";"))
+            {
+                if (!_encodingService.TryDecode(claimValue, EncodingType.AccountId, out var decodedValue))
+                {
+                    _logger.LogWarning("Employer account id claim value ({0}) could not be decoded.");
+                    continue;
+                }
+                accountIds.Add(decodedValue);
+            }
+
+            if (accountIds.Any())
+            {
+                return true;
+            }
+        }
 
         return false;
     }
@@ -89,16 +107,14 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
         return true;
     }
 
-    private bool TryGetValidationRequired(IDictionary<object, object> httpContextItems, out bool validationRequired)
+    private bool IsValidationRequired()
     {
-        validationRequired = false;
-
-        if (httpContextItems.TryGetValue("IsClaimsValidationRequired", out var validationRequiredValue) && validationRequiredValue is bool)
+        if (_httpContext.Items.TryGetValue("IsClaimsValidationRequired", out var validationRequiredValue) && validationRequiredValue is bool)
         {
-            validationRequired = (bool)validationRequiredValue;
-            return true;
+            return (bool)validationRequiredValue;
         }
-        _logger.LogWarning("Unexpected error. Value for IsClaimsValidationRequired was not found in HttpContext.Items");
+
+        _logger.LogInformation("Value for IsClaimsValidationRequired was not found in HttpContext.Items");
         return false;
     }
 }
