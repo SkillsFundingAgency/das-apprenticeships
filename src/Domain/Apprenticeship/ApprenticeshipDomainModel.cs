@@ -10,6 +10,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         private readonly DataAccess.Entities.Apprenticeship.Apprenticeship _entity;
         private readonly List<ApprovalDomainModel> _approvals;
         private readonly List<PriceHistoryDomainModel> _priceHistories;
+        private readonly List<StartDateChangeDomainModel> _startDateChanges;
 
         public Guid Key => _entity.Key;
         public string TrainingCode => _entity.TrainingCode;
@@ -21,6 +22,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public long Ukprn => _entity.Ukprn;
         public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
         public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
+        public IReadOnlyCollection<StartDateChangeDomainModel> StartDateChanges => new ReadOnlyCollection<StartDateChangeDomainModel>(_startDateChanges);
 
         public int? AgeAtStartOfApprenticeship
         {
@@ -91,6 +93,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity = entity;
             _approvals = entity.Approvals.Select(ApprovalDomainModel.Get).ToList();
             _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
+            _startDateChanges = entity.StartDateChanges.Select(StartDateChangeDomainModel.Get).ToList();
             if (newApprenticeship)
             {
                 AddEvent(new ApprenticeshipCreated(_entity.Key));
@@ -115,15 +118,15 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             decimal totalPrice,
             DateTime effectiveFromDate,
             DateTime createdDate,
-            PriceChangeRequestStatus? priceChangeRequestStatus,
+            ChangeRequestStatus? priceChangeRequestStatus,
             string? providerApprovedBy,
             string changeReason,
             string? employerApprovedBy,
             DateTime? providerApprovedDate,
             DateTime? employerApprovedDate,
-            PriceChangeInitiator? initiator)
+            ChangeInitiator? initiator)
         {
-			if(_priceHistories.Any(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
+			if(_priceHistories.Any(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created))
             {
                 throw new InvalidOperationException("There is already a pending price change");
             }
@@ -148,12 +151,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         public void ApprovePriceChange(string? providerApprovedBy, decimal? trainingPrice, decimal? assementPrice)
         {
-            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
             if(pendingPriceChange == null)
                 throw new InvalidOperationException("There is no pendingPriceChange to Approve");
 
-            if(pendingPriceChange.Initiator == PriceChangeInitiator.Provider)
+            if(pendingPriceChange.Initiator == ChangeInitiator.Provider)
             {
                 // Employer Approving
                 pendingPriceChange?.Approve(providerApprovedBy, DateTime.Now);
@@ -179,12 +182,12 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         /// </summary>
         public void ProviderSelfApprovePriceChange()
         {
-            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
             if (pendingPriceChange == null)
                 throw new InvalidOperationException("There is no pendingPriceChange to Approve");
 
-            if (pendingPriceChange.Initiator != PriceChangeInitiator.Provider)
+            if (pendingPriceChange.Initiator != ChangeInitiator.Provider)
                 throw new InvalidOperationException($"{nameof(ProviderSelfApprovePriceChange)} is only valid for provider initiated changes");
 
             pendingPriceChange?.Approve();
@@ -193,14 +196,46 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         public void CancelPendingPriceChange()
         {
-            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
             pendingPriceChange.Cancel();
         }
 
         public void RejectPendingPriceChange(string? reason)
         {
-            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Created);
+            var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
             pendingPriceChange.Reject(reason);
         }
+
+        public void AddStartDateChange(
+            DateTime actualStartDate,
+            string reason,
+            string? providerApprovedBy,
+            DateTime? providerApprovedDate,
+            string? employerApprovedBy,
+            DateTime? employerApprovedDate,
+            DateTime createdDate,
+            ChangeRequestStatus requestStatus,
+            ChangeInitiator? initiator)
+        {
+            if (_startDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created))
+            {
+                throw new InvalidOperationException("There is already a pending start date change");
+            }
+
+            var startDateChange = StartDateChangeDomainModel.New(this.Key,
+                actualStartDate,
+                reason,
+                providerApprovedBy,
+                providerApprovedDate,
+                employerApprovedBy,
+                employerApprovedDate,
+                createdDate,
+                requestStatus,
+                initiator);
+
+            _startDateChanges.Add(startDateChange);
+            _entity.StartDateChanges.Add(startDateChange.GetEntity());
+        }
+
     }
 }

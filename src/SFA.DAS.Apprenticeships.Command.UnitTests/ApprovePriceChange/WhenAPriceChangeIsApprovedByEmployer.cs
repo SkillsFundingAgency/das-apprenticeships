@@ -37,7 +37,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
             command.AssessmentPrice = null;
             command.TrainingPrice = null;
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), PriceChangeInitiator.Provider);
+            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeInitiator.Provider);
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
             //Act
@@ -48,7 +48,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
                 It.Is<ApprenticeshipDomainModel>(y => y
                         .GetEntity()
                         .PriceHistories
-                        .Count(z => z.PriceChangeRequestStatus == PriceChangeRequestStatus.Approved 
+                        .Count(z => z.PriceChangeRequestStatus == ChangeRequestStatus.Approved 
                                     && z.EmployerApprovedBy == command.UserId
                                     && z.EmployerApprovedBy != null) == 1)));
         }

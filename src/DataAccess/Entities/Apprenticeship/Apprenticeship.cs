@@ -8,6 +8,7 @@
         {
             Approvals = new List<Approval>();
             PriceHistories = new List<PriceHistory>();
+            StartDateChanges = new List<StartDateChange>();
         }
         
         [Key]
@@ -29,6 +30,7 @@
         public long? AccountLegalEntityId { get; set; }
         public List<PriceHistory> PriceHistories { get; set; }
         public long Ukprn { get; set; }
+        public List<StartDateChange> StartDateChanges { get; set; }
         public string TrainingCourseVersion { get; set; }
     }
 }

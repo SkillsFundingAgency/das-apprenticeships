@@ -85,7 +85,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
             {
                 pendingPriceChange = await DbContext.Apprenticeships
                 .Include(x => x.PriceHistories)
-                .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
+                .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created))
                 .Select(PriceHistoryToPendingPriceChange())
                 .SingleOrDefaultAsync();
             }
@@ -106,16 +106,16 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 		        OriginalTrainingPrice = x.TrainingPrice,
                 OriginalAssessmentPrice = x.EndPointAssessmentPrice,
                 OriginalTotalPrice = x.TotalPrice,
-                PendingTrainingPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).TrainingPrice,
-                PendingAssessmentPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).AssessmentPrice,
-                PendingTotalPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).TotalPrice,
-                EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EffectiveFromDate,
-                Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ChangeReason,
+                PendingTrainingPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).TrainingPrice,
+                PendingAssessmentPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).AssessmentPrice,
+                PendingTotalPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).TotalPrice,
+                EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).EffectiveFromDate,
+                Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).ChangeReason,
                 Ukprn = x.Ukprn,
-                ProviderApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ProviderApprovedDate,
-                EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EmployerApprovedDate,
+                ProviderApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).ProviderApprovedDate,
+                EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).EmployerApprovedDate,
                 AccountLegalEntityId = x.AccountLegalEntityId,
-                Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).Initiator.ToString()
+                Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).Initiator.ToString()
             };
         }
         
@@ -143,5 +143,41 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories
 	        return approval?.ApprenticeshipKey;
         }
 
+        public async Task<PendingStartDateChange?> GetPendingStartDateChange(Guid apprenticeshipKey)
+        {
+            _logger.LogInformation($"Getting pending start date change for apprenticeship {apprenticeshipKey}");
+
+            PendingStartDateChange? pendingStartDateChange = null;
+
+            try
+            {
+                pendingStartDateChange = await DbContext.Apprenticeships
+                    .Include(x => x.StartDateChanges)
+                    .Where(x => x.Key == apprenticeshipKey && x.StartDateChanges.Any(y => y.RequestStatus == ChangeRequestStatus.Created))
+                    .Select(StartDateChangeToPendingStartDateChange())
+                    .SingleOrDefaultAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Error getting pending start date change for apprenticeship {apprenticeshipKey}");
+            }
+
+            return pendingStartDateChange;
+        }
+
+        private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingStartDateChange>> StartDateChangeToPendingStartDateChange()
+        {
+            return x => new PendingStartDateChange
+            {
+                Reason = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Reason,
+                Ukprn = x.Ukprn,
+                ProviderApprovedDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ProviderApprovedDate,
+                EmployerApprovedDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).EmployerApprovedDate,
+                AccountLegalEntityId = x.AccountLegalEntityId,
+                Initiator = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Initiator.ToString(),
+                OriginalActualStartDate = x.ActualStartDate.GetValueOrDefault(),
+                PendingActualStartDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ActualStartDate
+            };
+        }
     }
 }

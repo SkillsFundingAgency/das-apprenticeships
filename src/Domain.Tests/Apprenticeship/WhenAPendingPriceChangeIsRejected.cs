@@ -63,7 +63,7 @@ public class WhenAPendingPriceChangeIsRejected
         var reason = _fixture.Create<string>();
         _apprenticeship.RejectPendingPriceChange(reason);
 
-        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Rejected);
+        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Rejected);
 
         priceHistory.Should().NotBeNull();
         priceHistory.RejectReason.Should().Be(reason);

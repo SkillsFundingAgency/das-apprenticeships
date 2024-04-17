@@ -35,7 +35,7 @@ public class WhenCreatePending
 
         result.Should().BeOfType<OkObjectResult>();
 
-        _commandDispatcher.Verify(x => x.Send<CreatePriceChangeCommand, PriceChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
+        _commandDispatcher.Verify(x => x.Send<CreatePriceChangeCommand, ChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
             r.Initiator == request.Initiator &&
             r.ApprenticeshipKey == apprenticeshipKey &&
             r.UserId == request.UserId &&
@@ -53,7 +53,7 @@ public class WhenCreatePending
         var apprenticeshipKey = _fixture.Create<Guid>();
         var request = _fixture.Create<PostCreateApprenticeshipPriceChangeRequest>();
 
-        _commandDispatcher.Setup(x => x.Send<CreatePriceChangeCommand, PriceChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
+        _commandDispatcher.Setup(x => x.Send<CreatePriceChangeCommand, ChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
             r.Initiator == request.Initiator &&
             r.ApprenticeshipKey == apprenticeshipKey &&
             r.UserId == request.UserId &&

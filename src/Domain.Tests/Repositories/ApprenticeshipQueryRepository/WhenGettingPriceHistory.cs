@@ -64,7 +64,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                         {
                             Key = priceHistoryKey,
                             ApprenticeshipKey = apprenticeshipKey,
-                            PriceChangeRequestStatus = PriceChangeRequestStatus.Created,
+                            PriceChangeRequestStatus = ChangeRequestStatus.Created,
                             TrainingPrice = 10000,
                             AssessmentPrice = 3000,
                             TotalPrice = 13000,
