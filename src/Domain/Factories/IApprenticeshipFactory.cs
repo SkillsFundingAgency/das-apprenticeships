@@ -20,7 +20,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
             DateTime plannedEndDate,
             long accountLegalEntityId,
             long ukprn,
-            long employerAccountId);
+            long employerAccountId,
+            string trainingCourseVersion);
         
         ApprenticeshipDomainModel GetExisting(DataAccess.Entities.Apprenticeship.Apprenticeship model);
 

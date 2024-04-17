@@ -33,7 +33,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
                 _fixture.Create<DateTime>(),
                 _fixture.Create<long>(),
                 _fixture.Create<long>(),
-                _fixture.Create<long>());
+                _fixture.Create<long>(),
+                _fixture.Create<string>());
         }
 
         [Test]

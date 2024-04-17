@@ -20,7 +20,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
             DateTime plannedEndDate,
             long accountLegalEntityId,
             long ukprn,
-            long employerAccountId)
+            long employerAccountId,
+            string trainingCourseVersion)
         {
             return ApprenticeshipDomainModel.New(
                 uln,
@@ -37,7 +38,8 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
                 plannedEndDate,
                 accountLegalEntityId,
                 ukprn,
-                employerAccountId);
+                employerAccountId,
+                trainingCourseVersion);
         }
 
         public ApprenticeshipDomainModel GetExisting(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
