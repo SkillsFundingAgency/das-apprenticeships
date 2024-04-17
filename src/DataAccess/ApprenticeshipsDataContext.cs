@@ -15,6 +15,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
         public virtual DbSet<Apprenticeship> Apprenticeships { get; set; }
         public virtual DbSet<Approval> Approvals { get; set; }
         public virtual DbSet<PriceHistory> PriceHistories { get; set; }
+        public virtual DbSet<StartDateChange> StartDateChanges { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,12 +34,24 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 .Property(x => x.PriceChangeRequestStatus)
                 .HasConversion(
                     v => v.ToString(),
-                    v => (PriceChangeRequestStatus)Enum.Parse(typeof(PriceChangeRequestStatus), v));
+                    v => (ChangeRequestStatus)Enum.Parse(typeof(ChangeRequestStatus), v));
             modelBuilder.Entity<PriceHistory>()
                 .Property(x => x.Initiator)
                 .HasConversion(
                     v => v.ToString(),
-                    v => (PriceChangeInitiator)Enum.Parse(typeof(PriceChangeInitiator), v));
+                    v => (ChangeInitiator)Enum.Parse(typeof(ChangeInitiator), v));
+            modelBuilder.Entity<StartDateChange>()
+                .HasKey(x => x.Key);
+            modelBuilder.Entity<StartDateChange>()
+                .Property(x => x.RequestStatus)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (ChangeRequestStatus)Enum.Parse(typeof(ChangeRequestStatus), v));
+            modelBuilder.Entity<StartDateChange>()
+                .Property(x => x.Initiator)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (ChangeInitiator)Enum.Parse(typeof(ChangeInitiator), v));
 
             base.OnModelCreating(modelBuilder);
         }
