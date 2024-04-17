@@ -59,9 +59,10 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
             {
                 if (!_encodingService.TryDecode(claimValue, EncodingType.AccountId, out var decodedValue))
                 {
-                    _logger.LogWarning("Employer account id claim value ({0}) could not be decoded.");
+                    _logger.LogWarning("Employer account id claim value ({0}) could not be decoded.", claimValue);
                     continue;
                 }
+
                 accountIds.Add(decodedValue);
             }
 
