@@ -100,7 +100,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                         {
                             Key = priceHistoryKey,
                             ApprenticeshipKey = apprenticeshipKey,
-                            PriceChangeRequestStatus = PriceChangeRequestStatus.Created,
+                            PriceChangeRequestStatus = ChangeRequestStatus.Created,
                             TrainingPrice = 10000,
                             AssessmentPrice = 3000,
                             TotalPrice = 13000,
@@ -110,7 +110,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                             EmployerApprovedDate = employerApprovedDate,
                             ProviderApprovedBy = initiator == "Provider" ? "Mr Provider" : null,
                             EmployerApprovedBy = initiator == "Employer" ? "Mr Employer" : null,
-                            Initiator = initiator == "Employer" ? PriceChangeInitiator.Employer : PriceChangeInitiator.Provider
+                            Initiator = initiator == "Employer" ? ChangeInitiator.Employer : ChangeInitiator.Provider
                         }
                     })
                     .Create(), 

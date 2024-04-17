@@ -33,7 +33,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         public async Task ThenPriceHistoryIsAddedToApprenticeship()
         {
             var command = _fixture.Create<CreatePriceChangeCommand>();
-            command.Initiator = PriceChangeInitiator.Provider.ToString();
+            command.Initiator = ChangeInitiator.Provider.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
@@ -60,17 +60,17 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
             
             await _commandHandler.Handle(command);
 
-            if (initiator == PriceChangeInitiator.Provider.ToString())
+            if (initiator == ChangeInitiator.Provider.ToString())
                 _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
                     y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
                     y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
                     y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
                     y.GetEntity().PriceHistories.Single().EffectiveFromDate == command.EffectiveFromDate &&
                     y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
-                    y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Created &&
+                    y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Created &&
                     y.GetEntity().PriceHistories.Single().ProviderApprovedBy == command.UserId &&
                     y.GetEntity().PriceHistories.Single().EmployerApprovedBy == null &&
-                    y.GetEntity().PriceHistories.Single().Initiator == PriceChangeInitiator.Provider
+                    y.GetEntity().PriceHistories.Single().Initiator == ChangeInitiator.Provider
                 )));
             else
                 _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
@@ -79,10 +79,10 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
                     y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
                     y.GetEntity().PriceHistories.Single().EffectiveFromDate == command.EffectiveFromDate &&
                     y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
-                    y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Created &&
+                    y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Created &&
                     y.GetEntity().PriceHistories.Single().ProviderApprovedBy == null &&
                     y.GetEntity().PriceHistories.Single().EmployerApprovedBy == command.UserId &&
-                    y.GetEntity().PriceHistories.Single().Initiator == PriceChangeInitiator.Employer
+                    y.GetEntity().PriceHistories.Single().Initiator == ChangeInitiator.Employer
                 )));
         }
 
@@ -93,7 +93,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
 		{
 			var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 			var command = _fixture.Create<CreatePriceChangeCommand>();
-			command.Initiator = PriceChangeInitiator.Provider.ToString();
+			command.Initiator = ChangeInitiator.Provider.ToString();
 			command.AssessmentPrice = newTotal*0.25m;
 			command.TrainingPrice = newTotal - command.AssessmentPrice;
 			command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
@@ -106,10 +106,10 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
 
             if(expectAutoApprove)
 				_apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
-					y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Approved)));
+					y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Approved)));
             else
 	            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
-		            y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == PriceChangeRequestStatus.Approved)), Times.Never);
+		            y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Approved)), Times.Never);
 		}
 
 		[Test]

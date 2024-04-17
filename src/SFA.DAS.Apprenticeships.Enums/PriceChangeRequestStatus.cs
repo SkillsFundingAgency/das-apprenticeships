@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Apprenticeships.Enums;
 
-public enum PriceChangeRequestStatus
+public enum ChangeRequestStatus
 {
     Created = 0,
     Approved = 1,
