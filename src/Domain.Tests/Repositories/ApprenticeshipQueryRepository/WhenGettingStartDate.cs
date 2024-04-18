@@ -71,6 +71,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
             result.ApprenticeDateOfBirth.Should().Be(apprenticeships[0].DateOfBirth);
             result.CourseCode.Should().Be(apprenticeships[0].TrainingCode);
+            result.CourseVersion.Should().Be(apprenticeships[0].TrainingCourseVersion);
         }
     }
 }
