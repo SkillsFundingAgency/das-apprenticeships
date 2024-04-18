@@ -102,7 +102,7 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
             }
 
             accountIds.Add(accountId);
-            _logger.LogInformation("{0} claim value ({1) parsed successfully... account Ids: {1}", type, accountId.ToString());
+            _logger.LogInformation("{0} claim value ({1}) parsed successfully", type, accountId.ToString());
         }
 
         return true;
