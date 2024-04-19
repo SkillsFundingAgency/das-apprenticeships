@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Drawing;
+﻿﻿using System.Collections.ObjectModel;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -234,6 +233,5 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _startDateChanges.Add(startDateChange);
             _entity.StartDateChanges.Add(startDateChange.GetEntity());
         }
-
     }
 }
