@@ -20,7 +20,6 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
 
     public AccountIdClaims GetAccountIdClaims()
     {
-        _logger.LogInformation("Fetching the relevant claim values from HttpContext....");
         var accountIdClaims = new AccountIdClaims();
 
         if (_httpContext == null || _httpContext.Items == null)
@@ -28,10 +27,8 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
             _logger.LogWarning("Unexpected error. HttpContext or HttpContext.Items is null.");
             return accountIdClaims;
         }
-        _logger.LogInformation("HttpContext.Items:... {p1}", string.Join(", ", _httpContext.Items));
 
         var validationRequired = IsValidationRequired();
-        _logger.LogInformation("Account ID validation flag found in HttpContext: {p1}", validationRequired.ToString());
         accountIdClaims.IsClaimsValidationRequired = validationRequired;
 
         if (!TryGetAccountIds(out var accountIds, out var accountType))
@@ -48,47 +45,37 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
     private bool TryGetAccountIds(out List<long> accountIds, out AccountIdClaimsType accountType)
     {
         accountIds = new List<long>();
-        accountType = default;
 
+        // Attempt to find UKPRN claims
         if (TryGetClaims(_httpContext.Items, "Ukprn", out var ukprnValues, out accountType))
             return ParseClaims(ukprnValues, AccountIdClaimsType.Provider, accountIds);
 
-        if (TryGetClaims(_httpContext.Items, "EmployerAccountId", out var employerAccountIdValues, out accountType) && !string.IsNullOrEmpty(employerAccountIdValues))
+        // Attempt to find EmployerAccountId claims
+        if (!TryGetClaims(_httpContext.Items, "EmployerAccountId", out var employerAccountIdValues, out accountType) ||
+            string.IsNullOrEmpty(employerAccountIdValues)) return false;
+        foreach (var claimValue in employerAccountIdValues.Split(";"))
         {
-            foreach (var claimValue in employerAccountIdValues.Split(";"))
+            if (!_encodingService.TryDecode(claimValue, EncodingType.AccountId, out var decodedValue))
             {
-                if (!_encodingService.TryDecode(claimValue, EncodingType.AccountId, out var decodedValue))
-                {
-                    _logger.LogWarning("Employer account id claim value ({0}) could not be decoded.", claimValue);
-                    continue;
-                }
-
-                accountIds.Add(decodedValue);
+                _logger.LogWarning("Employer account id claim value ({0}) could not be decoded.", claimValue);
+                continue;
             }
-
-            if (accountIds.Any())
-            {
-                return true;
-            }
+            accountIds.Add(decodedValue);
         }
 
-        return false;
+        return accountIds.Any();
     }
 
-    private bool TryGetClaims(IDictionary<object, object> httpContextItems, string key, out string? claim, out AccountIdClaimsType accountType)
+    private static bool TryGetClaims(IDictionary<object, object> httpContextItems, string key, out string? claim, out AccountIdClaimsType accountType)
     {
         claim = null;
         accountType = default;
+        
+        if (!httpContextItems.TryGetValue(key, out var values)) return false;
 
-        if (httpContextItems.TryGetValue(key, out var values))
-        {
-            claim = values.ToString();
-            _logger.LogInformation("{0} claims found in HttpContext (before trying to parse). Value: {1}", key, claim);
-            accountType = key == "Ukprn" ? AccountIdClaimsType.Provider : AccountIdClaimsType.Employer;
-            return true;
-        }
-
-        return false;
+        claim = values.ToString();
+        accountType = key == "Ukprn" ? AccountIdClaimsType.Provider : AccountIdClaimsType.Employer;
+        return true;
     }
 
     private bool ParseClaims(string values, AccountIdClaimsType type, List<long> accountIds)
@@ -100,11 +87,8 @@ public class AccountIdClaimsHandler : IAccountIdClaimsHandler
                 _logger.LogWarning("{0} claim ({1}) could not be successfully parsed to long value.", type, claimValue);
                 return false;
             }
-
             accountIds.Add(accountId);
-            _logger.LogInformation("{0} claim value ({1}) parsed successfully", type, accountId.ToString());
         }
-
         return true;
     }
 

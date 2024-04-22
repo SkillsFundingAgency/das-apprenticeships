@@ -25,8 +25,6 @@ public class BearerTokenMiddleware
     /// </summary>
     public async Task Invoke(HttpContext context)
     {
-        _logger.LogInformation("BearerTokenMiddleware invoked.");
-        _logger.LogInformation("BearerTokenMiddleware: verifying that logging template works. {p1}", "testString");
         if (DisableAccountAuthorization())
         {
             _logger.LogInformation("Account-level authorization has been disabled.");
@@ -45,7 +43,6 @@ public class BearerTokenMiddleware
         }
 
         var claims = GetClaimsFromToken(token);
-        _logger.LogInformation("Claims:... {p1}", string.Join(", ", claims.Select(x => x.ToString())));
         if (!HandleProviderAccountClaim(context, claims) && !HandleEmployerAccountClaim(context, claims))
         {
             _logger.LogError("Invalid bearer token. An account id claim was not found for a provider or employer in the token.");
@@ -95,9 +92,7 @@ public class BearerTokenMiddleware
             return false;
         }
         var accountIds = string.Join(";", ukprns);
-        _logger.LogInformation("Ukprn claim(s) found. {p1}", accountIds);
         context.Items["Ukprn"] = accountIds;
-        _logger.LogInformation("Ukprn claim(s) stored in HttpContext. Value stored: {p1}", context.Items["Ukprn"]);
         return true;
     }
 
@@ -111,9 +106,7 @@ public class BearerTokenMiddleware
         }
 
         var accountIds = string.Join(";", employerAccountIds);
-        _logger.LogInformation("EmployerAccountId claim(s) found. {p1}", accountIds);
         context.Items["EmployerAccountId"] = accountIds;
-        _logger.LogInformation("EmployerAccountId claim(s) stored in HttpContext. Value stored: {p1}", context.Items["EmployerAccountId"]);
         return true;
     }
 }
