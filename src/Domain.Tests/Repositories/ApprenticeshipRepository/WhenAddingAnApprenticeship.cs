@@ -112,8 +112,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
                 _fixture.Create<DateTime>(), //  DateTime? plannedEndDate,
                 _fixture.Create<long>(),     //  long accountLegalEntityId,
 				_fixture.Create<long>(),     //  long ukprn,
-				_fixture.Create<long>(),
-                _fixture.Create<string>());    //  long employerAccountId
+				_fixture.Create<long>(),    // long employerAccountId
+                _fixture.Create<string>());    //  string trainingCourseVersion
 
 			await _sut.Add(testApprenticeship);
             
