@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
@@ -13,6 +13,7 @@ public class WhenGetApprenticeshipKey
 {
     private Fixture _fixture;
     private Mock<IQueryDispatcher> _queryDispatcher;
+    private Mock<ILogger<ApprenticeshipController>> _mockLogger;
     private ApprenticeshipController _sut;
 
     [SetUp]
@@ -20,7 +21,8 @@ public class WhenGetApprenticeshipKey
     {
         _fixture = new Fixture();
         _queryDispatcher = new Mock<IQueryDispatcher>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object);
+        _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
+        _sut = new ApprenticeshipController(_queryDispatcher.Object, _mockLogger.Object);
     }
 
     [Test]

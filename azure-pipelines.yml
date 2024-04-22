@@ -65,6 +65,7 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: AT DevTest Shared Resources
+  - group: AT das-apprenticeships
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -79,6 +80,7 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: TEST DevTest Shared Resources
+  - group: TEST das-apprenticeships
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -93,6 +95,7 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: TEST2 DevTest Shared Resources
+  - group: TEST2 das-apprenticeships
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -107,6 +110,7 @@ stages:
   variables:
   - group: PreProd Management Resources
   - group: PreProd Shared Resources
+  - group: PreProd das-apprenticeships
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -136,6 +140,7 @@ stages:
   variables:
   - group: MO Management Resources
   - group: MO Shared Resources
+  - group: MO das-apprenticeships
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -150,6 +155,7 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: DEMO DevTest Shared Resources
+  - group: DEMO das-apprenticeships
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
