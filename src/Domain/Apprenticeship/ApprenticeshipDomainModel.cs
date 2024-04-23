@@ -235,5 +235,15 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity.StartDateChanges.Add(startDateChange.GetEntity());
         }
 
+        public void ApproveStartDateChange(string? userApprovedBy)
+        {
+            var pendingStartDateChange = _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
+
+            if(pendingStartDateChange == null)
+                throw new InvalidOperationException("There is no pending start date request to approve for this apprenticeship.");
+
+            pendingStartDateChange.Approve(false, pendingStartDateChange.Initiator, userApprovedBy, DateTime.UtcNow);
+            //TODO Add event
+        }
     }
 }

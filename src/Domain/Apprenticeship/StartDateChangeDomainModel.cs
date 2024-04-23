@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 {
@@ -57,6 +58,32 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         internal static StartDateChangeDomainModel Get(DataAccess.Entities.Apprenticeship.StartDateChange entity)
         {
             return new StartDateChangeDomainModel(entity);
+        }
+
+        public void Approve(bool isAutoApproved, ChangeInitiator changeInitiator, string? userId, DateTime approvedDate)
+        {
+            //TODO Simplify PriceHistoryDomainModel Approve methods with similar structure
+            _entity.RequestStatus = ChangeRequestStatus.Approved;
+
+            if (isAutoApproved)
+            {
+                return;
+            }
+
+            switch (changeInitiator)
+            {
+                case ChangeInitiator.Employer:
+                    _entity.EmployerApprovedBy = userId;
+                    _entity.EmployerApprovedDate = approvedDate;
+                    break;
+                case ChangeInitiator.Provider:
+                    _entity.ProviderApprovedBy = userId;
+                    _entity.ProviderApprovedDate = approvedDate;
+                    break;
+                default:
+                    //TODO Log warning
+                    return;
+            }
         }
     }
 }
