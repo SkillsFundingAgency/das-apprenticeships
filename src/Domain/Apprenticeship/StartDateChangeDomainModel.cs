@@ -5,7 +5,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 {
     public class StartDateChangeDomainModel
     {
-        private readonly DataAccess.Entities.Apprenticeship.StartDateChange _entity;
+        private readonly StartDateChange _entity;
 
         public Guid Key => _entity.Key;
         public Guid ApprenticeshipKey => _entity.ApprenticeshipKey;
@@ -45,17 +45,17 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             });
         }
 
-        private StartDateChangeDomainModel(DataAccess.Entities.Apprenticeship.StartDateChange entity)
+        private StartDateChangeDomainModel(StartDateChange entity)
         {
             _entity = entity;
         }
 
-        public DataAccess.Entities.Apprenticeship.StartDateChange GetEntity()
+        public StartDateChange GetEntity()
         {
             return _entity;
         }
 
-        internal static StartDateChangeDomainModel Get(DataAccess.Entities.Apprenticeship.StartDateChange entity)
+        internal static StartDateChangeDomainModel Get(StartDateChange entity)
         {
             return new StartDateChangeDomainModel(entity);
         }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Drawing;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -126,7 +125,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
 			if(_priceHistories.Any(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created))
             {
-                throw new InvalidOperationException("There is already a pending price change");
+                throw new InvalidOperationException("There is already a pending price change for this apprenticeship.");
             }
 
 			var priceHistory = PriceHistoryDomainModel.New(this.Key,
@@ -147,31 +146,30 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _entity.PriceHistories.Add(priceHistory.GetEntity());
         }
 
-        public void ApprovePriceChange(string? providerApprovedBy, decimal? trainingPrice, decimal? assementPrice)
+        public void ApprovePriceChange(string? userApprovedBy, decimal? trainingPrice, decimal? assessmentPrice)
         {
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
             if(pendingPriceChange == null)
-                throw new InvalidOperationException("There is no pendingPriceChange to Approve");
+                throw new InvalidOperationException("There is no pending price change to approve for this apprenticeship.");
 
             if(pendingPriceChange.Initiator == ChangeInitiator.Provider)
             {
                 // Employer Approving
-                pendingPriceChange?.Approve(providerApprovedBy, DateTime.Now);
+                pendingPriceChange?.Approve(userApprovedBy, DateTime.Now);
                 AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
                 return;
             }
 
             // Provider Approving
-            if (trainingPrice == null || assementPrice == null)
-                throw new InvalidOperationException("Training and assessment prices must be provided when approving an employer initiated price change");
+            if (trainingPrice == null || assessmentPrice == null)
+                throw new InvalidOperationException("Both training and assessment prices must be provided when approving an employer-initiated price change.");
 
-            if (pendingPriceChange.TotalPrice != trainingPrice + assementPrice)
-                throw new InvalidOperationException("The total price does not match the sum of the training and assessment prices");
+            if (pendingPriceChange.TotalPrice != trainingPrice + assessmentPrice)
+                throw new InvalidOperationException($"The total price ({pendingPriceChange.TotalPrice}) does not match the sum of the training price ({pendingPriceChange.TrainingPrice}) and the assessment ({pendingPriceChange.AssessmentPrice}) price.");
 
-            pendingPriceChange?.Approve(providerApprovedBy, DateTime.Now, trainingPrice.Value, assementPrice.Value);
+            pendingPriceChange?.Approve(userApprovedBy, DateTime.Now, trainingPrice.Value, assessmentPrice.Value);
             AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
-
         }
 
         /// <summary>
@@ -183,10 +181,10 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
             if (pendingPriceChange == null)
-                throw new InvalidOperationException("There is no pendingPriceChange to Approve");
+                throw new InvalidOperationException("There is no pending price change request to approve");
 
             if (pendingPriceChange.Initiator != ChangeInitiator.Provider)
-                throw new InvalidOperationException($"{nameof(ProviderSelfApprovePriceChange)} is only valid for provider initiated changes");
+                throw new InvalidOperationException($"{nameof(ProviderSelfApprovePriceChange)} is only valid for provider-initiated changes");
 
             pendingPriceChange?.Approve();
             AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange!.Key, ApprovedBy.Provider));
@@ -217,7 +215,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             if (_startDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created))
             {
-                throw new InvalidOperationException("There is already a pending start date change");
+                throw new InvalidOperationException("There is already a pending start date change for this apprenticeship.");
             }
 
             var startDateChange = StartDateChangeDomainModel.New(this.Key,
