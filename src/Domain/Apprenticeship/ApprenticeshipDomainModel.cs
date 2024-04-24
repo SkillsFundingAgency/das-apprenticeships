@@ -58,7 +58,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             long accountLegalEntityId,
             long ukprn,
             long employerAccountId,
-            string trainingCourseVersion)
+            string? trainingCourseVersion)
         {
             return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
             {

@@ -31,6 +31,6 @@
         public List<PriceHistory> PriceHistories { get; set; }
         public long Ukprn { get; set; }
         public List<StartDateChange> StartDateChanges { get; set; }
-        public string TrainingCourseVersion { get; set; }
+        public string? TrainingCourseVersion { get; set; }
     }
 }

@@ -9,5 +9,5 @@ public class ApprenticeshipStartDate
     public long UKPRN { get; set; }
     public DateTime ApprenticeDateOfBirth { get; set; }
     public string CourseCode { get; set; }
-    public string CourseVersion { get; set; }
+    public string? CourseVersion { get; set; }
 }
