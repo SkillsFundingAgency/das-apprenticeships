@@ -233,7 +233,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             _startDateChanges.Add(startDateChange);
             _entity.StartDateChanges.Add(startDateChange.GetEntity());
         }
-
         public void ApproveStartDateChange(string? userApprovedBy)
         {
             var pendingStartDateChange = _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);

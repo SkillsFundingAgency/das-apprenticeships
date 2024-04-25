@@ -1,17 +1,19 @@
 ﻿using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure;
+namespace SFA.DAS.Apprenticeships.DataAccess;
 
+[ExcludeFromCodeCoverage]
 public class SqlAzureIdentityAuthenticationDbConnectionInterceptor : DbConnectionInterceptor
 {
     private readonly ILogger<SqlAzureIdentityAuthenticationDbConnectionInterceptor> _logger;
     private readonly ISqlAzureIdentityTokenProvider _tokenProvider;
-    private static bool _connectionNeedsAccessToken = true;
+    private readonly bool _connectionNeedsAccessToken;
 
-    public SqlAzureIdentityAuthenticationDbConnectionInterceptor(ILogger<SqlAzureIdentityAuthenticationDbConnectionInterceptor> logger, ISqlAzureIdentityTokenProvider tokenProvider, bool connectionNeedsAccessToken)
+    public SqlAzureIdentityAuthenticationDbConnectionInterceptor(ILogger<SqlAzureIdentityAuthenticationDbConnectionInterceptor> logger, ISqlAzureIdentityTokenProvider? tokenProvider, bool connectionNeedsAccessToken = true)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
@@ -32,7 +34,7 @@ public class SqlAzureIdentityAuthenticationDbConnectionInterceptor : DbConnectio
         }
         else
         {
-            _logger.LogWarning($"Skipping GetAccessToken because ConnectionNeedsAccessToken is {_connectionNeedsAccessToken}");
+            _logger.LogWarning("Skipping GetAccessToken because ConnectionNeedsAccessToken is {p1}", _connectionNeedsAccessToken);
         }
 
         return base.ConnectionOpening(connection, eventData, result);
@@ -55,7 +57,7 @@ public class SqlAzureIdentityAuthenticationDbConnectionInterceptor : DbConnectio
         }
         else
         {
-            _logger.LogWarning($"Skipping GetAccessToken Async because ConnectionNeedsAccessToken is {_connectionNeedsAccessToken}");
+            _logger.LogWarning("Skipping GetAccessToken Async because ConnectionNeedsAccessToken is {p1}", _connectionNeedsAccessToken);
         }
 
         return await base.ConnectionOpeningAsync(connection, eventData, result, cancellationToken);

@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.11.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.34" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.60.3" />
     <PackageReference Include="NServiceBus" Version="7.8.4" />
     <PackageReference Include="Scrutor" Version="4.1.0" />
     <PackageReference Include="SFA.DAS.NServiceBus" Version="17.0.49" />
@@ -17,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\SFA.DAS.Apprenticeships.DataAccess.csproj" />
+    <ProjectReference Include="..\Infrastructure\SFA.DAS.Apprenticeships.Infrastructure.csproj" />
     <ProjectReference Include="..\SFA.DAS.Apprenticeships.DataTransferObjects\SFA.DAS.Apprenticeships.DataTransferObjects.csproj" />
     <ProjectReference Include="..\SFA.DAS.Apprenticeships.Enums\SFA.DAS.Apprenticeships.Enums.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Apprenticeships.Types.csproj" />
