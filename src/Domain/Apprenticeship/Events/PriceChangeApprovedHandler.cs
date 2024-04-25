@@ -37,4 +37,37 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
             await _messageSession.Publish(apprenticeshipCreatedEvent);
         }
     }
+
+    public class StartDateChangeApprovedHandler : IDomainEventHandler<StartDateChangeApproved>
+    {
+        private readonly IApprenticeshipRepository _repository;
+        private readonly IMessageSession _messageSession;
+
+        public StartDateChangeApprovedHandler(IApprenticeshipRepository repository, IMessageSession messageSession)
+        {
+            _repository = repository;
+            _messageSession = messageSession;
+        }
+
+        public async Task Handle(StartDateChangeApproved @event, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
+            var approval = apprenticeship.Approvals.Single();
+            var startDateChange = apprenticeship.StartDateChanges.Single(x => x.Key == @event.StartDateChangeKey);
+            var startDateChangedEvent = new ApprenticeshipStartDateChangedEvent()
+            {
+                ApprenticeshipKey = apprenticeship.Key,
+                ApprenticeshipId = approval.ApprovalsApprenticeshipId,
+                EmployerAccountId = apprenticeship.EmployerAccountId,
+                ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? startDateChange.EmployerApprovedDate!.Value : startDateChange.ProviderApprovedDate!.Value,
+                ProviderId = apprenticeship.Ukprn,
+                ActualStartDate = startDateChange.ActualStartDate,
+                ProviderApprovedBy = startDateChange.ProviderApprovedBy,
+                EmployerApprovedBy = startDateChange.EmployerApprovedBy,
+                Initiator = startDateChange.Initiator.ToString()
+            };
+
+            await _messageSession.Publish(startDateChangedEvent);
+        }
+    }
 }
