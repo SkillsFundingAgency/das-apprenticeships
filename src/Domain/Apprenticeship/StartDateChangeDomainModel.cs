@@ -60,28 +60,19 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             return new StartDateChangeDomainModel(entity);
         }
 
-        public void Approve(bool isAutoApproved, ApprovedBy approver, string? userId, DateTime approvedDate)
+        public void Approve(ApprovedBy approver, string? userId, DateTime approvedDate)
         {
-            //TODO Simplify PriceHistoryDomainModel Approve methods with similar structure
             _entity.RequestStatus = ChangeRequestStatus.Approved;
 
-            if (isAutoApproved)
+            if (approver == ApprovedBy.Employer)
             {
-                return;
+                _entity.EmployerApprovedBy = userId;
+                _entity.EmployerApprovedDate = approvedDate;
             }
-
-            switch (approver)
+            else
             {
-                case ApprovedBy.Employer:
-                    _entity.EmployerApprovedBy = userId;
-                    _entity.EmployerApprovedDate = approvedDate;
-                    break;
-                case ApprovedBy.Provider:
-                    _entity.ProviderApprovedBy = userId;
-                    _entity.ProviderApprovedDate = approvedDate;
-                    break;
-                default:
-                    return;
+                _entity.ProviderApprovedBy = userId;
+                _entity.ProviderApprovedDate = approvedDate;
             }
         }
     }

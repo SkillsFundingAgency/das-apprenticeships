@@ -23,7 +23,7 @@ public class WhenAStartDateChangeIsApproved
     }
 
     [Test]
-    public void ThenTheStartDateChangeRecordIsUpdated()
+    public void ThenTheStartDateChangeRecordIsUpdated_EmployerApproval()
     {
         //Arrange
         var employerUserId = _fixture.Create<string>();
@@ -41,6 +41,24 @@ public class WhenAStartDateChangeIsApproved
     }
 
     [Test]
+    public void ThenTheStartDateChangeRecordIsUpdated_ProviderApproval()
+    {
+        //Arrange
+        var employerUserId = _fixture.Create<string>();
+        var apprenticeship = BuildApprenticeshipWithPendingPriceChange(pendingProviderApproval:true);
+
+        //Act
+        apprenticeship.ApproveStartDateChange(employerUserId);
+
+        //Assert
+        apprenticeship.GetEntity().StartDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
+        var startDateChange = apprenticeship.GetEntity().StartDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Approved);
+        startDateChange.Should().NotBeNull();
+        startDateChange.ProviderApprovedBy.Should().Be(employerUserId);
+        startDateChange.ProviderApprovedDate.Should().NotBeNull();
+    }
+
+    [Test]
     public void ThenAStartDateChangeApprovedEventIsAdded()
     {
         //Arrange
@@ -54,7 +72,7 @@ public class WhenAStartDateChangeIsApproved
         events.Should().ContainSingle(x => x.GetType() == typeof(StartDateChangeApproved));
     }
 
-    private ApprenticeshipDomainModel BuildApprenticeshipWithPendingPriceChange()
+    private ApprenticeshipDomainModel BuildApprenticeshipWithPendingPriceChange(bool pendingProviderApproval = false)
     {
         var apprenticeship = new ApprenticeshipFactory().CreateNew(
             "1234435",
@@ -77,10 +95,20 @@ public class WhenAStartDateChangeIsApproved
 
         var startDateChange = StartDateChangeDomainModel.Get(_fixture.Create<StartDateChange>());
 
-        apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.Reason,
-            startDateChange.ProviderApprovedBy, startDateChange.ProviderApprovedDate,
-            null, null, startDateChange.CreatedDate,
-            ChangeRequestStatus.Created, startDateChange.Initiator);
+        if (pendingProviderApproval)
+        {
+            apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.Reason,
+                null, null,
+                startDateChange.EmployerApprovedBy, startDateChange.EmployerApprovedDate, startDateChange.CreatedDate,
+                ChangeRequestStatus.Created, ChangeInitiator.Employer);
+        }
+        else
+        {
+            apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.Reason,
+                startDateChange.ProviderApprovedBy, startDateChange.ProviderApprovedDate,
+                null, null, startDateChange.CreatedDate,
+                ChangeRequestStatus.Created, ChangeInitiator.Provider);
+        }
 
         return apprenticeship;
     }

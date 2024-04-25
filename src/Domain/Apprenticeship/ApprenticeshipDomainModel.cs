@@ -242,7 +242,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
             var approver = pendingStartDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
 
-            pendingStartDateChange.Approve(false, approver, userApprovedBy, DateTime.UtcNow);
+            pendingStartDateChange.Approve(approver, userApprovedBy, DateTime.UtcNow);
             AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver));
         }
     }
