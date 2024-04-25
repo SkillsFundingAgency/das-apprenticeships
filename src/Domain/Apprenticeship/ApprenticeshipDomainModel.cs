@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -240,8 +241,10 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             if(pendingStartDateChange == null)
                 throw new InvalidOperationException("There is no pending start date request to approve for this apprenticeship.");
 
-            pendingStartDateChange.Approve(false, pendingStartDateChange.Initiator, userApprovedBy, DateTime.UtcNow);
-            //TODO Add event
+            var approver = pendingStartDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
+
+            pendingStartDateChange.Approve(false, approver, userApprovedBy, DateTime.UtcNow);
+            AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver));
         }
     }
 }
