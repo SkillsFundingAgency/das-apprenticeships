@@ -26,17 +26,18 @@ public class WhenAStartDateChangeIsApproved
     public void ThenTheStartDateChangeRecordIsUpdated_EmployerApproval()
     {
         //Arrange
-        var employerUserId = _fixture.Create<string>();
-        var apprenticeship = BuildApprenticeshipWithPendingPriceChange();
+        var approverUserId = _fixture.Create<string>();
+        var apprenticeship = BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
-        apprenticeship.ApproveStartDateChange(employerUserId);
+        apprenticeship.ApproveStartDateChange(approverUserId);
 
         //Assert
-        apprenticeship.GetEntity().StartDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
-        var startDateChange = apprenticeship.GetEntity().StartDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Approved);
+        var entity = apprenticeship.GetEntity();
+        entity.StartDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
+        var startDateChange = entity.StartDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Approved);
         startDateChange.Should().NotBeNull();
-        startDateChange.EmployerApprovedBy.Should().Be(employerUserId);
+        startDateChange.EmployerApprovedBy.Should().Be(approverUserId);
         startDateChange.EmployerApprovedDate.Should().NotBeNull();
     }
 
@@ -44,17 +45,18 @@ public class WhenAStartDateChangeIsApproved
     public void ThenTheStartDateChangeRecordIsUpdated_ProviderApproval()
     {
         //Arrange
-        var employerUserId = _fixture.Create<string>();
-        var apprenticeship = BuildApprenticeshipWithPendingPriceChange(pendingProviderApproval:true);
+        var approverUserId = _fixture.Create<string>();
+        var apprenticeship = BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval:true);
 
         //Act
-        apprenticeship.ApproveStartDateChange(employerUserId);
+        apprenticeship.ApproveStartDateChange(approverUserId);
 
         //Assert
-        apprenticeship.GetEntity().StartDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
-        var startDateChange = apprenticeship.GetEntity().StartDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Approved);
+        var entity = apprenticeship.GetEntity();
+        entity.StartDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
+        var startDateChange = entity.StartDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Approved);
         startDateChange.Should().NotBeNull();
-        startDateChange.ProviderApprovedBy.Should().Be(employerUserId);
+        startDateChange.ProviderApprovedBy.Should().Be(approverUserId);
         startDateChange.ProviderApprovedDate.Should().NotBeNull();
     }
 
@@ -63,7 +65,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var employerUserId = _fixture.Create<string>();
-        var apprenticeship = BuildApprenticeshipWithPendingPriceChange();
+        var apprenticeship = BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
         apprenticeship.ApproveStartDateChange(employerUserId);
@@ -72,7 +74,7 @@ public class WhenAStartDateChangeIsApproved
         events.Should().ContainSingle(x => x.GetType() == typeof(StartDateChangeApproved));
     }
 
-    private ApprenticeshipDomainModel BuildApprenticeshipWithPendingPriceChange(bool pendingProviderApproval = false)
+    private ApprenticeshipDomainModel BuildApprenticeshipWithPendingStartDateChange(bool pendingProviderApproval = false)
     {
         var apprenticeship = new ApprenticeshipFactory().CreateNew(
             "1234435",
