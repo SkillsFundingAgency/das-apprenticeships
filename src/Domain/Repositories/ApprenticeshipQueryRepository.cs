@@ -64,16 +64,6 @@ using SFA.DAS.Apprenticeships.Enums;
          };
      }
 
-     public async Task<IEnumerable<ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
-     {
-         var dataModels = await DbContext.PriceHistories
-             .Where(x => x.Key == apprenticeshipKey)
-             .Select(PriceHistoryToApprenticeshipPrice())
-             .ToListAsync();
-
-         return dataModels;
-     }
-
      public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
      {
          _logger.LogInformation("Getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
@@ -117,29 +107,12 @@ using SFA.DAS.Apprenticeships.Enums;
              Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).Initiator.ToString()
          };
      }
-        
-     private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
-     {
-         return x => new ApprenticeshipPrice
-         {
-             TrainingPrice = x.TrainingPrice,
-             AssessmentPrice = x.AssessmentPrice,
-             TotalPrice = x.TotalPrice
-         };
-     }
 
      public async Task<Guid?> GetKey(string apprenticeshipHashedId)
      {
          var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
              x.ApprenticeshipHashedId == apprenticeshipHashedId);
          return apprenticeship?.Key;
-     }
-
-     public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
-     {
-         var approval = await DbContext.Approvals.FirstOrDefaultAsync(x =>
-             x.ApprovalsApprenticeshipId == apprenticeshipId);
-         return approval?.ApprenticeshipKey;
      }
 
      public async Task<PendingStartDateChange?> GetPendingStartDateChange(Guid apprenticeshipKey)
