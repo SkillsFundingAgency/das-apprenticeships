@@ -1,4 +1,4 @@
-﻿﻿using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
@@ -60,7 +60,9 @@ using SFA.DAS.Apprenticeships.Enums;
              PlannedEndDate = apprenticeship.PlannedEndDate,
              AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
              UKPRN = apprenticeship.Ukprn,
-             ApprenticeDateOfBirth = apprenticeship.DateOfBirth
+                ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
+                CourseCode = apprenticeship.TrainingCode,
+                CourseVersion = apprenticeship.TrainingCourseVersion
          };
      }
 

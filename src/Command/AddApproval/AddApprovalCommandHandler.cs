@@ -42,7 +42,8 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                 command.PlannedEndDate,
                 command.AccountLegalEntityId,
                 command.UKPRN,
-                command.EmployerAccountId);
+                command.EmployerAccountId,
+                command.TrainingCourseVersion);
 
             apprenticeship.AddApproval(
                 command.ApprovalsApprenticeshipId,
