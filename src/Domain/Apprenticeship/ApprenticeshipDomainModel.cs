@@ -57,7 +57,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
         DateTime? plannedEndDate,
         long accountLegalEntityId,
         long ukprn,
-        long employerAccountId)
+            long employerAccountId,
+            string? trainingCourseVersion)
     {
         return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
         {
@@ -76,7 +77,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
             PlannedEndDate = plannedEndDate,
             AccountLegalEntityId = accountLegalEntityId,
             EmployerAccountId = employerAccountId,
-            Ukprn = ukprn
+            Ukprn = ukprn,
+                TrainingCourseVersion = trainingCourseVersion
         });
     }
 
