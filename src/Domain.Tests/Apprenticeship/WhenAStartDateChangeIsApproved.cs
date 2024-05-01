@@ -93,7 +93,8 @@ public class WhenAStartDateChangeIsApproved
             _fixture.Create<DateTime>(),
             _fixture.Create<long>(),
             _fixture.Create<long>(),
-            _fixture.Create<long>());
+            _fixture.Create<long>(),
+            "1.1");
 
         var startDateChange = StartDateChangeDomainModel.Get(_fixture.Create<StartDateChange>());
 
