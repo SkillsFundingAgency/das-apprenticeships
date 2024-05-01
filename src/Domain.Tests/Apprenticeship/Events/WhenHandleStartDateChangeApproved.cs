@@ -51,7 +51,8 @@ public class WhenHandleStartDateChangeApproved
             _fixture.Create<DateTime>(),
             _fixture.Create<long>(),
             _fixture.Create<long>(),
-            _fixture.Create<long>());
+            _fixture.Create<long>(),
+            "1.1");
 
         var startDateChange = _fixture.Create<StartDateChange>();
 
