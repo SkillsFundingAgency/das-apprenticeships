@@ -75,4 +75,10 @@ public class StartDateChangeDomainModel
             _entity.ProviderApprovedDate = approvedDate;
         }
     }
+
+    public void Reject(string? reason)
+    {
+        _entity.RequestStatus = ChangeRequestStatus.Rejected;
+        _entity.RejectReason = reason;
+    }
 }
