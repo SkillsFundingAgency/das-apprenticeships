@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Http.Features;
@@ -53,7 +52,7 @@ public sealed class DummyHttpRequest : HttpRequest
 
     public override Stream Body
     {
-        get => _stream ??= new MemoryStream(Encoding.UTF8.GetBytes(_content));
+        get => _stream ??= new MemoryStream(System.Text.Encoding.UTF8.GetBytes(_content));
         set => _stream = value;
     }
 

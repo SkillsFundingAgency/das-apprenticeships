@@ -36,6 +36,7 @@ public class WhenAPriceChangeIsCreated
             _fixture.Create<DateTime>(),
             _fixture.Create<DateTime>(),
             _fixture.Create<long>(),
+            _fixture.Create<long>(),
             _fixture.Create<long>());
     }
 
@@ -51,7 +52,11 @@ public class WhenAPriceChangeIsCreated
             expectedModel.CreatedDate,
             expectedModel.PriceChangeRequestStatus,
             expectedModel.ProviderApprovedBy,
-            expectedModel.ChangeReason);
+            expectedModel.ChangeReason!,
+            null,
+            expectedModel.ProviderApprovedDate,
+            expectedModel.EmployerApprovedDate,
+            expectedModel.Initiator);
 
         var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.EffectiveFromDate == expectedModel.EffectiveFromDate);
 

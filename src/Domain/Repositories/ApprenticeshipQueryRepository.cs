@@ -1,108 +1,181 @@
-﻿using System.Linq.Expressions;
+﻿﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.Repositories
-{
-    public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
-    {
-        private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
-        private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
+ namespace SFA.DAS.Apprenticeships.Domain.Repositories; 
 
-        public ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext)
-        {
-            _lazyContext = dbContext;
-        }
+ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
+ {
+     private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
+     private readonly ILogger<ApprenticeshipQueryRepository> _logger;
+     private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
 
-        public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
-        {
-            var dataModels = await DbContext.Apprenticeships
-                .Include(x => x.Approvals)
-                .Where(a => a.Approvals.Any(c => c.UKPRN == ukprn && (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
-                .ToListAsync();
+     public ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext, ILogger<ApprenticeshipQueryRepository> logger)
+     {
+         _lazyContext = dbContext;
+         _logger = logger;
+     }
+
+     public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
+     {
+         var dataModels = await DbContext.Apprenticeships
+             .Where(x => x.Ukprn == ukprn)
+             .Include(x => x.Approvals)
+             .Where(a => a.Approvals.Any(c => (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
+             .ToListAsync();
         
-            var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
-            return result;
-        }
+         var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
+         return result;
+     }
 
-        public async Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey)
-        {
-            var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
-                x.Key == apprenticeshipKey);
-            return apprenticeship == null ? null :  new ApprenticeshipPrice
-            {
-                TotalPrice = apprenticeship.TotalPrice,
-                AssessmentPrice = apprenticeship.EndPointAssessmentPrice,
-                TrainingPrice = apprenticeship.TrainingPrice,
-                FundingBandMaximum = apprenticeship.FundingBandMaximum,
-                ApprenticeshipActualStartDate = apprenticeship.ActualStartDate,
-                ApprenticeshipPlannedEndDate = apprenticeship.PlannedEndDate,
-                AccountLegalEntityId = apprenticeship.AccountLegalEntityId
-            };
-        }
+     public async Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey)
+     {
+         var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
+             x.Key == apprenticeshipKey);
+         return apprenticeship == null ? null :  new ApprenticeshipPrice
+         {
+             TotalPrice = apprenticeship.TotalPrice,
+             AssessmentPrice = apprenticeship.EndPointAssessmentPrice,
+             TrainingPrice = apprenticeship.TrainingPrice,
+             FundingBandMaximum = apprenticeship.FundingBandMaximum,
+             ApprenticeshipActualStartDate = apprenticeship.ActualStartDate,
+             ApprenticeshipPlannedEndDate = apprenticeship.PlannedEndDate,
+             AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
+             UKPRN = apprenticeship.Ukprn
+         };
+     }
+     public async Task<ApprenticeshipStartDate?> GetStartDate(Guid apprenticeshipKey)
+     {
+         var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
+             x.Key == apprenticeshipKey);
 
-        public async Task<IEnumerable<ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
-        {
-            var dataModels = await DbContext.PriceHistories
-                .Where(x => x.Key == apprenticeshipKey)
-                .Select(PriceHistoryToApprenticeshipPrice())
-                .ToListAsync();
+         return apprenticeship == null ? null : new ApprenticeshipStartDate
+         {
+             ApprenticeshipKey = apprenticeship.Key,
+             ActualStartDate = apprenticeship.ActualStartDate,
+             PlannedEndDate = apprenticeship.PlannedEndDate,
+             AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
+             UKPRN = apprenticeship.Ukprn,
+             ApprenticeDateOfBirth = apprenticeship.DateOfBirth
+         };
+     }
 
-            return dataModels;
-        }
+     public async Task<IEnumerable<ApprenticeshipPrice>> GetPriceHistory(Guid apprenticeshipKey)
+     {
+         var dataModels = await DbContext.PriceHistories
+             .Where(x => x.Key == apprenticeshipKey)
+             .Select(PriceHistoryToApprenticeshipPrice())
+             .ToListAsync();
 
-        public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
-        {
-            var pendingPriceChange = await DbContext.Apprenticeships
-	            .Include(x => x.PriceHistories)
-                .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created))
-                .Select(PriceHistoryToPendingPriceChange())
-                .SingleOrDefaultAsync();
+         return dataModels;
+     }
 
-            return pendingPriceChange;
-        }
+     public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
+     {
+         _logger.LogInformation("Getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
 
-        private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingPriceChange>> PriceHistoryToPendingPriceChange()
-        {
-	        return x => new PendingPriceChange
-	        {
-		        OriginalTrainingPrice = x.TrainingPrice,
-                OriginalAssessmentPrice = x.EndPointAssessmentPrice,
-                OriginalTotalPrice = x.TotalPrice,
-                PendingTrainingPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).TrainingPrice,
-                PendingAssessmentPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).AssessmentPrice,
-                PendingTotalPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).TotalPrice,
-                EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).EffectiveFromDate,
-                Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == PriceChangeRequestStatus.Created).ChangeReason,
-                Ukprn = x.Ukprn
-            };
-        }
+         PendingPriceChange? pendingPriceChange = null;
 
-		private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
-        {
-            return x => new ApprenticeshipPrice
-            {
-                TrainingPrice = x.TrainingPrice,
-                AssessmentPrice = x.AssessmentPrice,
-                TotalPrice = x.TotalPrice
-            };
-        }
+         try
+         {
+             pendingPriceChange = await DbContext.Apprenticeships
+                 .Include(x => x.PriceHistories)
+                 .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created))
+                 .Select(PriceHistoryToPendingPriceChange())
+                 .SingleOrDefaultAsync();
+         }
+         catch(Exception e)
+         {
+             _logger.LogError(e, "Error getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+         }
 
-        public async Task<Guid?> GetKey(string apprenticeshipHashedId)
-        {
-            var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
-                x.ApprenticeshipHashedId == apprenticeshipHashedId);
-            return apprenticeship?.Key;
-        }
+         return pendingPriceChange;
+     }
 
-        public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
-        {
-	        var approval = await DbContext.Approvals.FirstOrDefaultAsync(x =>
-		        x.ApprovalsApprenticeshipId == apprenticeshipId);
-	        return approval?.ApprenticeshipKey;
-        }
-	}
-}
+     private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingPriceChange>> PriceHistoryToPendingPriceChange()
+     {
+         return x => new PendingPriceChange
+         {
+             FirstName = x.FirstName,
+             LastName = x.LastName,
+             OriginalTrainingPrice = x.TrainingPrice,
+             OriginalAssessmentPrice = x.EndPointAssessmentPrice,
+             OriginalTotalPrice = x.TotalPrice,
+             PendingTrainingPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).TrainingPrice,
+             PendingAssessmentPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).AssessmentPrice,
+             PendingTotalPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).TotalPrice,
+             EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).EffectiveFromDate,
+             Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).ChangeReason,
+             Ukprn = x.Ukprn,
+             ProviderApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).ProviderApprovedDate,
+             EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).EmployerApprovedDate,
+             AccountLegalEntityId = x.AccountLegalEntityId,
+             Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).Initiator.ToString()
+         };
+     }
+        
+     private static Expression<Func<PriceHistory, ApprenticeshipPrice>> PriceHistoryToApprenticeshipPrice()
+     {
+         return x => new ApprenticeshipPrice
+         {
+             TrainingPrice = x.TrainingPrice,
+             AssessmentPrice = x.AssessmentPrice,
+             TotalPrice = x.TotalPrice
+         };
+     }
+
+     public async Task<Guid?> GetKey(string apprenticeshipHashedId)
+     {
+         var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
+             x.ApprenticeshipHashedId == apprenticeshipHashedId);
+         return apprenticeship?.Key;
+     }
+
+     public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
+     {
+         var approval = await DbContext.Approvals.FirstOrDefaultAsync(x =>
+             x.ApprovalsApprenticeshipId == apprenticeshipId);
+         return approval?.ApprenticeshipKey;
+     }
+
+     public async Task<PendingStartDateChange?> GetPendingStartDateChange(Guid apprenticeshipKey)
+     {
+         _logger.LogInformation("Getting pending start date change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+
+         PendingStartDateChange? pendingStartDateChange = null;
+
+         try
+         {
+             pendingStartDateChange = await DbContext.Apprenticeships
+                 .Include(x => x.StartDateChanges)
+                 .Where(x => x.Key == apprenticeshipKey && x.StartDateChanges.Any(y => y.RequestStatus == ChangeRequestStatus.Created))
+                 .Select(StartDateChangeToPendingStartDateChange())
+                 .SingleOrDefaultAsync();
+         }
+         catch (Exception e)
+         {
+             _logger.LogError(e, "Error getting pending start date change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+         }
+
+         return pendingStartDateChange;
+     }
+
+     private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingStartDateChange>> StartDateChangeToPendingStartDateChange()
+     {
+         return x => new PendingStartDateChange
+         {
+             Reason = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Reason,
+             Ukprn = x.Ukprn,
+             ProviderApprovedDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ProviderApprovedDate,
+             EmployerApprovedDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).EmployerApprovedDate,
+             AccountLegalEntityId = x.AccountLegalEntityId,
+             Initiator = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Initiator.ToString(),
+             OriginalActualStartDate = x.ActualStartDate.GetValueOrDefault(),
+             PendingActualStartDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ActualStartDate
+         };
+     }
+ }

@@ -37,6 +37,7 @@ public class WhenAPendingPriceChangeIsCancelled
             _fixture.Create<DateTime>(),
             _fixture.Create<DateTime>(),
             _fixture.Create<long>(),
+            _fixture.Create<long>(),
             _fixture.Create<long>());
 
         var priceHistory = PriceHistoryDomainModel.Get(_fixture.Create<PriceHistory>());
@@ -48,7 +49,11 @@ public class WhenAPendingPriceChangeIsCancelled
             priceHistory.CreatedDate,
             priceHistory.PriceChangeRequestStatus,
             priceHistory.ProviderApprovedBy,
-            priceHistory.ChangeReason);
+            priceHistory.ChangeReason!,
+            null,
+            priceHistory.ProviderApprovedDate,
+            priceHistory.EmployerApprovedDate,
+            priceHistory.Initiator);
     }
 
     [Test]
@@ -56,7 +61,7 @@ public class WhenAPendingPriceChangeIsCancelled
     {
         _apprenticeship.CancelPendingPriceChange();
 
-        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == PriceChangeRequestStatus.Cancelled);
+        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Cancelled);
 
         priceHistory.Should().NotBeNull();
     }

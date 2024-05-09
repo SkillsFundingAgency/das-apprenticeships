@@ -94,6 +94,8 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             apprenticeship.Uln.Should().Be(ApprovalCreatedEvent.Uln);
             apprenticeship.FirstName.Should().Be(ApprovalCreatedEvent.FirstName);
             apprenticeship.LastName.Should().Be(ApprovalCreatedEvent.LastName);
+            apprenticeship.EmployerAccountId.Should().Be(ApprovalCreatedEvent.EmployerAccountId);
+            apprenticeship.Ukprn.Should().Be(ApprovalCreatedEvent.UKPRN);
             int.Parse(apprenticeship.TrainingCode).Should().Be(int.Parse(ApprovalCreatedEvent.TrainingCode));
             apprenticeship.Key.Should().NotBe(Guid.Empty);
             apprenticeship.Ukprn.Should().Be(ApprovalCreatedEvent.UKPRN);
@@ -102,12 +104,10 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             approval.ActualStartDate.Should().BeSameDateAs(ApprovalCreatedEvent.ActualStartDate!.Value);
             approval.ApprovalsApprenticeshipId.Should().Be(ApprovalCreatedEvent.ApprovalsApprenticeshipId);
             approval.AgreedPrice.Should().Be(ApprovalCreatedEvent.AgreedPrice);
-            approval.EmployerAccountId.Should().Be(ApprovalCreatedEvent.EmployerAccountId);
             approval.FundingEmployerAccountId.Should().Be(ApprovalCreatedEvent.FundingEmployerAccountId);
             approval.FundingType.Should().Be(Enum.Parse<Enums.FundingType>(ApprovalCreatedEvent.FundingType.ToString()));
             approval.LegalEntityName.Should().Be(ApprovalCreatedEvent.LegalEntityName);
             approval.PlannedEndDate.Should().BeSameDateAs(ApprovalCreatedEvent.PlannedEndDate!.Value);
-            approval.UKPRN.Should().Be(ApprovalCreatedEvent.UKPRN);
             approval.Id.Should().NotBe(Guid.Empty);
             approval.PlannedStartDate.Should().BeSameDateAs(ApprovalCreatedEvent.StartDate!.Value);
             approval.FundingPlatform.Should().Be(ApprovalCreatedEvent.IsOnFlexiPaymentPilot.HasValue ? (ApprovalCreatedEvent.IsOnFlexiPaymentPilot.Value ? Enums.FundingPlatform.DAS : Enums.FundingPlatform.SLD) : null);
@@ -151,11 +151,11 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.PlannedEndDate.Should().BeSameDateAs(Approval.PlannedEndDate);
             publishedEvent.AgreedPrice.Should().Be(Approval.AgreedPrice);
             publishedEvent.ApprovalsApprenticeshipId.Should().Be(Approval.ApprovalsApprenticeshipId);
-            publishedEvent.EmployerAccountId.Should().Be(Approval.EmployerAccountId);
+            publishedEvent.EmployerAccountId.Should().Be(Apprenticeship.EmployerAccountId);
             publishedEvent.FundingEmployerAccountId.Should().Be(Approval.FundingEmployerAccountId);
             publishedEvent.FundingType.ToString().Should().Be(Approval.FundingType.ToString());
             publishedEvent.LegalEntityName.Should().Be(Approval.LegalEntityName);
-            publishedEvent.UKPRN.Should().Be(Approval.UKPRN);
+            publishedEvent.UKPRN.Should().Be(Apprenticeship.Ukprn);
             publishedEvent.FirstName.Should().Be(Apprenticeship.FirstName);
             publishedEvent.LastName.Should().Be(Apprenticeship.LastName);
             publishedEvent.PlannedStartDate.Should().BeSameDateAs(Approval.PlannedStartDate!.Value);

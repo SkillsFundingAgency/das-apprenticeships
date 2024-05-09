@@ -13,13 +13,17 @@
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
-    <PackageReference Include="Azure.Identity" Version="1.10.4" />
+    <PackageReference Include="Azure.Identity" Version="1.11.0" />
     <PackageReference Include="coverlet.msbuild" Version="3.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.8.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.28" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.60.3" />
     <PackageReference Include="Microsoft.SqlServer.DacFx" Version="160.6161.0" />
+    <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
 	<PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />

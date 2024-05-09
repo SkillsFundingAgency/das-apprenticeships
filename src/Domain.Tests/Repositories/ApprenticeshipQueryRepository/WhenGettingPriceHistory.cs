@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
 {
@@ -21,11 +23,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         public void Arrange()
         {
             _fixture = new Fixture();
-
-            var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("ApprenticeshipsDbContext" + Guid.NewGuid()).Options;
-            _dbContext = new ApprenticeshipsDataContext(options);
-
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
         }
 
         [TearDown]
@@ -37,6 +34,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         [Test]
         public async Task ThenReturnNullWhenNoApprenticeshipFoundWithApprenticeshipKey()
         {
+            //Arrange
+            SetUpApprenticeshipQueryRepository();
+            
             //Act
             var result = await _sut.GetPendingPriceChange(_fixture.Create<Guid>());
 
@@ -47,6 +47,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         [Test]
         public async Task ThenTheCorrectPendingPriceChangeIsReturned()
         {
+            //Arrange
+            SetUpApprenticeshipQueryRepository();
+            
             //Act
             var apprenticeshipKey = _fixture.Create<Guid>();
             var otherApprenticeshipKey = _fixture.Create<Guid>();
@@ -61,7 +64,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                         {
                             Key = priceHistoryKey,
                             ApprenticeshipKey = apprenticeshipKey,
-                            PriceChangeRequestStatus = PriceChangeRequestStatus.Created,
+                            PriceChangeRequestStatus = ChangeRequestStatus.Created,
                             TrainingPrice = 10000,
                             AssessmentPrice = 3000,
                             TotalPrice = 13000,
@@ -93,6 +96,13 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.EffectiveFrom = effectiveFromDate;
             result.Reason = "testReason";
             result.Ukprn = apprenticeships[0].Ukprn;
+        }
+        
+        private void SetUpApprenticeshipQueryRepository()
+        {
+            _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
+            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
     }
 }

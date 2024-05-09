@@ -1,6 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
@@ -20,7 +21,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryCon
         {
             _fixture = new Fixture();
             _commandDispatcher = new Mock<ICommandDispatcher>();
-            _sut = new PriceHistoryController(Mock.Of<IQueryDispatcher>(), _commandDispatcher.Object);
+            _sut = new PriceHistoryController(Mock.Of<IQueryDispatcher>(), _commandDispatcher.Object, Mock.Of<ILogger<PriceHistoryController>>());
         }
 
         [Test]

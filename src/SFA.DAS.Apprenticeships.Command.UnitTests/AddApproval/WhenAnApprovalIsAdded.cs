@@ -59,7 +59,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ActualStartDate,
                     command.PlannedEndDate,
                     command.AccountLegalEntityId,
-                    command.UKPRN))
+                    command.UKPRN,
+                    command.EmployerAccountId))
                 .Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
@@ -95,7 +96,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ActualStartDate,
                     command.PlannedEndDate,
                     command.AccountLegalEntityId,
-                    command.UKPRN))
+                    command.UKPRN,
+                    command.EmployerAccountId))
                 .Returns(apprenticeship);
 
             await _commandHandler.Handle(command);
@@ -128,7 +130,23 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             command.PlannedStartDate = new DateTime();
 
-            _apprenticeshipFactory.Setup(x => x.CreateNew(command.Uln, command.TrainingCode, command.DateOfBirth, command.FirstName, command.LastName, command.TrainingPrice, command.EndPointAssessmentPrice, command.AgreedPrice, command.ApprenticeshipHashedId, (int)Math.Ceiling(command.AgreedPrice), command.ActualStartDate, command.PlannedEndDate, command.AccountLegalEntityId, command.UKPRN)).Returns(apprenticeship);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(
+                    command.Uln, 
+                    command.TrainingCode, 
+                    command.DateOfBirth, 
+                    command.FirstName, 
+                    command.LastName, 
+                    command.TrainingPrice, 
+                    command.EndPointAssessmentPrice, 
+                    command.AgreedPrice, 
+                    command.ApprenticeshipHashedId, 
+                    (int)Math.Ceiling(command.AgreedPrice), 
+                    command.ActualStartDate, 
+                    command.PlannedEndDate, 
+                    command.AccountLegalEntityId, 
+                    command.UKPRN, 
+                    command.EmployerAccountId))
+                .Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
 
@@ -159,7 +177,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ActualStartDate,
                     command.PlannedEndDate,
                     command.AccountLegalEntityId,
-                    command.UKPRN))
+                    command.UKPRN,
+                    command.EmployerAccountId))
                 .Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
                 .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
@@ -196,7 +215,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ActualStartDate,
                     command.PlannedEndDate,
                     command.AccountLegalEntityId,
-                    command.UKPRN))
+                    command.UKPRN,
+                    command.EmployerAccountId))
                 .Returns(apprenticeship);
 
             await _commandHandler.Handle(command);
@@ -231,7 +251,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.ActualStartDate,
                     command.PlannedEndDate, 
                     command.AccountLegalEntityId,
-                    command.UKPRN))
+                    command.UKPRN,
+                    command.EmployerAccountId))
                 .Returns(apprenticeship);
 
             await _commandHandler.Handle(command);

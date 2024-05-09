@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
 {
@@ -21,11 +23,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         public void Arrange()
         {
             _fixture = new Fixture();
-
-            var options = new DbContextOptionsBuilder<ApprenticeshipsDataContext>().UseInMemoryDatabase("ApprenticeshipsDbContext" + Guid.NewGuid()).Options;
-            _dbContext = new ApprenticeshipsDataContext(options);
-
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
         }
 
         [TearDown]
@@ -37,6 +34,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         [Test]
         public async Task ThenReturnNullWhenNoApprenticeshipFoundWithApprenticeshipKey()
         {
+            //Arrange
+            SetUpApprenticeshipQueryRepository();
+
             //Act
             var result = await _sut.GetPendingPriceChange(_fixture.Create<Guid>());
 
@@ -47,6 +47,9 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         [Test]
         public async Task ThenReturnNullWhenNoPriceHistoryRecordsFoundForExistingApprenticeship()
         {
+            //Arrange
+            SetUpApprenticeshipQueryRepository();
+
             //Act
             var apprenticeshipKey = _fixture.Create<Guid>();
             var otherApprenticeshipKey1 = _fixture.Create<Guid>();
@@ -74,15 +77,21 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.Should().BeNull();
         }
 
-        [Test]
-        public async Task ThenTheCorrectPendingPriceChangeIsReturned()
+        [TestCase("Employer")]
+        [TestCase("Provider")]
+        public async Task ThenTheCorrectPendingPriceChangeIsReturned(string initiator)
         {
+            //Arrange
+            SetUpApprenticeshipQueryRepository();
+
             //Act
             var apprenticeshipKey = _fixture.Create<Guid>();
             var otherApprenticeshipKey = _fixture.Create<Guid>();
             var priceHistoryKey = _fixture.Create<Guid>();
             var effectiveFromDate = DateTime.UtcNow.AddDays(-5).Date;
-            
+            var providerApprovedDate = initiator == "Provider" ? _fixture.Create<DateTime>() : (DateTime?)null;
+            var employerApprovedDate = initiator == "Employer" ? _fixture.Create<DateTime>() : (DateTime?)null;
+
             var apprenticeships = new[]
             {
                 _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
@@ -91,12 +100,17 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                         {
                             Key = priceHistoryKey,
                             ApprenticeshipKey = apprenticeshipKey,
-                            PriceChangeRequestStatus = PriceChangeRequestStatus.Created,
+                            PriceChangeRequestStatus = ChangeRequestStatus.Created,
                             TrainingPrice = 10000,
                             AssessmentPrice = 3000,
                             TotalPrice = 13000,
                             EffectiveFromDate = effectiveFromDate,
-                            ChangeReason = "testReason"
+                            ChangeReason = "testReason",
+                            ProviderApprovedDate = providerApprovedDate,
+                            EmployerApprovedDate = employerApprovedDate,
+                            ProviderApprovedBy = initiator == "Provider" ? "Mr Provider" : null,
+                            EmployerApprovedBy = initiator == "Employer" ? "Mr Employer" : null,
+                            Initiator = initiator == "Employer" ? ChangeInitiator.Employer : ChangeInitiator.Provider
                         }
                     })
                     .Create(), 
@@ -114,15 +128,26 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
 
             // Assert
             result.Should().NotBeNull();
-            result.OriginalTrainingPrice = apprenticeships[0].TrainingPrice;
-            result.OriginalAssessmentPrice = apprenticeships[0].EndPointAssessmentPrice;
-            result.OriginalTotalPrice = apprenticeships[0].TotalPrice;
-            result.PendingTrainingPrice = 10000;
-            result.PendingAssessmentPrice = 3000;
-            result.PendingTotalPrice = 13000;
-            result.EffectiveFrom = effectiveFromDate;
-            result.Reason = "testReason";
-            result.Ukprn = apprenticeships[0].Ukprn;
+            result.OriginalTrainingPrice.Should().Be(apprenticeships[0].TrainingPrice);
+            result.OriginalAssessmentPrice.Should().Be(apprenticeships[0].EndPointAssessmentPrice);
+            result.OriginalTotalPrice.Should().Be(apprenticeships[0].TotalPrice);
+            result.PendingTrainingPrice.Should().Be(10000);
+            result.PendingAssessmentPrice.Should().Be(3000);
+            result.PendingTotalPrice.Should().Be(13000);
+            result.EffectiveFrom.Should().Be(effectiveFromDate);
+            result.Reason.Should().Be("testReason");
+            result.Ukprn.Should().Be(apprenticeships[0].Ukprn);
+            result.ProviderApprovedDate.Should().Be(providerApprovedDate);
+            result.EmployerApprovedDate.Should().Be(employerApprovedDate);
+            result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
+            result.Initiator.Should().Be(initiator);
+        }
+
+        private void SetUpApprenticeshipQueryRepository()
+        {
+            _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
+            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
     }
 }

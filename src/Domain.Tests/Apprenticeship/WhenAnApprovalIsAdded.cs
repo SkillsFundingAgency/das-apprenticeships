@@ -18,16 +18,30 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
         [SetUp]
         public void SetUp()
         {
-            var apprenticeshipFactory = new ApprenticeshipFactory();
             _fixture = new Fixture();
-            _apprenticeship = apprenticeshipFactory.CreateNew(
-                "1234435",
-                "TRN",
-                new DateTime(2000,
-                    10,
-                    16),
-                "Ron",
-                "Swanson",
+        }
+
+        [Test]
+        public void ThenTheApprovalIsAdded()
+        {
+            var apprenticeship = CreateNewApprenticeship();
+            var approvalDomainModel = ApprovalDomainModel.Get(_fixture.Create<Approval>());
+            
+            apprenticeship.AddApproval(approvalDomainModel.ApprovalsApprenticeshipId, approvalDomainModel.LegalEntityName, approvalDomainModel.ActualStartDate, approvalDomainModel.PlannedEndDate, approvalDomainModel.AgreedPrice, approvalDomainModel.FundingEmployerAccountId, approvalDomainModel.FundingType, approvalDomainModel.FundingBandMaximum, approvalDomainModel.PlannedStartDate, approvalDomainModel.FundingPlatform);
+
+            var approval = apprenticeship.GetEntity().Approvals.Single();
+            approval.Should().BeEquivalentTo(approvalDomainModel);
+        }
+
+        private ApprenticeshipDomainModel CreateNewApprenticeship()
+        {
+            var apprenticeshipFactory = new ApprenticeshipFactory();
+            return apprenticeshipFactory.CreateNew(
+                _fixture.Create<string>(),
+                _fixture.Create<string>(),
+                _fixture.Create<DateTime>(),
+                _fixture.Create<string>(),
+                _fixture.Create<string>(),
                 _fixture.Create<decimal?>(),
                 _fixture.Create<decimal?>(),
                 _fixture.Create<decimal>(),
@@ -36,19 +50,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
                 _fixture.Create<DateTime>(),
                 _fixture.Create<DateTime>(),
                 _fixture.Create<long>(),
+                _fixture.Create<long>(),
                 _fixture.Create<long>());
-        }
-
-        [Test]
-        public void ThenTheApprovalIsAdded()
-        {
-            var expectedModel = ApprovalDomainModel.Get(_fixture.Create<Approval>());
-            _apprenticeship.AddApproval(expectedModel.ApprovalsApprenticeshipId, expectedModel.Ukprn, expectedModel.EmployerAccountId, expectedModel.LegalEntityName, expectedModel.ActualStartDate, expectedModel.PlannedEndDate, expectedModel.AgreedPrice, expectedModel.FundingEmployerAccountId, expectedModel.FundingType, expectedModel.FundingBandMaximum, expectedModel.PlannedStartDate, expectedModel.FundingPlatform);
-
-            var approval = _apprenticeship.GetEntity().Approvals.Single();
-
-            approval.Should().BeEquivalentTo(expectedModel, options => options
-                .WithMapping<Approval>(x => x.Ukprn, y => y.UKPRN));
         }
     }
 }

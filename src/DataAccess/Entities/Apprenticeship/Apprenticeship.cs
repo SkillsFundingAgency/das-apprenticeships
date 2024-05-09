@@ -8,6 +8,7 @@
         {
             Approvals = new List<Approval>();
             PriceHistories = new List<PriceHistory>();
+            StartDateChanges = new List<StartDateChange>();
         }
         
         [Key]
@@ -24,9 +25,11 @@
         public int? FundingBandMaximum { get; set; }
         public DateTime? ActualStartDate { get; set; }
         public DateTime? PlannedEndDate { get; set; }
+        public long EmployerAccountId { get; set; }
         public List<Approval> Approvals { get; set; }
         public long? AccountLegalEntityId { get; set; }
         public List<PriceHistory> PriceHistories { get; set; }
-        public long? Ukprn { get; set; }
+        public long Ukprn { get; set; }
+        public List<StartDateChange> StartDateChanges { get; set; }
     }
 }
