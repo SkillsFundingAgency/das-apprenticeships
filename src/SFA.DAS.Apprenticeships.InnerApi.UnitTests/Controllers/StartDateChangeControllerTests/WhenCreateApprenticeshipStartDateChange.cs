@@ -45,6 +45,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.StartDateChange
                 r.ApprenticeshipKey == apprenticeshipKey &&
                 r.UserId == request.UserId &&
                 r.ActualStartDate == request.ActualStartDate &&
+                r.PlannedEndDate == request.PlannedEndDate &&
                 r.Reason == request.Reason
             ), It.IsAny<CancellationToken>()));
         }

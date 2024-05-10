@@ -57,7 +57,7 @@ public class WhenHandleStartDateChangeApproved
         var startDateChange = _fixture.Create<StartDateChange>();
 
         apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
-        apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.Reason, startDateChange.ProviderApprovedBy, startDateChange.ProviderApprovedDate, null, null, startDateChange.CreatedDate, startDateChange.RequestStatus, ChangeInitiator.Provider);
+        apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.PlannedEndDate, startDateChange.Reason, startDateChange.ProviderApprovedBy, startDateChange.ProviderApprovedDate, null, null, startDateChange.CreatedDate, startDateChange.RequestStatus, ChangeInitiator.Provider);
         var employerUserId = _fixture.Create<string>();
         apprenticeship.ApproveStartDateChange(employerUserId);
         var approval = apprenticeship.Approvals.Single();
@@ -75,7 +75,8 @@ public class WhenHandleStartDateChangeApproved
             e.ApprenticeshipId == approval.ApprovalsApprenticeshipId &&
             e.ProviderId == apprenticeship.Ukprn &&
             e.ActualStartDate == startDateChange.ActualStartDate &&
-            e.ProviderApprovedBy == startDateChange.ProviderApprovedBy &&
+			e.PlannedEndDate == startDateChange.PlannedEndDate &&
+			e.ProviderApprovedBy == startDateChange.ProviderApprovedBy &&
             e.EmployerApprovedBy == employerUserId &&
             e.Initiator == ChangeInitiator.Provider.ToString()
         ), It.IsAny<PublishOptions>()));

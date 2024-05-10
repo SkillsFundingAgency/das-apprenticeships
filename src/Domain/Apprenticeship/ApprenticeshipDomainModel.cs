@@ -206,7 +206,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
     public void AddStartDateChange(
         DateTime actualStartDate,
-        string reason,
+		DateTime plannedEndDate,
+		string reason,
         string? providerApprovedBy,
         DateTime? providerApprovedDate,
         string? employerApprovedBy,
@@ -222,7 +223,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         var startDateChange = StartDateChangeDomainModel.New(this.Key,
             actualStartDate,
-            reason,
+			plannedEndDate,
+			reason,
             providerApprovedBy,
             providerApprovedDate,
             employerApprovedBy,

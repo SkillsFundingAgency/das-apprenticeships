@@ -43,7 +43,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreateStartDateChange
             _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
                 y.GetEntity().StartDateChanges.Count == 1 &&
                 y.GetEntity().StartDateChanges[0].ActualStartDate == command.ActualStartDate &&
-                y.GetEntity().StartDateChanges[0].Reason == command.Reason &&
+				y.GetEntity().StartDateChanges[0].PlannedEndDate == command.PlannedEndDate &&
+				y.GetEntity().StartDateChanges[0].Reason == command.Reason &&
                 y.GetEntity().StartDateChanges[0].ProviderApprovedBy == command.UserId &&
                 y.GetEntity().StartDateChanges[0].ProviderApprovedDate != null &&
                 y.GetEntity().StartDateChanges[0].EmployerApprovedBy == null &&
@@ -70,7 +71,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreateStartDateChange
             _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
                 y.GetEntity().StartDateChanges.Count == 1 &&
                 y.GetEntity().StartDateChanges[0].ActualStartDate == command.ActualStartDate &&
-                y.GetEntity().StartDateChanges[0].Reason == command.Reason &&
+				y.GetEntity().StartDateChanges[0].PlannedEndDate == command.PlannedEndDate &&
+				y.GetEntity().StartDateChanges[0].Reason == command.Reason &&
                 y.GetEntity().StartDateChanges[0].EmployerApprovedBy == command.UserId &&
                 y.GetEntity().StartDateChanges[0].EmployerApprovedDate != null &&
                 y.GetEntity().StartDateChanges[0].ProviderApprovedBy == null &&
