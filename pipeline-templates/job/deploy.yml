@@ -59,6 +59,7 @@ jobs:
             TargetFileName: '*.schema.json'
             TableName: Configuration
             ConfigurationSecrets:
+              UserBearerTokenSigningKey: $(UserBearerTokenSigningKey)
               NServiceBusLicense: $(NServiceBusLicense)
               ApprenticeshipsApimSubscriptionKey: $(ApprenticeshipsApimSubscriptionKey)
         - template: azure-pipelines-templates/deploy/step/function-deploy.yml@das-platform-building-blocks
