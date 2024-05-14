@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.Factories;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
@@ -27,7 +24,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var approverUserId = _fixture.Create<string>();
-        var apprenticeship = BuildApprenticeshipWithPendingStartDateChange();
+        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
         apprenticeship.ApproveStartDateChange(approverUserId);
@@ -46,7 +43,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var approverUserId = _fixture.Create<string>();
-        var apprenticeship = BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval:true);
+        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval:true);
 
         //Act
         apprenticeship.ApproveStartDateChange(approverUserId);
@@ -65,54 +62,12 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var employerUserId = _fixture.Create<string>();
-        var apprenticeship = BuildApprenticeshipWithPendingStartDateChange();
+        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
         apprenticeship.ApproveStartDateChange(employerUserId);
 
         var events = apprenticeship.FlushEvents();
         events.Should().ContainSingle(x => x.GetType() == typeof(StartDateChangeApproved));
-    }
-
-    private ApprenticeshipDomainModel BuildApprenticeshipWithPendingStartDateChange(bool pendingProviderApproval = false)
-    {
-        var apprenticeship = new ApprenticeshipFactory().CreateNew(
-            "1234435",
-            "TRN",
-            new DateTime(2000,
-                10,
-                16),
-            "Ron",
-            "Swanson",
-            _fixture.Create<decimal?>(),
-            _fixture.Create<decimal?>(),
-            _fixture.Create<decimal>(),
-            _fixture.Create<string>(),
-            _fixture.Create<int>(),
-            _fixture.Create<DateTime>(),
-            _fixture.Create<DateTime>(),
-            _fixture.Create<long>(),
-            _fixture.Create<long>(),
-            _fixture.Create<long>(),
-            "1.1");
-
-        var startDateChange = StartDateChangeDomainModel.Get(_fixture.Create<StartDateChange>());
-
-        if (pendingProviderApproval)
-        {
-            apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.Reason,
-                null, null,
-                startDateChange.EmployerApprovedBy, startDateChange.EmployerApprovedDate, startDateChange.CreatedDate,
-                ChangeRequestStatus.Created, ChangeInitiator.Employer);
-        }
-        else
-        {
-            apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.Reason,
-                startDateChange.ProviderApprovedBy, startDateChange.ProviderApprovedDate,
-                null, null, startDateChange.CreatedDate,
-                ChangeRequestStatus.Created, ChangeInitiator.Provider);
-        }
-
-        return apprenticeship;
     }
 }
