@@ -75,8 +75,8 @@ public class WhenHandleStartDateChangeApproved
             e.ApprenticeshipId == approval.ApprovalsApprenticeshipId &&
             e.ProviderId == apprenticeship.Ukprn &&
             e.ActualStartDate == startDateChange.ActualStartDate &&
-			e.PlannedEndDate == startDateChange.PlannedEndDate &&
-			e.ProviderApprovedBy == startDateChange.ProviderApprovedBy &&
+            e.PlannedEndDate == startDateChange.PlannedEndDate &&
+            e.ProviderApprovedBy == startDateChange.ProviderApprovedBy &&
             e.EmployerApprovedBy == employerUserId &&
             e.Initiator == ChangeInitiator.Provider.ToString()
         ), It.IsAny<PublishOptions>()));

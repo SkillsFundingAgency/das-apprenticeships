@@ -7,8 +7,8 @@ public class CreateStartDateChangeCommand : ICommand
 		Guid apprenticeshipKey,
         string userId, 
         DateTime actualStartDate,
-		DateTime plannedEndDate,
-		string reason)
+        DateTime plannedEndDate,
+        string reason)
     {
         Initiator = initiator;
         ApprenticeshipKey = apprenticeshipKey;
@@ -21,6 +21,6 @@ public class CreateStartDateChangeCommand : ICommand
     public Guid ApprenticeshipKey { get; set; }
     public string UserId { get; set; }
     public DateTime ActualStartDate { get; set; }
-	public DateTime PlannedEndDate { get; set; }
-	public string Reason { get; set; }
+    public DateTime PlannedEndDate { get; set; }
+    public string Reason { get; set; }
 }

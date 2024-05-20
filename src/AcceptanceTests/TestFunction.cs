@@ -131,10 +131,10 @@ public class TestFunction : IDisposable
     {
         var config = new List<object>();
 
-		foreach (var encodingType in Enum.GetValues(typeof(EncodingType)))
-		{
+        foreach (var encodingType in Enum.GetValues(typeof(EncodingType)))
+        {
             config.Add(new { EncodingType = encodingType, Salt = "AnyString", MinHashLength = 6, Alphabet = "ABCDEFGHJKMNPRSTUVWXYZ23456789" });
-		}
+        }
 
         return JsonConvert.SerializeObject(new { Encodings = config });
 	}
