@@ -245,6 +245,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         var approver = pendingStartDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
         pendingStartDateChange.Approve(approver, userApprovedBy, DateTime.UtcNow);
         _entity.ActualStartDate = pendingStartDateChange.ActualStartDate;
+        _entity.PlannedEndDate = pendingStartDateChange.PlannedEndDate;
 
         AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver));
     }
