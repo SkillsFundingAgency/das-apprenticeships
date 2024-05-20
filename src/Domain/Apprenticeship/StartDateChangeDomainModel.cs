@@ -12,9 +12,9 @@ public class StartDateChangeDomainModel
     public DateTime ActualStartDate => _entity.ActualStartDate;
     public DateTime PlannedEndDate => _entity.PlannedEndDate;
     public string Reason => _entity.Reason;
-    public string ProviderApprovedBy => _entity.ProviderApprovedBy;
+    public string ProviderApprovedBy => _entity.ProviderApprovedBy!;
     public DateTime? ProviderApprovedDate => _entity.ProviderApprovedDate;
-    public string EmployerApprovedBy => _entity.EmployerApprovedBy;
+    public string EmployerApprovedBy => _entity.EmployerApprovedBy!;
     public DateTime? EmployerApprovedDate => _entity.EmployerApprovedDate;
     public DateTime CreatedDate => _entity.CreatedDate;
     public ChangeRequestStatus RequestStatus => _entity.RequestStatus;
@@ -77,5 +77,11 @@ public class StartDateChangeDomainModel
             _entity.ProviderApprovedBy = userId;
             _entity.ProviderApprovedDate = approvedDate;
         }
+    }
+
+    public void Reject(string? reason)
+    {
+        _entity.RequestStatus = ChangeRequestStatus.Rejected;
+        _entity.RejectReason = reason!;
     }
 }

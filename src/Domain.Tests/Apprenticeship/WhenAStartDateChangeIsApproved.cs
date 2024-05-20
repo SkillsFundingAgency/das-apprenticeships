@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.Factories;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
@@ -27,7 +24,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var approverUserId = _fixture.Create<string>();
-        var apprenticeship = BuildApprenticeshipWithPendingStartDateChange();
+        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
         apprenticeship.ApproveStartDateChange(approverUserId);
@@ -46,7 +43,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var approverUserId = _fixture.Create<string>();
-        var apprenticeship = BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval:true);
+        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval:true);
 
         //Act
         apprenticeship.ApproveStartDateChange(approverUserId);
@@ -65,7 +62,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var employerUserId = _fixture.Create<string>();
-        var apprenticeship = BuildApprenticeshipWithPendingStartDateChange();
+        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
         apprenticeship.ApproveStartDateChange(employerUserId);

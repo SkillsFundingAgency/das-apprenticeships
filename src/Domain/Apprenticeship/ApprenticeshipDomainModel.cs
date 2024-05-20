@@ -248,4 +248,13 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver));
     }
+
+    public void RejectStartDateChange(string? reason)
+    {
+        var pendingStartDateChange = _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
+        if (pendingStartDateChange == null)
+            throw new InvalidOperationException("There is no pending start date request to reject for this apprenticeship.");
+
+        pendingStartDateChange.Reject(reason);
+    }
 }

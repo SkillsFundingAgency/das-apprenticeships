@@ -19,5 +19,5 @@ public class StartDateChange
     public DateTime CreatedDate { get; set; }
     public ChangeRequestStatus RequestStatus { get; set; }
     public ChangeInitiator? Initiator { get; set; }
-
+    public string RejectReason { get; set; } = null!;
 }
