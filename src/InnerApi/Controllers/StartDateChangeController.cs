@@ -102,4 +102,19 @@ public class StartDateChangeController : ControllerBase
         await _commandDispatcher.Send(new RejectStartDateChangeCommand(apprenticeshipKey, request.Reason));
         return Ok();
     }
+
+    /// <summary>
+    /// Removes a pending start date change
+    /// </summary>
+    /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+    /// <returns>Ok result</returns>
+    [HttpDelete("{apprenticeshipKey}/startDateChange/pending")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> CancelPendingStartDateChange(Guid apprenticeshipKey)
+    {
+	    var request = new CancelPendingPriceChangeRequest(apprenticeshipKey);
+	    await _commandDispatcher.Send(request);
+
+	    return Ok();
+    }
 }

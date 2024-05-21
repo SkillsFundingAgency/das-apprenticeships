@@ -255,4 +255,10 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         pendingStartDateChange.Reject(reason);
     }
+
+    public void CancelPendingStartDateChange()
+    {
+	    var pendingStartDateChange = _startDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Created);
+	    pendingStartDateChange.Cancel();
+    }
 }
