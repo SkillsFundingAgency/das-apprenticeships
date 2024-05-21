@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
+using SFA.DAS.Apprenticeships.Command.CancelPendingStartDateChange;
 using SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
 using SFA.DAS.Apprenticeships.Command.RejectStartDateChange;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
@@ -112,7 +113,7 @@ public class StartDateChangeController : ControllerBase
     [ProducesResponseType(200)]
     public async Task<IActionResult> CancelPendingStartDateChange(Guid apprenticeshipKey)
     {
-	    var request = new CancelPendingPriceChangeRequest(apprenticeshipKey);
+	    var request = new CancelPendingStartDateChangeRequest(apprenticeshipKey);
 	    await _commandDispatcher.Send(request);
 
 	    return Ok();
