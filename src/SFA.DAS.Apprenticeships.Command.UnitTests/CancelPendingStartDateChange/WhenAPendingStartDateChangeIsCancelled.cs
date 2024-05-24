@@ -1,17 +1,13 @@
 ﻿using AutoFixture;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
 using SFA.DAS.Apprenticeships.Command.CancelPendingStartDateChange;
-using SFA.DAS.Apprenticeships.Command.CreatePriceChange;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.CancelPendingStartDateChange;
@@ -34,7 +30,7 @@ public class WhenAPendingStartDateChangeIsCancelled
     }
 
     [Test]
-    public async Task ThenPriceHistoryIsCancelled()
+    public async Task ThenStartDateChangeIsCancelled()
     {
         var command = _fixture.Create<CancelPendingStartDateChangeRequest>();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
