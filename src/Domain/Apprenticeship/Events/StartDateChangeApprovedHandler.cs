@@ -30,6 +30,7 @@ public class StartDateChangeApprovedHandler : IDomainEventHandler<StartDateChang
             ProviderId = apprenticeship.Ukprn,
             ActualStartDate = startDateChange.ActualStartDate,
             PlannedEndDate = startDateChange.PlannedEndDate,
+            AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
             ProviderApprovedBy = startDateChange.ProviderApprovedBy,
             EmployerApprovedBy = startDateChange.EmployerApprovedBy,
             Initiator = startDateChange.Initiator.ToString()!

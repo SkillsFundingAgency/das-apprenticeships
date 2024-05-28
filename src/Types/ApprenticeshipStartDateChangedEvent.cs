@@ -6,6 +6,7 @@ public class ApprenticeshipStartDateChangedEvent
     public long ApprenticeshipId { get; set; }
     public DateTime ActualStartDate { get; set; }
     public DateTime PlannedEndDate { get; set; }
+    public int? AgeAtStartOfApprenticeship { get; set; }
     public long EmployerAccountId { get; set; }
     public long ProviderId { get; set; }
     public DateTime ApprovedDate { get; set; }

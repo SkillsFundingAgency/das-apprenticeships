@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
@@ -27,18 +28,12 @@ public class ApprenticeshipDomainModel : AggregateRoot
     {
         get
         {
-            var firstApproval = _approvals.OrderBy(x => x.ActualStartDate).First();
-            if (!firstApproval.ActualStartDate.HasValue)
+            if (_entity.ActualStartDate.HasValue && _approvals.Single().FundingPlatform == FundingPlatform.DAS)
             {
-                return null;
+                return DateOfBirth.CalculateAgeAtDate(_entity.ActualStartDate.Value);
             }
-            var age = firstApproval.ActualStartDate.Value.Year - DateOfBirth.Year;
-            if (firstApproval.ActualStartDate.Value.Date.AddYears(-age) < DateOfBirth.Date)
-            {
-                age--;
-            }
-
-            return age;
+            
+            return null;
         }
     }
 
@@ -57,8 +52,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
         DateTime? plannedEndDate,
         long accountLegalEntityId,
         long ukprn,
-            long employerAccountId,
-            string? trainingCourseVersion)
+        long employerAccountId,
+        string? trainingCourseVersion)
     {
         return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
         {
