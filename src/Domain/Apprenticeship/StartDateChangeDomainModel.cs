@@ -81,4 +81,8 @@ public class StartDateChangeDomainModel
         _entity.RequestStatus = ChangeRequestStatus.Rejected;
         _entity.RejectReason = reason!;
     }
+    public void Cancel()
+    {
+	    _entity.RequestStatus = ChangeRequestStatus.Cancelled;
+    }
 }
