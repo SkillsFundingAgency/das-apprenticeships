@@ -32,5 +32,6 @@
         public long Ukprn { get; set; }
         public List<StartDateChange> StartDateChanges { get; set; }
         public string? TrainingCourseVersion { get; set; }
+        public bool? PaymentsFrozen { get; set; }
     }
 }

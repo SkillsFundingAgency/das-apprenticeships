@@ -19,6 +19,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     public DateTime DateOfBirth => _entity.DateOfBirth;
     public long EmployerAccountId => _entity.EmployerAccountId;
     public long Ukprn => _entity.Ukprn;
+    public bool PaymentsFrozen => _entity.PaymentsFrozen.GetValueOrDefault();
     public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
     public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
     public IReadOnlyCollection<StartDateChangeDomainModel> StartDateChanges => new ReadOnlyCollection<StartDateChangeDomainModel>(_startDateChanges);
@@ -57,8 +58,9 @@ public class ApprenticeshipDomainModel : AggregateRoot
         DateTime? plannedEndDate,
         long accountLegalEntityId,
         long ukprn,
-            long employerAccountId,
-            string? trainingCourseVersion)
+        long employerAccountId,
+        string? trainingCourseVersion,
+        bool? paymentsFrozen)
     {
         return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
         {
@@ -77,8 +79,9 @@ public class ApprenticeshipDomainModel : AggregateRoot
             PlannedEndDate = plannedEndDate,
             AccountLegalEntityId = accountLegalEntityId,
             EmployerAccountId = employerAccountId,
-            Ukprn = ukprn,
-                TrainingCourseVersion = trainingCourseVersion
+            Ukprn = ukprn, 
+            TrainingCourseVersion = trainingCourseVersion,
+            PaymentsFrozen = paymentsFrozen
         });
     }
 
