@@ -38,8 +38,7 @@ public class WhenAPriceChangeIsCreated
             _fixture.Create<long>(),
             _fixture.Create<long>(),
             _fixture.Create<long>(),
-            _fixture.Create<string>(),
-            false);
+            _fixture.Create<string>());
     }
 
     [Test]

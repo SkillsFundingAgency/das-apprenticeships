@@ -59,8 +59,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         long accountLegalEntityId,
         long ukprn,
         long employerAccountId,
-        string? trainingCourseVersion,
-        bool? paymentsFrozen)
+        string? trainingCourseVersion)
     {
         return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
         {
@@ -81,7 +80,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
             EmployerAccountId = employerAccountId,
             Ukprn = ukprn, 
             TrainingCourseVersion = trainingCourseVersion,
-            PaymentsFrozen = paymentsFrozen
+            PaymentsFrozen = false
         });
     }
 
