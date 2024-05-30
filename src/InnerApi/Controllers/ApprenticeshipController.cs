@@ -5,6 +5,7 @@ using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
