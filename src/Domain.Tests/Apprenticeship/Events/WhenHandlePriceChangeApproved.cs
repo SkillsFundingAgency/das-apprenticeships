@@ -51,7 +51,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                 _fixture.Create<long>(),
                 _fixture.Create<long>(),
                 _fixture.Create<long>(),
-                _fixture.Create<string>());
+                _fixture.Create<string>(),
+                false);
             apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
             apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeRequestStatus.Created, null, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<ChangeInitiator>());
             apprenticeship.ApprovePriceChange("Bob", null, null);

@@ -31,7 +31,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
                 Fixture.Create<long>(),
                 Fixture.Create<long>(),
                 Fixture.Create<long>(),
-                "1.1");
+                "1.1",
+                false);
 
             var startDateChange = StartDateChangeDomainModel.Get(Fixture.Create<StartDateChange>());
 

@@ -39,7 +39,8 @@ public class WhenAPendingPriceChangeIsCancelled
             _fixture.Create<long>(),
             _fixture.Create<long>(),
             _fixture.Create<long>(),
-            _fixture.Create<string>());
+            _fixture.Create<string>(),
+            false);
 
         var priceHistory = PriceHistoryDomainModel.Get(_fixture.Create<PriceHistory>());
         _apprenticeship.AddPriceHistory(

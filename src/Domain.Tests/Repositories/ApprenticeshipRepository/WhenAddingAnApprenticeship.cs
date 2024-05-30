@@ -124,7 +124,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
                 _fixture.Create<long>(),     //  long accountLegalEntityId,
 				_fixture.Create<long>(),     //  long ukprn,
 				_fixture.Create<long>(),    // long employerAccountId
-                _fixture.Create<string>());    //  string trainingCourseVersion
+                _fixture.Create<string>(),    //  string trainingCourseVersion
+				false); //bool paymentsFrozen - false on creation
             SetUpApprenticeshipRepository();
 			await _sut.Add(testApprenticeship);
             

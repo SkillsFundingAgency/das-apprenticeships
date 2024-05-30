@@ -22,7 +22,8 @@ namespace SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations
                 fixture.Create<long>(),
                 fixture.Create<long>(),
                 fixture.Create<long>(),
-                fixture.Create<string>()));
+                fixture.Create<string>(),
+                fixture.Create<bool>()));
         }
     }
 }

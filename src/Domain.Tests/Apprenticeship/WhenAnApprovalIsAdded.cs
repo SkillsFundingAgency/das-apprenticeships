@@ -52,7 +52,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
                 _fixture.Create<long>(),
                 _fixture.Create<long>(),
                 _fixture.Create<long>(),
-                _fixture.Create<string>());
+                _fixture.Create<string>(),
+                false);
         }
     }
 }
