@@ -147,7 +147,7 @@ using SFA.DAS.Apprenticeships.Enums;
             paymentsFrozen = await DbContext.Apprenticeships
 	            .Where(x => x.Key == apprenticeshipKey)
 	            .Select(x => x.PaymentsFrozen)
-	            .SingleOrDefaultAsync();
+	            .SingleAsync();
 	     }
 	     catch (Exception e)
 	     {
