@@ -3,6 +3,7 @@
 	[Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
 	[ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL,
 	[ActualStartDate] DATETIME NOT NULL,
+	[PlannedEndDate] DATETIME NULL,
 	[Reason] NVARCHAR(MAX),
 	[ProviderApprovedBy] NVARCHAR(500) NULL,
 	[ProviderApprovedDate] DATETIME NULL,

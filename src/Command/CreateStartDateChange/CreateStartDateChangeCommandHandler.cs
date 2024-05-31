@@ -21,11 +21,11 @@ public class CreateStartDateChangeCommandHandler : ICommandHandler<CreateStartDa
 
         if (initiator == ChangeInitiator.Provider)
         {
-            apprenticeship.AddStartDateChange(command.ActualStartDate, command.Reason, command.UserId, DateTime.Now, null, null, DateTime.Now, ChangeRequestStatus.Created, ChangeInitiator.Provider);
+            apprenticeship.AddStartDateChange(command.ActualStartDate, command.PlannedEndDate, command.Reason, command.UserId, DateTime.Now, null, null, DateTime.Now, ChangeRequestStatus.Created, ChangeInitiator.Provider);
         }
         else
         {
-            apprenticeship.AddStartDateChange(command.ActualStartDate, command.Reason, null, null, command.UserId, DateTime.Now, DateTime.Now, ChangeRequestStatus.Created, ChangeInitiator.Employer);
+            apprenticeship.AddStartDateChange(command.ActualStartDate, command.PlannedEndDate, command.Reason, null, null, command.UserId, DateTime.Now, DateTime.Now, ChangeRequestStatus.Created, ChangeInitiator.Employer);
         }
 
         await _apprenticeshipRepository.Update(apprenticeship);
