@@ -37,7 +37,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         public async Task WhenValidTokenWithUkprnClaim_ShouldSetUkprnInContextItems()
         {
             // Arrange
-            var claims = new List<Claim> { new ("http://schemas.portal.com/ukprn", "12345") };
+            var claims = new List<Claim> { new ("http://schemas.portal.com/ukprn", "12345"), new(ClaimTypes.Name, "ProviderUserName") };
             var token = CreateValidToken(ValidSigningKey, claims);
             _httpContext.Request.Headers["Authorization"] = $"{token}";
             SetUserBearerTokenSigningKeyConfig(ValidSigningKey);
@@ -55,7 +55,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         public async Task WhenValidTokenWithEmployerAccountIdClaim_ShouldSetEmployerAccountIdInContextItems()
         {
             // Arrange
-            var claims = new List<Claim> { new ("http://das/employer/identity/claims/account", "98765") };
+            var claims = new List<Claim> { new ("http://das/employer/identity/claims/account", "98765"), new("http://das/employer/identity/claims/id", "EmployerUserName") };
             var token = CreateValidToken(ValidSigningKey, claims);
             _httpContext.Request.Headers["Authorization"] = $"{token}";
             SetUserBearerTokenSigningKeyConfig(ValidSigningKey);
