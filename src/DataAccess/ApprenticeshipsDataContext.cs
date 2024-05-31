@@ -21,6 +21,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
         public virtual DbSet<Approval> Approvals { get; set; }
         public virtual DbSet<PriceHistory> PriceHistories { get; set; }
         public virtual DbSet<StartDateChange> StartDateChanges { get; set; }
+        public virtual DbSet<FreezeRequest> FreezeRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,6 +65,11 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 .HasConversion(
                     v => v.ToString(),
                     v => (ChangeInitiator)Enum.Parse(typeof(ChangeInitiator), v));
+
+            // FreezeRequest
+            modelBuilder.Entity<FreezeRequest>()
+                .HasKey(x => x.Key);
+
 
             base.OnModelCreating(modelBuilder);
         }

@@ -9,6 +9,7 @@ public class Apprenticeship
 		Approvals = new List<Approval>();
 		PriceHistories = new List<PriceHistory>();
 		StartDateChanges = new List<StartDateChange>();
+		FreezeRequests = new List<FreezeRequest>();
 	}
         
 	[Key]
@@ -31,6 +32,7 @@ public class Apprenticeship
 	public List<PriceHistory> PriceHistories { get; set; }
 	public long Ukprn { get; set; }
 	public List<StartDateChange> StartDateChanges { get; set; }
+	public List<FreezeRequest> FreezeRequests { get; set; }
 	public string? TrainingCourseVersion { get; set; }
 	public bool? PaymentsFrozen { get; set; }
 }

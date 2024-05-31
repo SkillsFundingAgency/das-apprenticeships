@@ -93,12 +93,15 @@ public class BearerTokenMiddleware
         }
         var accountIds = string.Join(";", ukprns);
         context.Items["Ukprn"] = accountIds;
+        context.Items["UserId"] = claims.Single(x => x.Type == ClaimTypes.Name).Value;
         return true;
     }
 
     private bool HandleEmployerAccountClaim(HttpContext context, IEnumerable<Claim> claims)
     {
         const string employerAccountIdClaimName = "http://das/employer/identity/claims/account";
+        const string UserIdClaimName = "http://das/employer/identity/claims/id";
+
         var employerAccountIds = claims.Where(x => x.Type == employerAccountIdClaimName).Select(x => x.Value).ToArray();
         if (!employerAccountIds.Any())
         {
@@ -107,6 +110,7 @@ public class BearerTokenMiddleware
 
         var accountIds = string.Join(";", employerAccountIds);
         context.Items["EmployerAccountId"] = accountIds;
+        context.Items["UserId"] = claims.Single(x => x.Type == UserIdClaimName).Value;
         return true;
     }
 }
