@@ -168,7 +168,9 @@ using SFA.DAS.Apprenticeships.Enums;
              AccountLegalEntityId = x.AccountLegalEntityId,
              Initiator = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Initiator.ToString(),
              OriginalActualStartDate = x.ActualStartDate.GetValueOrDefault(),
-             PendingActualStartDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ActualStartDate
-         };
+             PendingActualStartDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ActualStartDate,
+			 OriginalPlannedEndDate = x.PlannedEndDate.GetValueOrDefault(),
+			 PendingPlannedEndDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).PlannedEndDate
+		 };
      }
  }
