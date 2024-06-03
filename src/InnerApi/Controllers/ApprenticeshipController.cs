@@ -113,9 +113,10 @@ public class ApprenticeshipController : ControllerBase
             await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPayments.Freeze));
             return Ok();
         }
-        catch (ArgumentException exception)
+        catch (Exception exception)
         {
-            _logger.LogError(exception, $"Bad Request, missing or invalid: {exception.ParamName}");
+            _logger.LogError(exception, "{method} failed to update {apprenticeshipKey} : {message}", 
+                nameof(FreezePaymentStatus), apprenticeshipKey, exception.Message);
             return BadRequest();
         }
     }
