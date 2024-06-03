@@ -35,15 +35,16 @@ public class WhenAPendingStartDateChangeIsCancelled
         var command = _fixture.Create<CancelPendingStartDateChangeRequest>();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
         apprenticeship.AddStartDateChange(
-            _fixture.Create<DateTime>(), 
-            _fixture.Create<string>(), 
-            _fixture.Create<string>(), 
-            _fixture.Create<DateTime>(), 
-            _fixture.Create<string>(), 
-            _fixture.Create<DateTime>(), 
-            _fixture.Create<DateTime>(),
-            ChangeRequestStatus.Created,
-            ChangeInitiator.Provider);
+            _fixture.Create<DateTime>(),    // ActualStartDate
+            _fixture.Create<DateTime>(),    // PlannedEndDate
+            _fixture.Create<string>(),      // Reason
+            _fixture.Create<string>(),      // ProviderApprovedBy 
+            _fixture.Create<DateTime>(),    // ProviderApprovedByDate 
+            _fixture.Create<string>(),      //EmployerApprovedBy 
+            _fixture.Create<DateTime>(),    //EmployerApprovedByDate
+            _fixture.Create<DateTime>(),    //CreatedDate
+            ChangeRequestStatus.Created,    // RequestStatus
+            ChangeInitiator.Provider);      // ChangeInitiator
 
         _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 

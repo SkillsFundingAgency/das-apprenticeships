@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.RejectedPendingStartDateChan
             // Arrange
             var command = _fixture.Create<RejectStartDateChangeCommand>();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            apprenticeship.AddStartDateChange(_fixture.Create<DateTime>(), _fixture.Create<string>(),
+            apprenticeship.AddStartDateChange(_fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<string>(),
                 _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<string>(),
                 _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeRequestStatus.Created,
                 ChangeInitiator.Provider);

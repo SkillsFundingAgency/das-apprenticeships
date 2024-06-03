@@ -10,6 +10,7 @@ public class StartDateChangeDomainModel
     public Guid Key => _entity.Key;
     public Guid ApprenticeshipKey => _entity.ApprenticeshipKey;
     public DateTime ActualStartDate => _entity.ActualStartDate;
+    public DateTime PlannedEndDate => _entity.PlannedEndDate;
     public string Reason => _entity.Reason;
     public string ProviderApprovedBy => _entity.ProviderApprovedBy!;
     public DateTime? ProviderApprovedDate => _entity.ProviderApprovedDate;
@@ -21,6 +22,7 @@ public class StartDateChangeDomainModel
 
     internal static StartDateChangeDomainModel New(Guid apprenticeshipKey,
         DateTime actualStartDate,
+        DateTime plannedEndDate,
         string reason,
         string? providerApprovedBy,
         DateTime? providerApprovedDate,
@@ -34,6 +36,7 @@ public class StartDateChangeDomainModel
         {
             ApprenticeshipKey = apprenticeshipKey,
             ActualStartDate = actualStartDate,
+            PlannedEndDate = plannedEndDate,
             Reason = reason,
             ProviderApprovedBy = providerApprovedBy,
             ProviderApprovedDate = providerApprovedDate,

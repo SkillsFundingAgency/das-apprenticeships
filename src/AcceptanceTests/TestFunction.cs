@@ -5,10 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.TestHelpers;
+using SFA.DAS.Encoding;
+using System;
 
 namespace SFA.DAS.Apprenticeships.AcceptanceTests;
 
@@ -33,7 +36,8 @@ public class TestFunction : IDisposable
             { "AzureWebJobsStorage", "UseDevelopmentStorage=true" },
             { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true" },
             { "ApplicationSettings:LogLevel", "DEBUG" },
-            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! }
+            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! },
+            { "SFA.DAS.Encoding", MockEncodingConfig() }
         };
 
         mockApprenticeshipsOuterApiClient = new Mock<IApprenticeshipsOuterApiClient>();
@@ -122,4 +126,16 @@ public class TestFunction : IDisposable
 
         _isDisposed = true;
     }
+
+    private string MockEncodingConfig()
+    {
+        var config = new List<object>();
+
+        foreach (var encodingType in Enum.GetValues(typeof(EncodingType)))
+        {
+            config.Add(new { EncodingType = encodingType, Salt = "AnyString", MinHashLength = 6, Alphabet = "ABCDEFGHJKMNPRSTUVWXYZ23456789" });
+        }
+
+        return JsonConvert.SerializeObject(new { Encodings = config });
+	}
 }

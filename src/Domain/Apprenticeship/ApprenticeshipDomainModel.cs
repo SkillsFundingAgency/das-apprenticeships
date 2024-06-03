@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
@@ -28,18 +29,12 @@ public class ApprenticeshipDomainModel : AggregateRoot
     {
         get
         {
-            var firstApproval = _approvals.OrderBy(x => x.ActualStartDate).First();
-            if (!firstApproval.ActualStartDate.HasValue)
+            if (_entity.ActualStartDate.HasValue && _approvals.Single().FundingPlatform == FundingPlatform.DAS)
             {
-                return null;
+                return DateOfBirth.CalculateAgeAtDate(_entity.ActualStartDate.Value);
             }
-            var age = firstApproval.ActualStartDate.Value.Year - DateOfBirth.Year;
-            if (firstApproval.ActualStartDate.Value.Date.AddYears(-age) < DateOfBirth.Date)
-            {
-                age--;
-            }
-
-            return age;
+            
+            return null;
         }
     }
 
@@ -208,6 +203,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
     public void AddStartDateChange(
         DateTime actualStartDate,
+        DateTime plannedEndDate,
         string reason,
         string? providerApprovedBy,
         DateTime? providerApprovedDate,
@@ -224,6 +220,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         var startDateChange = StartDateChangeDomainModel.New(this.Key,
             actualStartDate,
+            plannedEndDate,
             reason,
             providerApprovedBy,
             providerApprovedDate,
@@ -245,6 +242,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         var approver = pendingStartDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
         pendingStartDateChange.Approve(approver, userApprovedBy, DateTime.UtcNow);
         _entity.ActualStartDate = pendingStartDateChange.ActualStartDate;
+        _entity.PlannedEndDate = pendingStartDateChange.PlannedEndDate;
 
         AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver));
     }
