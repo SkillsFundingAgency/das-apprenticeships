@@ -10,7 +10,8 @@
 	[EmployerApprovedDate] DATETIME NULL,
 	[CreatedDate] DATETIME NOT NULL,
 	[RequestStatus] NVARCHAR(50) NULL, 
-    [Initiator] CHAR(8) NULL
+    [Initiator] CHAR(8) NULL, 
+    [RejectReason] NVARCHAR(MAX) NULL
 )
 GO
 ALTER TABLE [dbo].[StartDateChange]

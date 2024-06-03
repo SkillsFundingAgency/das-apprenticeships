@@ -56,7 +56,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
                 _logger.LogError(exception, $"Bad Request, missing or invalid: {exception.ParamName}");
                 return BadRequest();
             }
-
         }
 
         /// <summary>

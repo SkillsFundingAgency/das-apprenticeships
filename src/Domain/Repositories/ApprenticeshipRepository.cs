@@ -39,6 +39,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
         var apprenticeship = await DbContext.Apprenticeships
             .Include(x => x.Approvals)
             .Include(x => x.PriceHistories)
+            .Include(x => x.StartDateChanges)
             .SingleAsync(x => x.Key == key);
 
         return _apprenticeshipFactory.GetExisting(apprenticeship);

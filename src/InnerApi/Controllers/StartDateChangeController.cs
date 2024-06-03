@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
+using SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
 using SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
+using SFA.DAS.Apprenticeships.Command.RejectStartDateChange;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetPendingStartDateChange;
@@ -53,7 +55,6 @@ public class StartDateChangeController : ControllerBase
             _logger.LogError(exception, $"Bad Request, missing or invalid: {exception.ParamName}");
             return BadRequest();
         }
-
     }
 
     /// <summary>
@@ -74,5 +75,31 @@ public class StartDateChangeController : ControllerBase
         }
 
         return Ok(response);
+    }
+
+    /// <summary>
+    /// Approves a pending start date change
+    /// </summary>
+    /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+    /// <param name="request">Details of the request for start date change approval</param>
+    [HttpPatch("{apprenticeshipKey}/startDateChange/pending")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> ApproveStartDateChange(Guid apprenticeshipKey, [FromBody] ApproveStartDateChangeRequest request)
+    {
+        await _commandDispatcher.Send(new ApproveStartDateChangeCommand(apprenticeshipKey, request.UserId));
+        return Ok();
+    }
+
+    /// <summary>
+    /// Rejects a pending start date change
+    /// </summary>
+    /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+    /// <param name="request">Details of the request for start date change rejection</param>
+    [HttpPatch("{apprenticeshipKey}/startDateChange/reject")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> RejectStartDateChange(Guid apprenticeshipKey, [FromBody] RejectStartDateChangeRequest request)
+    {
+        await _commandDispatcher.Send(new RejectStartDateChangeCommand(apprenticeshipKey, request.Reason));
+        return Ok();
     }
 }

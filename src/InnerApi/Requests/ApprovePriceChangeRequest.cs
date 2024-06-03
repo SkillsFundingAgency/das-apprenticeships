@@ -1,7 +1,7 @@
 ﻿namespace SFA.DAS.Apprenticeships.InnerApi.Requests;
 
 /// <summary>
-/// Object to approve a pending price change request (recorded in the PriceHistory table)
+/// Request to approve a pending price change request
 /// </summary>
 public class ApprovePriceChangeRequest
 {
@@ -11,12 +11,12 @@ public class ApprovePriceChangeRequest
     public string UserId { get; set; }
 
     /// <summary>
-    /// Only used when a provider is approving a employer initiated price change
+    /// The training price set by the provider for employer-initiated price changes
     /// </summary>
     public decimal? TrainingPrice { get; set; }
 
     /// <summary>
-    /// Only used when a provider is approving a employer initiated price change
+    /// The assessment price set by the provider for employer-initiated price changes
     /// </summary>
     public decimal? AssessmentPrice { get; set; }
 }
