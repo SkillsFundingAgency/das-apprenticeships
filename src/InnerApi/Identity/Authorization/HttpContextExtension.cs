@@ -13,12 +13,15 @@ public static class HttpContextExtension
     /// <exception cref="UnauthorizedAccessException">Throws exception if userId not found</exception>
     public static string GetUserId(this HttpContext httpContext)
     {
-        var userId = httpContext.Items["UserId"];
-        if(userId == null)
-        {
+        if(!httpContext.Items.TryGetValue("UserId", out var userId) || userId == null)
             throw new UnauthorizedAccessException("User Id not found in HttpContext");
-        }
+
+        var userIdAsString = userId as string;
+
+        if(string.IsNullOrEmpty(userIdAsString))
+            throw new UnauthorizedAccessException("User Id Key exists in HttpContext, but the value is empty");
 
         return (string)userId;
+
     }
 }

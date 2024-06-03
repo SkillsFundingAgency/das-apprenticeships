@@ -6,17 +6,17 @@ public class SetPaymentsFrozenCommand : ICommand
     public string UserId { get; }
     public bool NewPaymentsFrozenStatus { get; }
 
-    public SetPaymentsFrozenCommand(Guid apprenticeshipKey, string userId, SetPaymentsFrozen setPaymentsFrozen)
+    public SetPaymentsFrozenCommand(Guid apprenticeshipKey, string userId, SetPayments setPaymentsFrozen)
     {
         ApprenticeshipKey = apprenticeshipKey;
         UserId = userId;
 
         switch (setPaymentsFrozen)
         {
-            case SetPaymentsFrozen.Freeze:
+            case SetPayments.Freeze:
                 NewPaymentsFrozenStatus = true;
                 break;
-            case SetPaymentsFrozen.Unfreeze:
+            case SetPayments.Unfreeze:
                 NewPaymentsFrozenStatus = false;
                 break;
             default:
@@ -25,7 +25,7 @@ public class SetPaymentsFrozenCommand : ICommand
     }
 }
 
-public enum SetPaymentsFrozen
+public enum SetPayments
 {
     Freeze,
     Unfreeze

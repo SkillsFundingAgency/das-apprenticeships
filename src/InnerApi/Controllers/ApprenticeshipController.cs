@@ -110,7 +110,7 @@ public class ApprenticeshipController : ControllerBase
     {
         try
         {
-            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPaymentsFrozen.Freeze));
+            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPayments.Freeze));
             return Ok();
         }
         catch (ArgumentException exception)
