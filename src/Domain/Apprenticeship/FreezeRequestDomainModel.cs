@@ -13,15 +13,17 @@ public class FreezeRequestDomainModel
     public bool Unfrozen => _entity.Unfrozen;
     public DateTime? UnfrozenDateTime => _entity.UnfrozenDateTime;
     public string? UnfrozenBy => _entity.UnfrozenBy;
+    public string? Reason => _entity.Reason;
 
-    internal static FreezeRequestDomainModel New(Guid apprenticeshipKey, string userId, DateTime frozenDateTime)
+    internal static FreezeRequestDomainModel New(Guid apprenticeshipKey, string userId, DateTime frozenDateTime, string? reason)
     {
         return new FreezeRequestDomainModel(new FreezeRequest
         {
             ApprenticeshipKey = apprenticeshipKey,
             FrozenBy = userId,
             FrozenDateTime = frozenDateTime,
-            Unfrozen = false
+            Unfrozen = false,
+            Reason = reason
         });
     }
 

@@ -12,4 +12,5 @@ public class FreezeRequest
     public bool Unfrozen { get; set; }
     public DateTime? UnfrozenDateTime { get; set; }
     public string? UnfrozenBy { get; set; }
+    public string? Reason { get; set; }
 }

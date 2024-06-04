@@ -14,7 +14,7 @@ public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozen
     public async Task Handle(SetPaymentsFrozenCommand command, CancellationToken cancellationToken = default)
     {
         var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
-        apprenticeship.SetPaymentStatus(command.NewPaymentsFrozenStatus, command.UserId, DateTime.Now);
+        apprenticeship.SetPaymentStatus(command.NewPaymentsFrozenStatus, command.UserId, DateTime.Now, command.Reason);
         await _apprenticeshipRepository.Update(apprenticeship);
     }
 }

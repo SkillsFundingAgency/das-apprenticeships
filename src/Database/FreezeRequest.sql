@@ -6,7 +6,8 @@
     [FrozenDateTime] DATETIME NOT NULL, 
     [Unfrozen] BIT NOT NULL, 
     [UnfrozenDateTime] DATETIME NULL, 
-    [UnfrozenBy] NVARCHAR(500) NULL 
+    [UnfrozenBy] NVARCHAR(500) NULL, 
+    [Reason] NVARCHAR(200) NULL 
 )
 
 GO

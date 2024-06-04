@@ -5,8 +5,9 @@ public class SetPaymentsFrozenCommand : ICommand
     public Guid ApprenticeshipKey { get; }
     public string UserId { get; }
     public bool NewPaymentsFrozenStatus { get; }
+    public string? Reason { get; set; }
 
-    public SetPaymentsFrozenCommand(Guid apprenticeshipKey, string userId, SetPayments setPaymentsFrozen)
+    public SetPaymentsFrozenCommand(Guid apprenticeshipKey, string userId, SetPayments setPaymentsFrozen, string? reason = null)
     {
         ApprenticeshipKey = apprenticeshipKey;
         UserId = userId;
@@ -22,6 +23,7 @@ public class SetPaymentsFrozenCommand : ICommand
             default:
                 throw new ArgumentOutOfRangeException(nameof(setPaymentsFrozen), setPaymentsFrozen, null);
         }
+        Reason = reason;
     }
 }
 

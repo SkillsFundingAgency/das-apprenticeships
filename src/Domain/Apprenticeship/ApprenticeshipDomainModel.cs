@@ -265,7 +265,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 	    pendingStartDateChange.Cancel();
     }
 
-    public void SetPaymentStatus(bool newPaymentsFrozenStatus, string userId, DateTime changeDateTime)
+    public void SetPaymentStatus(bool newPaymentsFrozenStatus, string userId, DateTime changeDateTime, string? reason = null)
     {
         if (PaymentsFrozen == newPaymentsFrozenStatus)
         {
@@ -275,7 +275,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         if (newPaymentsFrozenStatus)
         {
             _entity.PaymentsFrozen = newPaymentsFrozenStatus; // this could be moved out of the if statement when unfreezing is implemented
-            var freezeRequest = FreezeRequestDomainModel.New(_entity.Key, userId, changeDateTime);
+            var freezeRequest = FreezeRequestDomainModel.New(_entity.Key, userId, changeDateTime, reason);
             _freezeRequests.Add(freezeRequest);
             _entity.FreezeRequests.Add(freezeRequest.GetEntity());
             AddEvent(new PaymentsFrozen(_entity.Key));

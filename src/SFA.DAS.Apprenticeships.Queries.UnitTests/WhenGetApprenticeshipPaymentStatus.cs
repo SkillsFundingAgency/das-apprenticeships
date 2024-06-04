@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Moq;
+using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
 
@@ -25,16 +26,24 @@ public class WhenGetApprenticeshipPaymentStatus
 	{
 		// Arrange
 		var query = _fixture.Create<GetApprenticeshipPaymentStatusRequest>();
-		var expectedResult = _fixture.Create<bool>();
+		var queryResult = _fixture.Create<PaymentStatus>();
+		var expectedResult = new GetApprenticeshipPaymentStatusResponse
+		{
+            ApprenticeshipKey = query.ApprenticeshipKey,
+            PaymentsFrozen = queryResult.IsFrozen,
+            ReasonFrozen = queryResult.Reason,
+            FrozenOn = queryResult.FrozenOn
+        };
 
-		_apprenticeshipQueryRepository
+
+        _apprenticeshipQueryRepository
 			.Setup(x => x.GetPaymentStatus(query.ApprenticeshipKey))
-			.ReturnsAsync(expectedResult);
+			.ReturnsAsync(queryResult);
 
 		// Act
 		var actualResult = await _sut.Handle(query);
 
 		// Assert
-		actualResult.Should().BeEquivalentTo(new GetApprenticeshipPaymentStatusResponse { PaymentsFrozen = expectedResult });
+		actualResult.Should().BeEquivalentTo(expectedResult);
 	}
 }

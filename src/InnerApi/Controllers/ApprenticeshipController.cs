@@ -5,6 +5,7 @@ using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
@@ -104,13 +105,14 @@ public class ApprenticeshipController : ControllerBase
     /// Changes Apprenticeship Payment Status to Frozen
     /// </summary>
     /// <param name="apprenticeshipKey"></param>
+    /// <param name="freezeRequest"></param>
     [HttpPost("{apprenticeshipKey}/freeze")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> FreezePaymentStatus(Guid apprenticeshipKey)
+    public async Task<IActionResult> FreezePaymentStatus(Guid apprenticeshipKey, [FromBody]FreezeRequest freezeRequest)
     {
         try
         {
-            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPayments.Freeze));
+            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPayments.Freeze, freezeRequest.Reason));
             return Ok();
         }
         catch (Exception exception)
