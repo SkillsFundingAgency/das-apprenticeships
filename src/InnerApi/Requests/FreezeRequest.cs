@@ -1,7 +1,7 @@
 ﻿namespace SFA.DAS.Apprenticeships.InnerApi.Requests;
 
 /// <summary>
-/// Request model for Freezing apprenticeship payments.
+/// Request model for freezing apprenticeship payments.
 /// </summary>
 public class FreezeRequest
 {

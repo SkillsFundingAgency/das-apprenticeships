@@ -1,8 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace SFA.DAS.Apprenticeships.DataTransferObjects;
 
-namespace SFA.DAS.Apprenticeships.DataTransferObjects;
-
-[ExcludeFromCodeCoverage]
 public class PaymentStatus
 {
     public bool IsFrozen { get; set; }
