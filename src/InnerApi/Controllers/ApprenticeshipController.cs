@@ -5,6 +5,7 @@ using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
@@ -78,11 +79,26 @@ public class ApprenticeshipController : ControllerBase
     }
 
     /// <summary>
-    /// Get Apprenticeship Key
+    /// Get Apprenticeship Payment Status (Frozen/Unfrozen)
     /// </summary>
-    /// <param name="apprenticeshipHashedId">This should be the hashed id for the apprenticeship not the commitment</param>
-    /// <returns>Apprenticeship Key</returns>
-    [HttpGet("{apprenticeshipHashedId}/key")]
+    /// <param name="apprenticeshipKey"></param>
+    /// <returns>Apprenticeship Payment Status (Frozen/Unfrozen)</returns>
+    [HttpGet("{apprenticeshipKey}/paymentStatus")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetApprenticeshipPaymentStatus(Guid apprenticeshipKey)
+    {
+	    var request = new GetApprenticeshipPaymentStatusRequest { ApprenticeshipKey = apprenticeshipKey };
+	    var response = await _queryDispatcher.Send<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse?>(request);
+	    if (response == null) return NotFound();
+	    return Ok(response);
+    }
+
+	/// <summary>
+	/// Get Apprenticeship Key
+	/// </summary>
+	/// <param name="apprenticeshipHashedId">This should be the hashed id for the apprenticeship not the commitment</param>
+	/// <returns>Apprenticeship Key</returns>
+	[HttpGet("{apprenticeshipHashedId}/key")]
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetApprenticeshipKey(string apprenticeshipHashedId)
     {

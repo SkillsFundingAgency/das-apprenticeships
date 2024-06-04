@@ -16,5 +16,6 @@
     [AccountLegalEntityId] BIGINT NULL,
     [Ukprn] BIGINT NOT NULL, 
     [EmployerAccountId] BIGINT NOT NULL, 
-    [TrainingCourseVersion] NVARCHAR(10) NULL
+    [TrainingCourseVersion] NVARCHAR(10) NULL, 
+    [PaymentsFrozen] BIT NULL
 )
