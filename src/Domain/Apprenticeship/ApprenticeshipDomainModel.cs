@@ -272,13 +272,20 @@ public class ApprenticeshipDomainModel : AggregateRoot
             throw new InvalidOperationException($"Payments are already {(newPaymentsFrozenStatus ? "frozen" : "unfrozen")} for this apprenticeship: {Key}.");
         }
 
+        _entity.PaymentsFrozen = newPaymentsFrozenStatus;
+
         if (newPaymentsFrozenStatus)
         {
-            _entity.PaymentsFrozen = newPaymentsFrozenStatus; // this could be moved out of the if statement when unfreezing is implemented
             var freezeRequest = FreezeRequestDomainModel.New(_entity.Key, userId, changeDateTime, reason);
             _freezeRequests.Add(freezeRequest);
             _entity.FreezeRequests.Add(freezeRequest.GetEntity());
             AddEvent(new PaymentsFrozen(_entity.Key));
+        }
+        else
+        {
+            var freezeRequest = _freezeRequests.Single(x => x.Unfrozen == false);
+            freezeRequest.Unfreeze(userId, changeDateTime);
+            AddEvent(new PaymentsUnfrozen(_entity.Key));
         }
     }
 }

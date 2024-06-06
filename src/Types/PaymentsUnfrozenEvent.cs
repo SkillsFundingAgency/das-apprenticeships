@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Apprenticeships.Types;
 
-public class PaymentsUnfrozenEvent
+public class PaymentsFrozenEvent
 {
     public Guid ApprenticeshipKey { get; set; }
 }

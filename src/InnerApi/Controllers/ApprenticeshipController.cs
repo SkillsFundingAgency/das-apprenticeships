@@ -124,6 +124,27 @@ public class ApprenticeshipController : ControllerBase
     }
 
     /// <summary>
+    /// Changes Apprenticeship Payment Status to Active
+    /// </summary>
+    /// <param name="apprenticeshipKey"></param>
+    [HttpPost("{apprenticeshipKey}/unfreeze")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> UnfreezePaymentStatus(Guid apprenticeshipKey)
+    {
+        try
+        {
+            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPayments.Unfreeze));
+            return Ok();
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "{method} failed to update {apprenticeshipKey} : {message}",
+                nameof(UnfreezePaymentStatus), apprenticeshipKey, exception.Message);
+            return BadRequest();
+        }
+    }
+
+    /// <summary>
     /// Get Apprenticeship Key
     /// </summary>
     /// <param name="apprenticeshipHashedId">This should be the hashed id for the apprenticeship not the commitment</param>
