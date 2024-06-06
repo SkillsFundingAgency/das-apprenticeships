@@ -12,7 +12,7 @@ using SFA.DAS.Apprenticeships.Queries;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
 
-public class WhenFreezePaymentStatus
+public class WhenUnfreezePaymentStatus
 {
     private Fixture _fixture;
     private Mock<IQueryDispatcher> _queryDispatcher;
@@ -41,7 +41,7 @@ public class WhenFreezePaymentStatus
         _commandDispatcher.Setup(x => x.Send(It.IsAny<SetPaymentsFrozenCommand>(), It.IsAny<CancellationToken>()));
 
         //  Act
-        var result = await _sut.FreezePaymentStatus(_fixture.Create<Guid>(), _fixture.Create<FreezeRequest>());
+        var result = await _sut.UnfreezePaymentStatus(_fixture.Create<Guid>());
 
         //  Assert
         result.Should().BeOfType<OkResult>();
@@ -54,7 +54,7 @@ public class WhenFreezePaymentStatus
         _commandDispatcher.Setup(x => x.Send(It.IsAny<SetPaymentsFrozenCommand>(), It.IsAny<CancellationToken>())).Throws(new Exception("Test"));
 
         //  Act
-        var result = await _sut.FreezePaymentStatus(_fixture.Create<Guid>(), _fixture.Create<FreezeRequest>());
+        var result = await _sut.UnfreezePaymentStatus(_fixture.Create<Guid>());
 
         //  Assert
         result.Should().BeOfType<BadRequestResult>();

@@ -1,15 +1,9 @@
 ﻿using AutoFixture;
-using Microsoft.AspNetCore.Http;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
-using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
-using SFA.DAS.Apprenticeships.Enums;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 
@@ -17,7 +11,6 @@ public class WhenSettingPaymentStatus
 {
     private Fixture _fixture;
     private ApprenticeshipFactory _apprenticeshipFactory;
-    private const string _userId = "AnyUserId";
 
     [SetUp]
     public void SetUp()
@@ -30,10 +23,11 @@ public class WhenSettingPaymentStatus
     public void And_NewStatusIsSameAsOld_Then_Throws()
     {
         //Arrange
+        var userId = _fixture.Create<string>();
         var apprenticeship = CreateApprenticeshipDomainModel();
 
         //Act / Assert
-        var exception = Assert.Throws<InvalidOperationException>(()=>apprenticeship.SetPaymentStatus(false, _userId, DateTime.Now));
+        var exception = Assert.Throws<InvalidOperationException>(()=>apprenticeship.SetPaymentStatus(false, userId, DateTime.Now));
         Assert.That(exception.Message, Is.EqualTo($"Payments are already unfrozen for this apprenticeship: {apprenticeship.Key}."));
 
     }
@@ -42,14 +36,45 @@ public class WhenSettingPaymentStatus
     public void And_NewStatusIsFrozen_Then_PaymentsAreFrozen()
     {
         //Arrange
+        var userId = _fixture.Create<string>();
+        var timeChanged = DateTime.Now;
         var apprenticeship = CreateApprenticeshipDomainModel();
 
         //Act 
-        apprenticeship.SetPaymentStatus(true, _userId, DateTime.Now);
+        apprenticeship.SetPaymentStatus(true, userId, timeChanged);
 
         //Assert
         Assert.That(apprenticeship.PaymentsFrozen.Equals(true));
-        Assert.That(apprenticeship.FreezeRequests.Count.Equals(1));
+        Assert.That(apprenticeship.FreezeRequests.Count(x => 
+            x.FrozenBy == userId && 
+            x.FrozenDateTime == timeChanged && 
+            !x.Unfrozen), 
+            Is.EqualTo(1));
+    }
+
+    [Test]
+    public void And_NewStatusIsUnfreeze_Then_PaymentsAreActive()
+    {
+        //Arrange
+        var userIdFreeze = _fixture.Create<string>();
+        var userIdUnfreeze = _fixture.Create<string>();
+        var timefreeze = DateTime.Now.AddMinutes(-10);
+        var timeUnfreeze = DateTime.Now;
+        var apprenticeship = CreateApprenticeshipDomainModel();
+        apprenticeship.SetPaymentStatus(true, userIdFreeze, timefreeze);
+
+        //Act 
+        apprenticeship.SetPaymentStatus(false, userIdUnfreeze, timeUnfreeze);
+
+        //Assert
+        Assert.That(apprenticeship.PaymentsFrozen.Equals(false));
+        Assert.That(apprenticeship.FreezeRequests.Count(x => 
+            x.FrozenBy == userIdFreeze && 
+            x.FrozenDateTime == timefreeze &&
+            x.UnfrozenBy == userIdUnfreeze &&
+            x.UnfrozenDateTime == timeUnfreeze &&
+            x.Unfrozen), 
+            Is.EqualTo(1));
     }
 
     private ApprenticeshipDomainModel CreateApprenticeshipDomainModel()
