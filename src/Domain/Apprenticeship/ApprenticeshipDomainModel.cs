@@ -283,7 +283,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         }
         else
         {
-            var freezeRequest = _freezeRequests.Single(x => x.Unfrozen == false);
+            var freezeRequest = _freezeRequests.Single(x => !x.Unfrozen);
             freezeRequest.Unfreeze(userId, changeDateTime);
             AddEvent(new PaymentsUnfrozen(_entity.Key));
         }
