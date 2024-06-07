@@ -9,16 +9,21 @@ using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
+namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PaymentStatusControllerTests;
 
 public class WhenFreezePaymentStatus
 {
     private Fixture _fixture;
     private Mock<IQueryDispatcher> _queryDispatcher;
     private Mock<ICommandDispatcher> _commandDispatcher;
-    private Mock<ILogger<ApprenticeshipController>> _mockLogger;
-    private ApprenticeshipController _sut;
+    private Mock<ILogger<PaymentStatusController>> _mockLogger;
+    private PaymentStatusController _sut;
 
     [SetUp]
     public void Setup()
@@ -26,8 +31,8 @@ public class WhenFreezePaymentStatus
         _fixture = new Fixture();
         _queryDispatcher = new Mock<IQueryDispatcher>();
         _commandDispatcher = new Mock<ICommandDispatcher>();
-        _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object);
+        _mockLogger = new Mock<ILogger<PaymentStatusController>>();
+        _sut = new PaymentStatusController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object);
 
         var mockHttpContext = new Mock<HttpContext>();
         mockHttpContext.Setup(x => x.Items).Returns(new Dictionary<object, object?> { { "UserId", "testUserId" } });

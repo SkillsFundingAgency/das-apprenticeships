@@ -87,64 +87,6 @@ public class ApprenticeshipController : ControllerBase
     }
 
     /// <summary>
-    /// Get Apprenticeship Payment Status (Frozen/Unfrozen)
-    /// </summary>
-    /// <param name="apprenticeshipKey"></param>
-    /// <returns>Apprenticeship Payment Status (Frozen/Unfrozen)</returns>
-    [HttpGet("{apprenticeshipKey}/paymentStatus")]
-    [ProducesResponseType(200)]
-    public async Task<IActionResult> GetApprenticeshipPaymentStatus(Guid apprenticeshipKey)
-    {
-	    var request = new GetApprenticeshipPaymentStatusRequest { ApprenticeshipKey = apprenticeshipKey };
-	    var response = await _queryDispatcher.Send<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse?>(request);
-	    if (response == null) return NotFound();
-	    return Ok(response);
-    }
-
-    /// <summary>
-    /// Changes Apprenticeship Payment Status to Frozen
-    /// </summary>
-    /// <param name="apprenticeshipKey"></param>
-    /// <param name="freezeRequest"></param>
-    [HttpPost("{apprenticeshipKey}/freeze")]
-    [ProducesResponseType(200)]
-    public async Task<IActionResult> FreezePaymentStatus(Guid apprenticeshipKey, [FromBody]FreezeRequest freezeRequest)
-    {
-        try
-        {
-            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPayments.Freeze, freezeRequest.Reason));
-            return Ok();
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, "{method} failed to update {apprenticeshipKey} : {message}", 
-                nameof(FreezePaymentStatus), apprenticeshipKey, exception.Message);
-            return BadRequest();
-        }
-    }
-
-    /// <summary>
-    /// Changes Apprenticeship Payment Status to Active
-    /// </summary>
-    /// <param name="apprenticeshipKey"></param>
-    [HttpPost("{apprenticeshipKey}/unfreeze")]
-    [ProducesResponseType(200)]
-    public async Task<IActionResult> UnfreezePaymentStatus(Guid apprenticeshipKey)
-    {
-        try
-        {
-            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPayments.Unfreeze));
-            return Ok();
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, "{method} failed to update {apprenticeshipKey} : {message}",
-                nameof(UnfreezePaymentStatus), apprenticeshipKey, exception.Message);
-            return BadRequest();
-        }
-    }
-
-    /// <summary>
     /// Get Apprenticeship Key
     /// </summary>
     /// <param name="apprenticeshipHashedId">This should be the hashed id for the apprenticeship not the commitment</param>
