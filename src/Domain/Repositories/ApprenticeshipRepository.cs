@@ -40,6 +40,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
             .Include(x => x.Approvals)
             .Include(x => x.PriceHistories)
             .Include(x => x.StartDateChanges)
+            .Include(x => x.FreezeRequests)
             .SingleAsync(x => x.Key == key);
 
         return _apprenticeshipFactory.GetExisting(apprenticeship);

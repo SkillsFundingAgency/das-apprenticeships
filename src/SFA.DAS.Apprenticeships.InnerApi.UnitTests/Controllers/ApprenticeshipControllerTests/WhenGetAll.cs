@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
 using SFA.DAS.Apprenticeships.Queries;
@@ -14,6 +15,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipC
     {
         private Fixture _fixture;
         private Mock<IQueryDispatcher> _queryDispatcher;
+        private Mock<ICommandDispatcher> _commandDispatcher;
         private Mock<ILogger<ApprenticeshipController>> _mockLogger;
         private ApprenticeshipController _sut;
 
@@ -22,8 +24,9 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipC
         {
             _fixture = new Fixture();
             _queryDispatcher = new Mock<IQueryDispatcher>();
+            _commandDispatcher = new Mock<ICommandDispatcher>();
             _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-            _sut = new ApprenticeshipController(_queryDispatcher.Object, _mockLogger.Object);
+            _sut = new ApprenticeshipController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object);
         }
 
         [TestCase(null)]

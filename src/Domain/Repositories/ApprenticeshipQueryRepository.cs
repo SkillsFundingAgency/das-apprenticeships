@@ -1,7 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -138,23 +140,30 @@ using SFA.DAS.Apprenticeships.Enums;
          return pendingStartDateChange;
      }
 
-     public async Task<bool?> GetPaymentStatus(Guid apprenticeshipKey)
+     public async Task<PaymentStatus?> GetPaymentStatus(Guid apprenticeshipKey)
      {
-	     bool? paymentsFrozen = null;
+        PaymentStatus? paymentStatus = null;
 
 	     try
 	     {
-            paymentsFrozen = await DbContext.Apprenticeships
-	            .Where(x => x.Key == apprenticeshipKey)
-	            .Select(x => x.PaymentsFrozen)
+            paymentStatus = await DbContext.Apprenticeships
+            .Where(x => x.Key == apprenticeshipKey)
+	            .Select(x => new PaymentStatus { IsFrozen = x.PaymentsFrozen == true })
 	            .SingleAsync();
+
+            if (paymentStatus.IsFrozen)
+            {
+                var activeFreezeRequest = DbContext.FreezeRequests.Single(x => x.ApprenticeshipKey == apprenticeshipKey && !x.Unfrozen);
+                paymentStatus.Reason = activeFreezeRequest.Reason;
+                paymentStatus.FrozenOn = activeFreezeRequest.FrozenDateTime;
+            }
 	     }
 	     catch (Exception e)
 	     {
 		     _logger.LogError(e, "Error getting payment status for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
 		 }
 
-	     return paymentsFrozen;
+	     return paymentStatus;
      }
 
      private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingStartDateChange>> StartDateChangeToPendingStartDateChange()

@@ -11,6 +11,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     private readonly List<ApprovalDomainModel> _approvals;
     private readonly List<PriceHistoryDomainModel> _priceHistories;
     private readonly List<StartDateChangeDomainModel> _startDateChanges;
+    private readonly List<FreezeRequestDomainModel> _freezeRequests;
 
     public Guid Key => _entity.Key;
     public string TrainingCode => _entity.TrainingCode;
@@ -24,6 +25,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
     public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
     public IReadOnlyCollection<StartDateChangeDomainModel> StartDateChanges => new ReadOnlyCollection<StartDateChangeDomainModel>(_startDateChanges);
+    public IReadOnlyCollection<FreezeRequestDomainModel> FreezeRequests => new ReadOnlyCollection<FreezeRequestDomainModel>(_freezeRequests);
 
     public int? AgeAtStartOfApprenticeship
     {
@@ -90,6 +92,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _approvals = entity.Approvals.Select(ApprovalDomainModel.Get).ToList();
         _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
         _startDateChanges = entity.StartDateChanges.Select(StartDateChangeDomainModel.Get).ToList();
+        _freezeRequests = entity.FreezeRequests.Select(FreezeRequestDomainModel.Get).ToList();
         if (newApprenticeship)
         {
             AddEvent(new ApprenticeshipCreated(_entity.Key));
@@ -260,5 +263,22 @@ public class ApprenticeshipDomainModel : AggregateRoot
     {
 	    var pendingStartDateChange = _startDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Created);
 	    pendingStartDateChange.Cancel();
+    }
+
+    public void SetPaymentStatus(bool newPaymentsFrozenStatus, string userId, DateTime changeDateTime, string? reason = null)
+    {
+        if (PaymentsFrozen == newPaymentsFrozenStatus)
+        {
+            throw new InvalidOperationException($"Payments are already {(newPaymentsFrozenStatus ? "frozen" : "unfrozen")} for this apprenticeship: {Key}.");
+        }
+
+        if (newPaymentsFrozenStatus)
+        {
+            _entity.PaymentsFrozen = newPaymentsFrozenStatus; // this could be moved out of the if statement when unfreezing is implemented
+            var freezeRequest = FreezeRequestDomainModel.New(_entity.Key, userId, changeDateTime, reason);
+            _freezeRequests.Add(freezeRequest);
+            _entity.FreezeRequests.Add(freezeRequest.GetEntity());
+            AddEvent(new PaymentsFrozen(_entity.Key));
+        }
     }
 }
