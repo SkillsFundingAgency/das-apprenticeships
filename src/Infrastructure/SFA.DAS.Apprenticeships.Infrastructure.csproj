@@ -10,7 +10,7 @@
     <PackageReference Include="Azure.Identity" Version="1.11.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.34" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.60.3" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.61.3" />
     <PackageReference Include="NServiceBus" Version="7.8.4" />
     <PackageReference Include="SFA.DAS.Approvals.EventHandlers.Messages" Version="1.1.7-prerelease-2" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
