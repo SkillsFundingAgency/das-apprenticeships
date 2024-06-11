@@ -265,7 +265,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 	    pendingStartDateChange.Cancel();
     }
 
-    public void SetPaymentStatus(bool newPaymentsFrozenStatus, string userId, DateTime changeDateTime, string? reason = null)
+    public void SetPaymentsFrozen(bool newPaymentsFrozenStatus, string userId, DateTime changeDateTime, string? reason = null)
     {
         if (PaymentsFrozen == newPaymentsFrozenStatus)
         {

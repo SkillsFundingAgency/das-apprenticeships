@@ -27,7 +27,7 @@ public class WhenSettingPaymentStatus
         var apprenticeship = CreateApprenticeshipDomainModel();
 
         //Act / Assert
-        var exception = Assert.Throws<InvalidOperationException>(()=>apprenticeship.SetPaymentStatus(false, userId, DateTime.Now));
+        var exception = Assert.Throws<InvalidOperationException>(()=>apprenticeship.SetPaymentsFrozen(false, userId, DateTime.Now));
         Assert.That(exception.Message, Is.EqualTo($"Payments are already unfrozen for this apprenticeship: {apprenticeship.Key}."));
 
     }
@@ -41,7 +41,7 @@ public class WhenSettingPaymentStatus
         var apprenticeship = CreateApprenticeshipDomainModel();
 
         //Act 
-        apprenticeship.SetPaymentStatus(true, userId, timeChanged);
+        apprenticeship.SetPaymentsFrozen(true, userId, timeChanged);
 
         //Assert
         Assert.That(apprenticeship.PaymentsFrozen.Equals(true));
@@ -61,10 +61,10 @@ public class WhenSettingPaymentStatus
         var timefreeze = DateTime.Now.AddMinutes(-10);
         var timeUnfreeze = DateTime.Now;
         var apprenticeship = CreateApprenticeshipDomainModel();
-        apprenticeship.SetPaymentStatus(true, userIdFreeze, timefreeze);
+        apprenticeship.SetPaymentsFrozen(true, userIdFreeze, timefreeze);
 
         //Act 
-        apprenticeship.SetPaymentStatus(false, userIdUnfreeze, timeUnfreeze);
+        apprenticeship.SetPaymentsFrozen(false, userIdUnfreeze, timeUnfreeze);
 
         //Assert
         Assert.That(apprenticeship.PaymentsFrozen.Equals(false));
