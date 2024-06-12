@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -55,14 +54,14 @@ using SFA.DAS.Apprenticeships.Enums;
 
          return apprenticeship == null ? null : new ApprenticeshipStartDate
          {
-             ApprenticeshipKey = apprenticeship.Key,
-             ActualStartDate = apprenticeship.ActualStartDate,
-             PlannedEndDate = apprenticeship.PlannedEndDate,
-             AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
-             UKPRN = apprenticeship.Ukprn,
-                ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
-                CourseCode = apprenticeship.TrainingCode,
-                CourseVersion = apprenticeship.TrainingCourseVersion
+	         ApprenticeshipKey = apprenticeship.Key,
+	         ActualStartDate = apprenticeship.ActualStartDate,
+	         PlannedEndDate = apprenticeship.PlannedEndDate,
+	         AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
+	         UKPRN = apprenticeship.Ukprn,
+	         ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
+	         CourseCode = apprenticeship.TrainingCode,
+	         CourseVersion = apprenticeship.TrainingCourseVersion
          };
      }
 
@@ -139,6 +138,25 @@ using SFA.DAS.Apprenticeships.Enums;
          return pendingStartDateChange;
      }
 
+     public async Task<bool?> GetPaymentStatus(Guid apprenticeshipKey)
+     {
+	     bool? paymentsFrozen = null;
+
+	     try
+	     {
+            paymentsFrozen = await DbContext.Apprenticeships
+	            .Where(x => x.Key == apprenticeshipKey)
+	            .Select(x => x.PaymentsFrozen)
+	            .SingleAsync();
+	     }
+	     catch (Exception e)
+	     {
+		     _logger.LogError(e, "Error getting payment status for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+		 }
+
+	     return paymentsFrozen;
+     }
+
      private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingStartDateChange>> StartDateChangeToPendingStartDateChange()
      {
          return x => new PendingStartDateChange
@@ -150,7 +168,9 @@ using SFA.DAS.Apprenticeships.Enums;
              AccountLegalEntityId = x.AccountLegalEntityId,
              Initiator = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Initiator.ToString(),
              OriginalActualStartDate = x.ActualStartDate.GetValueOrDefault(),
-             PendingActualStartDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ActualStartDate
-         };
+             PendingActualStartDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ActualStartDate,
+			 OriginalPlannedEndDate = x.PlannedEndDate.GetValueOrDefault(),
+			 PendingPlannedEndDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).PlannedEndDate
+		 };
      }
  }

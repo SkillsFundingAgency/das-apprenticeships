@@ -10,64 +10,79 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
     [TestFixture]
     public class WhenCalculatingAgeAtStartOfApprenticeship
     {
-        private Domain.Apprenticeship.ApprenticeshipDomainModel _apprenticeship;
+        private ApprenticeshipFactory _apprenticeshipFactory;
         private Fixture _fixture;
 
-        [SetUp]
-        public void SetUp()
+        public WhenCalculatingAgeAtStartOfApprenticeship()
         {
-            var apprenticeshipFactory = new ApprenticeshipFactory();
+            _apprenticeshipFactory = new ApprenticeshipFactory();
             _fixture = new Fixture();
-            _apprenticeship = apprenticeshipFactory.CreateNew(
-                "1234435", 
-                "TRN", 
-                new DateTime(2000, 10, 16), 
-                "Ron",
-                "Swanson", 
-                _fixture.Create<decimal?>(), 
-                _fixture.Create<decimal?>(), 
-                _fixture.Create<decimal>(),
-                _fixture.Create<string>(), 
-                _fixture.Create<int>(), 
-                _fixture.Create<DateTime>(), 
-                _fixture.Create<DateTime>(),
-                _fixture.Create<long>(),
-                _fixture.Create<long>(),
-                _fixture.Create<long>(),
-                _fixture.Create<string>());
-        }
-
-        [Test]
-        public void ThenEarliestApprovalStartDateIsUsed()
-        {
-            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2022, 09, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), FundingPlatform.SLD);
-            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2020, 11, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), FundingPlatform.SLD);
-
-            _apprenticeship.AgeAtStartOfApprenticeship.Should().Be(20);
         }
         
         [Test]
         public void WhenTheStartDateIsLaterInTheYearThenTheDateOfBirthThenAgeIsCorrect()
         {
-            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2020, 11, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), FundingPlatform.SLD);
+            var dateOfBirth = new DateTime(2000, 10, 16);
+            var startDate = new DateTime(2020, 11, 01);
+            var apprenticeship = CreateApprenticeshipDomainModel(dateOfBirth, startDate, FundingPlatform.DAS);
 
-            _apprenticeship.AgeAtStartOfApprenticeship.Should().Be(20);
+            apprenticeship.AgeAtStartOfApprenticeship.Should().Be(20);
         }
 
         [Test]
         public void WhenTheStartDateIsEarlierInTheYearThenTheDateOfBirthThenAgeIsCorrect()
         {
-            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), new DateTime(2020, 09, 01), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), FundingPlatform.SLD);
+            var dateOfBirth = new DateTime(2000, 10, 16);
+            var startDate = new DateTime(2020, 09, 01);
+            var apprenticeship = CreateApprenticeshipDomainModel(dateOfBirth, startDate, FundingPlatform.DAS);
 
-            _apprenticeship.AgeAtStartOfApprenticeship.Should().Be(19);
+            apprenticeship.AgeAtStartOfApprenticeship.Should().Be(19);
         }
 
         [Test]
         public void WhenCalculatingForAnApprenticeWithSldFundingTypeThenAgeShouldBeNull()
         {
-            _apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), null, _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<FundingType>(), _fixture.Create<int>(), new DateTime(2020, 11, 01), FundingPlatform.DAS);
+            var dateOfBirth = new DateTime(2000, 10, 16);
+            var startDate = _fixture.Create<DateTime>();
+            var apprenticeship = CreateApprenticeshipDomainModel(dateOfBirth, startDate, FundingPlatform.SLD);
 
-            _apprenticeship.AgeAtStartOfApprenticeship.Should().Be(null);
+            apprenticeship.AgeAtStartOfApprenticeship.Should().Be(null);
+        }
+
+        private Domain.Apprenticeship.ApprenticeshipDomainModel CreateApprenticeshipDomainModel(DateTime dateOfBirth, DateTime startDate, FundingPlatform fundingPlatform)
+        {
+            var apprenticeship = _apprenticeshipFactory.CreateNew(
+                "1234435",
+                "TRN",
+                dateOfBirth,
+                "Ron",
+                "Swanson",
+                _fixture.Create<decimal?>(),
+                _fixture.Create<decimal?>(),
+                _fixture.Create<decimal>(),
+                _fixture.Create<string>(),
+                _fixture.Create<int>(),
+                startDate,
+                _fixture.Create<DateTime>(),
+                _fixture.Create<long>(),
+                _fixture.Create<long>(),
+                _fixture.Create<long>(),
+                _fixture.Create<string>());
+
+            apprenticeship.AddApproval(
+                _fixture.Create<long>(), 
+                _fixture.Create<string>(), 
+                new DateTime(2020, 11, 01), 
+                _fixture.Create<DateTime>(), 
+                _fixture.Create<decimal>(), 
+                _fixture.Create<long>(), 
+                _fixture.Create<FundingType>(), 
+                _fixture.Create<int>(), 
+                _fixture.Create<DateTime?>(),
+                fundingPlatform);
+
+            return apprenticeship;
+
         }
     }
 }

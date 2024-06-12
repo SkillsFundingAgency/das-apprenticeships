@@ -75,7 +75,7 @@ public class WhenAStartDateChangeIsApproved
 
     private void CreatePendingStartDateChange(ApprenticeshipDomainModel apprenticeship, DateTime startDate, ChangeInitiator changeInitiator)
     {
-        apprenticeship.AddStartDateChange(startDate, _fixture.Create<string>(), _fixture.Create<string>(),
+        apprenticeship.AddStartDateChange(startDate, _fixture.Create<DateTime>(), _fixture.Create<string>(), _fixture.Create<string>(),
             _fixture.Create<DateTime>(), _fixture.Create<string>(), _fixture.Create<DateTime>(),
             _fixture.Create<DateTime>(), ChangeRequestStatus.Created, changeInitiator);
     }

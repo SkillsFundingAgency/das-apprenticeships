@@ -37,14 +37,14 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
 
             if (pendingProviderApproval)
             {
-                apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.Reason,
+                apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.PlannedEndDate, startDateChange.Reason,
                     null, null,
                     startDateChange.EmployerApprovedBy, startDateChange.EmployerApprovedDate, startDateChange.CreatedDate,
                     ChangeRequestStatus.Created, ChangeInitiator.Employer);
             }
             else
             {
-                apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.Reason,
+                apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.PlannedEndDate, startDateChange.Reason,
                     startDateChange.ProviderApprovedBy, startDateChange.ProviderApprovedDate,
                     null, null, startDateChange.CreatedDate,
                     ChangeRequestStatus.Created, ChangeInitiator.Provider);
