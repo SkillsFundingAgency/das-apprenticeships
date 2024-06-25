@@ -19,7 +19,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
     [TestFixture]
     public class WhenAnApprovalIsAdded
     {
-        private AddApprovalCommandHandler _commandHandler = null!;
+        private AddApprenticeshipCommandHandler _commandHandler = null!;
         private Mock<IApprenticeshipFactory> _apprenticeshipFactory = null!;
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
         private Mock<IFundingBandMaximumService> _fundingBandMaximumService = null!;
@@ -31,7 +31,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
             _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
             _fundingBandMaximumService = new Mock<IFundingBandMaximumService>();
-            _commandHandler = new AddApprovalCommandHandler(_apprenticeshipFactory.Object, _apprenticeshipRepository.Object, _fundingBandMaximumService.Object);
+            _commandHandler = new AddApprenticeshipCommandHandler(_apprenticeshipFactory.Object, _apprenticeshipRepository.Object, _fundingBandMaximumService.Object);
 
             _fixture = new Fixture();
             _fixture.Customize(new ApprenticeshipCustomization());
@@ -40,7 +40,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         [Test]
         public async Task ThenTheApprovalIsCreated()
         {
-            var command = _fixture.Create<AddApprovalCommand>();
+            var command = _fixture.Create<AddApprenticeshipCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -53,9 +53,9 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.LastName,
                     command.TrainingPrice,
                     command.EndPointAssessmentPrice,
-                    command.AgreedPrice,
+                    command.TotalPrice,
                     command.ApprenticeshipHashedId,
-                    (int)Math.Ceiling(command.AgreedPrice),
+                    (int)Math.Ceiling(command.TotalPrice),
                     command.ActualStartDate,
                     command.PlannedEndDate,
                     command.AccountLegalEntityId,
@@ -64,7 +64,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.TrainingCourseVersion))
                 .Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
-                .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
+                .ReturnsAsync((int)Math.Ceiling(command.TotalPrice));
 
             await _commandHandler.Handle(command);
 
@@ -74,7 +74,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         [Test]
         public async Task ThenTheApprovalIsCreatedWithTheCorrectFundingBandMaximum()
         {
-            var command = _fixture.Create<AddApprovalCommand>();
+            var command = _fixture.Create<AddApprenticeshipCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -91,7 +91,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.LastName,
                     command.TrainingPrice,
                     command.EndPointAssessmentPrice,
-                    command.AgreedPrice,
+                    command.TotalPrice,
                     command.ApprenticeshipHashedId,
                     fundingBandMaximum,
                     command.ActualStartDate,
@@ -110,7 +110,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         [Test]
         public async Task ThenExceptionIsThrownWhenNoFundingBandMaximumForTheGivenDateAndCourseCodeIsPresent()
         {
-            var command = _fixture.Create<AddApprovalCommand>();
+            var command = _fixture.Create<AddApprenticeshipCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
 
@@ -126,7 +126,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         [Test]
         public async Task ThenTheApprovalIsCreatedWithNullPlannedStartDateWhenOneIsNotSpecified()
         {
-            var command = _fixture.Create<AddApprovalCommand>();
+            var command = _fixture.Create<AddApprenticeshipCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -140,9 +140,9 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.LastName, 
                     command.TrainingPrice, 
                     command.EndPointAssessmentPrice, 
-                    command.AgreedPrice, 
+                    command.TotalPrice, 
                     command.ApprenticeshipHashedId, 
-                    (int)Math.Ceiling(command.AgreedPrice), 
+                    (int)Math.Ceiling(command.TotalPrice), 
                     command.ActualStartDate, 
                     command.PlannedEndDate, 
                     command.AccountLegalEntityId, 
@@ -151,7 +151,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.TrainingCourseVersion))
                 .Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
-                .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
+                .ReturnsAsync((int)Math.Ceiling(command.TotalPrice));
 
             await _commandHandler.Handle(command);
 
@@ -161,7 +161,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         [Test]
         public async Task ThenTheApprovalIsCreatedWithPlannedStartDateWhenOneIsSpecified()
         {
-            var command = _fixture.Create<AddApprovalCommand>();
+            var command = _fixture.Create<AddApprenticeshipCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -174,9 +174,9 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.LastName,
                     command.TrainingPrice,
                     command.EndPointAssessmentPrice,
-                    command.AgreedPrice,
+                    command.TotalPrice,
                     command.ApprenticeshipHashedId,
-                    (int)Math.Ceiling(command.AgreedPrice),
+                    (int)Math.Ceiling(command.TotalPrice),
                     command.ActualStartDate,
                     command.PlannedEndDate,
                     command.AccountLegalEntityId,
@@ -185,7 +185,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.TrainingCourseVersion))
                 .Returns(apprenticeship);
             _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
-                .ReturnsAsync((int)Math.Ceiling(command.AgreedPrice));
+                .ReturnsAsync((int)Math.Ceiling(command.TotalPrice));
 
             await _commandHandler.Handle(command);
 
@@ -195,7 +195,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         [Test]
         public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithDasFundingPlatform()
         {
-            var command = _fixture.Create<AddApprovalCommand>();
+            var command = _fixture.Create<AddApprenticeshipCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -213,7 +213,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.LastName,
                     command.TrainingPrice,
                     command.EndPointAssessmentPrice,
-                    command.AgreedPrice,
+                    command.TotalPrice,
                     command.ApprenticeshipHashedId,
                     fundingBandMaximum,
                     command.ActualStartDate,
@@ -232,7 +232,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         [Test]
         public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithSldFundingPlatform()
         {
-            var command = _fixture.Create<AddApprovalCommand>();
+            var command = _fixture.Create<AddApprenticeshipCommand>();
             var trainingCodeInt = _fixture.Create<int>();
             command.TrainingCode = trainingCodeInt.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -250,7 +250,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     command.LastName,
                     command.TrainingPrice,
                     command.EndPointAssessmentPrice,
-                    command.AgreedPrice,
+                    command.TotalPrice,
                     command.ApprenticeshipHashedId,
                     fundingBandMaximum,
                     command.ActualStartDate,

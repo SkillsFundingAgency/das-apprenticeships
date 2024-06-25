@@ -21,11 +21,11 @@ namespace SFA.DAS.Apprenticeships.Functions
         [FunctionName("HandleApprovalCreatedEvent")]
         public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedEvent @event)
         {
-            await _commandDispatcher.Send(new AddApprovalCommand
+            await _commandDispatcher.Send(new AddApprenticeshipCommand
             {
                 TrainingCode = @event.TrainingCode,
                 ActualStartDate = @event.ActualStartDate,
-                AgreedPrice = @event.AgreedPrice,
+                TotalPrice = @event.AgreedPrice,
                 TrainingPrice = @event.TrainingPrice,
                 EndPointAssessmentPrice = @event.EndPointAssessmentPrice,
                 ApprovalsApprenticeshipId = @event.ApprovalsApprenticeshipId,

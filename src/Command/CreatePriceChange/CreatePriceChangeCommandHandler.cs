@@ -34,7 +34,7 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
 
             await _apprenticeshipRepository.Update(apprenticeship);
 
-            if (initiator == ChangeInitiator.Provider && EmployerApprovalNotRequired(apprenticeship, command))
+            if (initiator == ChangeInitiator.Provider && IsNewTotalPriceLessThanExisting(apprenticeship, command))
             {
 	            apprenticeship.ProviderSelfApprovePriceChange();
 	            returnStatus = ChangeRequestStatus.Approved;
@@ -44,16 +44,9 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
             return returnStatus;
         }
 
-        private static bool EmployerApprovalNotRequired(ApprenticeshipDomainModel apprenticeshipDomainModel, CreatePriceChangeCommand command)
+        private static bool IsNewTotalPriceLessThanExisting(ApprenticeshipDomainModel apprenticeshipDomainModel, CreatePriceChangeCommand command)
         {
-            var apprenticeship = apprenticeshipDomainModel.GetEntity();
-
-            if (apprenticeship.TotalPrice >= command.TotalPrice)
-            {
-                return true;
-            }
-
-            return false;
+            return apprenticeshipDomainModel.LatestPrice != null && (apprenticeshipDomainModel.LatestPrice.TotalPrice >= command.TotalPrice);
         }
     }
 }

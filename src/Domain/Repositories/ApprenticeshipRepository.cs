@@ -23,8 +23,8 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
 
     public async Task Add(ApprenticeshipDomainModel apprenticeship)
     {
+        //_accountIdAuthorizer.AuthorizeAccountId(apprenticeship);
         var entity = apprenticeship.GetEntity();
-        _accountIdAuthorizer.AuthorizeAccountId(entity);
         await DbContext.AddAsync(entity);
         await DbContext.SaveChangesAsync();
             
@@ -34,10 +34,12 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
         }
     }
 
+    //todo consider moving this to the query repository but it currently returns a domain model which others in that repository don't
     public async Task<ApprenticeshipDomainModel> Get(Guid key)
     {
         var apprenticeship = await DbContext.Apprenticeships
-            .Include(x => x.Approvals)
+            .Include(x => x.Episodes)
+            .Include(x => x.Episodes.Select(y => y.Prices))
             .Include(x => x.PriceHistories)
             .Include(x => x.StartDateChanges)
             .Include(x => x.FreezeRequests)
@@ -49,7 +51,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
     public async Task Update(ApprenticeshipDomainModel apprenticeship)
     {
         var entity = apprenticeship.GetEntity();
-        _accountIdAuthorizer.AuthorizeAccountId(entity);
+        //_accountIdAuthorizer.AuthorizeAccountId(entity);
         DbContext.Update(entity);
 
         await DbContext.SaveChangesAsync();

@@ -33,10 +33,10 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
             await _handler.HandleCommand(@event);
 
             _commandDispatcher.Verify(x =>
-                x.Send<AddApprovalCommand>(It.Is<AddApprovalCommand>(c =>
+                x.Send<AddApprenticeshipCommand>(It.Is<AddApprenticeshipCommand>(c =>
                         c.TrainingCode == @event.TrainingCode &&
                         c.ActualStartDate == @event.ActualStartDate &&
-                        c.AgreedPrice == @event.AgreedPrice &&
+                        c.TotalPrice == @event.AgreedPrice &&
                         c.TrainingPrice == @event.TrainingPrice &&
                         c.EndPointAssessmentPrice == @event.EndPointAssessmentPrice &&
                         c.ApprovalsApprenticeshipId == @event.ApprovalsApprenticeshipId &&

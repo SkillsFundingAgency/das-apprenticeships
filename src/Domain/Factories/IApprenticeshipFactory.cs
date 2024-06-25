@@ -7,23 +7,11 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
     {
         ApprenticeshipDomainModel CreateNew(
             string uln, 
-            string trainingCode, 
             DateTime dateOfBirth,
-            string firstName,
+            string firstName, 
             string lastName, 
-            decimal? trainingPrice, 
-            decimal? endpointAssessmentPrice, 
-            decimal totalPrice,
-            string apprenticeshipHashedId, 
-            int fundingBandMaximum, 
-            DateTime? actualStartDate, 
-            DateTime plannedEndDate,
-            long accountLegalEntityId,
-            long ukprn,
-            long employerAccountId,
-            string trainingCourseVersion);
+            string apprenticeshipHashedId);
         
         ApprenticeshipDomainModel GetExisting(DataAccess.Entities.Apprenticeship.Apprenticeship model);
-
     }
 }

@@ -18,27 +18,29 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
         public async Task Handle(ApprenticeshipCreated @event, CancellationToken cancellationToken = default(CancellationToken))
         {
             var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
-            var approval = apprenticeship.Approvals.Single();
+            var approval = apprenticeship.Episodes.Single();
+            var latestEpisode = apprenticeship.LatestEpisode;
+            var latestPrice = apprenticeship.LatestPrice;
             var apprenticeshipCreatedEvent = new ApprenticeshipCreatedEvent
             {
                 ApprenticeshipKey = apprenticeship.Key, 
                 Uln = apprenticeship.Uln,
-                TrainingCode = apprenticeship.TrainingCode,
+                TrainingCode = latestEpisode.TrainingCode,
                 FundingEmployerAccountId = approval.FundingEmployerAccountId,
-                AgreedPrice = approval.AgreedPrice,
+                AgreedPrice = latestPrice.TotalPrice,
                 FundingType = (FundingType)approval.FundingType,
-                ActualStartDate = approval.ActualStartDate,
+                ActualStartDate = apprenticeship.StartDate,
                 ApprovalsApprenticeshipId = approval.ApprovalsApprenticeshipId,
-                EmployerAccountId = apprenticeship.EmployerAccountId,
+                EmployerAccountId = latestEpisode.EmployerAccountId,
                 LegalEntityName = approval.LegalEntityName,
-                PlannedEndDate = approval.PlannedEndDate,
-                UKPRN = apprenticeship.Ukprn,
-                FundingBandMaximum = approval.FundingBandMaximum,
+                PlannedEndDate = apprenticeship.EndDate,
+                UKPRN = latestEpisode.Ukprn,
+                FundingBandMaximum = latestPrice.FundingBandMaximum,
                 DateOfBirth = apprenticeship.DateOfBirth,
                 FirstName = apprenticeship.FirstName, 
                 LastName = apprenticeship.LastName,
                 AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
-                PlannedStartDate = approval.PlannedStartDate,
+                PlannedStartDate = apprenticeship.StartDate, //todo do we need both actual and planned start dates?
                 FundingPlatform = (FundingPlatform?)approval.FundingPlatform
             };
 

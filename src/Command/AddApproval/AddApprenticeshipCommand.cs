@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Apprenticeships.Command.AddApproval
 {
-    public class AddApprovalCommand : ICommand
+    public class AddApprenticeshipCommand : ICommand
     {
         public string Uln { get; set; }
         public string TrainingCode { get; set; }
@@ -12,7 +12,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
         public string LegalEntityName { get; set; }
         public DateTime? ActualStartDate { get; set; }
         public DateTime PlannedEndDate { get; set; }
-        public decimal AgreedPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public decimal? TrainingPrice { get; set; } 
         public decimal? EndPointAssessmentPrice { get; set; }
         public long? FundingEmployerAccountId { get; set; }

@@ -19,7 +19,7 @@ public class StartDateChangeApprovedHandler : IDomainEventHandler<StartDateChang
     public async Task Handle(StartDateChangeApproved @event, CancellationToken cancellationToken = default(CancellationToken))
     {
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
-        var approval = apprenticeship.Approvals.Single();
+        var approval = apprenticeship.Episodes.Single();
         var startDateChange = apprenticeship.StartDateChanges.Single(x => x.Key == @event.StartDateChangeKey);
         var startDateChangedEvent = new ApprenticeshipStartDateChangedEvent()
         {

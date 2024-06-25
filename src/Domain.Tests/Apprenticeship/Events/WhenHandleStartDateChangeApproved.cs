@@ -60,7 +60,7 @@ public class WhenHandleStartDateChangeApproved
         apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.PlannedEndDate, startDateChange.Reason, startDateChange.ProviderApprovedBy, startDateChange.ProviderApprovedDate, null, null, startDateChange.CreatedDate, startDateChange.RequestStatus, ChangeInitiator.Provider);
         var employerUserId = _fixture.Create<string>();
         apprenticeship.ApproveStartDateChange(employerUserId);
-        var approval = apprenticeship.Approvals.Single();
+        var approval = apprenticeship.Episodes.Single();
         var command = new StartDateChangeApproved(apprenticeship.Key, apprenticeship.StartDateChanges.Single().Key, ApprovedBy.Employer);
 
         _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);

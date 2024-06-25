@@ -19,7 +19,7 @@ public class PriceChangeApprovedHandler : IDomainEventHandler<PriceChangeApprove
     public async Task Handle(PriceChangeApproved @event, CancellationToken cancellationToken = default(CancellationToken))
     {
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
-        var approval = apprenticeship.Approvals.Single();
+        var approval = apprenticeship.Episodes.Single();
         var priceChange = apprenticeship.PriceHistories.Single(x => x.Key == @event.PriceHistoryKey);
         var apprenticeshipCreatedEvent = new PriceChangeApprovedEvent
         {

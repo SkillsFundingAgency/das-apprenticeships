@@ -16,9 +16,10 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             _accountIdAuthorizer = accountIdAuthorizer;
         }
 
-        public IQueryable<Apprenticeship> Apprenticeships => _accountIdAuthorizer.ApplyAuthorizationFilterOnQueries(ApprenticeshipsDbSet);
+        public IQueryable<Apprenticeship> Apprenticeships => _accountIdAuthorizer.ApplyAuthorizationFilterOnQueries(ApprenticeshipsDbSet); //TODO FIX THIS
         public virtual DbSet<Apprenticeship> ApprenticeshipsDbSet { get; set; }
-        public virtual DbSet<Approval> Approvals { get; set; }
+        public virtual DbSet<Episode> Episodes { get; set; }
+        public virtual DbSet<EpisodePrice> EpisodePrices { get; set; }
         public virtual DbSet<PriceHistory> PriceHistories { get; set; }
         public virtual DbSet<StartDateChange> StartDateChanges { get; set; }
         public virtual DbSet<FreezeRequest> FreezeRequests { get; set; }
@@ -27,17 +28,29 @@ namespace SFA.DAS.Apprenticeships.DataAccess
         {
             // Apprenticeship
             modelBuilder.Entity<Apprenticeship>()
-                .HasMany(x => x.Approvals).WithOne().HasForeignKey(fk => fk.ApprenticeshipKey);
+                .HasMany(x => x.Episodes)
+                .WithOne()
+                .HasForeignKey(fk => fk.ApprenticeshipKey);
             modelBuilder.Entity<Apprenticeship>()
                 .HasKey(a => new { a.Key });
             
-            // Approval
-            modelBuilder.Entity<Approval>()
+            // Episode
+            modelBuilder.Entity<Episode>()
                 .Property(p => p.FundingType)
                 .HasConversion(
                     v => v.ToString(),
                     v => (FundingType)Enum.Parse(typeof(FundingType), v));
+            //todo - are we missing this conversion for FundingPlatform?
+            //modelBuilder.Entity<Episode>()
+            //    .Property(p => p.FundingPlatform)
+            //    .HasConversion(
+            //        v => v.ToString(),
+            //        v => (FundingPlatform?)Enum.Parse(typeof(FundingPlatform?), v));
             
+            // EpisodePrice
+            modelBuilder.Entity<EpisodePrice>()
+                .HasKey(x => x.Key);
+
             // PriceHistory
             modelBuilder.Entity<PriceHistory>()
                 .HasKey(x => x.Key);
@@ -69,7 +82,6 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             // FreezeRequest
             modelBuilder.Entity<FreezeRequest>()
                 .HasKey(x => x.Key);
-
 
             base.OnModelCreating(modelBuilder);
         }

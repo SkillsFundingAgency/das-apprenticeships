@@ -5,20 +5,20 @@ using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Command.AddApproval
 {
-    public class AddApprovalCommandHandler : ICommandHandler<AddApprovalCommand>
+    public class AddApprenticeshipCommandHandler : ICommandHandler<AddApprenticeshipCommand>
     {
         private readonly IApprenticeshipFactory _apprenticeshipFactory;
         private readonly IApprenticeshipRepository _apprenticeshipRepository;
         private readonly IFundingBandMaximumService _fundingBandMaximumService;
 
-        public AddApprovalCommandHandler(IApprenticeshipFactory apprenticeshipFactory, IApprenticeshipRepository apprenticeshipRepository, IFundingBandMaximumService fundingBandMaximumService)
+        public AddApprenticeshipCommandHandler(IApprenticeshipFactory apprenticeshipFactory, IApprenticeshipRepository apprenticeshipRepository, IFundingBandMaximumService fundingBandMaximumService)
         {
             _apprenticeshipFactory = apprenticeshipFactory;
             _apprenticeshipRepository = apprenticeshipRepository;
             _fundingBandMaximumService = fundingBandMaximumService;
         }
 
-        public async Task Handle(AddApprovalCommand command, CancellationToken cancellationToken = default)
+        public async Task Handle(AddApprenticeshipCommand command, CancellationToken cancellationToken = default)
         {
             var startDate = command.FundingPlatform == FundingPlatform.DAS ? command.ActualStartDate : command.PlannedStartDate;
             var fundingBandMaximum = await _fundingBandMaximumService.GetFundingBandMaximum(int.Parse(command.TrainingCode), startDate);
@@ -29,33 +29,31 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
             
             var apprenticeship = _apprenticeshipFactory.CreateNew(
                 command.Uln,
-                command.TrainingCode,
                 command.DateOfBirth,
                 command.FirstName,
                 command.LastName,
-                command.TrainingPrice,
-                command.EndPointAssessmentPrice,
-                command.AgreedPrice,
-                command.ApprenticeshipHashedId,
-                fundingBandMaximum.Value,
-                command.ActualStartDate,
-                command.PlannedEndDate,
-                command.AccountLegalEntityId,
+                command.ApprenticeshipHashedId);
+
+            apprenticeship.AddEpisode(
+                command.ApprovalsApprenticeshipId,
                 command.UKPRN,
                 command.EmployerAccountId,
-                command.TrainingCourseVersion);
-
-            apprenticeship.AddApproval(
-                command.ApprovalsApprenticeshipId,
-                command.LegalEntityName,
-                command.ActualStartDate,
+                startDate,
                 command.PlannedEndDate,
-                command.AgreedPrice,
-                command.FundingEmployerAccountId,
+                command.TotalPrice,
+                command.TrainingPrice,
+                command.EndPointAssessmentPrice,
                 command.FundingType,
+                command.FundingPlatform,
                 fundingBandMaximum.Value,
-                (!command.PlannedStartDate.HasValue) || (command.PlannedStartDate.GetValueOrDefault().Year == 1) ? null : command.PlannedStartDate.Value,
-                command.FundingPlatform);
+                command.FundingEmployerAccountId,
+                command.LegalEntityName,
+                command.AccountLegalEntityId,
+                command.TrainingCode,
+                command.TrainingCourseVersion
+                //,,(!command.PlannedStartDate.HasValue) || (command.PlannedStartDate.GetValueOrDefault().Year == 1) ? null : command.PlannedStartDate.Value, //todo verify this original logic and whether to incorporate it
+                );
+
             await _apprenticeshipRepository.Add(apprenticeship);
         }
     }

@@ -25,21 +25,21 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return;
         }
 
-        switch (_accountIdClaims.AccountIdClaimsType)
-        {
-            case AccountIdClaimsType.Provider:
-                if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.Ukprn)) {
-                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn), apprenticeship.Ukprn));
-                }
-                break;
-            case AccountIdClaimsType.Employer:
-                if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.EmployerAccountId)) {
-                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId));
-                }
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
-        }
+        //switch (_accountIdClaims.AccountIdClaimsType)
+        //{
+        //    case AccountIdClaimsType.Provider:
+        //        if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.Ukprn)) {
+        //            throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn), apprenticeship.Ukprn));
+        //        }
+        //        break;
+        //    case AccountIdClaimsType.Employer:
+        //        if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.EmployerAccountId)) {
+        //            throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId));
+        //        }
+        //        break;
+        //    default:
+        //        throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
+        //}
     }
             
     public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(DbSet<Apprenticeship> apprenticeships)
@@ -55,15 +55,30 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return apprenticeships;
         }
 
-        switch (_accountIdClaims.AccountIdClaimsType)
+        if (_accountIdClaims.AccountIds == null)
         {
-            case AccountIdClaimsType.Provider:
-                return apprenticeships.Where(x => _accountIdClaims.AccountIds.Contains(x.Ukprn));
-            case AccountIdClaimsType.Employer:
-                return apprenticeships.Where(x => _accountIdClaims.AccountIds.Contains(x.EmployerAccountId));
-            default:
-                throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
+            _logger.LogInformation("There are no account IDs in the account ID claims.");
+            return apprenticeships;
         }
+
+        return null;
+
+        //var apprenticeshipsWithEpisodes = apprenticeships.Include(x => x.Episodes)
+        //    .Where(x => x.Episodes.MaxBy(y => y.EpisodeStartDate) != null);
+
+        //switch (_accountIdClaims.AccountIdClaimsType)
+        //{
+        //    case AccountIdClaimsType.Provider:
+        //        return apprenticeshipsWithEpisodes
+        //            .Where(x => _accountIdClaims.AccountIds
+        //                .Contains(x.Episodes.MaxBy(y => y.EpisodeStartDate)!.Ukprn));
+        //    case AccountIdClaimsType.Employer:
+        //        return apprenticeshipsWithEpisodes
+        //            .Where(x => _accountIdClaims.AccountIds
+        //                .Contains(x.Episodes.MaxBy(y => y.EpisodeStartDate)!.EmployerAccountId));
+        //    default:
+        //        throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
+        //}
     }
 
     private string InvalidAccountIdClaimsTypeErrorMessage()

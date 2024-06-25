@@ -60,10 +60,11 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Apprenticeship.sql" />
-    <Build Include="Approval.sql" />
     <Build Include="PriceHistory.sql" />
     <Build Include="StartDateChange.sql" />
     <Build Include="FreezeRequest.sql" />
+    <Build Include="Episode.sql" />
+    <Build Include="EpisodePrice.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.Apprenticeships.Database.refactorlog" />

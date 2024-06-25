@@ -15,9 +15,11 @@ public class ApprovalQueryRepository : IApprovalQueryRepository
 
     public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
     {
-        var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
-            .Include(x => x.Approvals)
-            .SingleOrDefaultAsync(x => x.Approvals.Any(x => x.ApprovalsApprenticeshipId == apprenticeshipId));
-        return apprenticeshipWithMatchingId?.Approvals.FirstOrDefault()?.ApprenticeshipKey;
+        //todo fix method
+        return null;
+        //var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
+        //    .Include(x => x.Approvals)
+        //    .SingleOrDefaultAsync(x => x.Approvals.Any(x => x.ApprovalsApprenticeshipId == apprenticeshipId));
+        //return apprenticeshipWithMatchingId?.Approvals.FirstOrDefault()?.ApprenticeshipKey;
     }
 }

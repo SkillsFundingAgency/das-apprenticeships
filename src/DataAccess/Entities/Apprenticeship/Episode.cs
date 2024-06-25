@@ -1,0 +1,23 @@
+﻿using SFA.DAS.Apprenticeships.Enums;
+
+namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+
+[Table("dbo.Episode")]
+[System.ComponentModel.DataAnnotations.Schema.Table("Episode")]
+public class Episode
+{
+	public Guid Key { get; set; }
+	public Guid ApprenticeshipKey { get; set; }
+    public long ApprovalsApprenticeshipId { get; set; }
+    public long Ukprn { get; set; }
+    public long EmployerAccountId { get; set; }
+	public FundingType FundingType { get; set; }
+	public FundingPlatform? FundingPlatform { get; set; }
+	public long? FundingEmployerAccountId { get; set; }
+	public string LegalEntityName { get; set; }
+    public long? AccountLegalEntityId { get; set; }
+    public string TrainingCode { get; set; } = null!;
+    public string? TrainingCourseVersion { get; set; }
+    public bool PaymentsFrozen { get; set; }
+    public List<EpisodePrice> Prices { get; set; }
+}
