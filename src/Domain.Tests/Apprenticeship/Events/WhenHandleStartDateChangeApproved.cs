@@ -55,7 +55,7 @@ public class WhenHandleStartDateChangeApproved
         _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipStartDateChangedEvent>(e =>
             e.ApprenticeshipKey == apprenticeship.Key &&
             e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
-            e.ApprenticeshipId == approval.ApprovalsApprenticeshipId &&
+            e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId &&
             e.ProviderId == apprenticeship.LatestEpisode.Ukprn &&
             e.ActualStartDate == startDateChange.ActualStartDate &&
             e.PlannedEndDate == startDateChange.PlannedEndDate &&

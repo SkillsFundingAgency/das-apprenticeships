@@ -8,6 +8,7 @@ namespace SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations
         public void Customize(IFixture fixture)
         {
             fixture.Register(() => new ApprenticeshipFactory().CreateNew(
+                fixture.Create<long>(),
                 fixture.Create<string>(),
                 fixture.Create<DateTime>(),
                 fixture.Create<string>(),
