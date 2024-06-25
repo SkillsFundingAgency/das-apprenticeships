@@ -40,7 +40,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 FirstName = apprenticeship.FirstName, 
                 LastName = apprenticeship.LastName,
                 AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
-                PlannedStartDate = apprenticeship.StartDate, //todo do we need both actual and planned start dates?
+                PlannedStartDate = apprenticeship.StartDate, //todo do we need both actual and planned start dates? if so, need to double check if this has been handled correctly (e.g. actual vs planned)
                 FundingPlatform = (FundingPlatform?)approval.FundingPlatform
             };
 

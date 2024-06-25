@@ -3,7 +3,7 @@ using SFA.DAS.Apprenticeships.DataAccess;
 
 namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 
-//TODO RENAME MOVE TO MAIN QUERY REPOSITORY
+//TODO MOVE TO MAIN QUERY REPOSITORY
 public class ApprovalQueryRepository : IApprovalQueryRepository
 {
     private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;

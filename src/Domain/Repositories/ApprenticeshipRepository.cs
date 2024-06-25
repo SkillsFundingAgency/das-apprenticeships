@@ -34,7 +34,6 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
         }
     }
 
-    //todo consider moving this to the query repository but it currently returns a domain model which others in that repository don't
     public async Task<ApprenticeshipDomainModel> Get(Guid key)
     {
         var apprenticeship = await DbContext.Apprenticeships

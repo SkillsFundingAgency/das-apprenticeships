@@ -11,7 +11,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
     [TestFixture]
     public class WhenAnEpisodeIsAdded
     {
-        private ApprenticeshipDomainModel _apprenticeship;
         private Fixture _fixture;
 
         [SetUp]
@@ -21,6 +20,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
             _fixture.Customize(new ApprenticeshipCustomization());
         }
 
+        //todo this should pass once freeze/unfreeze is sorted out
         [Test]
         public void ThenAnEpisodeAndPriceIsAdded()
         {

@@ -40,7 +40,7 @@ public class WhenSettingPaymentStatus
         apprenticeship.SetPaymentStatus(true, _userId, DateTime.Now);
 
         //Assert
-        //todo fix test for freeze function
+        //todo fix test for freeze/unfreeze
         //Assert.That(apprenticeship.PaymentsFrozen.Equals(true));
         //Assert.That(apprenticeship.FreezeRequests.Count.Equals(1));
     }

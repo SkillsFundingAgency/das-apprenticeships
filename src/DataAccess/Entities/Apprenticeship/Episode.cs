@@ -6,7 +6,11 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 [System.ComponentModel.DataAnnotations.Schema.Table("Episode")]
 public class Episode
 {
-	public Guid Key { get; set; }
+    public Episode()
+    {
+        Prices = new List<EpisodePrice>();
+    }
+    public Guid Key { get; set; }
 	public Guid ApprenticeshipKey { get; set; }
     public long Ukprn { get; set; }
     public long EmployerAccountId { get; set; }

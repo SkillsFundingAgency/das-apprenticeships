@@ -108,7 +108,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
         }
 
-        //todo fix test once figured out how to handle actual vs planned start date in new code
+        //todo fix test once figured out whether actual vs planned start date handled correctly in latest changes
         //[Test]
         //public async Task ThenTheApprovalIsCreatedWithNullPlannedStartDateWhenOneIsNotSpecified()
         //{
@@ -144,7 +144,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         //    _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().Approvals.Single().PlannedStartDate == null)));
         //}
 
-        //todo fix test once figured out how to handle actual vs planned start date in new code
+        //todo fix test once figured out whether actual vs planned start date handled correctly in latest changes
         //[Test]
         //public async Task ThenTheApprovalIsCreatedWithPlannedStartDateWhenOneIsSpecified()
         //{
@@ -179,7 +179,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         //    _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().Approvals.Single().PlannedStartDate == command.PlannedStartDate)));
         //}
 
-        //todo fix test once figured out how to handle actual vs planned start date in new code
+        //todo fix test once figured out whether actual vs planned start date handled correctly in latest changes
         //[Test]
         //public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithDasFundingPlatform()
         //{
@@ -217,7 +217,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
         //    _fundingBandMaximumService.Verify(x => x.GetFundingBandMaximum(trainingCodeInt, command.ActualStartDate));
         //}
 
-        //todo fix test once figured out how to handle actual vs planned start date in new code
+        //todo fix test once figured out whether actual vs planned start date handled correctly in latest changes
         //[Test]
         //public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithSldFundingPlatform()
         //{

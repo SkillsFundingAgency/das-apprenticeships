@@ -16,7 +16,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             _accountIdAuthorizer = accountIdAuthorizer;
         }
 
-        public IQueryable<Apprenticeship> Apprenticeships => _accountIdAuthorizer.ApplyAuthorizationFilterOnQueries(ApprenticeshipsDbSet); //TODO FIX THIS
+        public IQueryable<Apprenticeship> Apprenticeships => _accountIdAuthorizer.ApplyAuthorizationFilterOnQueries(ApprenticeshipsDbSet);
         public virtual DbSet<Apprenticeship> ApprenticeshipsDbSet { get; set; }
         public virtual DbSet<Episode> Episodes { get; set; }
         public virtual DbSet<EpisodePrice> EpisodePrices { get; set; }

@@ -127,7 +127,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             var result = await _sut.GetPendingPriceChange(apprenticeshipKey);
 
             // Assert
-            //todo fix test
+            //todo PRICE CHANGE - fix test 
             //result.Should().NotBeNull();
             //result.OriginalTrainingPrice.Should().Be(apprenticeships[0].TrainingPrice);
             //result.OriginalAssessmentPrice.Should().Be(apprenticeships[0].EndPointAssessmentPrice);

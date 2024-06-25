@@ -14,7 +14,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     private readonly List<FreezeRequestDomainModel> _freezeRequests;
 
     public Guid Key => _entity.Key;
-    public long ApprovalsApprenticeshipId => _entity.ApprovalsApprenticeshipId;
+    public long ApprovalsApprenticeshipId => _entity.ApprovalsApprenticeshipId; //TODO - Verify if this belongs here or on the episode (looks to be from [Apprenticeship] table in commitments DB so assuming doesn't change with CoC)
     public string Uln => _entity.Uln;
     public string FirstName => _entity.FirstName;
     public string LastName => _entity.LastName;
@@ -24,7 +24,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     public IReadOnlyCollection<StartDateChangeDomainModel> StartDateChanges => new ReadOnlyCollection<StartDateChangeDomainModel>(_startDateChanges);
     public IReadOnlyCollection<FreezeRequestDomainModel> FreezeRequests => new ReadOnlyCollection<FreezeRequestDomainModel>(_freezeRequests);
     public DateTime? StartDate => AllPrices.MinBy(x => x.StartDate)?.StartDate;
-    public DateTime? EndDate => AllPrices.MaxBy(x => x.StartDate)?.EndDate; //TODO verify if needed
+    public DateTime? EndDate => AllPrices.MaxBy(x => x.StartDate)?.EndDate;
     public IEnumerable<EpisodePriceDomainModel> AllPrices => 
         _episodes.SelectMany(x => x.EpisodePrices).Where(x => !x.IsDeleted);
     public EpisodePriceDomainModel? LatestPrice =>
@@ -289,7 +289,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
     public void SetPaymentStatus(bool newPaymentsFrozenStatus, string userId, DateTime changeDateTime, string? reason = null)
     {
-        //TODO - update logic below
+        //TODO - FREEZE/UNFREEZE update below
         //if (PaymentsFrozen == newPaymentsFrozenStatus)
         //{
         //    throw new InvalidOperationException($"Payments are already {(newPaymentsFrozenStatus ? "frozen" : "unfrozen")} for this apprenticeship: {Key}.");
@@ -297,7 +297,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         if (newPaymentsFrozenStatus)
         {
-            //TODO - to update Episodes in entity
+            //TODO - FREEZE/UNFREEZE update below
             //_entity.PaymentsFrozen = newPaymentsFrozenStatus; // this could be moved out of the if statement when unfreezing is implemented
             var freezeRequest = FreezeRequestDomainModel.New(_entity.Key, userId, changeDateTime, reason);
             _freezeRequests.Add(freezeRequest);
