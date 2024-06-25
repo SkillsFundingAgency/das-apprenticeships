@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.Command.AddApproval
+namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship
 {
     public class AddApprenticeshipCommand : ICommand
     {

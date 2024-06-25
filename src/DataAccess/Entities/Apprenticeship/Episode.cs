@@ -8,7 +8,6 @@ public class Episode
 {
 	public Guid Key { get; set; }
 	public Guid ApprenticeshipKey { get; set; }
-    public long ApprovalsApprenticeshipId { get; set; }
     public long Ukprn { get; set; }
     public long EmployerAccountId { get; set; }
 	public FundingType FundingType { get; set; }

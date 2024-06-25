@@ -3,6 +3,7 @@ using SFA.DAS.Apprenticeships.DataAccess;
 
 namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 
+//TODO RENAME MOVE TO MAIN QUERY REPOSITORY
 public class ApprovalQueryRepository : IApprovalQueryRepository
 {
     private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
@@ -15,11 +16,8 @@ public class ApprovalQueryRepository : IApprovalQueryRepository
 
     public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
     {
-        //todo fix method
-        return null;
-        //var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
-        //    .Include(x => x.Approvals)
-        //    .SingleOrDefaultAsync(x => x.Approvals.Any(x => x.ApprovalsApprenticeshipId == apprenticeshipId));
-        //return apprenticeshipWithMatchingId?.Approvals.FirstOrDefault()?.ApprenticeshipKey;
+        var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
+            .SingleOrDefaultAsync(x => x.ApprovalsApprenticeshipId == apprenticeshipId);
+        return apprenticeshipWithMatchingId?.Key;
     }
 }

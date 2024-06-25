@@ -1,11 +1,11 @@
-﻿
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 
 namespace SFA.DAS.Apprenticeships.Domain.Factories
 {
     public interface IApprenticeshipFactory
     {
         ApprenticeshipDomainModel CreateNew(
+            long approvalsApprenticeshipId,
             string uln, 
             DateTime dateOfBirth,
             string firstName, 

@@ -14,6 +14,7 @@ public class Apprenticeship
         
 	[Key]
 	public Guid Key { get; set; }
+    public long ApprovalsApprenticeshipId { get; set; }
 	public string Uln { get; set; } = null!;
 	public string FirstName { get; set; } = null!;
 	public string LastName { get; set; } = null!;

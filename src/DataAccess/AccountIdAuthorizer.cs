@@ -25,6 +25,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return;
         }
 
+        //TODO FIX THIS
         //switch (_accountIdClaims.AccountIdClaimsType)
         //{
         //    case AccountIdClaimsType.Provider:
@@ -63,6 +64,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
 
         return null;
 
+        //TODO FIX THIS
         //var apprenticeshipsWithEpisodes = apprenticeships.Include(x => x.Episodes)
         //    .Where(x => x.Episodes.MaxBy(y => y.EpisodeStartDate) != null);
 

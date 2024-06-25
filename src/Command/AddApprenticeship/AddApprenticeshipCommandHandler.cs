@@ -3,7 +3,7 @@ using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
-namespace SFA.DAS.Apprenticeships.Command.AddApproval
+namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship
 {
     public class AddApprenticeshipCommandHandler : ICommandHandler<AddApprenticeshipCommand>
     {
@@ -28,6 +28,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                     $"No funding band maximum found for course {command.TrainingCode} for given date {startDate?.ToString("u")}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
             
             var apprenticeship = _apprenticeshipFactory.CreateNew(
+                command.ApprovalsApprenticeshipId,
                 command.Uln,
                 command.DateOfBirth,
                 command.FirstName,
@@ -35,7 +36,6 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
                 command.ApprenticeshipHashedId);
 
             apprenticeship.AddEpisode(
-                command.ApprovalsApprenticeshipId,
                 command.UKPRN,
                 command.EmployerAccountId,
                 startDate,

@@ -21,21 +21,22 @@ public class StartDateChangeApprovedHandler : IDomainEventHandler<StartDateChang
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
         var approval = apprenticeship.Episodes.Single();
         var startDateChange = apprenticeship.StartDateChanges.Single(x => x.Key == @event.StartDateChangeKey);
-        var startDateChangedEvent = new ApprenticeshipStartDateChangedEvent()
-        {
-            ApprenticeshipKey = apprenticeship.Key,
-            ApprenticeshipId = approval.ApprovalsApprenticeshipId,
-            EmployerAccountId = apprenticeship.EmployerAccountId,
-            ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? startDateChange.EmployerApprovedDate!.Value : startDateChange.ProviderApprovedDate!.Value,
-            ProviderId = apprenticeship.Ukprn,
-            ActualStartDate = startDateChange.ActualStartDate,
-            PlannedEndDate = startDateChange.PlannedEndDate,
-            AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
-            ProviderApprovedBy = startDateChange.ProviderApprovedBy,
-            EmployerApprovedBy = startDateChange.EmployerApprovedBy,
-            Initiator = startDateChange.Initiator.ToString()!
-        };
+        //todo amend
+        //var startDateChangedEvent = new ApprenticeshipStartDateChangedEvent()
+        //{
+        //    ApprenticeshipKey = apprenticeship.Key,
+        //    ApprenticeshipId = approval.ApprovalsApprenticeshipId,
+        //    EmployerAccountId = apprenticeship.EmployerAccountId,
+        //    ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? startDateChange.EmployerApprovedDate!.Value : startDateChange.ProviderApprovedDate!.Value,
+        //    ProviderId = apprenticeship.Ukprn,
+        //    ActualStartDate = startDateChange.ActualStartDate,
+        //    PlannedEndDate = startDateChange.PlannedEndDate,
+        //    AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
+        //    ProviderApprovedBy = startDateChange.ProviderApprovedBy,
+        //    EmployerApprovedBy = startDateChange.EmployerApprovedBy,
+        //    Initiator = startDateChange.Initiator.ToString()!
+        //};
 
-        await _messageSession.Publish(startDateChangedEvent);
+        //await _messageSession.Publish(startDateChangedEvent);
     }
 }

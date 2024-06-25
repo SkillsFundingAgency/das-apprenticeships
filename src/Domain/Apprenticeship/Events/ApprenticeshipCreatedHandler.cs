@@ -30,7 +30,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 AgreedPrice = latestPrice.TotalPrice,
                 FundingType = (FundingType)approval.FundingType,
                 ActualStartDate = apprenticeship.StartDate,
-                ApprovalsApprenticeshipId = approval.ApprovalsApprenticeshipId,
+                ApprovalsApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
                 EmployerAccountId = latestEpisode.EmployerAccountId,
                 LegalEntityName = approval.LegalEntityName,
                 PlannedEndDate = apprenticeship.EndDate,

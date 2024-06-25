@@ -1,11 +1,11 @@
-﻿
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 
 namespace SFA.DAS.Apprenticeships.Domain.Factories
 {
     public class ApprenticeshipFactory : IApprenticeshipFactory
     {
         public ApprenticeshipDomainModel CreateNew(
+            long approvalsApprenticeshipId,
             string uln, 
             DateTime dateOfBirth,
             string firstName, 
@@ -13,6 +13,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
             string apprenticeshipHashedId)
         {
             return ApprenticeshipDomainModel.New(
+                approvalsApprenticeshipId,
                 uln,
                 dateOfBirth,
                 firstName,

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.AddApproval;
+using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Approvals.EventHandlers.Messages;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
@@ -46,6 +46,5 @@ namespace SFA.DAS.Apprenticeships.Functions
                 TrainingCourseVersion = @event.TrainingCourseVersion
             });
         }
-
     }
 }

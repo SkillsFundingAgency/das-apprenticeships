@@ -21,19 +21,20 @@ public class PriceChangeApprovedHandler : IDomainEventHandler<PriceChangeApprove
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
         var approval = apprenticeship.Episodes.Single();
         var priceChange = apprenticeship.PriceHistories.Single(x => x.Key == @event.PriceHistoryKey);
-        var apprenticeshipCreatedEvent = new PriceChangeApprovedEvent
-        {
-            ApprenticeshipKey = apprenticeship.Key, 
-            ApprenticeshipId = approval.ApprovalsApprenticeshipId,
-            EmployerAccountId = apprenticeship.EmployerAccountId,
-            ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? priceChange.EmployerApprovedDate!.Value : priceChange.ProviderApprovedDate!.Value,
-            ApprovedBy = @event.ApprovedBy,
-            AssessmentPrice = priceChange.AssessmentPrice!.Value,
-            TrainingPrice = priceChange.TrainingPrice!.Value,
-            EffectiveFromDate = priceChange.EffectiveFromDate,
-            ProviderId = apprenticeship.Ukprn
-        };
+        //todo amend handler for price change
+        //var apprenticeshipCreatedEvent = new PriceChangeApprovedEvent
+        //{
+        //    ApprenticeshipKey = apprenticeship.Key, 
+        //    ApprenticeshipId = approval.ApprovalsApprenticeshipId,
+        //    EmployerAccountId = apprenticeship.EmployerAccountId,
+        //    ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? priceChange.EmployerApprovedDate!.Value : priceChange.ProviderApprovedDate!.Value,
+        //    ApprovedBy = @event.ApprovedBy,
+        //    AssessmentPrice = priceChange.AssessmentPrice!.Value,
+        //    TrainingPrice = priceChange.TrainingPrice!.Value,
+        //    EffectiveFromDate = priceChange.EffectiveFromDate,
+        //    ProviderId = apprenticeship.Ukprn
+        //};
 
-        await _messageSession.Publish(apprenticeshipCreatedEvent);
+        //await _messageSession.Publish(apprenticeshipCreatedEvent);
     }
 }

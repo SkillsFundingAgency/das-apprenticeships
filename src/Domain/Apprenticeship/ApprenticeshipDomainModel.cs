@@ -14,6 +14,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     private readonly List<FreezeRequestDomainModel> _freezeRequests;
 
     public Guid Key => _entity.Key;
+    public long ApprovalsApprenticeshipId => _entity.ApprovalsApprenticeshipId;
     public string Uln => _entity.Uln;
     public string FirstName => _entity.FirstName;
     public string LastName => _entity.LastName;
@@ -45,6 +46,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     }
 
     internal static ApprenticeshipDomainModel New(
+        long approvalsApprenticeshipId,
         string uln,
         DateTime dateOfBirth,
         string firstName,
@@ -54,6 +56,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
         {
             Key = Guid.NewGuid(),
+            ApprovalsApprenticeshipId = approvalsApprenticeshipId,
             Uln = uln,
             FirstName = firstName,
             LastName = lastName,
@@ -82,7 +85,6 @@ public class ApprenticeshipDomainModel : AggregateRoot
     }
 
     public void AddEpisode(
-        long approvalsApprenticeshipId, 
         long ukprn,
         long employerAccountId,
         DateTime? startDate,
@@ -100,7 +102,6 @@ public class ApprenticeshipDomainModel : AggregateRoot
         string? trainingCourseVersion)
     {
         var episode = EpisodeDomainModel.New(
-            approvalsApprenticeshipId,
             ukprn,
             employerAccountId,
             fundingType,
@@ -111,7 +112,6 @@ public class ApprenticeshipDomainModel : AggregateRoot
             trainingCode,
             trainingCourseVersion); 
         
-        //todo double check if happy with this pattern
         episode.AddEpisodePrice(
             startDate,
             endDate,
