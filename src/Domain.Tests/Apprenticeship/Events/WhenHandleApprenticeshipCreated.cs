@@ -1,13 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
+using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
@@ -23,6 +23,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         public void Setup()
         {
             _fixture = new Fixture();
+            _fixture.Customize(new ApprenticeshipCustomization());
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
             _messageSession = new Mock<IMessageSession>();
             _handler = new ApprenticeshipCreatedHandler(_apprenticeshipRepository.Object, _messageSession.Object);
@@ -31,28 +32,10 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         [Test]
         public async Task ThenApprenticeshipCreatedEventIsPublished()
         {
-            var apprenticeshipFactory = new ApprenticeshipFactory();
-            var apprenticeship = apprenticeshipFactory.CreateNew(
-                "1234435",
-                "TRN",
-                new DateTime(2000,
-                    10,
-                    16),
-                "Ron",
-                "Swanson",
-                _fixture.Create<decimal?>(),
-                _fixture.Create<decimal?>(),
-                _fixture.Create<decimal>(),
-                _fixture.Create<string>(),
-                _fixture.Create<int>(),
-                _fixture.Create<DateTime>(),
-                _fixture.Create<DateTime>(),
-                _fixture.Create<long>(),
-                _fixture.Create<long>(),
-                _fixture.Create<long>(),
-                _fixture.Create<string>());
-            apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
-            var approval = apprenticeship.Episodes.Single();
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
+            var episode = apprenticeship.LatestEpisode;
+            var episodePrice = apprenticeship.LatestPrice;
             var command = _fixture.Create<ApprenticeshipCreated>();
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
@@ -62,22 +45,22 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
             _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipCreatedEvent>(e =>
                     e.ApprenticeshipKey == apprenticeship.Key &&
                     e.Uln == apprenticeship.Uln &&
-                    e.TrainingCode == apprenticeship.TrainingCode &&
-                    e.FundingEmployerAccountId == approval.FundingEmployerAccountId &&
-                    e.AgreedPrice == approval.AgreedPrice &&
-                    e.FundingType == (FundingType)approval.FundingType &&
-                    e.ActualStartDate == approval.ActualStartDate &&
-                    e.ApprovalsApprenticeshipId == approval.ApprovalsApprenticeshipId &&
-                    e.EmployerAccountId == apprenticeship.EmployerAccountId &&
-                    e.LegalEntityName == approval.LegalEntityName &&
-                    e.PlannedEndDate == approval.PlannedEndDate &&
-                    e.UKPRN == apprenticeship.Ukprn &&
+                    e.TrainingCode == episode.TrainingCode &&
+                    e.FundingEmployerAccountId == episode.FundingEmployerAccountId &&
+                    e.AgreedPrice == episodePrice.TotalPrice &&
+                    e.FundingType == (FundingType)episode.FundingType &&
+                    e.ActualStartDate == episodePrice.StartDate &&
+                    e.ApprovalsApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId &&
+                    e.EmployerAccountId == episode.EmployerAccountId &&
+                    e.LegalEntityName == episode.LegalEntityName &&
+                    e.PlannedEndDate == episodePrice.EndDate &&
+                    e.UKPRN == episode.Ukprn &&
                     e.DateOfBirth == apprenticeship.DateOfBirth &&
                     e.FirstName == apprenticeship.FirstName &&
-                    e.LastName== apprenticeship.LastName &&
+                    e.LastName == apprenticeship.LastName &&
                     e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship &&
-                    e.PlannedStartDate == approval.PlannedStartDate &&
-                    e.FundingPlatform == (FundingPlatform?)approval.FundingPlatform
+                    e.PlannedStartDate == episodePrice.StartDate &&
+                    e.FundingPlatform == (FundingPlatform?)episode.FundingPlatform
                 ), It.IsAny<PublishOptions>()));
         }
     }

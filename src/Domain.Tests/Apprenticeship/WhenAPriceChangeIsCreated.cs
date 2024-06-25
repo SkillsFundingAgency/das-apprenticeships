@@ -1,51 +1,31 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Factories;
+using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 
 [TestFixture]
 public class WhenAPriceChangeIsCreated
 {
-    private ApprenticeshipDomainModel _apprenticeship;
     private Fixture _fixture;
 
     [SetUp]
     public void SetUp()
     {
-        var apprenticeshipFactory = new ApprenticeshipFactory();
         _fixture = new Fixture();
-        _apprenticeship = apprenticeshipFactory.CreateNew(
-            "1234435",
-            "TRN",
-            new DateTime(2000,
-                10,
-                16),
-            "Ron",
-            "Swanson",
-            _fixture.Create<decimal?>(),
-            _fixture.Create<decimal?>(),
-            _fixture.Create<decimal>(),
-            _fixture.Create<string>(),
-            _fixture.Create<int>(),
-            _fixture.Create<DateTime>(),
-            _fixture.Create<DateTime>(),
-            _fixture.Create<long>(),
-            _fixture.Create<long>(),
-            _fixture.Create<long>(),
-            _fixture.Create<string>());
+        _fixture.Customize(new ApprenticeshipCustomization());
     }
 
     [Test]
     public void ThenThePriceHistoryRecordIsAdded()
     {
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
         var expectedModel = PriceHistoryDomainModel.Get(_fixture.Create<PriceHistory>());
-        _apprenticeship.AddPriceHistory(
+        apprenticeship.AddPriceHistory(
             expectedModel.TrainingPrice,
             expectedModel.AssessmentPrice,
             expectedModel.TotalPrice,
@@ -59,7 +39,7 @@ public class WhenAPriceChangeIsCreated
             expectedModel.EmployerApprovedDate,
             expectedModel.Initiator);
 
-        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.EffectiveFromDate == expectedModel.EffectiveFromDate);
+        var priceHistory = apprenticeship.GetEntity().PriceHistories.Single(x => x.EffectiveFromDate == expectedModel.EffectiveFromDate);
 
         priceHistory.Should()
             .BeEquivalentTo(expectedModel,

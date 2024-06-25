@@ -5,8 +5,6 @@ using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprovalQueryRepository
@@ -71,14 +69,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprovalQueryRep
         {
             return _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
                 .With(x => x.Key, apprenticeshipKey)
-                .With(x => x.Approvals, new List<Approval>() { new()
-                    {
-                        Id = _fixture.Create<Guid>(),
-                        ApprovalsApprenticeshipId = apprenticeshipId,
-                        ApprenticeshipKey = apprenticeshipKey,
-                        LegalEntityName = "legalEntityName"
-                    }
-                })
                 .Create();
         }
 
@@ -86,25 +76,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprovalQueryRep
         {
             _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
             _sut = new Domain.Repositories.ApprovalQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
-        }
-
-        private DataAccess.Entities.Apprenticeship.Apprenticeship CreateApprenticeshipWithUkprn(string uln, long ukprn)
-        {
-            return CreateApprenticeshipWithUkPrnAndFundingPlatform(uln, ukprn, _fixture.Create<FundingPlatform>());
-        }
-
-        private DataAccess.Entities.Apprenticeship.Apprenticeship CreateApprenticeshipWithUkPrnAndFundingPlatform(string uln, long ukprn, FundingPlatform fundingPlatform)
-        {
-            return _fixture
-                .Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
-                .With(x => x.Uln, uln)
-                .With(x => x.Ukprn, ukprn)
-                .With(x => x.Approvals, new List<Approval>() { new()
-                {
-                    FundingPlatform = fundingPlatform,
-                    LegalEntityName = "legalEntityName"
-                } })
-                .Create();
         }
     }
 }

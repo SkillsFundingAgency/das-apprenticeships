@@ -63,7 +63,7 @@ public class PriceHistoryDomainModel
         return _entity;
     }
 
-    internal static PriceHistoryDomainModel Get(DataAccess.Entities.Apprenticeship.PriceHistory entity)
+    public static PriceHistoryDomainModel Get(DataAccess.Entities.Apprenticeship.PriceHistory entity)
     {
         return new PriceHistoryDomainModel(entity);
     }

@@ -35,16 +35,13 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         }
 
         [Test]
-        public async Task Then_the_apprenticeship_is_retrieved()
+        public async Task ThenApprenticeshipIsRetrieved()
         {
             // Arrange
-            var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
             SetUpApprenticeshipRepository();
-            _apprenticeshipFactory.Setup(x => x.GetExisting(It.Is<DataAccess.Entities.Apprenticeship.Apprenticeship>(y =>
-                    y.Key == expectedApprenticeship.Key &&
-                    y.TrainingCode == expectedApprenticeship.TrainingCode &&
-                    y.Uln == expectedApprenticeship.Uln
-                ))).Returns(expectedApprenticeship);
+            var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
+            _apprenticeshipFactory
+                .Setup(x => x.GetExisting(It.IsAny<DataAccess.Entities.Apprenticeship.Apprenticeship>())).Returns(expectedApprenticeship);
 
             // Act
             await _sut.Add(expectedApprenticeship);

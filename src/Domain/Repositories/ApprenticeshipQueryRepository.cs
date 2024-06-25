@@ -20,7 +20,7 @@ using SFA.DAS.Apprenticeships.Enums;
 
      public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
      {
-         //todo do we only want to return apprenticeships where the ukprn matches the latest one?
+         //todo do we only want to return apprenticeships where the ukprn matches the latest episode or any historically?
          var dataModels = await DbContext.Apprenticeships
              .Include(x => x.Episodes)
              .Where(x => x.Episodes.Any(y => y.Ukprn == ukprn && (fundingPlatform == null || y.FundingPlatform == fundingPlatform)))

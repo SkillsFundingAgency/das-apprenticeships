@@ -65,7 +65,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         });
     }
 
-    internal static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+    public static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
     {
         return new ApprenticeshipDomainModel(entity, false);
     }
@@ -97,7 +97,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         int fundingBandMaximum,
         long? fundingEmployerAccountId, 
         string legalEntityName, 
-        long accountLegalEntityId,
+        long? accountLegalEntityId,
         string trainingCode,
         string? trainingCourseVersion)
     {

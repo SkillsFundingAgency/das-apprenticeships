@@ -1,45 +1,28 @@
-﻿using System;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.Factories;
+using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 {
     [TestFixture]
     public class WhenAnApprenticeshipIsCreated
     {
-        private ApprenticeshipFactory _apprenticeshipFactory;
         private Fixture _fixture;
 
         [SetUp]
         public void SetUp()
         {
-            _apprenticeshipFactory = new ApprenticeshipFactory();
             _fixture = new Fixture();
+            _fixture.Customize(new ApprenticeshipCustomization());
         }
 
         [Test]
         public void ThenAnApprenticeshipCreatedEventIsAdded()
         {
-            var apprenticeship = _apprenticeshipFactory.CreateNew(
-                "1234435",
-                "TRN",
-                new DateTime(2000, 10, 16),
-                "Ron",
-                "Swanson",
-                _fixture.Create<decimal?>(),
-                _fixture.Create<decimal?>(),
-                _fixture.Create<decimal>(),
-                _fixture.Create<string>(),
-                _fixture.Create<int>(),
-                _fixture.Create<DateTime>(),
-                _fixture.Create<DateTime>(),
-                _fixture.Create<long>(),
-                _fixture.Create<long>(),
-                _fixture.Create<long>(),
-                _fixture.Create<string>());
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             var events = apprenticeship.FlushEvents();
             events.Should().ContainSingle(x => x.GetType() == typeof(ApprenticeshipCreated));
         }

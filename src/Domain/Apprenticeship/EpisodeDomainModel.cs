@@ -14,7 +14,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public FundingPlatform? FundingPlatform => _entity.FundingPlatform;
         public long? FundingEmployerAccountId => _entity.FundingEmployerAccountId;
         public string LegalEntityName => _entity.LegalEntityName;
+        public long? AccountLegalEntityId => _entity.AccountLegalEntityId;
         public string TrainingCode => _entity.TrainingCode;
+        public string TrainingCourseVersion => _entity.TrainingCourseVersion;
         public bool PaymentsFrozen => _entity.PaymentsFrozen; //TODO verify if needed
         public IReadOnlyCollection<EpisodePriceDomainModel> EpisodePrices => new ReadOnlyCollection<EpisodePriceDomainModel>(_episodePrices);
 
@@ -25,7 +27,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             FundingPlatform? fundingPlatform,
             long? fundingEmployerAccountId, 
             string legalEntityName, 
-            long accountLegalEntityId,
+            long? accountLegalEntityId,
             string trainingCode,
             string? trainingCourseVersion)
         {
@@ -75,7 +77,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             return _entity;
         }
 
-        internal static EpisodeDomainModel Get(Episode entity)
+        public static EpisodeDomainModel Get(Episode entity)
         {
             return new EpisodeDomainModel(entity);
         }

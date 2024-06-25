@@ -4,7 +4,7 @@ using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.AddApproval;
+using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Approvals.EventHandlers.Messages;
 using FundingType = SFA.DAS.Approvals.EventHandlers.Messages.FundingType;
@@ -33,7 +33,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
             await _handler.HandleCommand(@event);
 
             _commandDispatcher.Verify(x =>
-                x.Send<AddApprenticeshipCommand>(It.Is<AddApprenticeshipCommand>(c =>
+                x.Send(It.Is<AddApprenticeshipCommand>(c =>
                         c.TrainingCode == @event.TrainingCode &&
                         c.ActualStartDate == @event.ActualStartDate &&
                         c.TotalPrice == @event.AgreedPrice &&

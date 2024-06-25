@@ -7,8 +7,10 @@
         public bool IsDeleted => _entity.IsDeleted; 
         public DateTime? StartDate => _entity.StartDate; 
         public DateTime EndDate => _entity.EndDate; 
-        public decimal TotalPrice => _entity.TotalPrice; //TODO verify if needed
-        public int FundingBandMaximum => _entity.FundingBandMaximum; //TODO verify if needed
+        public decimal TotalPrice => _entity.TotalPrice;
+        public decimal? EndPointAssessmentPrice => _entity.EndPointAssessmentPrice;
+        public decimal? TrainingPrice => _entity.TrainingPrice;
+        public int FundingBandMaximum => _entity.FundingBandMaximum;
 
         internal static EpisodePriceDomainModel New(
             DateTime? startDate,
@@ -41,7 +43,7 @@
             return _entity;
         }
 
-        internal static EpisodePriceDomainModel Get(DataAccess.Entities.Apprenticeship.EpisodePrice entity)
+        public static EpisodePriceDomainModel Get(DataAccess.Entities.Apprenticeship.EpisodePrice entity)
         {
             return new EpisodePriceDomainModel(entity);
         }

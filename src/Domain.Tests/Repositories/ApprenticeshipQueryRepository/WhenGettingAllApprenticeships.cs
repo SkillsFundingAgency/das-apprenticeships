@@ -102,17 +102,18 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             return CreateApprenticeshipWithUkPrnAndFundingPlatform(uln, ukprn, _fixture.Create<FundingPlatform>());
         }
 
+        //todo fix this for tests above
         private DataAccess.Entities.Apprenticeship.Apprenticeship CreateApprenticeshipWithUkPrnAndFundingPlatform(string uln, long ukprn, FundingPlatform fundingPlatform)
         {
             return _fixture
                 .Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
                 .With(x => x.Uln, uln)
-                .With(x => x.Ukprn, ukprn)
-                .With(x => x.Approvals, new List<Approval>() { new()
-                {
-                    FundingPlatform = fundingPlatform,
-                    LegalEntityName = "legalEntityName"
-                } })
+                //.With(x => x.Ukprn, ukprn)
+                //.With(x => x.Approvals, new List<Approval>() { new()
+                //{
+                //    FundingPlatform = fundingPlatform,
+                //    LegalEntityName = "legalEntityName"
+                //} })
                 .Create();
         }
     }

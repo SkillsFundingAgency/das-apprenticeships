@@ -1,15 +1,16 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events;
@@ -26,6 +27,7 @@ public class WhenHandleStartDateChangeApproved
     public void Setup()
     {
         _fixture = new Fixture();
+        _fixture.Customize(new ApprenticeshipCustomization());
         _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
         _messageSession = new Mock<IMessageSession>();
         _handler = new StartDateChangeApprovedHandler(_apprenticeshipRepository.Object, _messageSession.Object);
@@ -35,29 +37,10 @@ public class WhenHandleStartDateChangeApproved
     public async Task ThenApprenticeshipStartDateChangedEventIsPublished()
     {
         // Arrange
-        var apprenticeshipFactory = new ApprenticeshipFactory();
-        var apprenticeship = apprenticeshipFactory.CreateNew(
-            "1234435",
-            "TRN",
-            new DateTime(2000, 10, 16),
-            "Ron",
-            "Swanson",
-            _fixture.Create<decimal?>(),
-            _fixture.Create<decimal?>(),
-            _fixture.Create<decimal>(),
-            _fixture.Create<string>(),
-            _fixture.Create<int>(),
-            _fixture.Create<DateTime>(),
-            _fixture.Create<DateTime>(),
-            _fixture.Create<long>(),
-            _fixture.Create<long>(),
-            _fixture.Create<long>(),
-            "1.1");
-
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
         var startDateChange = _fixture.Create<StartDateChange>();
-
-        apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
-        apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.PlannedEndDate, startDateChange.Reason, startDateChange.ProviderApprovedBy, startDateChange.ProviderApprovedDate, null, null, startDateChange.CreatedDate, startDateChange.RequestStatus, ChangeInitiator.Provider);
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
+        ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, startDateChange);
         var employerUserId = _fixture.Create<string>();
         apprenticeship.ApproveStartDateChange(employerUserId);
         var approval = apprenticeship.Episodes.Single();
@@ -71,9 +54,9 @@ public class WhenHandleStartDateChangeApproved
         // Assert
         _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipStartDateChangedEvent>(e =>
             e.ApprenticeshipKey == apprenticeship.Key &&
-            e.EmployerAccountId == apprenticeship.EmployerAccountId &&
+            e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
             e.ApprenticeshipId == approval.ApprovalsApprenticeshipId &&
-            e.ProviderId == apprenticeship.Ukprn &&
+            e.ProviderId == apprenticeship.LatestEpisode.Ukprn &&
             e.ActualStartDate == startDateChange.ActualStartDate &&
             e.PlannedEndDate == startDateChange.PlannedEndDate &&
             e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship &&

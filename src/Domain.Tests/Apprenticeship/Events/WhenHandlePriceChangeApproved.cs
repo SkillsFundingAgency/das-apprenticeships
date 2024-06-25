@@ -1,13 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Types;
 
@@ -32,30 +32,10 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         [Test]
         public async Task ThenApprenticeshipCreatedEventIsPublished()
         {
-            var apprenticeshipFactory = new ApprenticeshipFactory();
-            var apprenticeship = apprenticeshipFactory.CreateNew(
-                "1234435",
-                "TRN",
-                new DateTime(2000,
-                    10,
-                    16),
-                "Ron",
-                "Swanson",
-                _fixture.Create<decimal?>(),
-                _fixture.Create<decimal?>(),
-                _fixture.Create<decimal>(),
-                _fixture.Create<string>(),
-                _fixture.Create<int>(),
-                _fixture.Create<DateTime>(),
-                _fixture.Create<DateTime>(),
-                _fixture.Create<long>(),
-                _fixture.Create<long>(),
-                _fixture.Create<long>(),
-                _fixture.Create<string>());
-            apprenticeship.AddApproval(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<decimal>(), _fixture.Create<long>(), _fixture.Create<Enums.FundingType>(), _fixture.Create<int>(), _fixture.Create<DateTime?>(), _fixture.Create<Enums.FundingPlatform?>());
-            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeRequestStatus.Created, null, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<ChangeInitiator>());
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
+            ApprenticeshipDomainModelTestHelper.AddPendingPriceChange(apprenticeship);
             apprenticeship.ApprovePriceChange("Bob", null, null);
-            var approval = apprenticeship.Episodes.Single();
             var priceChange = apprenticeship.PriceHistories.Single();
             var command = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Employer);
 
@@ -65,16 +45,16 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 
             _messageSession.Verify(x => x.Publish(It.Is<PriceChangeApprovedEvent>(e =>
                     e.ApprenticeshipKey == apprenticeship.Key &&
-                    e.EmployerAccountId == apprenticeship.EmployerAccountId &&
+                    e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
                     e.ApprenticeshipKey == apprenticeship.Key &&
-                    e.ApprenticeshipId == approval.ApprovalsApprenticeshipId &&
-                    e.EmployerAccountId == apprenticeship.EmployerAccountId &&
+                    e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId &&
+                    e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
                     e.ApprovedDate == priceChange.EmployerApprovedDate!.Value &&
                     e.ApprovedBy == ApprovedBy.Employer &&
                     e.AssessmentPrice == priceChange.AssessmentPrice!.Value &&
                     e.TrainingPrice == priceChange.TrainingPrice!.Value &&
                     e.EffectiveFromDate == priceChange.EffectiveFromDate &&
-                    e.ProviderId == apprenticeship.Ukprn
+                    e.ProviderId == apprenticeship.LatestEpisode.Ukprn
                 ), It.IsAny<PublishOptions>()));
         }
     }
