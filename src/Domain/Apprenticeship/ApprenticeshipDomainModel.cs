@@ -14,7 +14,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     private readonly List<FreezeRequestDomainModel> _freezeRequests;
 
     public Guid Key => _entity.Key;
-    public long ApprovalsApprenticeshipId => _entity.ApprovalsApprenticeshipId; //TODO - Verify if this belongs here or on the episode (looks to be from [Apprenticeship] table in commitments DB so assuming doesn't change with CoC)
+    public long ApprovalsApprenticeshipId => _entity.ApprovalsApprenticeshipId;
     public string Uln => _entity.Uln;
     public string FirstName => _entity.FirstName;
     public string LastName => _entity.LastName;

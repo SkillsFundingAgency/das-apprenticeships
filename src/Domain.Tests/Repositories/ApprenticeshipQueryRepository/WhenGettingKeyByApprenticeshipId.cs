@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprovalQueryRepository
+namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
 {
     public class WhenGettingKeyByApprenticeshipId
     {
-        private Domain.Repositories.ApprovalQueryRepository _sut;
+        private Domain.Repositories.ApprenticeshipQueryRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
 
@@ -31,8 +33,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprovalQueryRep
         public async Task ThenReturnNullWhenNoRecordFoundWithApprenticeshipId()
         {
             //Arrange
-            SetUpApprovalQueryRepository();
-            
+            SetUpApprenticeshipQueryRepository();
+
             //Act
             var result = await _sut.GetKeyByApprenticeshipId(_fixture.Create<long>());
 
@@ -44,14 +46,14 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprovalQueryRep
         public async Task ThenTheCorrectApprenticeshipKeyIsReturned()
         {
             //Arrange
-            SetUpApprovalQueryRepository();
-            
+            SetUpApprenticeshipQueryRepository();
+
             //Act
             var approvalsApprenticeshipId = _fixture.Create<long>();
             var expectedApprenticeshipKey = _fixture.Create<Guid>();
             var apprenticeships = new List<DataAccess.Entities.Apprenticeship.Apprenticeship>
             {
-                CreateApprenticeshipWithApproval(expectedApprenticeshipKey, approvalsApprenticeshipId), 
+                CreateApprenticeshipWithApproval(expectedApprenticeshipKey, approvalsApprenticeshipId),
                 CreateApprenticeshipWithApproval(_fixture.Create<Guid>(), _fixture.Create<long>())
             };
             await _dbContext.AddRangeAsync(apprenticeships);
@@ -72,10 +74,11 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprovalQueryRep
                 .Create();
         }
 
-        private void SetUpApprovalQueryRepository()
+        private void SetUpApprenticeshipQueryRepository()
         {
             _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-            _sut = new Domain.Repositories.ApprovalQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext));
+            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
+            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
     }
 }

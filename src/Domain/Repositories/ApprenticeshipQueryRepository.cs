@@ -29,6 +29,12 @@ using SFA.DAS.Apprenticeships.Enums;
          var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
          return result;
      }
+     public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
+     {
+         var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
+             .SingleOrDefaultAsync(x => x.ApprovalsApprenticeshipId == apprenticeshipId);
+         return apprenticeshipWithMatchingId?.Key;
+     }
 
      public async Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey)
      {

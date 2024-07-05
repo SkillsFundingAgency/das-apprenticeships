@@ -24,7 +24,6 @@ public static class ServiceCollectionExtensions
                     .WithTransientLifetime();
             })
             .AddScoped<IApprenticeshipQueryRepository, ApprenticeshipQueryRepository>()
-            .AddScoped<IApprovalQueryRepository, ApprovalQueryRepository>()
             .AddScoped<IQueryDispatcher, QueryDispatcher>();
 
         return serviceCollection;
