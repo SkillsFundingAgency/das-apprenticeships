@@ -13,4 +13,8 @@ public class PriceChangeApprovedEvent
     public ApprovedBy ApprovedBy { get; set; }
     public long EmployerAccountId { get; set; }
     public long ProviderId { get; set; }
+
+    public Guid ApprenticeshipEpisodeKey { get; set; }
+    public Guid PriceKey { get; set; }
+    public List<Guid> DeletedPriceKeys { get; set; }
 }
