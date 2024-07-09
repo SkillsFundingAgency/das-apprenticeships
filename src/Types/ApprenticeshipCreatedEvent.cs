@@ -21,4 +21,6 @@ public class ApprenticeshipCreatedEvent
     public int? AgeAtStartOfApprenticeship { get; set; }
     public DateTime? PlannedStartDate { get; set; }
     public FundingPlatform? FundingPlatform { get; set; }
+    public Guid ApprenticeshipEpisodeKey { get; set; }
+    public Guid PriceKey { get; set; }
 }

@@ -13,4 +13,7 @@ public class ApprenticeshipStartDateChangedEvent
     public string ProviderApprovedBy { get; set; }
     public string EmployerApprovedBy { get; set; }
     public string Initiator { get; set; }
+    public Guid ApprenticeshipEpisodeKey { get; set; }
+    public Guid PriceKey { get; set; }
+    public List<Guid> DeletedPriceKeys { get; set; }
 }
