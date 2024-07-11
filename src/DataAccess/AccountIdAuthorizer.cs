@@ -69,16 +69,36 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         var apprenticeshipsWithEpisodes = apprenticeships
             .Include(x => x.Episodes);
 
+        var currentDateTime = DateTime.UtcNow;
+
         switch (_accountIdClaims.AccountIdClaimsType)
         {
             case AccountIdClaimsType.Provider:
                 return apprenticeshipsWithEpisodes
-                    .Where(x => _accountIdClaims.AccountIds
-                        .Contains(x.GetCurrentEpisode().Ukprn));
+                    .Select(a => new
+                    {
+                        Apprenticeship = a,
+                        CurrentEpisode = a.Episodes
+                            .FirstOrDefault(e => e.Prices.Any(price => 
+                                price.StartDate <= currentDateTime && price.EndDate >= currentDateTime
+                                || price.StartDate >= currentDateTime
+                                || price.EndDate <= currentDateTime))
+                    })
+                    .Where(x => x.CurrentEpisode != null && _accountIdClaims.AccountIds.Contains(x.CurrentEpisode.Ukprn))
+                    .Select(x => x.Apprenticeship); ;
             case AccountIdClaimsType.Employer:
                 return apprenticeshipsWithEpisodes
-                    .Where(x => _accountIdClaims.AccountIds
-                        .Contains(x.GetCurrentEpisode().EmployerAccountId));
+                    .Select(a => new
+                    {
+                        Apprenticeship = a,
+                        CurrentEpisode = a.Episodes
+                            .FirstOrDefault(e => e.Prices.Any(price =>
+                                price.StartDate <= currentDateTime && price.EndDate >= currentDateTime
+                                || price.StartDate >= currentDateTime
+                                || price.EndDate <= currentDateTime))
+                    })
+                    .Where(x => x.CurrentEpisode != null && _accountIdClaims.AccountIds.Contains(x.CurrentEpisode.EmployerAccountId))
+                    .Select(x => x.Apprenticeship); ;
             default:
                 throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
         }
