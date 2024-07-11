@@ -20,13 +20,12 @@ using SFA.DAS.Apprenticeships.Enums;
 
      public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
      {
-         //todo do we only want to return apprenticeships where the ukprn matches the latest episode or any historically?
-         var dataModels = await DbContext.Apprenticeships
+         var apprenticeships = await DbContext.Apprenticeships
              .Include(x => x.Episodes)
              .Where(x => x.Episodes.Any(y => y.Ukprn == ukprn && (fundingPlatform == null || y.FundingPlatform == fundingPlatform)))
              .ToListAsync();
         
-         var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
+         var result = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
          return result;
      }
      public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
@@ -222,7 +221,7 @@ using SFA.DAS.Apprenticeships.Enums;
                  EmployerApprovedDate = startDateChange.EmployerApprovedDate,
                  AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
                  Initiator = startDateChange.Initiator.ToString(),
-                 OriginalActualStartDate = firstPrice.StartDate.GetValueOrDefault(),
+                 OriginalActualStartDate = firstPrice.StartDate,
                  PendingActualStartDate = startDateChange.ActualStartDate,
                  OriginalPlannedEndDate = latestPrice.EndDate,
                  PendingPlannedEndDate = startDateChange.PlannedEndDate

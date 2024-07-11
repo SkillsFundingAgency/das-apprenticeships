@@ -12,7 +12,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 [TestFixture]
 public class WhenAPendingPriceChangeIsRejected
 {
-    private ApprenticeshipDomainModel _apprenticeship = null!;
     private Fixture _fixture = null!;
 
     [SetUp]
@@ -47,7 +46,7 @@ public class WhenAPendingPriceChangeIsRejected
         apprenticeship.RejectPendingPriceChange(reason);
 
         // Assert
-        var priceHistory = _apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Rejected);
+        var priceHistory = apprenticeship.GetEntity().PriceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Rejected);
         priceHistory.Should().NotBeNull();
         priceHistory.RejectReason.Should().Be(reason);
     }

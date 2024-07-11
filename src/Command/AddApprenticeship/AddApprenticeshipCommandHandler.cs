@@ -1,6 +1,5 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship
@@ -20,12 +19,18 @@ namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship
 
         public async Task Handle(AddApprenticeshipCommand command, CancellationToken cancellationToken = default)
         {
-            var startDate = command.FundingPlatform == FundingPlatform.DAS ? command.ActualStartDate : command.PlannedStartDate;
+            if (command.ActualStartDate == null)
+            {
+                throw new Exception(
+                    $"{nameof(command.ActualStartDate)} for Apprenticeship ({command.ApprenticeshipHashedId} (Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}) is null. " +
+                    $"Apprenticeships funded by DAS should always have an actual start date. ");
+            }
+            var startDate = command.ActualStartDate.Value;
             var fundingBandMaximum = await _fundingBandMaximumService.GetFundingBandMaximum(int.Parse(command.TrainingCode), startDate);
 
             if (fundingBandMaximum == null)
                 throw new Exception(
-                    $"No funding band maximum found for course {command.TrainingCode} for given date {startDate?.ToString("u")}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
+                    $"No funding band maximum found for course {command.TrainingCode} for given date {startDate:u}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
             
             var apprenticeship = _apprenticeshipFactory.CreateNew(
                 command.ApprovalsApprenticeshipId,
@@ -50,9 +55,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship
                 command.LegalEntityName,
                 command.AccountLegalEntityId,
                 command.TrainingCode,
-                command.TrainingCourseVersion
-                //,,(!command.PlannedStartDate.HasValue) || (command.PlannedStartDate.GetValueOrDefault().Year == 1) ? null : command.PlannedStartDate.Value, //todo verify this original logic and whether to incorporate it
-                );
+                command.TrainingCourseVersion);
 
             await _apprenticeshipRepository.Add(apprenticeship);
         }

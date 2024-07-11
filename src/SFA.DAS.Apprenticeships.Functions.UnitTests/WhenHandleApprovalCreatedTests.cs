@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command;
@@ -13,26 +14,17 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
 {
     public class WhenHandleApprovalCreatedTests
     {
-        private Mock<ICommandDispatcher> _commandDispatcher;
-        private HandleApprovalCreated _handler;
-        private Fixture _fixture;
-
-        [SetUp]
-        public void Setup()
-        {
-            _fixture = new Fixture();
-            _commandDispatcher = new Mock<ICommandDispatcher>();
-            _handler = new HandleApprovalCreated(_commandDispatcher.Object);
-        }
-
         [Test]
         public async Task ThenApprovalIsAdded()
         {
-            var @event = _fixture.Create<ApprovalCreatedEvent>();
+            var fixture = new Fixture();
+            var @event = fixture.Create<ApprovalCreatedEvent>();
             @event.FundingType = FundingType.Transfer;
-            await _handler.HandleCommand(@event);
+            var commandDispatcher = new Mock<ICommandDispatcher>();
+            var handler = new HandleApprovalCreated(commandDispatcher.Object);
+            await handler.HandleCommand(@event, new Mock<ILogger>().Object);
 
-            _commandDispatcher.Verify(x =>
+            commandDispatcher.Verify(x =>
                 x.Send(It.Is<AddApprenticeshipCommand>(c =>
                         c.TrainingCode == @event.TrainingCode &&
                         c.ActualStartDate == @event.ActualStartDate &&
@@ -48,7 +40,6 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                         c.UKPRN == @event.UKPRN &&
                         c.Uln == @event.Uln &&
                         c.DateOfBirth == @event.DateOfBirth &&
-                        c.PlannedStartDate == @event.StartDate &&
                         c.FundingPlatform == (@event.IsOnFlexiPaymentPilot.HasValue ? (@event.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null)
                     ),
                     It.IsAny<CancellationToken>()));

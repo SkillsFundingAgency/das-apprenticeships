@@ -40,13 +40,12 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 .HasConversion(
                     v => v.ToString(),
                     v => (FundingType)Enum.Parse(typeof(FundingType), v));
-            //todo - are we missing this conversion for FundingPlatform?
-            //modelBuilder.Entity<Episode>()
-            //    .Property(p => p.FundingPlatform)
-            //    .HasConversion(
-            //        v => v.ToString(),
-            //        v => (FundingPlatform?)Enum.Parse(typeof(FundingPlatform?), v));
-            
+            modelBuilder.Entity<Episode>()
+                .Property(p => p.FundingPlatform)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (FundingPlatform?)Enum.Parse(typeof(FundingPlatform?), v));
+
             // EpisodePrice
             modelBuilder.Entity<EpisodePrice>()
                 .HasKey(x => x.Key);

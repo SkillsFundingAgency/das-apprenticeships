@@ -18,6 +18,7 @@ public class WhenSettingPaymentStatus
         _fixture.Customize(new ApprenticeshipCustomization());
     }
 
+    //TODO fix unit for freeze/unfreeze
     [Test]
     public void And_NewStatusIsSameAsOld_Then_Throws()
     {
@@ -30,6 +31,7 @@ public class WhenSettingPaymentStatus
 
     }
 
+    //TODO fix unit for freeze/unfreeze
     [Test]
     public void And_NewStatusIsFrozen_Then_PaymentsAreFrozen()
     {
@@ -40,8 +42,7 @@ public class WhenSettingPaymentStatus
         apprenticeship.SetPaymentStatus(true, _userId, DateTime.Now);
 
         //Assert
-        //todo fix test for freeze/unfreeze
-        //Assert.That(apprenticeship.PaymentsFrozen.Equals(true));
-        //Assert.That(apprenticeship.FreezeRequests.Count.Equals(1));
+        Assert.That(apprenticeship.LatestEpisode.PaymentsFrozen.Equals(true));
+        Assert.That(apprenticeship.FreezeRequests.Count.Equals(1));
     }
 }

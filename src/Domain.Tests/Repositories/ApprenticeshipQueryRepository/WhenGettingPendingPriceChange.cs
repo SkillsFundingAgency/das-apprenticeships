@@ -50,7 +50,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             //Arrange
             SetUpApprenticeshipQueryRepository();
 
-            //Act
             var apprenticeshipKey = _fixture.Create<Guid>();
             var otherApprenticeshipKey1 = _fixture.Create<Guid>();
             var otherApprenticeshipKey2 = _fixture.Create<Guid>();
@@ -84,13 +83,20 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             //Arrange
             SetUpApprenticeshipQueryRepository();
 
-            //Act
             var apprenticeshipKey = _fixture.Create<Guid>();
-            var otherApprenticeshipKey = _fixture.Create<Guid>();
+            var episodeKey = _fixture.Create<Guid>();
             var priceHistoryKey = _fixture.Create<Guid>();
             var effectiveFromDate = DateTime.UtcNow.AddDays(-5).Date;
             var providerApprovedDate = initiator == "Provider" ? _fixture.Create<DateTime>() : (DateTime?)null;
             var employerApprovedDate = initiator == "Employer" ? _fixture.Create<DateTime>() : (DateTime?)null;
+
+            var episodePrice = _fixture.Create<EpisodePrice>();
+            episodePrice.EpisodeKey = episodeKey;
+
+            var episode = _fixture.Build<Episode>()
+                .With(x => x.Key, episodeKey)
+                .With(x => x.Prices, new List<EpisodePrice> { episodePrice })
+                .Create();
 
             var apprenticeships = new[]
             {
@@ -113,11 +119,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                             Initiator = initiator == "Employer" ? ChangeInitiator.Employer : ChangeInitiator.Provider
                         }
                     })
+                    .With(x => x.Episodes, new List<Episode>() { episode })
                     .Create(), 
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
-                    .With(x => x.Key, otherApprenticeshipKey)
-                    .With(x => x.PriceHistories, new List<PriceHistory>() { new() { ApprenticeshipKey = otherApprenticeshipKey}})
-                    .Create()
             };
 
             await _dbContext.AddRangeAsync(apprenticeships);
@@ -127,21 +130,20 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             var result = await _sut.GetPendingPriceChange(apprenticeshipKey);
 
             // Assert
-            //todo PRICE CHANGE - fix test 
-            //result.Should().NotBeNull();
-            //result.OriginalTrainingPrice.Should().Be(apprenticeships[0].TrainingPrice);
-            //result.OriginalAssessmentPrice.Should().Be(apprenticeships[0].EndPointAssessmentPrice);
-            //result.OriginalTotalPrice.Should().Be(apprenticeships[0].TotalPrice);
-            //result.PendingTrainingPrice.Should().Be(10000);
-            //result.PendingAssessmentPrice.Should().Be(3000);
-            //result.PendingTotalPrice.Should().Be(13000);
-            //result.EffectiveFrom.Should().Be(effectiveFromDate);
-            //result.Reason.Should().Be("testReason");
-            //result.Ukprn.Should().Be(apprenticeships[0].Ukprn);
-            //result.ProviderApprovedDate.Should().Be(providerApprovedDate);
-            //result.EmployerApprovedDate.Should().Be(employerApprovedDate);
-            //result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
-            //result.Initiator.Should().Be(initiator);
+            result.Should().NotBeNull();
+            result.OriginalTrainingPrice.Should().Be(episodePrice.TrainingPrice);
+            result.OriginalAssessmentPrice.Should().Be(episodePrice.EndPointAssessmentPrice);
+            result.OriginalTotalPrice.Should().Be(episodePrice.TotalPrice);
+            result.PendingTrainingPrice.Should().Be(10000);
+            result.PendingAssessmentPrice.Should().Be(3000);
+            result.PendingTotalPrice.Should().Be(13000);
+            result.EffectiveFrom.Should().Be(effectiveFromDate);
+            result.Reason.Should().Be("testReason");
+            result.Ukprn.Should().Be(episode.Ukprn);
+            result.ProviderApprovedDate.Should().Be(providerApprovedDate);
+            result.EmployerApprovedDate.Should().Be(employerApprovedDate);
+            result.AccountLegalEntityId.Should().Be(episode.AccountLegalEntityId);
+            result.Initiator.Should().Be(initiator);
         }
 
         private void SetUpApprenticeshipQueryRepository()

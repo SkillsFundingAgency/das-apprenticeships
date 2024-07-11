@@ -16,25 +16,27 @@ public class PriceChangeApprovedHandler : IDomainEventHandler<PriceChangeApprove
         _messageSession = messageSession;
     }
 
-    public async Task Handle(PriceChangeApproved @event, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task Handle(PriceChangeApproved @event, CancellationToken cancellationToken = default)
     {
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
-        var approval = apprenticeship.Episodes.Single();
+        var episode = apprenticeship.LatestEpisode;
         var priceChange = apprenticeship.PriceHistories.Single(x => x.Key == @event.PriceHistoryKey);
-        //todo amend handler for price change
-        //var apprenticeshipCreatedEvent = new PriceChangeApprovedEvent
-        //{
-        //    ApprenticeshipKey = apprenticeship.Key, 
-        //    ApprenticeshipId = approval.ApprovalsApprenticeshipId,
-        //    EmployerAccountId = apprenticeship.EmployerAccountId,
-        //    ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? priceChange.EmployerApprovedDate!.Value : priceChange.ProviderApprovedDate!.Value,
-        //    ApprovedBy = @event.ApprovedBy,
-        //    AssessmentPrice = priceChange.AssessmentPrice!.Value,
-        //    TrainingPrice = priceChange.TrainingPrice!.Value,
-        //    EffectiveFromDate = priceChange.EffectiveFromDate,
-        //    ProviderId = apprenticeship.Ukprn
-        //};
+        var apprenticeshipCreatedEvent = new PriceChangeApprovedEvent
+        {
+            ApprenticeshipKey = apprenticeship.Key,
+            ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
+            EmployerAccountId = episode.EmployerAccountId,
+            ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? priceChange.EmployerApprovedDate!.Value : priceChange.ProviderApprovedDate!.Value,
+            ApprovedBy = @event.ApprovedBy,
+            AssessmentPrice = priceChange.AssessmentPrice!.Value,
+            TrainingPrice = priceChange.TrainingPrice!.Value,
+            EffectiveFromDate = priceChange.EffectiveFromDate,
+            ProviderId = episode.Ukprn,
+            EpisodeKey = @event.AmendedPrices.EpisodeKey,
+            PriceKey = @event.AmendedPrices.LatestPriceKey,
+            DeletedPriceKeys = @event.AmendedPrices.DeletedPriceKeys
+        };
 
-        //await _messageSession.Publish(apprenticeshipCreatedEvent);
+        await _messageSession.Publish(apprenticeshipCreatedEvent);
     }
 }

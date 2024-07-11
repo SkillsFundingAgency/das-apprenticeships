@@ -113,8 +113,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 
             var episodePrice = (await dbConnection.GetAllAsync<EpisodePrice>()).Last(x => x.EpisodeKey == episode.Key);
             episodePrice.Should().NotBeNull();
-            episodePrice.StartDate.Should().BeSameDateAs(ApprovalCreatedEvent.ActualStartDate!.Value); //todo check whether actual start date is being handled correctly
-            episodePrice.StartDate.Should().BeSameDateAs(ApprovalCreatedEvent.StartDate!.Value); 
+            episodePrice.StartDate.Should().BeSameDateAs(ApprovalCreatedEvent.ActualStartDate!.Value);
             episodePrice.EndDate.Should().BeSameDateAs(ApprovalCreatedEvent.PlannedEndDate!.Value);
             episodePrice.TotalPrice.Should().Be(ApprovalCreatedEvent.AgreedPrice);
 
@@ -154,7 +153,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.Uln.Should().Be(Apprenticeship.Uln);
             publishedEvent.ApprenticeshipKey.Should().Be(Apprenticeship.Key);
             int.Parse(publishedEvent.TrainingCode).Should().Be(int.Parse(LatestEpisode.TrainingCode));
-            publishedEvent.ActualStartDate.Should().BeSameDateAs(LatestEpisodePrice.StartDate ?? DateTime.Now); //todo check whether actual start date is being handled correctly
+            publishedEvent.ActualStartDate.Should().BeSameDateAs(LatestEpisodePrice.StartDate);
             publishedEvent.PlannedEndDate.Should().BeSameDateAs(LatestEpisodePrice.EndDate);
             publishedEvent.AgreedPrice.Should().Be(LatestEpisodePrice.TotalPrice);
             publishedEvent.ApprovalsApprenticeshipId.Should().Be(Apprenticeship.ApprovalsApprenticeshipId);
@@ -165,7 +164,6 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             publishedEvent.UKPRN.Should().Be(LatestEpisode.Ukprn);
             publishedEvent.FirstName.Should().Be(Apprenticeship.FirstName);
             publishedEvent.LastName.Should().Be(Apprenticeship.LastName);
-            publishedEvent.PlannedStartDate.Should().BeSameDateAs(LatestEpisodePrice.StartDate!.Value); //todo check whether actual start date is being handled correctly
             publishedEvent.FundingPlatform.ToString().Should().Be(LatestEpisode.FundingPlatform.ToString());
 
             _scenarioContext["publishedEvent"] = publishedEvent;

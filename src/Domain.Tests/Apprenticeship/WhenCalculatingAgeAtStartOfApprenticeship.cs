@@ -3,7 +3,6 @@ using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
@@ -20,39 +19,21 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
             _fixture.Customize(new ApprenticeshipCustomization());
         }
         
-        [Test]
-        public void WhenTheStartDateIsLaterInTheYearThenTheDateOfBirthThenAgeIsCorrect()
+        [TestCase(11, 20)]
+        [TestCase(09, 19)]
+        public void ThenItIsCalculatedCorrectlyAccordingToTheDateOfBirth(int month, int expectedAge)
         {
             var dateOfBirth = new DateTime(2000, 10, 16);
-            var startDate = new DateTime(2020, 11, 01);
-            var apprenticeship = CreateApprenticeshipDomainModel(dateOfBirth, startDate, FundingPlatform.DAS);
+            var startDate = new DateTime(2020, month, 01);
+            var apprenticeship = CreateApprenticeshipDomainModel(dateOfBirth, startDate);
 
-            apprenticeship.AgeAtStartOfApprenticeship.Should().Be(20);
+            apprenticeship.AgeAtStartOfApprenticeship.Should().Be(expectedAge);
         }
 
-        [Test]
-        public void WhenTheStartDateIsEarlierInTheYearThenTheDateOfBirthThenAgeIsCorrect()
-        {
-            var dateOfBirth = new DateTime(2000, 10, 16);
-            var startDate = new DateTime(2020, 09, 01);
-            var apprenticeship = CreateApprenticeshipDomainModel(dateOfBirth, startDate, FundingPlatform.DAS);
-
-            apprenticeship.AgeAtStartOfApprenticeship.Should().Be(19);
-        }
-
-        [Test]
-        public void WhenCalculatingForAnApprenticeWithSldFundingTypeThenAgeShouldBeNull()
-        {
-            var dateOfBirth = new DateTime(2000, 10, 16);
-            var startDate = _fixture.Create<DateTime>();
-            var apprenticeship = CreateApprenticeshipDomainModel(dateOfBirth, startDate, FundingPlatform.SLD);
-
-            apprenticeship.AgeAtStartOfApprenticeship.Should().Be(null);
-        }
-
-        private ApprenticeshipDomainModel CreateApprenticeshipDomainModel(DateTime dateOfBirth, DateTime startDate, FundingPlatform fundingPlatform)
+        private ApprenticeshipDomainModel CreateApprenticeshipDomainModel(DateTime dateOfBirth, DateTime startDate)
         {
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            apprenticeship.GetEntity().DateOfBirth = dateOfBirth;
             apprenticeship.AddEpisode(
                 _fixture.Create<long>(), 
                 _fixture.Create<long>(),
@@ -62,7 +43,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
                 _fixture.Create<decimal?>(), 
                 _fixture.Create<decimal?>(), 
                 _fixture.Create<FundingType>(), 
-                fundingPlatform,
+                _fixture.Create<FundingPlatform>(), 
                 _fixture.Create<int>(), 
                 _fixture.Create<long?>(), 
                 _fixture.Create<string>(), 
@@ -71,7 +52,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
                 _fixture.Create<string>());
 
             return apprenticeship;
-
         }
     }
 }

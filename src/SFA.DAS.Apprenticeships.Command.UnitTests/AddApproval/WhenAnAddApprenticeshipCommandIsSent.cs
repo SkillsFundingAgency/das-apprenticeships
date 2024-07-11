@@ -108,151 +108,30 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval
                     $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
         }
 
-        //todo fix test once figured out whether actual vs planned start date handled correctly in latest changes
-        //[Test]
-        //public async Task ThenTheApprovalIsCreatedWithNullPlannedStartDateWhenOneIsNotSpecified()
-        //{
-        //    var command = _fixture.Create<AddApprenticeshipCommand>();
-        //    var trainingCodeInt = _fixture.Create<int>();
-        //    command.TrainingCode = trainingCodeInt.ToString();
-        //    var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-        //    command.PlannedStartDate = new DateTime();
+        [Test]
+        public async Task ThenFundingBandMaximumIsFetchedUsingStartDate()
+        {
+            var command = _fixture.Create<AddApprenticeshipCommand>();
+            var trainingCodeInt = _fixture.Create<int>();
+            command.TrainingCode = trainingCodeInt.ToString();
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var fundingBandMaximum = _fixture.Create<int>();
 
-        //    _apprenticeshipFactory.Setup(x => x.CreateNew(
-        //            command.Uln, 
-        //            command.TrainingCode, 
-        //            command.DateOfBirth, 
-        //            command.FirstName, 
-        //            command.LastName, 
-        //            command.TrainingPrice, 
-        //            command.EndPointAssessmentPrice, 
-        //            command.TotalPrice, 
-        //            command.ApprenticeshipHashedId, 
-        //            (int)Math.Ceiling(command.TotalPrice), 
-        //            command.ActualStartDate, 
-        //            command.PlannedEndDate, 
-        //            command.AccountLegalEntityId, 
-        //            command.UKPRN, 
-        //            command.EmployerAccountId,
-        //            command.TrainingCourseVersion))
-        //        .Returns(apprenticeship);
-        //    _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
-        //        .ReturnsAsync((int)Math.Ceiling(command.TotalPrice));
+            _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
+                .ReturnsAsync(fundingBandMaximum);
 
-        //    await _commandHandler.Handle(command);
+            _apprenticeshipFactory.Setup(x => x.CreateNew(
+                    command.ApprovalsApprenticeshipId,
+                    command.Uln,
+                    command.DateOfBirth,
+                    command.FirstName,
+                    command.LastName,
+                    command.ApprenticeshipHashedId))
+                .Returns(apprenticeship);
 
-        //    _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().Approvals.Single().PlannedStartDate == null)));
-        //}
+            await _commandHandler.Handle(command);
 
-        //todo fix test once figured out whether actual vs planned start date handled correctly in latest changes
-        //[Test]
-        //public async Task ThenTheApprovalIsCreatedWithPlannedStartDateWhenOneIsSpecified()
-        //{
-        //    var command = _fixture.Create<AddApprenticeshipCommand>();
-        //    var trainingCodeInt = _fixture.Create<int>();
-        //    command.TrainingCode = trainingCodeInt.ToString();
-        //    var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-
-        //    _apprenticeshipFactory.Setup(x => x.CreateNew(
-        //            command.Uln,
-        //            command.TrainingCode,
-        //            command.DateOfBirth,
-        //            command.FirstName,
-        //            command.LastName,
-        //            command.TrainingPrice,
-        //            command.EndPointAssessmentPrice,
-        //            command.TotalPrice,
-        //            command.ApprenticeshipHashedId,
-        //            (int)Math.Ceiling(command.TotalPrice),
-        //            command.ActualStartDate,
-        //            command.PlannedEndDate,
-        //            command.AccountLegalEntityId,
-        //            command.UKPRN,
-        //            command.EmployerAccountId,
-        //            command.TrainingCourseVersion))
-        //        .Returns(apprenticeship);
-        //    _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
-        //        .ReturnsAsync((int)Math.Ceiling(command.TotalPrice));
-
-        //    await _commandHandler.Handle(command);
-
-        //    _apprenticeshipRepository.Verify(x => x.Add(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().Approvals.Single().PlannedStartDate == command.PlannedStartDate)));
-        //}
-
-        //todo fix test once figured out whether actual vs planned start date handled correctly in latest changes
-        //[Test]
-        //public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithDasFundingPlatform()
-        //{
-        //    var command = _fixture.Create<AddApprenticeshipCommand>();
-        //    var trainingCodeInt = _fixture.Create<int>();
-        //    command.TrainingCode = trainingCodeInt.ToString();
-        //    var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-        //    var fundingBandMaximum = _fixture.Create<int>();
-        //    command.FundingPlatform = FundingPlatform.DAS;
-
-        //    _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
-        //        .ReturnsAsync(fundingBandMaximum);
-
-        //    _apprenticeshipFactory.Setup(x => x.CreateNew(
-        //            command.Uln,
-        //            command.TrainingCode,
-        //            command.DateOfBirth,
-        //            command.FirstName,
-        //            command.LastName,
-        //            command.TrainingPrice,
-        //            command.EndPointAssessmentPrice,
-        //            command.TotalPrice,
-        //            command.ApprenticeshipHashedId,
-        //            fundingBandMaximum,
-        //            command.ActualStartDate,
-        //            command.PlannedEndDate,
-        //            command.AccountLegalEntityId,
-        //            command.UKPRN,
-        //            command.EmployerAccountId,
-        //            command.TrainingCourseVersion))
-        //        .Returns(apprenticeship);
-
-        //    await _commandHandler.Handle(command);
-
-        //    _fundingBandMaximumService.Verify(x => x.GetFundingBandMaximum(trainingCodeInt, command.ActualStartDate));
-        //}
-
-        //todo fix test once figured out whether actual vs planned start date handled correctly in latest changes
-        //[Test]
-        //public async Task ThenCorrectDateIsUsedWhenGettingFundingBandMaximumForApprenticeshipWithSldFundingPlatform()
-        //{
-        //    var command = _fixture.Create<AddApprenticeshipCommand>();
-        //    var trainingCodeInt = _fixture.Create<int>();
-        //    command.TrainingCode = trainingCodeInt.ToString();
-        //    var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-        //    var fundingBandMaximum = _fixture.Create<int>();
-        //    command.FundingPlatform = FundingPlatform.SLD;
-
-        //    _fundingBandMaximumService.Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
-        //        .ReturnsAsync(fundingBandMaximum);
-
-        //    _apprenticeshipFactory.Setup(x => x.CreateNew(
-        //            command.Uln,
-        //            command.TrainingCode,
-        //            command.DateOfBirth,
-        //            command.FirstName,
-        //            command.LastName,
-        //            command.TrainingPrice,
-        //            command.EndPointAssessmentPrice,
-        //            command.TotalPrice,
-        //            command.ApprenticeshipHashedId,
-        //            fundingBandMaximum,
-        //            command.ActualStartDate,
-        //            command.PlannedEndDate, 
-        //            command.AccountLegalEntityId,
-        //            command.UKPRN,
-        //            command.EmployerAccountId,
-        //            command.TrainingCourseVersion))
-        //        .Returns(apprenticeship);
-
-        //    await _commandHandler.Handle(command);
-
-        //    _fundingBandMaximumService.Verify(x => x.GetFundingBandMaximum(trainingCodeInt, command.PlannedStartDate));
-        //}
+            _fundingBandMaximumService.Verify(x => x.GetFundingBandMaximum(trainingCodeInt, command.ActualStartDate));
+        }
     }
 }

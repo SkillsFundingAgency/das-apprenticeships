@@ -59,7 +59,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.FirstName == apprenticeship.FirstName &&
                     e.LastName == apprenticeship.LastName &&
                     e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship &&
-                    e.PlannedStartDate == episodePrice.StartDate &&
                     e.FundingPlatform == (FundingPlatform?)episode.FundingPlatform
                 ), It.IsAny<PublishOptions>()));
         }

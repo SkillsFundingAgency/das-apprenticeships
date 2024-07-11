@@ -19,6 +19,19 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public string TrainingCourseVersion => _entity.TrainingCourseVersion;
         public bool PaymentsFrozen => _entity.PaymentsFrozen;
         public IReadOnlyCollection<EpisodePriceDomainModel> EpisodePrices => new ReadOnlyCollection<EpisodePriceDomainModel>(_episodePrices);
+        public EpisodePriceDomainModel LatestPrice
+        {
+            get
+            {
+                var latestPrice = _episodePrices.Where(y => !y.IsDeleted).MaxBy(x => x.StartDate);
+                if (latestPrice == null)
+                {
+                    throw new InvalidOperationException($"Unexpected error. {nameof(LatestPrice)} could not be found in the {nameof(EpisodeDomainModel)}.");
+                }
+
+                return latestPrice;
+            }
+        }
 
         internal static EpisodeDomainModel New(
             long ukprn,
@@ -47,29 +60,47 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             });
         }
 
-        internal void AddEpisodePrice(
-            DateTime? startDate,
+        internal EpisodePriceDomainModel AddEpisodePrice(
+            DateTime startDate,
             DateTime endDate,
             decimal totalPrice,
             decimal? trainingPrice,
             decimal? endpointAssessmentPrice,
-            int fundingBandMaximum)
+            int fundingBandMaximum,
+            bool shouldSupersedePreviousPrice = false)
         {
-            var episodePrice = EpisodePriceDomainModel.New(
+            var newEpisodePrice = EpisodePriceDomainModel.New(
                 startDate,
                 endDate,
                 totalPrice,
                 trainingPrice,
                 endpointAssessmentPrice,
                 fundingBandMaximum);
-            _episodePrices.Add(episodePrice);
-            _entity.Prices.Add(episodePrice.GetEntity());
+            _episodePrices.Add(newEpisodePrice);
+            _entity.Prices.Add(newEpisodePrice.GetEntity());
+
+            if (shouldSupersedePreviousPrice)
+            {
+                LatestPrice.EndEpisodePrice(newEpisodePrice.StartDate.AddDays(-1));
+            }
+
+            return newEpisodePrice;
         }
 
-        private EpisodeDomainModel(Episode entity)
+        internal AmendedPrices UpdatePricesForApprovedPriceChange(PriceHistoryDomainModel priceChangeRequest)
         {
-            _entity = entity;
-            _episodePrices = entity.Prices.Select(EpisodePriceDomainModel.Get).ToList();
+            var endDate = LatestPrice.EndDate;
+            var fundingBandMaximum = LatestPrice.FundingBandMaximum;
+            var deletedPrices = DeletePricesAfterDate(priceChangeRequest.EffectiveFromDate);
+            var newEpisode = AddEpisodePrice(priceChangeRequest.EffectiveFromDate,
+                endDate,
+                priceChangeRequest.TotalPrice,
+                priceChangeRequest.TrainingPrice,
+                priceChangeRequest.AssessmentPrice,
+                fundingBandMaximum,
+                true);
+            
+            return new AmendedPrices(newEpisode.GetEntity().Key, _entity.Key, deletedPrices.ToList());
         }
 
         public Episode GetEntity()
@@ -80,6 +111,36 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public static EpisodeDomainModel Get(Episode entity)
         {
             return new EpisodeDomainModel(entity);
+        }
+
+        //TODO IS THIS THE BEST WAY OF PASSING AROUND THIS DATA?
+        public class AmendedPrices
+        {
+            public AmendedPrices(Guid latestPriceKey, Guid episodeKey, List<Guid> deletedPriceKeys)
+            {
+                DeletedPriceKeys = deletedPriceKeys;
+                LatestPriceKey = latestPriceKey;
+                EpisodeKey = episodeKey;
+            }
+
+            public Guid EpisodeKey { get; set; }
+            public List<Guid> DeletedPriceKeys { get; set; }
+            public Guid LatestPriceKey { get; set; }
+        }
+
+        private IEnumerable<Guid> DeletePricesAfterDate(DateTime dateToDeletePricesAfter)
+        {
+            foreach (var price in _entity.Prices.Where(x => x.StartDate > dateToDeletePricesAfter && !x.IsDeleted))
+            {
+                price.IsDeleted = true;
+                yield return price.Key;
+            }
+        }
+
+        private EpisodeDomainModel(Episode entity)
+        {
+            _entity = entity;
+            _episodePrices = entity.Prices.Select(EpisodePriceDomainModel.Get).ToList();
         }
     }
 }

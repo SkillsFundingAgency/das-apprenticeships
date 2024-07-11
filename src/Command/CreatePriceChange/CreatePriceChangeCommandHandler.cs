@@ -36,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
 
             if (initiator == ChangeInitiator.Provider && IsNewTotalPriceLessThanExisting(apprenticeship, command))
             {
-	            apprenticeship.ProviderSelfApprovePriceChange();
+	            apprenticeship.ProviderAutoApprovePriceChange();
 	            returnStatus = ChangeRequestStatus.Approved;
 	            await _apprenticeshipRepository.Update(apprenticeship);
 			}

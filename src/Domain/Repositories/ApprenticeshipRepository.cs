@@ -23,6 +23,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
 
     public async Task Add(ApprenticeshipDomainModel apprenticeship)
     {
+        //TODO UNCOMMENT ONCE AUTH LOGIC FIXED
         //_accountIdAuthorizer.AuthorizeAccountId(apprenticeship);
         var entity = apprenticeship.GetEntity();
         await DbContext.AddAsync(entity);
@@ -50,6 +51,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
     public async Task Update(ApprenticeshipDomainModel apprenticeship)
     {
         var entity = apprenticeship.GetEntity();
+        //TODO UNCOMMENT ONCE AUTH LOGIC FIXED
         //_accountIdAuthorizer.AuthorizeAccountId(entity);
         DbContext.Update(entity);
 

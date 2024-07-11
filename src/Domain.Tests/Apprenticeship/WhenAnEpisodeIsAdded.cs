@@ -43,9 +43,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
                 episodeDomainModel.LegalEntityName,
                 episodeDomainModel.AccountLegalEntityId,
                 episodeDomainModel.TrainingCode,
-                episodeDomainModel.TrainingCourseVersion
-                //,,(!command.PlannedStartDate.HasValue) || (command.PlannedStartDate.GetValueOrDefault().Year == 1) ? null : command.PlannedStartDate.Value, //todo verify this original logic and whether to incorporate it
-            );
+                episodeDomainModel.TrainingCourseVersion);
 
             var latestEpisode = apprenticeship.GetEntity().Episodes.Last();
             latestEpisode.Should().BeEquivalentTo(episodeDomainModel);

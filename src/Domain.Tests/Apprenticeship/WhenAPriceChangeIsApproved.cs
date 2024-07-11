@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
@@ -42,7 +43,8 @@ public class WhenAPriceChangeIsApproved
             priceHistoryDomainModel.EmployerApprovedDate,
             priceHistoryDomainModel.Initiator);
         var employerUserId = _fixture.Create<string>();
-        
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
+
         //Act
         apprenticeship.ApprovePriceChange(employerUserId, null, null);
         var events = apprenticeship.FlushEvents();

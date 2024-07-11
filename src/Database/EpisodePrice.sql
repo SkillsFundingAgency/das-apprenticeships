@@ -3,7 +3,7 @@
     [Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
 	[EpisodeKey] UNIQUEIDENTIFIER NOT NULL, 
     [IsDeleted] BIT NOT NULL DEFAULT(0),
-    [StartDate] DATETIME NULL, 
+    [StartDate] DATETIME NOT NULL, 
     [EndDate] DATETIME NOT NULL, 
     [TrainingPrice] MONEY NULL, 
     [EndPointAssessmentPrice] MONEY NULL, 

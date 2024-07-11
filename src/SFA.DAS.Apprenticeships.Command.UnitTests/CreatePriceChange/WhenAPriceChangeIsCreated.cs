@@ -46,45 +46,44 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         [TestCase("Provider")]
         [TestCase("Employer")]
         public async Task ThenCorrectPriceHistoryValuesAreSet(string initiator)
-        {           
-            //todo fix test for price change
-            //var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            //var command = _fixture.Create<CreatePriceChangeCommand>();
-            //command.Initiator = initiator;
-            //command.AssessmentPrice = apprenticeship.GetEntity().EndPointAssessmentPrice + 1;
-            //command.TrainingPrice = apprenticeship.GetEntity().TrainingPrice + 1;
-            //command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
+        {
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var command = _fixture.Create<CreatePriceChangeCommand>();
+            command.Initiator = initiator;
+            command.AssessmentPrice = apprenticeship.LatestPrice.GetEntity().EndPointAssessmentPrice + 1;
+            command.TrainingPrice = apprenticeship.LatestPrice.GetEntity().TrainingPrice + 1;
+            command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
 
-            //apprenticeship.GetEntity().TotalPrice = command.TotalPrice - 1;
+            apprenticeship.LatestPrice.GetEntity().TotalPrice = command.TotalPrice - 1;
 
-            //_apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
-            
-            //await _commandHandler.Handle(command);
+            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
-            //if (initiator == ChangeInitiator.Provider.ToString())
-            //    _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
-            //        y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
-            //        y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
-            //        y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
-            //        y.GetEntity().PriceHistories.Single().EffectiveFromDate == command.EffectiveFromDate &&
-            //        y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
-            //        y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Created &&
-            //        y.GetEntity().PriceHistories.Single().ProviderApprovedBy == command.UserId &&
-            //        y.GetEntity().PriceHistories.Single().EmployerApprovedBy == null &&
-            //        y.GetEntity().PriceHistories.Single().Initiator == ChangeInitiator.Provider
-            //    )));
-            //else
-            //    _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
-            //        y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
-            //        y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
-            //        y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
-            //        y.GetEntity().PriceHistories.Single().EffectiveFromDate == command.EffectiveFromDate &&
-            //        y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
-            //        y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Created &&
-            //        y.GetEntity().PriceHistories.Single().ProviderApprovedBy == null &&
-            //        y.GetEntity().PriceHistories.Single().EmployerApprovedBy == command.UserId &&
-            //        y.GetEntity().PriceHistories.Single().Initiator == ChangeInitiator.Employer
-            //    )));
+            await _commandHandler.Handle(command);
+
+            if (initiator == ChangeInitiator.Provider.ToString())
+                _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+                    y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
+                    y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
+                    y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
+                    y.GetEntity().PriceHistories.Single().EffectiveFromDate == command.EffectiveFromDate &&
+                    y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
+                    y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Created &&
+                    y.GetEntity().PriceHistories.Single().ProviderApprovedBy == command.UserId &&
+                    y.GetEntity().PriceHistories.Single().EmployerApprovedBy == null &&
+                    y.GetEntity().PriceHistories.Single().Initiator == ChangeInitiator.Provider
+                )));
+            else
+                _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+                    y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
+                    y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
+                    y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
+                    y.GetEntity().PriceHistories.Single().EffectiveFromDate == command.EffectiveFromDate &&
+                    y.GetEntity().PriceHistories.Single().CreatedDate != DateTime.MinValue &&
+                    y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Created &&
+                    y.GetEntity().PriceHistories.Single().ProviderApprovedBy == null &&
+                    y.GetEntity().PriceHistories.Single().EmployerApprovedBy == command.UserId &&
+                    y.GetEntity().PriceHistories.Single().Initiator == ChangeInitiator.Employer
+                )));
         }
 
 		[TestCase(5000, 5001, false)]
@@ -99,8 +98,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
 			command.TrainingPrice = newTotal - command.AssessmentPrice;
 			command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
 
-            //todo fix test for price change
-			//apprenticeship.GetEntity().TotalPrice = oldTotal;
+			apprenticeship.LatestPrice.GetEntity().TotalPrice = oldTotal;
 
 			_apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 

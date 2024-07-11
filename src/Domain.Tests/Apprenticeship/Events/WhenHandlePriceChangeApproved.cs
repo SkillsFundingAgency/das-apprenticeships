@@ -34,14 +34,14 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         {
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
-            ApprenticeshipDomainModelTestHelper.AddPendingPriceChange(apprenticeship);
+            //ApprenticeshipDomainModelTestHelper.AddPendingPriceChange(apprenticeship);
             apprenticeship.ApprovePriceChange("Bob", null, null);
-            var priceChange = apprenticeship.PriceHistories.Single();
-            var command = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Employer);
+            var priceChange = apprenticeship.PriceHistories.First(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Approved);
+            var domainEvent = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Employer, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
 
-            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+            _apprenticeshipRepository.Setup(x => x.Get(domainEvent.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
-            await _handler.Handle(command);
+            await _handler.Handle(domainEvent);
 
             _messageSession.Verify(x => x.Publish(It.Is<PriceChangeApprovedEvent>(e =>
                     e.ApprenticeshipKey == apprenticeship.Key &&
@@ -54,7 +54,10 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.AssessmentPrice == priceChange.AssessmentPrice!.Value &&
                     e.TrainingPrice == priceChange.TrainingPrice!.Value &&
                     e.EffectiveFromDate == priceChange.EffectiveFromDate &&
-                    e.ProviderId == apprenticeship.LatestEpisode.Ukprn
+                    e.ProviderId == apprenticeship.LatestEpisode.Ukprn &&
+                    e.EpisodeKey == domainEvent.AmendedPrices.EpisodeKey &&
+                    e.PriceKey == domainEvent.AmendedPrices.LatestPriceKey &&
+                    e.DeletedPriceKeys == domainEvent.AmendedPrices.DeletedPriceKeys
                 ), It.IsAny<PublishOptions>()));
         }
     }

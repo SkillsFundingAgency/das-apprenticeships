@@ -10,6 +10,8 @@ public class Episode
     {
         Prices = new List<EpisodePrice>();
     }
+    
+    [Key]
     public Guid Key { get; set; }
 	public Guid ApprenticeshipKey { get; set; }
     public long Ukprn { get; set; }

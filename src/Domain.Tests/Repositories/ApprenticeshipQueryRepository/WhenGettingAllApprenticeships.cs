@@ -107,13 +107,14 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         {
             return _fixture
                 .Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
+                .With(x => x.Key, _fixture.Create<Guid>())
                 .With(x => x.Uln, uln)
-                //.With(x => x.Ukprn, ukprn)
-                //.With(x => x.Approvals, new List<Approval>() { new()
-                //{
-                //    FundingPlatform = fundingPlatform,
-                //    LegalEntityName = "legalEntityName"
-                //} })
+                .With(x => x.Episodes, new List<Episode>() { new()
+                {
+                    Key = _fixture.Create<Guid>(),
+                    Ukprn = ukprn,
+                    FundingPlatform = fundingPlatform
+                } })
                 .Create();
         }
     }
