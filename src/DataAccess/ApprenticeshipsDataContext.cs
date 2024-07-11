@@ -33,8 +33,10 @@ namespace SFA.DAS.Apprenticeships.DataAccess
                 .HasForeignKey(fk => fk.ApprenticeshipKey);
             modelBuilder.Entity<Apprenticeship>()
                 .HasKey(a => new { a.Key });
-            
+
             // Episode
+            modelBuilder.Entity<Episode>()
+                .HasKey(a => new { a.Key });
             modelBuilder.Entity<Episode>()
                 .Property(p => p.FundingType)
                 .HasConversion(
