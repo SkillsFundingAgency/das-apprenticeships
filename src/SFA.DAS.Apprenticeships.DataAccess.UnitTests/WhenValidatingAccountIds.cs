@@ -21,80 +21,80 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
             _fixture = new Fixture();
         }
 
-        //TODO FIX AFTER REFACTORING AUTHORIZATION CODE
-        //[Test]
-        //public void ProviderAccountIdMismatch_ThrowsUnauthorizedAccessException()
-        //{
-        //    // Arrange
-        //    var apprenticeship = _fixture.Build<Apprenticeship>().With(x => x.Ukprn, 12345).Create();
-        //    var idsInClaims = new List<long>() { 54321, 98765 };
-        //    var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Provider);
+        [Test]
+        public void ProviderAccountIdMismatch_ThrowsUnauthorizedAccessException()
+        {
+            // Arrange
+            var apprenticeship = BuildApprenticeshipWithAccountId(12345);
+            var idsInClaims = new List<long> { 54321, 98765 };
+            var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Provider);
 
-        //    // Act 
-        //    var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-            
-        //    // Assert
-        //    act.Should().Throw<UnauthorizedAccessException>();
-        //}
+            // Act 
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
 
-        //[Test]
-        //public void EmployerAccountIdMismatch_ThrowsUnauthorizedAccessException()
-        //{
-        //    // Arrange
-        //    var apprenticeship = new Apprenticeship { EmployerAccountId = 98765 };
-        //    var idsInClaims = new List<long>() { 5534534321, 0129843 };
-        //    var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Employer);
+            // Assert
+            act.Should().Throw<UnauthorizedAccessException>();
+        }
 
-        //    // Act 
-        //    var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-            
-        //    // Assert
-        //    act.Should().Throw<UnauthorizedAccessException>();
-        //}
+        [Test]
+        public void EmployerAccountIdMismatch_ThrowsUnauthorizedAccessException()
+        {
+            // Arrange
+            var apprenticeship = BuildApprenticeshipWithAccountId(null, 98765);
 
-        //[Test]
-        //public void NoClaimsValidationRequired_DoesNotThrowException()
-        //{
-        //    // Arrange
-        //    var apprenticeship = new Apprenticeship();
-        //    var authorizer = SetUpAuthorizer(false);
+            var idsInClaims = new List<long> { 5534534321, 0129843 };
+            var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Employer);
 
-        //    // Act 
-        //    var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-            
-        //    // Assert
-        //    act.Should().NotThrow();
-        //}
+            // Act 
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
 
-        //[TestCase()]
-        //public void ValidEmployerAccountId_DoesNothing()
-        //{
-        //    // Arrange
-        //    var apprenticeship = new Apprenticeship { EmployerAccountId = 98765 };
-        //    var idsInClaims = new List<long>() { 98765, 0129843 };
-        //    var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Employer);
+            // Assert
+            act.Should().Throw<UnauthorizedAccessException>();
+        }
 
-        //    // Act 
-        //    var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-    
-        //    // Assert
-        //    act.Should().NotThrow();
-        //}
+        [Test]
+        public void NoClaimsValidationRequired_DoesNotThrowException()
+        {
+            // Arrange
+            var apprenticeship = new Apprenticeship();
+            var authorizer = SetUpAuthorizer(false);
 
-        //[Test]
-        //public void ValidUkPrn_DoesNothing()
-        //{
-        //    // Arrange
-        //    var apprenticeship = new Apprenticeship { Ukprn = 54321 };
-        //    var idsInClaims = new List<long>() { 98765, 54321 };
-        //    var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Provider);
+            // Act 
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
 
-        //    // Act 
-        //    var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-    
-        //    // Assert
-        //    act.Should().NotThrow();
-        //}
+            // Assert
+            act.Should().NotThrow();
+        }
+
+        [Test]
+        public void ValidEmployerAccountId_DoesNothing()
+        {
+            // Arrange
+            var apprenticeship = BuildApprenticeshipWithAccountId(null, 98765);
+            var idsInClaims = new List<long> { 98765, 0129843 };
+            var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Employer);
+
+            // Act 
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
+
+            // Assert
+            act.Should().NotThrow();
+        }
+
+        [Test]
+        public void ValidUkPrn_DoesNothing()
+        {
+            // Arrange
+            var apprenticeship = BuildApprenticeshipWithAccountId(54321, null);
+            var idsInClaims = new List<long> { 98765, 54321 };
+            var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Provider);
+
+            // Act 
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
+
+            // Assert
+            act.Should().NotThrow();
+        }
 
         private static AccountIdAuthorizer SetUpAuthorizer(bool isClaimsValidationRequired, List<long>? accountIds = null, AccountIdClaimsType? accountIdClaimsType = null)
         {
@@ -103,10 +103,50 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
                 .Setup(x => x.GetAccountIdClaims())
                 .Returns(new AccountIdClaims
                 {
-                    IsClaimsValidationRequired = isClaimsValidationRequired, AccountIds = accountIds, AccountIdClaimsType = accountIdClaimsType
+                    IsClaimsValidationRequired = isClaimsValidationRequired,
+                    AccountIds = accountIds,
+                    AccountIdClaimsType = accountIdClaimsType
                 });
             var mockLogger = new Mock<ILogger<AccountIdAuthorizer>>();
             return new AccountIdAuthorizer(mockClaimsHandler.Object, mockLogger.Object);
+        }
+
+        private Apprenticeship BuildApprenticeshipWithAccountId(long? ukprn = null, long? employerAccountId = null)
+        {
+            return new Apprenticeship
+            {
+                Episodes = new List<Episode>
+                {
+                    //current episode to be validated against
+                    new()
+                    {
+                        Ukprn = ukprn ?? _fixture.Create<long>(),
+                        EmployerAccountId = employerAccountId ?? _fixture.Create<long>(),
+                        Prices = new List<EpisodePrice>
+                        {
+                            new()
+                            {
+                                StartDate = DateTime.UtcNow.AddDays(-2),
+                                EndDate = DateTime.UtcNow.AddDays(2)
+                            }
+                        }
+                    },
+                    //other episode with non-matching ids no to be validated against
+                    new()
+                    {
+                        Ukprn = _fixture.Create<long>(),
+                        EmployerAccountId = _fixture.Create<long>(),
+                        Prices = new List<EpisodePrice>
+                        {
+                            new()
+                            {
+                                StartDate = DateTime.UtcNow.AddDays(-100),
+                                EndDate = DateTime.UtcNow.AddDays(-2)
+                            }
+                        }
+                    }
+                }
+            };
         }
     }
 }
