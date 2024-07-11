@@ -45,8 +45,8 @@ namespace SFA.DAS.Apprenticeships.DataAccess
             modelBuilder.Entity<Episode>()
                 .Property(p => p.FundingPlatform)
                 .HasConversion(
-                    v => v.ToString(),
-                    v => (FundingPlatform?)Enum.Parse(typeof(FundingPlatform?), v));
+                    v => (int?)v,
+                    v => (FundingPlatform?)v);
 
             // EpisodePrice
             modelBuilder.Entity<EpisodePrice>()
