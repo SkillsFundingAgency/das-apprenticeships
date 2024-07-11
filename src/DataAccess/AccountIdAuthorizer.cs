@@ -31,13 +31,13 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         switch (_accountIdClaims.AccountIdClaimsType)
         {
             case AccountIdClaimsType.Provider:
-                if (!_accountIdClaims.AccountIds.Any(x => x == currentEpisode.Ukprn))
+                if (_accountIdClaims.AccountIds!.All(x => x != currentEpisode.Ukprn))
                 {
                     throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(currentEpisode.Ukprn), currentEpisode.Ukprn));
                 }
                 break;
             case AccountIdClaimsType.Employer:
-                if (!_accountIdClaims.AccountIds.Any(x => x == currentEpisode.EmployerAccountId))
+                if (_accountIdClaims.AccountIds!.All(x => x != currentEpisode.EmployerAccountId))
                 {
                     throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(currentEpisode.EmployerAccountId), currentEpisode.EmployerAccountId));
                 }
@@ -47,7 +47,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         }
     }
             
-    public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(DbSet<Apprenticeship> apprenticeships)
+    public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(IQueryable<Apprenticeship> apprenticeships)
     {
         if (!apprenticeships.Any())
         {
