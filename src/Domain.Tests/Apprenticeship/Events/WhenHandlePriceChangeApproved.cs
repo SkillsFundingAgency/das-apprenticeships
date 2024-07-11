@@ -55,7 +55,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.TrainingPrice == priceChange.TrainingPrice!.Value &&
                     e.EffectiveFromDate == priceChange.EffectiveFromDate &&
                     e.ProviderId == apprenticeship.LatestEpisode.Ukprn &&
-                    e.EpisodeKey == domainEvent.AmendedPrices.EpisodeKey &&
+                    e.EpisodeKey == domainEvent.AmendedPrices.ApprenticeshipEpisodeKey &&
                     e.PriceKey == domainEvent.AmendedPrices.LatestPriceKey &&
                     e.DeletedPriceKeys == domainEvent.AmendedPrices.DeletedPriceKeys
                 ), It.IsAny<PublishOptions>()));

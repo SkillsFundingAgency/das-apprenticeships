@@ -32,7 +32,7 @@ public class PriceChangeApprovedHandler : IDomainEventHandler<PriceChangeApprove
             TrainingPrice = priceChange.TrainingPrice!.Value,
             EffectiveFromDate = priceChange.EffectiveFromDate,
             ProviderId = episode.Ukprn,
-            EpisodeKey = @event.AmendedPrices.EpisodeKey,
+            EpisodeKey = @event.AmendedPrices.ApprenticeshipEpisodeKey,
             PriceKey = @event.AmendedPrices.LatestPriceKey,
             DeletedPriceKeys = @event.AmendedPrices.DeletedPriceKeys
         };

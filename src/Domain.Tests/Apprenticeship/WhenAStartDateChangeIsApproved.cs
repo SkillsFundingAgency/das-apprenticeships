@@ -19,34 +19,16 @@ public class WhenAStartDateChangeIsApproved
         _fixture = new Fixture();
     }
 
-    [Test]
-    public void ThenTheStartDateChangeRecordIsUpdated_EmployerApproval()
+    [TestCase(true)]
+    [TestCase(false)]
+    public void ThenTheStartDateChangeRecordIsUpdated(bool isPendingProviderApproval)
     {
         //Arrange
         var approverUserId = _fixture.Create<string>();
-        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange();
+        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange(isPendingProviderApproval);
 
         //Act
-        apprenticeship.ApproveStartDateChange(approverUserId);
-
-        //Assert
-        var entity = apprenticeship.GetEntity();
-        entity.StartDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
-        var startDateChange = entity.StartDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Approved);
-        startDateChange.Should().NotBeNull();
-        startDateChange.EmployerApprovedBy.Should().Be(approverUserId);
-        startDateChange.EmployerApprovedDate.Should().NotBeNull();
-    }
-
-    [Test]
-    public void ThenTheStartDateChangeRecordIsUpdated_ProviderApproval()
-    {
-        //Arrange
-        var approverUserId = _fixture.Create<string>();
-        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval:true);
-
-        //Act
-        apprenticeship.ApproveStartDateChange(approverUserId);
+        apprenticeship.ApproveStartDateChange(approverUserId, _fixture.Create<int>());
 
         //Assert
         var entity = apprenticeship.GetEntity();
@@ -57,6 +39,8 @@ public class WhenAStartDateChangeIsApproved
         startDateChange.ProviderApprovedDate.Should().NotBeNull();
     }
 
+    //TODO start date change - Add unit tests for the correct handing of episodes and prices
+
     [Test]
     public void ThenAStartDateChangeApprovedEventIsAdded()
     {
@@ -65,8 +49,9 @@ public class WhenAStartDateChangeIsApproved
         var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
-        apprenticeship.ApproveStartDateChange(employerUserId);
+        apprenticeship.ApproveStartDateChange(employerUserId, _fixture.Create<int>());
 
+        //Assert
         var events = apprenticeship.FlushEvents();
         events.Should().ContainSingle(x => x.GetType() == typeof(StartDateChangeApproved));
     }

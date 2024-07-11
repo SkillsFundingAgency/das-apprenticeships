@@ -57,4 +57,6 @@ public class WhenAPriceChangeIsApproved
         priceHistory.EmployerApprovedDate.Should().NotBeNull();
         events.Should().ContainSingle(x => x.GetType() == typeof(PriceChangeApproved));
     }
+
+    //TODO price change - Add unit tests for the correct handing of episodes and prices
 }

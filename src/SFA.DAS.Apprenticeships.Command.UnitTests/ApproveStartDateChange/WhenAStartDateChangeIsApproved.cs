@@ -8,6 +8,7 @@ using SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApproveStartDateChange;
@@ -17,13 +18,15 @@ public class WhenAStartDateChangeIsApproved
 {
     private ApproveStartDateChangeCommandHandler _commandHandler = null!;
     private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
+    private Mock<IFundingBandMaximumService> _fundingBandMaxService = null!;
     private Fixture _fixture = null!;
 
     [SetUp]
     public void SetUp()
     {
         _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
-        _commandHandler = new ApproveStartDateChangeCommandHandler(_apprenticeshipRepository.Object);
+        _fundingBandMaxService = new Mock<IFundingBandMaximumService>();
+        _commandHandler = new ApproveStartDateChangeCommandHandler(_apprenticeshipRepository.Object, _fundingBandMaxService.Object);
 
         _fixture = new Fixture();
         _fixture.Customize(new ApprenticeshipCustomization());

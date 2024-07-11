@@ -16,27 +16,29 @@ public class StartDateChangeApprovedHandler : IDomainEventHandler<StartDateChang
         _messageSession = messageSession;
     }
 
-    public async Task Handle(StartDateChangeApproved @event, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task Handle(StartDateChangeApproved @event, CancellationToken cancellationToken = default)
     {
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
-        var approval = apprenticeship.Episodes.Single();
         var startDateChange = apprenticeship.StartDateChanges.Single(x => x.Key == @event.StartDateChangeKey);
-        //todo amend handler for start date change
-        //var startDateChangedEvent = new ApprenticeshipStartDateChangedEvent()
-        //{
-        //    ApprenticeshipKey = apprenticeship.Key,
-        //    ApprenticeshipId = approval.ApprovalsApprenticeshipId,
-        //    EmployerAccountId = apprenticeship.EmployerAccountId,
-        //    ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? startDateChange.EmployerApprovedDate!.Value : startDateChange.ProviderApprovedDate!.Value,
-        //    ProviderId = apprenticeship.Ukprn,
-        //    ActualStartDate = startDateChange.ActualStartDate,
-        //    PlannedEndDate = startDateChange.PlannedEndDate,
-        //    AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
-        //    ProviderApprovedBy = startDateChange.ProviderApprovedBy,
-        //    EmployerApprovedBy = startDateChange.EmployerApprovedBy,
-        //    Initiator = startDateChange.Initiator.ToString()!
-        //};
+        var episode = apprenticeship.LatestEpisode;
+        var startDateChangedEvent = new ApprenticeshipStartDateChangedEvent()
+        {
+            ApprenticeshipKey = apprenticeship.Key,
+            ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
+            EmployerAccountId = episode.EmployerAccountId,
+            ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? startDateChange.EmployerApprovedDate!.Value : startDateChange.ProviderApprovedDate!.Value,
+            ProviderId = episode.Ukprn,
+            ActualStartDate = startDateChange.ActualStartDate,
+            PlannedEndDate = startDateChange.PlannedEndDate,
+            AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
+            ProviderApprovedBy = startDateChange.ProviderApprovedBy,
+            EmployerApprovedBy = startDateChange.EmployerApprovedBy,
+            Initiator = startDateChange.Initiator.ToString()!,
+            ApprenticeshipEpisodeKey = @event.AmendedPrices.ApprenticeshipEpisodeKey,
+            PriceKey = @event.AmendedPrices.LatestPriceKey,
+            DeletedPriceKeys = @event.AmendedPrices.DeletedPriceKeys
+        };
 
-        //await _messageSession.Publish(startDateChangedEvent);
+        await _messageSession.Publish(startDateChangedEvent);
     }
 }

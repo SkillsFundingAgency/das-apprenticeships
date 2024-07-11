@@ -33,6 +33,20 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             }
         }
 
+        public EpisodePriceDomainModel FirstPrice
+        {
+            get
+            {
+                var latestPrice = _episodePrices.Where(y => !y.IsDeleted).MinBy(x => x.StartDate);
+                if (latestPrice == null)
+                {
+                    throw new InvalidOperationException($"Unexpected error. {nameof(FirstPrice)} could not be found in the {nameof(EpisodeDomainModel)}.");
+                }
+
+                return latestPrice;
+            }
+        }
+
         internal static EpisodeDomainModel New(
             long ukprn,
             long employerAccountId,
@@ -76,13 +90,14 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 trainingPrice,
                 endpointAssessmentPrice,
                 fundingBandMaximum);
-            _episodePrices.Add(newEpisodePrice);
-            _entity.Prices.Add(newEpisodePrice.GetEntity());
 
             if (shouldSupersedePreviousPrice)
             {
-                LatestPrice.EndEpisodePrice(newEpisodePrice.StartDate.AddDays(-1));
+                LatestPrice.UpdateEndDate(newEpisodePrice.StartDate.AddDays(-1));
             }
+
+            _episodePrices.Add(newEpisodePrice);
+            _entity.Prices.Add(newEpisodePrice.GetEntity());
 
             return newEpisodePrice;
         }
@@ -91,7 +106,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             var endDate = LatestPrice.EndDate;
             var fundingBandMaximum = LatestPrice.FundingBandMaximum;
-            var deletedPrices = DeletePricesAfterDate(priceChangeRequest.EffectiveFromDate);
+            var deletedPrices = DeletePricesStartingAfterDate(priceChangeRequest.EffectiveFromDate);
             var newEpisode = AddEpisodePrice(priceChangeRequest.EffectiveFromDate,
                 endDate,
                 priceChangeRequest.TotalPrice,
@@ -101,6 +116,25 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 true);
             
             return new AmendedPrices(newEpisode.GetEntity().Key, _entity.Key, deletedPrices.ToList());
+        }
+
+        internal AmendedPrices UpdatePricesForApprovedStartDateChange(StartDateChangeDomainModel startDateChangeRequest, int fundingBandMaximum)
+        {
+            UpdateAllActivePricesWithNewFundingBandMaximum(fundingBandMaximum);
+            
+            var deletedPrices = DeletePricesEndingBeforeDate(startDateChangeRequest.ActualStartDate).ToList();
+            if (FirstPrice.StartDate != startDateChangeRequest.ActualStartDate)
+            {
+                FirstPrice.UpdateStartDate(startDateChangeRequest.ActualStartDate);
+            }
+
+            deletedPrices.AddRange(DeletePricesStartingAfterDate(startDateChangeRequest.PlannedEndDate));
+            if (LatestPrice.StartDate != startDateChangeRequest.PlannedEndDate)
+            {
+                LatestPrice.UpdateEndDate(startDateChangeRequest.PlannedEndDate);
+            }
+
+            return new AmendedPrices(LatestPrice.GetEntity().Key, _entity.Key, deletedPrices.ToList());
         }
 
         public Episode GetEntity()
@@ -113,24 +147,41 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             return new EpisodeDomainModel(entity);
         }
 
-        //TODO IS THIS THE BEST WAY OF PASSING AROUND THIS DATA?
+        //TODO Reconsider if this is the best way of passing this data amongst domain models
         public class AmendedPrices
         {
-            public AmendedPrices(Guid latestPriceKey, Guid episodeKey, List<Guid> deletedPriceKeys)
+            public AmendedPrices(Guid latestPriceKey, Guid apprenticeshipEpisodeKey, List<Guid> deletedPriceKeys)
             {
                 DeletedPriceKeys = deletedPriceKeys;
                 LatestPriceKey = latestPriceKey;
-                EpisodeKey = episodeKey;
+                ApprenticeshipEpisodeKey = apprenticeshipEpisodeKey;
             }
 
-            public Guid EpisodeKey { get; set; }
+            public Guid ApprenticeshipEpisodeKey { get; set; }
             public List<Guid> DeletedPriceKeys { get; set; }
             public Guid LatestPriceKey { get; set; }
         }
 
-        private IEnumerable<Guid> DeletePricesAfterDate(DateTime dateToDeletePricesAfter)
+        private void UpdateAllActivePricesWithNewFundingBandMaximum(int fundingBandMaximum)
         {
-            foreach (var price in _entity.Prices.Where(x => x.StartDate > dateToDeletePricesAfter && !x.IsDeleted))
+            foreach (var price in _entity.Prices.Where(x => !x.IsDeleted))
+            {
+                price.FundingBandMaximum = fundingBandMaximum;
+            }
+        }
+
+        private IEnumerable<Guid> DeletePricesStartingAfterDate(DateTime date)
+        {
+            foreach (var price in _entity.Prices.Where(x => x.StartDate > date && !x.IsDeleted))
+            {
+                price.IsDeleted = true;
+                yield return price.Key;
+            }
+        }
+
+        private IEnumerable<Guid> DeletePricesEndingBeforeDate(DateTime date)
+        {
+            foreach (var price in _entity.Prices.Where(x => x.EndDate < date && !x.IsDeleted))
             {
                 price.IsDeleted = true;
                 yield return price.Key;

@@ -210,10 +210,13 @@ public class ApprenticeshipDomainModel : AggregateRoot
         else
         {
             if (trainingPrice == null || assessmentPrice == null)
-                throw new InvalidOperationException("Both training and assessment prices must be provided.");
+                throw new InvalidOperationException("Both training and assessment prices must be provided when " +
+                                                    "approving an employer-initiated price change request.");
 
             if (pendingPriceChange.TotalPrice != trainingPrice + assessmentPrice)
-                throw new InvalidOperationException($"The total price ({pendingPriceChange.TotalPrice}) does not match the sum of the training price ({trainingPrice}) and the assessment price ({assessmentPrice}).");
+                throw new InvalidOperationException($"The total price ({pendingPriceChange.TotalPrice}) for this " +
+                                                    $"employer-initiated price change request does not match the sum of the " +
+                                                    $"training price ({trainingPrice}) and the assessment price ({assessmentPrice}).");
 
             pendingPriceChange.ApproveByProvider(userApprovedBy, DateTime.Now, trainingPrice.Value, assessmentPrice.Value);
             var amendedEpisodeDetails = UpdatePrices(pendingPriceChange);
@@ -239,7 +242,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     public void CancelPendingPriceChange()
     {
         if (PendingPriceChange == null)
-            throw new InvalidOperationException("There is no pending price change request to approve");
+            throw new InvalidOperationException("There is no pending price change request to cancel");
 
         PendingPriceChange.Cancel();
     }
@@ -283,7 +286,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _startDateChanges.Add(startDateChange);
         _entity.StartDateChanges.Add(startDateChange.GetEntity());
     }
-    public void ApproveStartDateChange(string? userApprovedBy)
+
+    public void ApproveStartDateChange(string? userApprovedBy, int fundingBandMaximum)
     {
         var pendingStartDateChange = _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
         if(pendingStartDateChange == null)
@@ -291,7 +295,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         var approver = pendingStartDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
         pendingStartDateChange.Approve(approver, userApprovedBy, DateTime.UtcNow);
-        var amendedEpisodeDetails = UpdatePrices(pendingStartDateChange);
+        var amendedEpisodeDetails = LatestEpisode.UpdatePricesForApprovedStartDateChange(pendingStartDateChange, fundingBandMaximum);
         AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver, amendedEpisodeDetails));
     }
 
@@ -344,16 +348,5 @@ public class ApprenticeshipDomainModel : AggregateRoot
         {
             return LatestEpisode.UpdatePricesForApprovedPriceChange(priceChangeRequest);
         }
-    }
-
-    private EpisodeDomainModel.AmendedPrices UpdatePrices(StartDateChangeDomainModel startDateChangeRequest)
-    {
-        //temporarily returning this until below is resolved
-        return new EpisodeDomainModel.AmendedPrices(LatestPrice.GetEntity().Key, LatestEpisode.GetEntity().Key, new List<Guid>());
-
-        //todo start date change - agree approach for constructing integration event since could update/create multiple new prices
-        //if new date is earlier than 1st price, then just update
-        //if any prices have a start date before the new date, delete them and create a new one with 
-        //do similar for end date too
     }
 }
