@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Infrastructure;
 
@@ -25,22 +26,25 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return;
         }
 
-        //TODO FIX THIS
-        //switch (_accountIdClaims.AccountIdClaimsType)
-        //{
-        //    case AccountIdClaimsType.Provider:
-        //        if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.Ukprn)) {
-        //            throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn), apprenticeship.Ukprn));
-        //        }
-        //        break;
-        //    case AccountIdClaimsType.Employer:
-        //        if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.EmployerAccountId)) {
-        //            throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId));
-        //        }
-        //        break;
-        //    default:
-        //        throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
-        //}
+        var currentEpisode = apprenticeship.GetCurrentEpisode();
+
+        switch (_accountIdClaims.AccountIdClaimsType)
+        {
+            case AccountIdClaimsType.Provider:
+                if (!_accountIdClaims.AccountIds.Any(x => x == currentEpisode.Ukprn))
+                {
+                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(currentEpisode.Ukprn), currentEpisode.Ukprn));
+                }
+                break;
+            case AccountIdClaimsType.Employer:
+                if (!_accountIdClaims.AccountIds.Any(x => x == currentEpisode.EmployerAccountId))
+                {
+                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(currentEpisode.EmployerAccountId), currentEpisode.EmployerAccountId));
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
+        }
     }
             
     public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(DbSet<Apprenticeship> apprenticeships)
@@ -62,25 +66,22 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return apprenticeships;
         }
 
-        return null;
+        var apprenticeshipsWithEpisodes = apprenticeships
+            .Include(x => x.Episodes);
 
-        //TODO FIX THIS
-        //var apprenticeshipsWithEpisodes = apprenticeships.Include(x => x.Episodes)
-        //    .Where(x => x.Episodes.MaxBy(y => y.EpisodeStartDate) != null);
-
-        //switch (_accountIdClaims.AccountIdClaimsType)
-        //{
-        //    case AccountIdClaimsType.Provider:
-        //        return apprenticeshipsWithEpisodes
-        //            .Where(x => _accountIdClaims.AccountIds
-        //                .Contains(x.Episodes.MaxBy(y => y.EpisodeStartDate)!.Ukprn));
-        //    case AccountIdClaimsType.Employer:
-        //        return apprenticeshipsWithEpisodes
-        //            .Where(x => _accountIdClaims.AccountIds
-        //                .Contains(x.Episodes.MaxBy(y => y.EpisodeStartDate)!.EmployerAccountId));
-        //    default:
-        //        throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
-        //}
+        switch (_accountIdClaims.AccountIdClaimsType)
+        {
+            case AccountIdClaimsType.Provider:
+                return apprenticeshipsWithEpisodes
+                    .Where(x => _accountIdClaims.AccountIds
+                        .Contains(x.GetCurrentEpisode().Ukprn));
+            case AccountIdClaimsType.Employer:
+                return apprenticeshipsWithEpisodes
+                    .Where(x => _accountIdClaims.AccountIds
+                        .Contains(x.GetCurrentEpisode().EmployerAccountId));
+            default:
+                throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
+        }
     }
 
     private string InvalidAccountIdClaimsTypeErrorMessage()
