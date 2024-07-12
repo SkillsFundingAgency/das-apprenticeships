@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using System;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
@@ -18,12 +19,12 @@ public class WhenSettingPaymentStatus
         _fixture.Customize(new ApprenticeshipCustomization());
     }
 
-    //TODO fix unit for freeze/unfreeze
     [Test]
     public void And_NewStatusIsSameAsOld_Then_Throws()
     {
         //Arrange
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
 
         //Act / Assert
         var exception = Assert.Throws<InvalidOperationException>(()=>apprenticeship.SetPaymentStatus(false, _userId, DateTime.Now));
@@ -31,12 +32,12 @@ public class WhenSettingPaymentStatus
 
     }
 
-    //TODO fix unit for freeze/unfreeze
     [Test]
     public void And_NewStatusIsFrozen_Then_PaymentsAreFrozen()
     {
         //Arrange
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
 
         //Act 
         apprenticeship.SetPaymentStatus(true, _userId, DateTime.Now);

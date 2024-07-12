@@ -18,15 +18,15 @@ public class WhenAStartDateChangeIsApproved
 {
     private ApproveStartDateChangeCommandHandler _commandHandler = null!;
     private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
-    private Mock<IFundingBandMaximumService> _fundingBandMaxService = null!;
+    private Mock<IFundingBandMaximumService> _fundingBandMaximumService = null!;
     private Fixture _fixture = null!;
 
     [SetUp]
     public void SetUp()
     {
         _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
-        _fundingBandMaxService = new Mock<IFundingBandMaximumService>();
-        _commandHandler = new ApproveStartDateChangeCommandHandler(_apprenticeshipRepository.Object, _fundingBandMaxService.Object);
+        _fundingBandMaximumService = new Mock<IFundingBandMaximumService>();
+        _commandHandler = new ApproveStartDateChangeCommandHandler(_apprenticeshipRepository.Object, _fundingBandMaximumService.Object);
 
         _fixture = new Fixture();
         _fixture.Customize(new ApprenticeshipCustomization());
@@ -38,21 +38,24 @@ public class WhenAStartDateChangeIsApproved
         //Arrange
         var command = _fixture.Create<ApproveStartDateChangeCommand>();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var startDate = _fixture.Create<DateTime>();
-        CreatePendingStartDateChange(apprenticeship, startDate, ChangeInitiator.Provider);
+        ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Provider, startDate);
         _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+        _fundingBandMaximumService
+            .Setup(x => x.GetFundingBandMaximum(It.IsAny<int>(), It.IsAny<DateTime?>()))
+            .ReturnsAsync((int)Math.Ceiling(apprenticeship.LatestPrice.TotalPrice + _fixture.Create<decimal>()));
 
         //Act
         await _commandHandler.Handle(command);
-            
+
         //Assert
-        //todo fix as part of start date change
-        //_apprenticeshipRepository.Verify(x => x.Update(
-        //    It.Is<ApprenticeshipDomainModel>(y => 
-        //        y.GetEntity().StartDateChanges
-        //        .Count(z => z.RequestStatus == ChangeRequestStatus.Approved 
-        //                    && z.EmployerApprovedBy == command.UserId) == 1
-        //        && y.GetEntity().ActualStartDate == startDate)));
+        _apprenticeshipRepository.Verify(x => x.Update(
+            It.Is<ApprenticeshipDomainModel>(y => 
+                y.GetEntity().StartDateChanges
+                .Count(z => z.RequestStatus == ChangeRequestStatus.Approved
+                            && z.EmployerApprovedBy == command.UserId) == 1
+                && y.StartDate == startDate)));
     }
 
     [Test]
@@ -61,27 +64,23 @@ public class WhenAStartDateChangeIsApproved
         //Arrange
         var command = _fixture.Create<ApproveStartDateChangeCommand>();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var startDate = _fixture.Create<DateTime>();
-        CreatePendingStartDateChange(apprenticeship, startDate, ChangeInitiator.Employer);
+        ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Employer, startDate);
         _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+        _fundingBandMaximumService
+            .Setup(x => x.GetFundingBandMaximum(It.IsAny<int>(), It.IsAny<DateTime?>()))
+            .ReturnsAsync((int)Math.Ceiling(apprenticeship.LatestPrice.TotalPrice + _fixture.Create<decimal>()));
 
         //Act
         await _commandHandler.Handle(command);
-            
-        //Assert
-        //todo fix as part of start date change
-        //_apprenticeshipRepository.Verify(x => x.Update(
-        //    It.Is<ApprenticeshipDomainModel>(y => 
-        //        y.GetEntity().StartDateChanges
-        //            .Count(z => z.RequestStatus == ChangeRequestStatus.Approved 
-        //                        && z.ProviderApprovedBy == command.UserId) == 1
-        //        && y.GetEntity().ActualStartDate == startDate)));
-    }
 
-    private void CreatePendingStartDateChange(ApprenticeshipDomainModel apprenticeship, DateTime startDate, ChangeInitiator changeInitiator)
-    {
-        apprenticeship.AddStartDateChange(startDate, _fixture.Create<DateTime>(), _fixture.Create<string>(), _fixture.Create<string>(),
-            _fixture.Create<DateTime>(), _fixture.Create<string>(), _fixture.Create<DateTime>(),
-            _fixture.Create<DateTime>(), ChangeRequestStatus.Created, changeInitiator);
+        //Assert
+        _apprenticeshipRepository.Verify(x => x.Update(
+            It.Is<ApprenticeshipDomainModel>(y =>
+                y.GetEntity().StartDateChanges
+                    .Count(z => z.RequestStatus == ChangeRequestStatus.Approved
+                                && z.ProviderApprovedBy == command.UserId) == 1
+                && y.StartDate == startDate)));
     }
 }

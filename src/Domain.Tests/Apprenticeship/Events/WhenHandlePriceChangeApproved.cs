@@ -9,6 +9,7 @@ using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
@@ -24,17 +25,18 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         public void Setup()
         {
             _fixture = new Fixture();
+            _fixture.Customize(new ApprenticeshipCustomization());
             _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
             _messageSession = new Mock<IMessageSession>();
             _handler = new PriceChangeApprovedHandler(_apprenticeshipRepository.Object, _messageSession.Object);
         }
 
         [Test]
-        public async Task ThenApprenticeshipCreatedEventIsPublished()
+        public async Task ThenPriceChangeApprovedEventIsPublished()
         {
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
-            //ApprenticeshipDomainModelTestHelper.AddPendingPriceChange(apprenticeship);
+            ApprenticeshipDomainModelTestHelper.AddPendingPriceChange(apprenticeship);
             apprenticeship.ApprovePriceChange("Bob", null, null);
             var priceChange = apprenticeship.PriceHistories.First(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Approved);
             var domainEvent = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Employer, _fixture.Create<EpisodeDomainModel.AmendedPrices>());

@@ -14,7 +14,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
         {
             Fixture.Customize(new ApprenticeshipCustomization());
             var apprenticeship = Fixture.Create<ApprenticeshipDomainModel>();
-
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
             var startDateChange = StartDateChangeDomainModel.Get(Fixture.Create<StartDateChange>());
 
             if (pendingProviderApproval)

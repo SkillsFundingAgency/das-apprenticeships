@@ -37,11 +37,11 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
     public async Task<ApprenticeshipDomainModel> Get(Guid key)
     {
         var apprenticeship = await DbContext.Apprenticeships
-            .Include(x => x.Episodes)
-            .Include(x => x.Episodes.Select(y => y.Prices))
             .Include(x => x.PriceHistories)
             .Include(x => x.StartDateChanges)
             .Include(x => x.FreezeRequests)
+            .Include(x => x.Episodes)
+            .ThenInclude(y => y.Prices)
             .SingleAsync(x => x.Key == key);
 
         return _apprenticeshipFactory.GetExisting(apprenticeship);

@@ -19,6 +19,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         public string TrainingCourseVersion => _entity.TrainingCourseVersion;
         public bool PaymentsFrozen => _entity.PaymentsFrozen;
         public IReadOnlyCollection<EpisodePriceDomainModel> EpisodePrices => new ReadOnlyCollection<EpisodePriceDomainModel>(_episodePrices);
+        public List<EpisodePriceDomainModel> ActiveEpisodePrices => _episodePrices.Where(x => !x.IsDeleted).ToList();
         public EpisodePriceDomainModel LatestPrice
         {
             get
@@ -120,21 +121,41 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         internal AmendedPrices UpdatePricesForApprovedStartDateChange(StartDateChangeDomainModel startDateChangeRequest, int fundingBandMaximum)
         {
-            UpdateAllActivePricesWithNewFundingBandMaximum(fundingBandMaximum);
-            
+            var latestPrice = LatestPrice;
             var deletedPrices = DeletePricesEndingBeforeDate(startDateChangeRequest.ActualStartDate).ToList();
-            if (FirstPrice.StartDate != startDateChangeRequest.ActualStartDate)
+            deletedPrices.AddRange(DeletePricesStartingAfterDate(startDateChangeRequest.PlannedEndDate));
+
+            if (ActiveEpisodePrices.Count == 0)
             {
-                FirstPrice.UpdateStartDate(startDateChangeRequest.ActualStartDate);
+                AddEpisodePrice(
+                    startDateChangeRequest.ActualStartDate,
+                    startDateChangeRequest.PlannedEndDate,
+                    latestPrice.TotalPrice,
+                    latestPrice.TrainingPrice,
+                    latestPrice.EndPointAssessmentPrice,
+                    fundingBandMaximum);
+            }
+            else
+            {
+                if (FirstPrice.StartDate != startDateChangeRequest.ActualStartDate)
+                {
+                    FirstPrice.UpdateStartDate(startDateChangeRequest.ActualStartDate);
+                }
+
+                if (LatestPrice.EndDate != startDateChangeRequest.PlannedEndDate)
+                {
+                    LatestPrice.UpdateEndDate(startDateChangeRequest.PlannedEndDate);
+                }
             }
 
-            deletedPrices.AddRange(DeletePricesStartingAfterDate(startDateChangeRequest.PlannedEndDate));
-            if (LatestPrice.StartDate != startDateChangeRequest.PlannedEndDate)
-            {
-                LatestPrice.UpdateEndDate(startDateChangeRequest.PlannedEndDate);
-            }
+            UpdateAllActivePricesWithNewFundingBandMaximum(fundingBandMaximum);
 
             return new AmendedPrices(LatestPrice.GetEntity().Key, _entity.Key, deletedPrices.ToList());
+        }
+
+        internal void UpdatePaymentStatus(bool isFrozen)
+        {
+            _entity.PaymentsFrozen = isFrozen;
         }
 
         public Episode GetEntity()

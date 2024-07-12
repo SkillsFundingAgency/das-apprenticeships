@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,7 +43,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         public async Task ThenAccountIdValidationIsPerformed()
         {
             // Arrange
-            var apprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             SetUpApprenticeshipRepository();
 
             // Act
@@ -57,17 +58,17 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         public async Task ThenApprenticeshipAddedToDataStore()
         {
             // Arrange
-            var testApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>());
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             SetUpApprenticeshipRepository();
 
             // Act
-            await _sut.Add(testApprenticeship);
+            await _sut.Add(apprenticeship);
             
             // Assert
             _dbContext.ApprenticeshipsDbSet.Count().Should().Be(1);
 
             var storedApprenticeship = _dbContext.ApprenticeshipsDbSet.Single();
-            var expectedModel = testApprenticeship.GetEntity();
+            var expectedModel = apprenticeship.GetEntity();
 
             expectedModel.Should().BeEquivalentTo(storedApprenticeship);
         }
@@ -76,50 +77,56 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
         public async Task ThenEpisodeAddedToDataStore()
         {
             // Arrange
-            var apprenticeshipEntity = _fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>();
-            var testApprenticeship = ApprenticeshipDomainModel.Get(apprenticeshipEntity);
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             SetUpApprenticeshipRepository();
-            var expectedEpisode = EpisodeDomainModel.Get(_fixture.Create<Episode>());
-            var expectedEpisodePrice = EpisodePriceDomainModel.Get(_fixture.Create<EpisodePrice>());
-            testApprenticeship.AddEpisode(
-                expectedEpisode.Ukprn, 
-                expectedEpisode.EmployerAccountId, 
-                expectedEpisodePrice.StartDate, 
-                expectedEpisodePrice.EndDate, 
-                expectedEpisodePrice.TotalPrice, 
-                expectedEpisodePrice.TrainingPrice, 
-                expectedEpisodePrice.EndPointAssessmentPrice, 
-                expectedEpisode.FundingType,
-                expectedEpisode.FundingPlatform,
-                expectedEpisodePrice.FundingBandMaximum, 
-                expectedEpisode.FundingEmployerAccountId, 
-                expectedEpisode.LegalEntityName, 
-                expectedEpisode.AccountLegalEntityId, 
-                expectedEpisode.TrainingCode, 
-                expectedEpisode.TrainingCourseVersion);
+            var episodePrice = _fixture.Build<EpisodePrice>().With(x => x.IsDeleted, false).Create();
+            var episode = EpisodeDomainModel.Get(_fixture.Build<Episode>()
+                .With(x => x.Prices, new List<EpisodePrice>(){ episodePrice })
+                .With(x => x.PaymentsFrozen, false)
+                .Create());
+
+            apprenticeship.AddEpisode(
+                episode.Ukprn,
+                episode.EmployerAccountId,
+                episodePrice.StartDate,
+                episodePrice.EndDate,
+                episodePrice.TotalPrice,
+                episodePrice.TrainingPrice,
+                episodePrice.EndPointAssessmentPrice,
+                episode.FundingType,
+                episode.FundingPlatform,
+                episodePrice.FundingBandMaximum,
+                episode.FundingEmployerAccountId,
+                episode.LegalEntityName,
+                episode.AccountLegalEntityId,
+                episode.TrainingCode,
+                episode.TrainingCourseVersion);
 
             // Act
-            await _sut.Add(testApprenticeship);
+            await _sut.Add(apprenticeship);
             
             // Assert
             _dbContext.Episodes.Count().Should().Be(1);
             var storedEpisode = _dbContext.Episodes.Single();
-            storedEpisode.Should().BeEquivalentTo(expectedEpisode);
+            storedEpisode.Should().BeEquivalentTo(episode, x => x
+                .Excluding(y => y.LatestPrice)
+                .Excluding(y => y.EpisodePrices)
+                .Excluding(y => y.FirstPrice)
+                .Excluding(y => y.ActiveEpisodePrices));
         }
 
         [Test]
         public async Task ThenDomainEventsPublished()
         {
             // Arrange
-            var apprenticeshipEntity = _fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>();
-            var testApprenticeship = ApprenticeshipDomainModel.Get(apprenticeshipEntity);
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             SetUpApprenticeshipRepository();
 			
             // Act
-            await _sut.Add(testApprenticeship);
+            await _sut.Add(apprenticeship);
             
             // Assert
-            _domainEventDispatcher.Verify(x => x.Send(It.Is<ApprenticeshipCreated>(e => e.ApprenticeshipKey == testApprenticeship.Key), It.IsAny<CancellationToken>()), Times.Once());
+            _domainEventDispatcher.Verify(x => x.Send(It.Is<ApprenticeshipCreated>(e => e.ApprenticeshipKey == apprenticeship.Key), It.IsAny<CancellationToken>()), Times.Once());
         }
 
         private void SetUpApprenticeshipRepository()

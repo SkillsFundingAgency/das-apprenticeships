@@ -7,8 +7,6 @@ using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.SetPaymentsFrozen;
@@ -33,6 +31,7 @@ public class WhenHandleSetPaymentsFrozenCommand
     {
         // Arrange
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         _mockApprenticeshipRepository.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(apprenticeship);
         var command = _fixture.Create<SetPaymentsFrozenCommand>();
 
@@ -41,6 +40,8 @@ public class WhenHandleSetPaymentsFrozenCommand
 
         // Assert
         _mockApprenticeshipRepository.Verify(x => x.Get(command.ApprenticeshipKey), Times.Once);
-        _mockApprenticeshipRepository.Verify(x => x.Update(apprenticeship), Times.Once);
+        _mockApprenticeshipRepository.Verify(x => x.Update(
+            It.Is<ApprenticeshipDomainModel>(y => y
+                .LatestEpisode.PaymentsFrozen == command.NewPaymentsFrozenStatus)), Times.Once);
     }
 }

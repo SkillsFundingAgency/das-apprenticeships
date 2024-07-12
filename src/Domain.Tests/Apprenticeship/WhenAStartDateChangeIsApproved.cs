@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
@@ -19,15 +20,15 @@ public class WhenAStartDateChangeIsApproved
         _fixture = new Fixture();
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
-    public void ThenTheStartDateChangeRecordIsUpdated(bool isPendingProviderApproval)
+    [Test]
+    public void ByProviderThenTheStartDateChangeRecordIsUpdated()
     {
         //Arrange
         var approverUserId = _fixture.Create<string>();
-        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange(isPendingProviderApproval);
+        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval: true);
 
         //Act
+        var now = DateTime.UtcNow;
         apprenticeship.ApproveStartDateChange(approverUserId, _fixture.Create<int>());
 
         //Assert
@@ -36,6 +37,30 @@ public class WhenAStartDateChangeIsApproved
         var startDateChange = entity.StartDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Approved);
         startDateChange.Should().NotBeNull();
         startDateChange.ProviderApprovedBy.Should().Be(approverUserId);
+        startDateChange.ProviderApprovedDate.Should().BeAfter(now);
+        startDateChange.EmployerApprovedBy.Should().NotBeNull();
+        startDateChange.EmployerApprovedDate.Should().NotBeNull();
+    }
+
+    [Test]
+    public void ByEmployerThenTheStartDateChangeRecordIsUpdated()
+    {
+        //Arrange
+        var approverUserId = _fixture.Create<string>();
+        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval: false);
+
+        //Act
+        var now = DateTime.UtcNow;
+        apprenticeship.ApproveStartDateChange(approverUserId, _fixture.Create<int>());
+
+        //Assert
+        var entity = apprenticeship.GetEntity();
+        entity.StartDateChanges.Any(x => x.RequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
+        var startDateChange = entity.StartDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Approved);
+        startDateChange.Should().NotBeNull();
+        startDateChange.EmployerApprovedBy.Should().Be(approverUserId);
+        startDateChange.EmployerApprovedDate.Should().BeAfter(now);
+        startDateChange.ProviderApprovedBy.Should().NotBeNull();
         startDateChange.ProviderApprovedDate.Should().NotBeNull();
     }
 

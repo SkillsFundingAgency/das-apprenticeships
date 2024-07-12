@@ -9,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
@@ -33,61 +34,70 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         }
 
         [Test]
-        public async Task Then_the_correct_apprenticeships_for_the_ukprn_are_retrieved()
+        public async Task ThenCorrectApprenticeshipsForUkprnAreRetrieved()
         {
             // Arrange
-            var ukprns = _fixture.CreateMany<long>(2).ToList();
-            var ulns = _fixture.CreateMany<string>(3).ToList();
-            var providerInTest = ukprns[1];
+            var ukprn = _fixture.Create<long>();
             SetUpApprenticeshipQueryRepository();
-            var apprenticeships = new[]
-            {
-                CreateApprenticeshipWithUkprn(ulns[0], ukprns[0]),
-                CreateApprenticeshipWithUkprn(ulns[1], providerInTest),
-                CreateApprenticeshipWithUkprn(ulns[2], providerInTest),
-            };
-            await _dbContext.AddRangeAsync(apprenticeships);
-            await _dbContext.SaveChangesAsync();
+            var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, fundingPlatform: FundingPlatform.DAS);
+            var apprenticeship2 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false);
+            var apprenticeship3 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, fundingPlatform: FundingPlatform.SLD);
+            var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, fundingPlatform: FundingPlatform.DAS);
 
             // Act
-            var result = await _sut.GetAll(providerInTest, null);
+            var result = await _sut.GetAll(ukprn, null);
 
             // Assert
             result.Should().NotBeNull();
-            result.Count().Should().Be(2);
-            result.Should().NotContain(x => x.Uln == ulns[0]);
-            result.Should().Contain(x => x.Uln == ulns[1]);
-            result.Should().Contain(x => x.Uln == ulns[2]);
+            result.Count().Should().Be(3);
+            result.Should().Contain(x => x.Uln == apprenticeship1.Uln);
+            result.Should().NotContain(x => x.Uln == apprenticeship2.Uln);
+            result.Should().Contain(x => x.Uln == apprenticeship3.Uln);
+            result.Should().Contain(x => x.Uln == apprenticeship4.Uln);
         }
 
         [Test]
-        public async Task And_filtering_by_funding_platform_Then_the_correct_apprenticeships_are_retrieved()
+        public async Task AndFilteringByFundingPlatformSLDThenCorrectApprenticeshipsAreRetrieved()
         {
             // Arrange
-            var ukprns = _fixture.CreateMany<long>(2).ToList();
-            var ulns = _fixture.CreateMany<string>(4).ToList();
-            var providerInTest = ukprns[1];
+            var ukprn = _fixture.Create<long>();
             SetUpApprenticeshipQueryRepository();
-            var apprenticeships = new[]
-            {
-                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[0], ukprns[0], FundingPlatform.DAS),
-                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[1], providerInTest, FundingPlatform.SLD),
-                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[2], providerInTest, FundingPlatform.DAS),
-                CreateApprenticeshipWithUkPrnAndFundingPlatform(ulns[3], providerInTest, FundingPlatform.SLD),
-            };
-            await _dbContext.AddRangeAsync(apprenticeships);
-            await _dbContext.SaveChangesAsync();
+            var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, fundingPlatform: FundingPlatform.DAS);
+            var apprenticeship2 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false);
+            var apprenticeship3 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, fundingPlatform: FundingPlatform.SLD);
+            var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, fundingPlatform: FundingPlatform.DAS);
 
             // Act
-            var result = await _sut.GetAll(providerInTest, FundingPlatform.SLD);
+            var result = await _sut.GetAll(ukprn, FundingPlatform.SLD);
 
             // Assert
-            result.Should().NotBeNull();
+            result.Count().Should().Be(1);
+            result.Should().NotContain(x => x.Uln == apprenticeship1.Uln);
+            result.Should().NotContain(x => x.Uln == apprenticeship2.Uln);
+            result.Should().Contain(x => x.Uln == apprenticeship3.Uln);
+            result.Should().NotContain(x => x.Uln == apprenticeship4.Uln);
+        }
+
+        [Test]
+        public async Task AndFilteringByFundingPlatformDASThenCorrectApprenticeshipsAreRetrieved()
+        {
+            // Arrange
+            var ukprn = _fixture.Create<long>();
+            SetUpApprenticeshipQueryRepository();
+            var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, fundingPlatform: FundingPlatform.DAS);
+            var apprenticeship2 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false);
+            var apprenticeship3 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, fundingPlatform: FundingPlatform.SLD);
+            var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, fundingPlatform: FundingPlatform.DAS);
+
+            // Act
+            var result = await _sut.GetAll(ukprn, FundingPlatform.DAS);
+
+            // Assert
             result.Count().Should().Be(2);
-            result.Should().NotContain(x => x.Uln == ulns[0]);
-            result.Should().Contain(x => x.Uln == ulns[1]);
-            result.Should().NotContain(x => x.Uln == ulns[2]);
-            result.Should().Contain(x => x.Uln == ulns[3]);
+            result.Should().Contain(x => x.Uln == apprenticeship1.Uln);
+            result.Should().NotContain(x => x.Uln == apprenticeship2.Uln);
+            result.Should().NotContain(x => x.Uln == apprenticeship3.Uln);
+            result.Should().Contain(x => x.Uln == apprenticeship4.Uln);
         }
 
         private void SetUpApprenticeshipQueryRepository()
@@ -95,27 +105,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
             var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
             _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
-        }
-
-        private DataAccess.Entities.Apprenticeship.Apprenticeship CreateApprenticeshipWithUkprn(string uln, long ukprn)
-        {
-            return CreateApprenticeshipWithUkPrnAndFundingPlatform(uln, ukprn, _fixture.Create<FundingPlatform>());
-        }
-
-        //todo fix this helper method
-        private DataAccess.Entities.Apprenticeship.Apprenticeship CreateApprenticeshipWithUkPrnAndFundingPlatform(string uln, long ukprn, FundingPlatform fundingPlatform)
-        {
-            return _fixture
-                .Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
-                .With(x => x.Key, _fixture.Create<Guid>())
-                .With(x => x.Uln, uln)
-                .With(x => x.Episodes, new List<Episode>() { new()
-                {
-                    Key = _fixture.Create<Guid>(),
-                    Ukprn = ukprn,
-                    FundingPlatform = fundingPlatform
-                } })
-                .Create();
         }
     }
 }

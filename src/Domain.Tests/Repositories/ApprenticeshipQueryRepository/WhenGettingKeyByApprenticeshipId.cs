@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
@@ -51,13 +52,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             //Act
             var approvalsApprenticeshipId = _fixture.Create<long>();
             var expectedApprenticeshipKey = _fixture.Create<Guid>();
-            var apprenticeships = new List<DataAccess.Entities.Apprenticeship.Apprenticeship>
-            {
-                CreateApprenticeshipWithApproval(expectedApprenticeshipKey, approvalsApprenticeshipId),
-                CreateApprenticeshipWithApproval(_fixture.Create<Guid>(), _fixture.Create<long>())
-            };
-            await _dbContext.AddRangeAsync(apprenticeships);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.AddApprenticeship(expectedApprenticeshipKey, false, approvalsApprenticeshipId: approvalsApprenticeshipId);
+            await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, approvalsApprenticeshipId: _fixture.Create<long>());
 
             // Act
             var result = await _sut.GetKeyByApprenticeshipId(approvalsApprenticeshipId);

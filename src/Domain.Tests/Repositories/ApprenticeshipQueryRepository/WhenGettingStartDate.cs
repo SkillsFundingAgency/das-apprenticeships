@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
@@ -49,29 +51,25 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             var apprenticeshipKey = _fixture.Create<Guid>();
             SetUpApprenticeshipQueryRepository();
 
-            var apprenticeships = new[]
-            {
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Key, apprenticeshipKey).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Key, _fixture.Create<Guid>()).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Key, _fixture.Create<Guid>()).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Key, _fixture.Create<Guid>()).Create()
-            };
-
-            await _dbContext.AddRangeAsync(apprenticeships);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.AddApprenticeship(apprenticeshipKey, false);
+            var apprenticeship = _dbContext.Apprenticeships.Single(x => x.Key == apprenticeshipKey);
+            var episode = _dbContext.Episodes.Single(x => x.ApprenticeshipKey == apprenticeshipKey);
+            var episodePrice = _dbContext.EpisodePrices.Single(x => x.EpisodeKey == episode.Key);
+            await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false);
+            await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false);
 
             // Act
             var result = await _sut.GetStartDate(apprenticeshipKey);
 
             // Assert
             //todo fix as part of start date change
-            //result.Should().NotBeNull();
-            //result.ActualStartDate.Should().Be(apprenticeships[0].ActualStartDate);
-            //result.PlannedEndDate.Should().Be(apprenticeships[0].PlannedEndDate);
-            //result.AccountLegalEntityId.Should().Be(apprenticeships[0].AccountLegalEntityId);
-            //result.ApprenticeDateOfBirth.Should().Be(apprenticeships[0].DateOfBirth);
-            //result.CourseCode.Should().Be(apprenticeships[0].TrainingCode);
-            //result.CourseVersion.Should().Be(apprenticeships[0].TrainingCourseVersion);
+            result.Should().NotBeNull();
+            result.ActualStartDate.Should().Be(episodePrice.StartDate);
+            result.PlannedEndDate.Should().Be(episodePrice.EndDate);
+            result.AccountLegalEntityId.Should().Be(episode.AccountLegalEntityId);
+            result.ApprenticeDateOfBirth.Should().Be(apprenticeship.DateOfBirth);
+            result.CourseCode.Should().Be(episode.TrainingCode);
+            result.CourseVersion.Should().Be(episode.TrainingCourseVersion);
         }
 
         private void SetUpApprenticeshipQueryRepository()

@@ -13,7 +13,7 @@ using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
 {
     [TestFixture]
-    public class WhenAPriceChangeIsApprovedByEmployer
+    public class WhenAPriceChangeIsApproved
     {
         private ApprovePriceChangeCommandHandler _commandHandler = null!;
         private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
@@ -30,14 +30,15 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
         }
 
         [Test]
-        public async Task ThenThePriceHistoryIsApproved()
+        public async Task ByEmployerThenThePriceHistoryIsApproved()
         {
             //Arrange
             var command = _fixture.Create<ApprovePriceChangeCommand>();
             command.AssessmentPrice = null;
             command.TrainingPrice = null;
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeInitiator.Provider);
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
+            ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeProviderInitiated(apprenticeship);
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
             //Act
@@ -51,6 +52,34 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
                         .Count(z => z.PriceChangeRequestStatus == ChangeRequestStatus.Approved 
                                     && z.EmployerApprovedBy == command.UserId
                                     && z.EmployerApprovedBy != null) == 1)));
+        }
+
+        [Test]
+        public async Task ByProviderThenThePriceHistoryIsApproved()
+        {
+            //Arrange
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var command = _fixture.Create<ApprovePriceChangeCommand>();
+            var totalPrice = command.TrainingPrice!.Value + command.AssessmentPrice!.Value;
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
+            ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeEmployerInitiated(
+                apprenticeship, 
+                totalPrice, 
+                effectiveFromDate:apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>()));
+            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+
+            //Act
+            await _commandHandler.Handle(command);
+            
+            //Assert
+            _apprenticeshipRepository.Verify(x => x.Update(
+                It.Is<ApprenticeshipDomainModel>(y => y
+                    .GetEntity()
+                    .PriceHistories
+                    .Count(z => z.PriceChangeRequestStatus == ChangeRequestStatus.Approved 
+                                && z.ProviderApprovedBy == command.UserId
+                                && z.TrainingPrice == command.TrainingPrice
+                                && z.AssessmentPrice == command.AssessmentPrice) == 1)));
         }
     }
 }

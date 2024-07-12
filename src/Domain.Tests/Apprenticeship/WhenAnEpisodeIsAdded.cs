@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
@@ -20,33 +21,34 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship
             _fixture.Customize(new ApprenticeshipCustomization());
         }
 
-        //todo this should pass once freeze/unfreeze is sorted out
         [Test]
         public void ThenAnEpisodeAndPriceIsAdded()
         {
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            var episodeDomainModel = EpisodeDomainModel.Get(_fixture.Create<Episode>());
-            var episodePriceDomainModel = EpisodePriceDomainModel.Get(_fixture.Create<EpisodePrice>());
+            var episodePrice = _fixture.Build<EpisodePrice>().With(x => x.IsDeleted, false).Create();
+            var episode = EpisodeDomainModel.Get(_fixture.Build<Episode>()
+                .With(x => x.Prices, new List<EpisodePrice>(){ episodePrice })
+                .With(x => x.PaymentsFrozen, false)
+                .Create());
 
             apprenticeship.AddEpisode(
-                episodeDomainModel.Ukprn,
-                episodeDomainModel.EmployerAccountId,
-                episodePriceDomainModel.StartDate,
-                episodePriceDomainModel.EndDate,
-                episodePriceDomainModel.TotalPrice,
-                episodePriceDomainModel.TrainingPrice,
-                episodePriceDomainModel.EndPointAssessmentPrice,
-                episodeDomainModel.FundingType,
-                episodeDomainModel.FundingPlatform,
-                episodePriceDomainModel.FundingBandMaximum,
-                episodeDomainModel.FundingEmployerAccountId,
-                episodeDomainModel.LegalEntityName,
-                episodeDomainModel.AccountLegalEntityId,
-                episodeDomainModel.TrainingCode,
-                episodeDomainModel.TrainingCourseVersion);
+                episode.Ukprn,
+                episode.EmployerAccountId,
+                episodePrice.StartDate,
+                episodePrice.EndDate,
+                episodePrice.TotalPrice,
+                episodePrice.TrainingPrice,
+                episodePrice.EndPointAssessmentPrice,
+                episode.FundingType,
+                episode.FundingPlatform,
+                episodePrice.FundingBandMaximum,
+                episode.FundingEmployerAccountId,
+                episode.LegalEntityName,
+                episode.AccountLegalEntityId,
+                episode.TrainingCode,
+                episode.TrainingCourseVersion);
 
-            var latestEpisode = apprenticeship.GetEntity().Episodes.Last();
-            latestEpisode.Should().BeEquivalentTo(episodeDomainModel);
+            apprenticeship.LatestEpisode.Should().BeEquivalentTo(episode);
         }
     }
 }
