@@ -48,13 +48,13 @@ public static class ApprenticeshipDomainModelTestHelper
             ChangeInitiator.Employer);
     }
 
-    public static void AddPendingPriceChangeProviderInitiated(ApprenticeshipDomainModel apprenticeship)
+    public static void AddPendingPriceChangeProviderInitiated(ApprenticeshipDomainModel apprenticeship, DateTime? effectiveFromDate = null)
     {
         apprenticeship.AddPriceHistory(
             _fixture.Create<decimal>(), 
             _fixture.Create<decimal>(), 
             _fixture.Create<decimal>(), 
-            _fixture.Create<DateTime>(), 
+            effectiveFromDate ?? _fixture.Create<DateTime>(),
             _fixture.Create<DateTime>(), 
             ChangeRequestStatus.Created, 
             _fixture.Create<string>(), 

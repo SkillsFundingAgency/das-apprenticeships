@@ -38,7 +38,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
             command.TrainingPrice = null;
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
-            ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeProviderInitiated(apprenticeship);
+            ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeProviderInitiated(apprenticeship, effectiveFromDate:apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>()));
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
             //Act

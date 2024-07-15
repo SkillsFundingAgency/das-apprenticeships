@@ -32,11 +32,11 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
         }
 
         [Test]
-        public async Task ThenPriceChangeApprovedEventIsPublished()
+        public async Task ByEmployerThenPriceChangeApprovedEventIsPublished()
         {
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
-            ApprenticeshipDomainModelTestHelper.AddPendingPriceChange(apprenticeship);
+            ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeProviderInitiated(apprenticeship, effectiveFromDate:apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>()));
             apprenticeship.ApprovePriceChange("Bob", null, null);
             var priceChange = apprenticeship.PriceHistories.First(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Approved);
             var domainEvent = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Employer, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
@@ -53,6 +53,43 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
                     e.ApprovedDate == priceChange.EmployerApprovedDate!.Value &&
                     e.ApprovedBy == ApprovedBy.Employer &&
+                    e.AssessmentPrice == priceChange.AssessmentPrice!.Value &&
+                    e.TrainingPrice == priceChange.TrainingPrice!.Value &&
+                    e.EffectiveFromDate == priceChange.EffectiveFromDate &&
+                    e.ProviderId == apprenticeship.LatestEpisode.Ukprn &&
+                    e.EpisodeKey == domainEvent.AmendedPrices.ApprenticeshipEpisodeKey &&
+                    e.PriceKey == domainEvent.AmendedPrices.LatestPriceKey &&
+                    e.DeletedPriceKeys == domainEvent.AmendedPrices.DeletedPriceKeys
+                ), It.IsAny<PublishOptions>()));
+        }
+
+        [Test]
+        public async Task ByProviderThenPriceChangeApprovedEventIsPublished()
+        {
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
+            var trainingPrice = _fixture.Create<int>();
+            var assessmentPrice = _fixture.Create<int>();
+            ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeEmployerInitiated(
+                apprenticeship, 
+                totalPrice: trainingPrice + assessmentPrice,
+                effectiveFromDate:apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>()));
+            apprenticeship.ApprovePriceChange("Bob", trainingPrice, assessmentPrice);
+            var priceChange = apprenticeship.PriceHistories.First(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Approved);
+            var domainEvent = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Provider, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
+
+            _apprenticeshipRepository.Setup(x => x.Get(domainEvent.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+
+            await _handler.Handle(domainEvent);
+
+            _messageSession.Verify(x => x.Publish(It.Is<PriceChangeApprovedEvent>(e =>
+                    e.ApprenticeshipKey == apprenticeship.Key &&
+                    e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
+                    e.ApprenticeshipKey == apprenticeship.Key &&
+                    e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId &&
+                    e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
+                    e.ApprovedDate == priceChange.ProviderApprovedDate!.Value &&
+                    e.ApprovedBy == ApprovedBy.Provider &&
                     e.AssessmentPrice == priceChange.AssessmentPrice!.Value &&
                     e.TrainingPrice == priceChange.TrainingPrice!.Value &&
                     e.EffectiveFromDate == priceChange.EffectiveFromDate &&

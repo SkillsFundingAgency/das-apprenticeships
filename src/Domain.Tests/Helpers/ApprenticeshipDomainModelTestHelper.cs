@@ -10,13 +10,15 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
     {
         private static readonly Fixture _fixture = new();
 
-        public static void AddEpisode(ApprenticeshipDomainModel apprenticeship)
+        public static void AddEpisode(ApprenticeshipDomainModel apprenticeship, DateTime? startDate = null, DateTime? endDate = null)
         {
+            var start = startDate ?? _fixture.Create<DateTime>();
+            var end = endDate ?? (start.AddDays(_fixture.Create<int>()));
             apprenticeship.AddEpisode(
                 _fixture.Create<long>(),
                 _fixture.Create<long>(), 
-                _fixture.Create<DateTime>(), 
-                _fixture.Create<DateTime>(), 
+                start,
+                end,
                 _fixture.Create<decimal>(),
                 _fixture.Create<decimal>(),
                 _fixture.Create<decimal>(),
@@ -26,25 +28,42 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
                 _fixture.Create<long?>(),
                 _fixture.Create<string>(),
                 _fixture.Create<long>(),
-                _fixture.Create<string>(),
+                _fixture.Create<int>().ToString(),
                 _fixture.Create<string?>());
         }
 
-        public static void AddPendingPriceChange(ApprenticeshipDomainModel apprenticeship)
+        public static void AddPendingPriceChangeEmployerInitiated(ApprenticeshipDomainModel apprenticeship, decimal? totalPrice = null, DateTime? effectiveFromDate = null)
+        {
+            apprenticeship.AddPriceHistory(
+                null,
+                null,
+                totalPrice ?? _fixture.Create<int>(),
+                effectiveFromDate ?? _fixture.Create<DateTime>(),
+                _fixture.Create<DateTime>(),
+                ChangeRequestStatus.Created,
+                null,
+                _fixture.Create<string>(),
+                _fixture.Create<string>(),
+                null,
+                _fixture.Create<DateTime>(),
+                ChangeInitiator.Employer);
+        }
+
+        public static void AddPendingPriceChangeProviderInitiated(ApprenticeshipDomainModel apprenticeship, DateTime? effectiveFromDate = null)
         {
             apprenticeship.AddPriceHistory(
                 _fixture.Create<decimal>(), 
                 _fixture.Create<decimal>(), 
                 _fixture.Create<decimal>(), 
-                _fixture.Create<DateTime>(), 
+                effectiveFromDate ?? _fixture.Create<DateTime>(),
                 _fixture.Create<DateTime>(), 
                 ChangeRequestStatus.Created, 
+                _fixture.Create<string>(), 
+                _fixture.Create<string>(), 
                 null, 
-                _fixture.Create<string>(), 
-                _fixture.Create<string>(), 
                 _fixture.Create<DateTime>(), 
-                _fixture.Create<DateTime>(), 
-                _fixture.Create<ChangeInitiator>());
+                null, 
+                ChangeInitiator.Provider);
         }
 
         public static void AddPendingStartDateChange(ApprenticeshipDomainModel apprenticeship, StartDateChange startDateChange)

@@ -32,10 +32,11 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         [Test]
         public async Task ThenPriceHistoryIsAddedToApprenticeship()
         {
-            var command = _fixture.Create<CreatePriceChangeCommand>();
-            command.Initiator = ChangeInitiator.Provider.ToString();
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
+            var command = _fixture.Create<CreatePriceChangeCommand>();
+            command.Initiator = ChangeInitiator.Provider.ToString();
+            command.EffectiveFromDate = apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>());
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
             
             await _commandHandler.Handle(command);
@@ -54,6 +55,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
             command.AssessmentPrice = apprenticeship.LatestPrice.GetEntity().EndPointAssessmentPrice + 1;
             command.TrainingPrice = apprenticeship.LatestPrice.GetEntity().TrainingPrice + 1;
             command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
+            command.EffectiveFromDate = apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>());
 
             apprenticeship.LatestPrice.GetEntity().TotalPrice = command.TotalPrice - 1;
 
