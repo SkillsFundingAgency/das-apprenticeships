@@ -38,31 +38,31 @@ public class WhenHandleStartDateChangeApproved
     {
         // Arrange
         //todo fix unit test for start date change
-        //var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-        //var startDateChange = _fixture.Create<StartDateChange>();
-        //ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
-        //ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, startDateChange);
-        //var employerUserId = _fixture.Create<string>();
-        //apprenticeship.ApproveStartDateChange(employerUserId);
-        //var command = new StartDateChangeApproved(apprenticeship.Key, apprenticeship.StartDateChanges.Single().Key, ApprovedBy.Employer, _fixture<EpisodeDomainModel.AmendedPrices>());
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var startDateChange = _fixture.Create<StartDateChange>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
+        ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, startDateChange);
+        var employerUserId = _fixture.Create<string>();
+        apprenticeship.ApproveStartDateChange(employerUserId, _fixture.Create<int>());
+        var command = new StartDateChangeApproved(apprenticeship.Key, apprenticeship.StartDateChanges.Single().Key, ApprovedBy.Employer, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
 
-        //_apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+        _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
-        //// Act
-        //await _handler.Handle(command);
+        // Act
+        await _handler.Handle(command);
 
-        //// Assert
-        //_messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipStartDateChangedEvent>(e =>
-        //    e.ApprenticeshipKey == apprenticeship.Key &&
-        //    e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
-        //    e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId &&
-        //    e.ProviderId == apprenticeship.LatestEpisode.Ukprn &&
-        //    e.ActualStartDate == startDateChange.ActualStartDate &&
-        //    e.PlannedEndDate == startDateChange.PlannedEndDate &&
-        //    e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship &&
-        //    e.ProviderApprovedBy == startDateChange.ProviderApprovedBy &&
-        //    e.EmployerApprovedBy == employerUserId &&
-        //    e.Initiator == ChangeInitiator.Provider.ToString()
-        //), It.IsAny<PublishOptions>()));
+        // Assert
+        _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipStartDateChangedEvent>(e =>
+            e.ApprenticeshipKey == apprenticeship.Key &&
+            e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
+            e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId &&
+            e.ProviderId == apprenticeship.LatestEpisode.Ukprn &&
+            e.ActualStartDate == startDateChange.ActualStartDate &&
+            e.PlannedEndDate == startDateChange.PlannedEndDate &&
+            e.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship &&
+            e.ProviderApprovedBy == startDateChange.ProviderApprovedBy &&
+            e.EmployerApprovedBy == employerUserId &&
+            e.Initiator == ChangeInitiator.Provider.ToString()
+        ), It.IsAny<PublishOptions>()));
     }
 }

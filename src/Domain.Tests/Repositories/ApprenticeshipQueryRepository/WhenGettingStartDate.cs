@@ -62,7 +62,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             var result = await _sut.GetStartDate(apprenticeshipKey);
 
             // Assert
-            //todo fix as part of start date change
             result.Should().NotBeNull();
             result.ActualStartDate.Should().Be(episodePrice.StartDate);
             result.PlannedEndDate.Should().Be(episodePrice.EndDate);
