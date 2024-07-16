@@ -47,6 +47,8 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         public async Task GivenAnApprenticeshipHasBeenCreatedAsPartOfTheApprovalsJourney()
         {
             var approvalCreatedEvent = _fixture.Build<ApprovalCreatedEvent>() 
+                .With(_ => _.TrainingCourseVersion, "1.0")
+                .With(_ => _.IsOnFlexiPaymentPilot, true)
                 .With(_ => _.Uln, _fixture.Create<long>().ToString)
                 .With(_ => _.TrainingCode, _fixture.Create<int>().ToString)
                 .Create();
@@ -126,7 +128,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         public async Task ThenAnApprenticeshipRecordIsCreatedWithTheCorrectFundingBandMaximum()
         {
             await ThenAnApprenticeshipRecordIsCreated();
-            ((EpisodePrice)_scenarioContext["Price"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
+            ((EpisodePrice)_scenarioContext["EpisodePrice"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
         }
 
         [Then("an Apprenticeship record is not created")]
