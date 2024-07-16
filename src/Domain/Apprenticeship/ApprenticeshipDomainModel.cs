@@ -315,12 +315,14 @@ public class ApprenticeshipDomainModel : AggregateRoot
         PendingStartDateChange.Cancel();
     }
 
-    public void SetPaymentStatus(bool newPaymentsFrozenStatus, string userId, DateTime changeDateTime, string? reason = null)
+    public void SetPaymentsFrozen(bool newPaymentsFrozenStatus, string userId, DateTime changeDateTime, string? reason = null)
     {
         if (LatestEpisode.PaymentsFrozen == newPaymentsFrozenStatus)
         {
             throw new InvalidOperationException($"Payments are already {(newPaymentsFrozenStatus ? "frozen" : "unfrozen")} for this apprenticeship: {Key}.");
         }
+
+        _entity.PaymentsFrozen = newPaymentsFrozenStatus;
 
         if (newPaymentsFrozenStatus)
         {
@@ -329,6 +331,12 @@ public class ApprenticeshipDomainModel : AggregateRoot
             _freezeRequests.Add(freezeRequest);
             _entity.FreezeRequests.Add(freezeRequest.GetEntity());
             AddEvent(new PaymentsFrozen(_entity.Key));
+        }
+        else
+        {
+            var freezeRequest = _freezeRequests.Single(x => !x.Unfrozen);
+            freezeRequest.Unfreeze(userId, changeDateTime);
+            AddEvent(new PaymentsUnfrozen(_entity.Key));
         }
     }
 

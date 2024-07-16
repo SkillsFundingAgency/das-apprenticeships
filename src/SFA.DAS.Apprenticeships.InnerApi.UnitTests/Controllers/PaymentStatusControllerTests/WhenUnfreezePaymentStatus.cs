@@ -7,21 +7,17 @@ using Moq;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
 
-public class WhenFreezePaymentStatus
+namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PaymentStatusControllerTests;
+
+public class WhenUnfreezePaymentStatus
 {
     private Fixture _fixture;
     private Mock<IQueryDispatcher> _queryDispatcher;
     private Mock<ICommandDispatcher> _commandDispatcher;
-    private Mock<ILogger<ApprenticeshipController>> _mockLogger;
-    private ApprenticeshipController _sut;
+    private Mock<ILogger<PaymentStatusController>> _mockLogger;
+    private PaymentStatusController _sut;
 
     [SetUp]
     public void Setup()
@@ -29,8 +25,8 @@ public class WhenFreezePaymentStatus
         _fixture = new Fixture();
         _queryDispatcher = new Mock<IQueryDispatcher>();
         _commandDispatcher = new Mock<ICommandDispatcher>();
-        _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object);
+        _mockLogger = new Mock<ILogger<PaymentStatusController>>();
+        _sut = new PaymentStatusController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object);
 
         var mockHttpContext = new Mock<HttpContext>();
         mockHttpContext.Setup(x => x.Items).Returns(new Dictionary<object, object?> { { "UserId", "testUserId" } });
@@ -44,7 +40,7 @@ public class WhenFreezePaymentStatus
         _commandDispatcher.Setup(x => x.Send(It.IsAny<SetPaymentsFrozenCommand>(), It.IsAny<CancellationToken>()));
 
         //  Act
-        var result = await _sut.FreezePaymentStatus(_fixture.Create<Guid>(), _fixture.Create<FreezeRequest>());
+        var result = await _sut.UnfreezePaymentStatus(_fixture.Create<Guid>());
 
         //  Assert
         result.Should().BeOfType<OkResult>();
@@ -57,7 +53,7 @@ public class WhenFreezePaymentStatus
         _commandDispatcher.Setup(x => x.Send(It.IsAny<SetPaymentsFrozenCommand>(), It.IsAny<CancellationToken>())).Throws(new Exception("Test"));
 
         //  Act
-        var result = await _sut.FreezePaymentStatus(_fixture.Create<Guid>(), _fixture.Create<FreezeRequest>());
+        var result = await _sut.UnfreezePaymentStatus(_fixture.Create<Guid>());
 
         //  Assert
         result.Should().BeOfType<BadRequestResult>();

@@ -37,6 +37,13 @@ public class FreezeRequestDomainModel
         return new FreezeRequestDomainModel(entity);
     }
 
+    internal void Unfreeze(string userId, DateTime changeDateTime)
+    {
+        _entity.Unfrozen = true;
+        _entity.UnfrozenBy = userId;
+        _entity.UnfrozenDateTime = changeDateTime;
+    }
+
     private FreezeRequestDomainModel(FreezeRequest entity)
     {
         _entity = entity;
