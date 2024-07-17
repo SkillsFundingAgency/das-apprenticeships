@@ -6,6 +6,7 @@ using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using System.Linq;
+using FluentAssertions;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 
@@ -31,9 +32,10 @@ public class WhenSettingPaymentStatus
         var userId = _fixture.Create<string>();
 
         //Act / Assert
-        var exception = Assert.Throws<InvalidOperationException>(()=>apprenticeship.SetPaymentsFrozen(false, userId, DateTime.Now));
-        Assert.That(exception.Message, Is.EqualTo($"Payments are already unfrozen for this apprenticeship: {apprenticeship.Key}."));
+        var action = () => apprenticeship.SetPaymentsFrozen(false, userId, DateTime.Now);
 
+        //Assert
+        action.Should().Throw<InvalidOperationException>().WithMessage($"Payments are already unfrozen for this apprenticeship: {apprenticeship.Key}.");
     }
 
     [Test]
@@ -49,13 +51,12 @@ public class WhenSettingPaymentStatus
         apprenticeship.SetPaymentsFrozen(true, userId, timeChanged);
 
         //Assert
-        Assert.That(apprenticeship.LatestEpisode.PaymentsFrozen.Equals(true));
-        Assert.That(apprenticeship.FreezeRequests.Count.Equals(1));
-        Assert.That(apprenticeship.FreezeRequests.Count(x => 
+        apprenticeship.LatestEpisode.PaymentsFrozen.Should().Be(true);
+        apprenticeship.FreezeRequests.Count.Should().Be(1);
+        apprenticeship.FreezeRequests.Count( x=> 
             x.FrozenBy == userId && 
             x.FrozenDateTime == timeChanged && 
-            !x.Unfrozen), 
-            Is.EqualTo(1));
+            !x.Unfrozen).Should().Be(1);
     }
 
     [Test]
@@ -74,13 +75,12 @@ public class WhenSettingPaymentStatus
         apprenticeship.SetPaymentsFrozen(false, userIdUnfreeze, timeUnfreeze);
 
         //Assert
-        Assert.That(apprenticeship.LatestEpisode.PaymentsFrozen.Equals(false));
-        Assert.That(apprenticeship.FreezeRequests.Count(x => 
+        apprenticeship.LatestEpisode.PaymentsFrozen.Should().Be(false);
+        apprenticeship.FreezeRequests.Count(x => 
             x.FrozenBy == userIdFreeze && 
             x.FrozenDateTime == timefreeze &&
             x.UnfrozenBy == userIdUnfreeze &&
             x.UnfrozenDateTime == timeUnfreeze &&
-            x.Unfrozen), 
-            Is.EqualTo(1));
+            x.Unfrozen).Should().Be(1);
     }
 }
