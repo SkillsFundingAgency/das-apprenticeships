@@ -1,0 +1,58 @@
+parameters:
+  BuildConfiguration:
+  AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
+  TargetProjects: 'src/**/*.csproj'
+
+jobs:
+- job: RunAcceptanceTests
+  dependsOn: CodeBuild
+  pool:
+    vmImage: 'windows-latest'
+    workspace:
+      clean: all
+  variables:
+  - group: BUILD Management Resources
+  steps:
+
+  - bash: |
+      npm install -g azurite
+      mkdir azurite
+      azurite --silent --location azurite --debug azurite/debug.log &
+    displayName: 'Install and Run Azurite'
+
+  - task: DownloadBuildArtifacts@1
+    displayName: Download Dacpac For Acceptance Tests
+    inputs:
+      buildType: 'current' # 'current' | 'specific'. Required. Download artifacts produced by. Default: current.
+      downloadType: 'specific' # 'single' | 'specific'. Required. Download type. Default: single.
+      downloadPath: '$(build.artifactstagingdirectory)/download'
+
+  - task: CopyFiles@2
+    displayName: Copy Dacpac For Acceptance Tests
+    inputs:
+      Contents: '**'
+      TargetFolder: 'src/Database/bin/release'
+      flattenFolders : true
+      SourceFolder : '$(build.artifactstagingdirectory)/download'
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: ${{ parameters.TargetProjects }}
+      noCache: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects:  ${{ parameters.TargetProjects }}
+      arguments: '--configuration $(buildConfiguration) --no-restore'
+
+  - task: DotNetCoreCLI@2
+    displayName: Acceptance Tests
+    condition: ${{ parameters.RunAcceptanceTests }}
+    inputs:
+      command: test
+      projects: ${{ parameters.AcceptanceTestProjects }}
+      publishTestResults: true
+      arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
