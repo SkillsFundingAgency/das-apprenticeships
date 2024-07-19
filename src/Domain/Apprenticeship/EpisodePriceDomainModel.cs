@@ -22,7 +22,6 @@
         {
             return new EpisodePriceDomainModel(new DataAccess.Entities.Apprenticeship.EpisodePrice
             {
-                Key = Guid.NewGuid(),
                 IsDeleted = false,
                 StartDate = startDate,
                 EndDate = endDate,
