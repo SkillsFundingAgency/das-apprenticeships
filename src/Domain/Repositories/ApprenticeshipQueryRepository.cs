@@ -40,6 +40,7 @@ using SFA.DAS.Apprenticeships.Enums;
      {
          var apprenticeship = await DbContext.Apprenticeships
              .Include(x => x.Episodes)
+             .ThenInclude(x => x.Prices)
              .FirstOrDefaultAsync(x => x.Key == apprenticeshipKey);
 
          var episodes = apprenticeship?.Episodes.ToList(); 
@@ -79,6 +80,7 @@ using SFA.DAS.Apprenticeships.Enums;
      {
          var apprenticeship = await DbContext.Apprenticeships
              .Include(x => x.Episodes)
+             .ThenInclude(x => x.Prices)
              .FirstOrDefaultAsync(x => x.Key == apprenticeshipKey);
 
          var episodes = apprenticeship?.Episodes.ToList(); 
@@ -125,6 +127,7 @@ using SFA.DAS.Apprenticeships.Enums;
          {
              var apprenticeship = await DbContext.Apprenticeships
                  .Include(x => x.PriceHistories)
+                 .Include(x => x.Episodes).ThenInclude(x => x.Prices)
                  .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created))
                  .SingleOrDefaultAsync();
 

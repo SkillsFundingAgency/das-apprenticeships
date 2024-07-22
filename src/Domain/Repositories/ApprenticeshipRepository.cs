@@ -54,7 +54,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
         DbContext.Update(entity);
 
         await DbContext.SaveChangesAsync();
-            
+  
         foreach (dynamic domainEvent in apprenticeship.FlushEvents())
         {
             await _domainEventDispatcher.Send(domainEvent);

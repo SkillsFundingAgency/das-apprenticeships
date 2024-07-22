@@ -61,7 +61,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             return new EpisodeDomainModel(new Episode
             {
-                Key = Guid.NewGuid(),
                 Ukprn = ukprn,
                 EmployerAccountId = employerAccountId,
                 FundingType = fundingType,
