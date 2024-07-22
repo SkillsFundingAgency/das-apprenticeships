@@ -192,6 +192,7 @@ using SFA.DAS.Apprenticeships.Enums;
          {
              var apprenticeship = await DbContext.Apprenticeships
                  .Include(x => x.StartDateChanges)
+                 .Include(x => x.Episodes).ThenInclude(x => x.Prices)
                  .Where(x => x.Key == apprenticeshipKey && x.StartDateChanges.Any(y => y.RequestStatus == ChangeRequestStatus.Created))
                  .SingleOrDefaultAsync();
              var episodes = apprenticeship?.Episodes.ToList(); 
