@@ -346,7 +346,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         if (LatestPrice.StartDate == priceChangeRequest.EffectiveFromDate)
         {
-            LatestPrice.UpdatePrice(priceChangeRequest.TotalPrice, priceChangeRequest.AssessmentPrice.Value, priceChangeRequest.TrainingPrice.Value);
+            LatestPrice.UpdatePrice(priceChangeRequest.TrainingPrice.Value, priceChangeRequest.AssessmentPrice.Value, priceChangeRequest.TotalPrice);
             return new EpisodeDomainModel.AmendedPrices(LatestPrice.GetEntity().Key, LatestEpisode.GetEntity().Key, new List<Guid>());
         }
         else
