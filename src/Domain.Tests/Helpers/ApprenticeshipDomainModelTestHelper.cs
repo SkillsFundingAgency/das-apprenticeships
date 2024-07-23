@@ -13,7 +13,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
         public static void AddEpisode(ApprenticeshipDomainModel apprenticeship, DateTime? startDate = null, DateTime? endDate = null)
         {
             var start = startDate ?? _fixture.Create<DateTime>();
-            var end = endDate ?? (start.AddDays(_fixture.Create<int>()));
+            var end = endDate ?? (start.AddDays(_fixture.Create<uint>()));
             apprenticeship.AddEpisode(
                 _fixture.Create<long>(),
                 _fixture.Create<long>(), 
