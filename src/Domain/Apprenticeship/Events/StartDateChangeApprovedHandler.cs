@@ -35,7 +35,7 @@ public class StartDateChangeApprovedHandler : IDomainEventHandler<StartDateChang
             EmployerApprovedBy = startDateChange.EmployerApprovedBy,
             Initiator = startDateChange.Initiator.ToString()!,
             ApprenticeshipEpisodeKey = @event.AmendedPrices.ApprenticeshipEpisodeKey,
-            PriceKey = @event.AmendedPrices.LatestPriceKey,
+            PriceKey = @event.AmendedPrices.LatestEpisodePrice.GetEntity().Key,
             DeletedPriceKeys = @event.AmendedPrices.DeletedPriceKeys
         };
 

@@ -115,7 +115,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 fundingBandMaximum,
                 true);
             
-            return new AmendedPrices(newEpisode.GetEntity().Key, _entity.Key, deletedPrices.ToList());
+            return new AmendedPrices(newEpisode, _entity.Key, deletedPrices.ToList());
         }
 
         internal AmendedPrices UpdatePricesForApprovedStartDateChange(StartDateChangeDomainModel startDateChangeRequest, int fundingBandMaximum)
@@ -149,7 +149,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
             UpdateAllActivePricesWithNewFundingBandMaximum(fundingBandMaximum);
 
-            return new AmendedPrices(LatestPrice.GetEntity().Key, _entity.Key, deletedPrices.ToList());
+            return new AmendedPrices(LatestPrice, _entity.Key, deletedPrices.ToList());
         }
 
         internal void UpdatePaymentStatus(bool isFrozen)
@@ -170,16 +170,16 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         //TODO Reconsider if this is the best way of passing this data amongst domain models
         public class AmendedPrices
         {
-            public AmendedPrices(Guid latestPriceKey, Guid apprenticeshipEpisodeKey, List<Guid> deletedPriceKeys)
+            public AmendedPrices(EpisodePriceDomainModel latestEpisodePrice, Guid apprenticeshipEpisodeKey, List<Guid> deletedPriceKeys)
             {
                 DeletedPriceKeys = deletedPriceKeys;
-                LatestPriceKey = latestPriceKey;
+                LatestEpisodePrice = latestEpisodePrice;
                 ApprenticeshipEpisodeKey = apprenticeshipEpisodeKey;
             }
 
             public Guid ApprenticeshipEpisodeKey { get; set; }
             public List<Guid> DeletedPriceKeys { get; set; }
-            public Guid LatestPriceKey { get; set; }
+            public EpisodePriceDomainModel LatestEpisodePrice { get; set; }
         }
 
         private void UpdateAllActivePricesWithNewFundingBandMaximum(int fundingBandMaximum)

@@ -58,7 +58,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.EffectiveFromDate == priceChange.EffectiveFromDate &&
                     e.ProviderId == apprenticeship.LatestEpisode.Ukprn &&
                     e.EpisodeKey == domainEvent.AmendedPrices.ApprenticeshipEpisodeKey &&
-                    e.PriceKey == domainEvent.AmendedPrices.LatestPriceKey &&
+                    e.PriceKey == domainEvent.AmendedPrices.LatestEpisodePrice.GetEntity().Key &&
                     e.DeletedPriceKeys == domainEvent.AmendedPrices.DeletedPriceKeys
                 ), It.IsAny<PublishOptions>()));
         }
@@ -95,7 +95,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
                     e.EffectiveFromDate == priceChange.EffectiveFromDate &&
                     e.ProviderId == apprenticeship.LatestEpisode.Ukprn &&
                     e.EpisodeKey == domainEvent.AmendedPrices.ApprenticeshipEpisodeKey &&
-                    e.PriceKey == domainEvent.AmendedPrices.LatestPriceKey &&
+                    e.PriceKey == domainEvent.AmendedPrices.LatestEpisodePrice.GetEntity().Key &&
                     e.DeletedPriceKeys == domainEvent.AmendedPrices.DeletedPriceKeys
                 ), It.IsAny<PublishOptions>()));
         }

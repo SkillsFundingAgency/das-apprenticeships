@@ -21,7 +21,7 @@ public class PriceChangeApprovedHandler : IDomainEventHandler<PriceChangeApprove
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
         var episode = apprenticeship.LatestEpisode;
         var priceChange = apprenticeship.PriceHistories.Single(x => x.Key == @event.PriceHistoryKey);
-        var apprenticeshipCreatedEvent = new PriceChangeApprovedEvent
+        var priceChangeApprovedEvent = new PriceChangeApprovedEvent
         {
             ApprenticeshipKey = apprenticeship.Key,
             ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
@@ -33,10 +33,10 @@ public class PriceChangeApprovedHandler : IDomainEventHandler<PriceChangeApprove
             EffectiveFromDate = priceChange.EffectiveFromDate,
             ProviderId = episode.Ukprn,
             EpisodeKey = @event.AmendedPrices.ApprenticeshipEpisodeKey,
-            PriceKey = @event.AmendedPrices.LatestPriceKey,
+            PriceKey = @event.AmendedPrices.LatestEpisodePrice.GetEntity().Key,
             DeletedPriceKeys = @event.AmendedPrices.DeletedPriceKeys
         };
 
-        await _messageSession.Publish(apprenticeshipCreatedEvent);
+        await _messageSession.Publish(priceChangeApprovedEvent);
     }
 }
