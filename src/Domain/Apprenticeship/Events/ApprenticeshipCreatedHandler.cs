@@ -40,7 +40,9 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
                 FirstName = apprenticeship.FirstName, 
                 LastName = apprenticeship.LastName,
                 AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
-                FundingPlatform = (FundingPlatform?)approval.FundingPlatform
+                FundingPlatform = (FundingPlatform?)approval.FundingPlatform,
+                ApprenticeshipEpisodeKey = latestEpisode.GetEntity().Key,
+                PriceKey = latestPrice.GetEntity().Key
             };
 
             await _messageSession.Publish(apprenticeshipCreatedEvent);
