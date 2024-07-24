@@ -113,7 +113,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                 priceChangeRequest.TrainingPrice,
                 priceChangeRequest.AssessmentPrice,
                 fundingBandMaximum,
-                true);
+                !deletedPrices.Any());
             
             return new AmendedPrices(newEpisode, _entity.Key, deletedPrices.ToList());
         }
