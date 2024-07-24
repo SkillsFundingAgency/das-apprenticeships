@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
@@ -72,5 +73,35 @@ public class WhenAPriceChangeIsApproved
         events.Should().ContainSingle(x => x.GetType() == typeof(PriceChangeApproved));
     }
 
-    //TODO price change - Add unit tests for the correct handing of episodes and prices
+    [Test]
+    public void AndTheEffectiveDateIsBeforeTheLatestEpisode_ThenTheLatestEpisodeIsDeleted()
+    {
+        //Arrange
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var originalStartDate = new DateTime(2024,1,1);
+        var originalEndDate = new DateTime(2024, 10, 1);
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, originalStartDate, originalEndDate);
+
+        CreatePriceChange(apprenticeship, originalEndDate.AddDays(-5), _fixture.Create<int>(), _fixture.Create<int>());
+
+
+        //Act
+        CreatePriceChange(apprenticeship, originalEndDate.AddDays(-10), _fixture.Create<int>(), _fixture.Create<int>());
+
+        //Assert
+        var apprenticeshipEntity = apprenticeship.GetEntity();
+        apprenticeshipEntity.PriceHistories.Should().HaveCount(2);
+        var prices = apprenticeshipEntity.Episodes.Single().Prices;
+        prices.Should().HaveCount(3);
+        prices.Count(x => x.IsDeleted).Should().Be(1);
+        prices.Count(x => x.StartDate == originalStartDate).Should().Be(1);
+        prices.Count(x => x.EndDate == originalEndDate && !x.IsDeleted).Should().Be(1);
+    }
+
+    private void CreatePriceChange(ApprenticeshipDomainModel apprenticeship, DateTime effectiveFromDate, int newTrainingPrice, int newAssessmentPrice)
+    {
+        ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeEmployerInitiated(apprenticeship, newTrainingPrice + newAssessmentPrice, effectiveFromDate);
+        apprenticeship.ApprovePriceChange(_fixture.Create<string>(), newTrainingPrice, newAssessmentPrice);
+        var events = apprenticeship.FlushEvents();
+    }
 }
