@@ -107,13 +107,24 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             var endDate = LatestPrice.EndDate;
             var fundingBandMaximum = LatestPrice.FundingBandMaximum;
             var deletedPrices = DeletePricesStartingAfterDate(priceChangeRequest.EffectiveFromDate);
+
+            var remainingPrices = _entity.Prices.Where(x => !x.IsDeleted).ToList();
+            var latestActivePrice = remainingPrices.MaxBy(x => x.StartDate);
+
+            var shouldSupersedePreviousPrice = false;
+
+            if(latestActivePrice != null && latestActivePrice.StartDate < priceChangeRequest.EffectiveFromDate)
+            {
+                shouldSupersedePreviousPrice = true;
+            }
+
             var newEpisode = AddEpisodePrice(priceChangeRequest.EffectiveFromDate,
                 endDate,
                 priceChangeRequest.TotalPrice,
                 priceChangeRequest.TrainingPrice,
                 priceChangeRequest.AssessmentPrice,
                 fundingBandMaximum,
-                !deletedPrices.Any());
+                shouldSupersedePreviousPrice);
             
             return new AmendedPrices(newEpisode, _entity.Key, deletedPrices.ToList());
         }
