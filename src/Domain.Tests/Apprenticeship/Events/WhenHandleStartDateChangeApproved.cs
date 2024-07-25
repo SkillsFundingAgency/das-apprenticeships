@@ -52,7 +52,7 @@ public class WhenHandleStartDateChangeApproved
         await _handler.Handle(command);
 
         // Assert
-        _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipStartDateChangedEvent>(e =>
+        _messageSession.Verify(x => x.Publish(It.Is<OldApprenticeshipStartDateChangedEvent>(e =>
             e.ApprenticeshipKey == apprenticeship.Key &&
             e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
             e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId &&

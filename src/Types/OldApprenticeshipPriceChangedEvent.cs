@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Apprenticeships.Types;
 
-public class PriceChangeApprovedEvent
+public class OldApprenticeshipPriceChangedEvent
 {
     public Guid ApprenticeshipKey { get; set; }
     public long ApprenticeshipId { get; set; }

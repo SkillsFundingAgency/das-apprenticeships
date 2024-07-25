@@ -42,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 
             await _handler.Handle(command);
 
-            _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipCreatedEvent>(e =>
+            _messageSession.Verify(x => x.Publish(It.Is<OldApprenticeshipCreatedEvent>(e =>
                     e.ApprenticeshipKey == apprenticeship.Key &&
                     e.Uln == apprenticeship.Uln &&
                     e.TrainingCode == episode.TrainingCode &&

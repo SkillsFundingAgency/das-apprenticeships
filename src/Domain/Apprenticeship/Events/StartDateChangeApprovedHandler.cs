@@ -21,7 +21,7 @@ public class StartDateChangeApprovedHandler : IDomainEventHandler<StartDateChang
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
         var startDateChange = apprenticeship.StartDateChanges.Single(x => x.Key == @event.StartDateChangeKey);
         var episode = apprenticeship.LatestEpisode;
-        var startDateChangedEvent = new ApprenticeshipStartDateChangedEvent()
+        var startDateChangedEvent = new OldApprenticeshipStartDateChangedEvent()
         {
             ApprenticeshipKey = apprenticeship.Key,
             ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,

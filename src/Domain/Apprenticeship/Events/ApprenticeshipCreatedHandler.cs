@@ -21,7 +21,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
             var approval = apprenticeship.Episodes.Single();
             var latestEpisode = apprenticeship.LatestEpisode;
             var latestPrice = apprenticeship.LatestPrice;
-            var apprenticeshipCreatedEvent = new ApprenticeshipCreatedEvent
+            var apprenticeshipCreatedEvent = new OldApprenticeshipCreatedEvent
             {
                 ApprenticeshipKey = apprenticeship.Key, 
                 Uln = apprenticeship.Uln,

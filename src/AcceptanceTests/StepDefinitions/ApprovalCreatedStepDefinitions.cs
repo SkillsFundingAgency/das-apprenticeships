@@ -33,7 +33,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         public static async Task StartEndpoint()
         {
             _endpointInstance = await EndpointHelper
-                .StartEndpoint(QueueNames.ApprovalCreated + "TEST", false, new[] { typeof(ApprovalCreatedEvent), typeof(ApprenticeshipCreatedEvent) });
+                .StartEndpoint(QueueNames.ApprovalCreated + "TEST", false, new[] { typeof(ApprovalCreatedEvent), typeof(OldApprenticeshipCreatedEvent) });
         }
 
         [AfterTestRun]
@@ -175,7 +175,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         public async Task ThenAnApprenticeshipCreatedEventEventIsPublishedWithTheCorrectFundingBandMaximum()
         {
             await ThenAnApprenticeshipCreatedEventEventIsPublished();
-            ((ApprenticeshipCreatedEvent)_scenarioContext["publishedEvent"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
+            ((OldApprenticeshipCreatedEvent)_scenarioContext["publishedEvent"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
         }
 
         [Then(@"an ApprenticeshipCreatedEvent event is not published")]
@@ -185,9 +185,9 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         }
 
 
-        private bool EventMatchesExpectation(ApprenticeshipCreatedEvent apprenticeshipCreatedEvent)
+        private bool EventMatchesExpectation(OldApprenticeshipCreatedEvent oldApprenticeshipCreatedEvent)
         {
-            return apprenticeshipCreatedEvent.Uln == ApprovalCreatedEvent.Uln;
+            return oldApprenticeshipCreatedEvent.Uln == ApprovalCreatedEvent.Uln;
         }
 
         public ApprovalCreatedEvent ApprovalCreatedEvent => (ApprovalCreatedEvent)_scenarioContext["ApprovalCreatedEvent"];

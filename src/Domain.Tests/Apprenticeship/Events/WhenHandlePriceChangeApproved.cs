@@ -45,7 +45,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 
             await _handler.Handle(domainEvent);
 
-            _messageSession.Verify(x => x.Publish(It.Is<PriceChangeApprovedEvent>(e =>
+            _messageSession.Verify(x => x.Publish(It.Is<OldApprenticeshipPriceChangedEvent>(e =>
                     e.ApprenticeshipKey == apprenticeship.Key &&
                     e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
                     e.ApprenticeshipKey == apprenticeship.Key &&
@@ -82,7 +82,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship.Events
 
             await _handler.Handle(domainEvent);
 
-            _messageSession.Verify(x => x.Publish(It.Is<PriceChangeApprovedEvent>(e =>
+            _messageSession.Verify(x => x.Publish(It.Is<OldApprenticeshipPriceChangedEvent>(e =>
                     e.ApprenticeshipKey == apprenticeship.Key &&
                     e.EmployerAccountId == apprenticeship.LatestEpisode.EmployerAccountId &&
                     e.ApprenticeshipKey == apprenticeship.Key &&

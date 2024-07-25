@@ -21,7 +21,7 @@ public class PriceChangeApprovedHandler : IDomainEventHandler<PriceChangeApprove
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
         var episode = apprenticeship.LatestEpisode;
         var priceChange = apprenticeship.PriceHistories.Single(x => x.Key == @event.PriceHistoryKey);
-        var priceChangeApprovedEvent = new PriceChangeApprovedEvent
+        var priceChangeApprovedEvent = new OldApprenticeshipPriceChangedEvent
         {
             ApprenticeshipKey = apprenticeship.Key,
             ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
