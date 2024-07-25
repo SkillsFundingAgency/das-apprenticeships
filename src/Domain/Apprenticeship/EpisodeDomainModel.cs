@@ -203,11 +203,15 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
         private IEnumerable<Guid> DeletePricesStartingAfterDate(DateTime date)
         {
+            var deletedPriceKeys = new List<Guid>();
+
             foreach (var price in _entity.Prices.Where(x => x.StartDate > date && !x.IsDeleted))
             {
                 price.IsDeleted = true;
-                yield return price.Key;
+                deletedPriceKeys.Add(price.Key);
             }
+
+            return deletedPriceKeys;
         }
 
         private IEnumerable<Guid> DeletePricesEndingBeforeDate(DateTime date)

@@ -98,6 +98,37 @@ public class WhenAPriceChangeIsApproved
         prices.Count(x => x.EndDate == originalEndDate && !x.IsDeleted).Should().Be(1);
     }
 
+
+    [Test]
+    public void AndTheEffectiveDateIsBeforeTheLatestEpisodeButNotEarlierEpisode_ThenTheLatestEpisodeIsDeleted()
+    {
+        //Arrange
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var originalStartDate = new DateTime(2024, 1, 1);
+        var originalEndDate = new DateTime(2024, 10, 1);
+        var firstPriceChangeDate = new DateTime(2024, 6, 1);
+        var secondPriceChangeDate = new DateTime(2024, 7, 25);
+        var finalPriceChangeDate = new DateTime(2024, 6, 15);
+
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, originalStartDate, originalEndDate);
+
+        CreatePriceChange(apprenticeship, firstPriceChangeDate, _fixture.Create<int>(), _fixture.Create<int>());
+        CreatePriceChange(apprenticeship, secondPriceChangeDate, _fixture.Create<int>(), _fixture.Create<int>());
+
+        //Act
+        CreatePriceChange(apprenticeship, finalPriceChangeDate, _fixture.Create<int>(), _fixture.Create<int>());
+
+        //Assert
+        var apprenticeshipEntity = apprenticeship.GetEntity();
+        apprenticeshipEntity.PriceHistories.Should().HaveCount(3);
+        var prices = apprenticeshipEntity.Episodes.Single().Prices;
+        prices.Should().HaveCount(4);
+        prices.Count(x => x.IsDeleted).Should().Be(1);
+        prices.Count(x => x.StartDate == originalStartDate && x.EndDate == firstPriceChangeDate.AddDays(-1) && !x.IsDeleted).Should().Be(1);
+        prices.Count(x => x.StartDate == firstPriceChangeDate && x.EndDate == finalPriceChangeDate.AddDays(-1) && !x.IsDeleted).Should().Be(1);
+        prices.Count(x => x.StartDate == secondPriceChangeDate && x.EndDate == originalEndDate && x.IsDeleted).Should().Be(1);
+        prices.Count(x => x.StartDate == finalPriceChangeDate && x.EndDate == originalEndDate && !x.IsDeleted).Should().Be(1);
+    }
     private void CreatePriceChange(ApprenticeshipDomainModel apprenticeship, DateTime effectiveFromDate, int newTrainingPrice, int newAssessmentPrice)
     {
         ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeEmployerInitiated(apprenticeship, newTrainingPrice + newAssessmentPrice, effectiveFromDate);
