@@ -4,7 +4,6 @@ public class ApprenticeshipStartDateChangedEvent : EpisodeUpdatedEvent
 {
     public Guid ApprenticeshipKey { get; set; }
     public long ApprenticeshipId { get; set; }
-    public int? AgeAtStartOfApprenticeship { get; set; }
     public DateTime ApprovedDate { get; set; }
     public string ProviderApprovedBy { get; set; }
     public string EmployerApprovedBy { get; set; }
