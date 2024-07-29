@@ -21,8 +21,6 @@ public class ApproveStartDateChangeCommandHandler : ICommandHandler<ApproveStart
         var trainingCode = apprenticeship.LatestEpisode.TrainingCode;
         var newStartDate = apprenticeship.PendingStartDateChange?.ActualStartDate;
         
-        //todo do we need to do this re-fetching of the fundingbandmax when new start date is approved (we weren't previously)?
-        //if so then will need to check if this needs considering in Earnings domain too
         var fundingBandMaximum = await _fundingBandMaximumService.GetFundingBandMaximum(int.Parse(trainingCode), newStartDate);
         if (fundingBandMaximum == null)
             throw new Exception(

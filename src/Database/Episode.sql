@@ -2,17 +2,17 @@
 (
     [Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
 	[ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL, 
-	[IsDeleted] BIT NOT NULL DEFAULT(0), -- TODO CONFIRM WITH MIKE THAT THIS IS NOT NEEDED (for now)?
+	[IsDeleted] BIT NOT NULL DEFAULT(0),
     [Ukprn] BIGINT NOT NULL, 
     [EmployerAccountId] BIGINT NOT NULL, 
     [FundingType] NVARCHAR(50) NOT NULL, 
     [FundingPlatform] INT NULL,
     [FundingEmployerAccountId] BIGINT NULL, 
     [LegalEntityName] NVARCHAR(255) NOT NULL,
-    [AccountLegalEntityId] BIGINT NULL, --INFORM MIKE THAT THIS NEEDING TO BE IN DESIGN
+    [AccountLegalEntityId] BIGINT NULL,
     [TrainingCode] NCHAR(10) NOT NULL,
-    [TrainingCourseVersion] NVARCHAR(10) NULL,  --INFORM MIKE THAT THIS NEEDING TO BE IN DESIGN
-    [PaymentsFrozen] BIT NOT NULL DEFAULT (0)  --INFORM MIKE THAT THIS NEEDING TO BE IN DESIGN
+    [TrainingCourseVersion] NVARCHAR(10) NULL,
+    [PaymentsFrozen] BIT NOT NULL DEFAULT (0)
 )
 GO
 ALTER TABLE dbo.Episode

@@ -179,7 +179,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             return new EpisodeDomainModel(entity);
         }
 
-        //TODO Reconsider if this is the best way of passing this data amongst domain models
         public class AmendedPrices
         {
             public AmendedPrices(EpisodePriceDomainModel latestEpisodePrice, Guid apprenticeshipEpisodeKey, List<Guid> deletedPriceKeys)

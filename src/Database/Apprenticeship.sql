@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Apprenticeship]
 (
 	[Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
-    [ApprovalsApprenticeshipId] BIGINT NOT NULL, --TODO INFORM MIKE THAT THIS NEEDING TO BE IN DESIGN (
+    [ApprovalsApprenticeshipId] BIGINT NOT NULL,
     [Uln] NVARCHAR(10) NOT NULL, 
     [FirstName] NVARCHAR(100) NOT NULL,
     [LastName] NVARCHAR(100) NOT NULL,
