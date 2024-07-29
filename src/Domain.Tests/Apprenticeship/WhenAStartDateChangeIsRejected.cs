@@ -23,7 +23,7 @@ public class WhenAStartDateChangeIsRejected
     {
         //Arrange
         var rejectReason = _fixture.Create<string>();
-        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange();
+        var apprenticeship = ApprenticeshipDomainModelTestHelper.BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
         apprenticeship.RejectStartDateChange(rejectReason);

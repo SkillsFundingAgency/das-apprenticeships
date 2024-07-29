@@ -25,7 +25,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var approverUserId = _fixture.Create<string>();
-        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval: true);
+        var apprenticeship = ApprenticeshipDomainModelTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval: true);
 
         //Act
         var now = DateTime.UtcNow;
@@ -47,7 +47,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var approverUserId = _fixture.Create<string>();
-        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval: false);
+        var apprenticeship = ApprenticeshipDomainModelTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval: false);
 
         //Act
         var now = DateTime.UtcNow;
@@ -71,7 +71,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var employerUserId = _fixture.Create<string>();
-        var apprenticeship = StartDateChangeTestHelper.BuildApprenticeshipWithPendingStartDateChange();
+        var apprenticeship = ApprenticeshipDomainModelTestHelper.BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
         apprenticeship.ApproveStartDateChange(employerUserId, _fixture.Create<int>());

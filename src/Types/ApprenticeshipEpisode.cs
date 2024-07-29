@@ -10,7 +10,7 @@ public class ApprenticeshipEpisode
 	public long? FundingEmployerAccountId { get; set; }
 	public string LegalEntityName { get; set; }
     public long? AccountLegalEntityId { get; set; }
-    public int? AgeAtStartOfApprenticeship { get; set; }
+    public int AgeAtStartOfApprenticeship { get; set; }
     public string TrainingCode { get; set; } = null!;
     public string? TrainingCourseVersion { get; set; }
     public bool PaymentsFrozen { get; set; }

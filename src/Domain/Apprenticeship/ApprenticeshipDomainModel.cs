@@ -70,7 +70,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
     public PriceHistoryDomainModel? PendingPriceChange => _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
     public StartDateChangeDomainModel? PendingStartDateChange => _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
 
-    public int? AgeAtStartOfApprenticeship => DateOfBirth.CalculateAgeAtDate(StartDate);
+    public int AgeAtStartOfApprenticeship => DateOfBirth.CalculateAgeAtDate(StartDate);
 
     internal static ApprenticeshipDomainModel New(
         long approvalsApprenticeshipId,

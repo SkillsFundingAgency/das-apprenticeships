@@ -1,14 +1,47 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using AutoFixture;
 using System;
+using System.Linq;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using SFA.DAS.Apprenticeships.Types;
+using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
+using FundingType = SFA.DAS.Apprenticeships.Enums.FundingType;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
 {
     public static class ApprenticeshipDomainModelTestHelper
     {
         private static readonly Fixture _fixture = new();
+
+        public static ApprenticeshipDomainModel BuildApprenticeshipWithPendingStartDateChange(bool pendingProviderApproval = false)
+        {
+            _fixture.Customize(new ApprenticeshipCustomization());
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            AddEpisode(apprenticeship);
+
+            var startDateEntity = _fixture.Create<StartDateChange>();
+            startDateEntity.PlannedEndDate = startDateEntity.ActualStartDate.AddMonths(24);
+            var startDateChange = StartDateChangeDomainModel.Get(startDateEntity);
+
+            if (pendingProviderApproval)
+            {
+                apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.PlannedEndDate, startDateChange.Reason,
+                    null, null,
+                    startDateChange.EmployerApprovedBy, startDateChange.EmployerApprovedDate, startDateChange.CreatedDate,
+                    ChangeRequestStatus.Created, ChangeInitiator.Employer);
+            }
+            else
+            {
+                apprenticeship.AddStartDateChange(startDateChange.ActualStartDate, startDateChange.PlannedEndDate, startDateChange.Reason,
+                    startDateChange.ProviderApprovedBy, startDateChange.ProviderApprovedDate,
+                    null, null, startDateChange.CreatedDate,
+                    ChangeRequestStatus.Created, ChangeInitiator.Provider);
+            }
+
+            return apprenticeship;
+        }
 
         public static void AddEpisode(ApprenticeshipDomainModel apprenticeship, DateTime? startDate = null, DateTime? endDate = null)
         {
@@ -66,7 +99,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
                 ChangeInitiator.Provider);
         }
 
-        public static void AddPendingStartDateChange(ApprenticeshipDomainModel apprenticeship, StartDateChange startDateChange)
+        public static void AddPendingStartDateChangeProviderInitiated(ApprenticeshipDomainModel apprenticeship, StartDateChange startDateChange)
         {
             apprenticeship.AddStartDateChange(
                 startDateChange.ActualStartDate, 
@@ -79,6 +112,41 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
                 startDateChange.CreatedDate, 
                 startDateChange.RequestStatus, 
                 ChangeInitiator.Provider);
+        }
+
+        public static void AddPendingStartDateChangeEmployerInitiated(ApprenticeshipDomainModel apprenticeship, StartDateChange startDateChange)
+        {
+            apprenticeship.AddStartDateChange(
+                startDateChange.ActualStartDate, 
+                startDateChange.PlannedEndDate, 
+                startDateChange.Reason, 
+                null, 
+                null,  
+                startDateChange.EmployerApprovedBy, 
+                startDateChange.EmployerApprovedDate, 
+                startDateChange.CreatedDate, 
+                startDateChange.RequestStatus, 
+                ChangeInitiator.Employer);
+        }
+
+        public static bool DoEpisodeDetailsMatchDomainModel(EpisodeUpdatedEvent e, ApprenticeshipDomainModel apprenticeship)
+        {
+            var episode = apprenticeship.LatestEpisode;
+            var expectedNumberOfPrices = apprenticeship.AllPrices.Count();
+            var episodePrice = apprenticeship.LatestPrice;
+            return 
+                e.Episode.TrainingCode == episode.TrainingCode &&
+                e.Episode.FundingEmployerAccountId == episode.FundingEmployerAccountId &&
+                e.Episode.EmployerAccountId == episode.EmployerAccountId &&
+                e.Episode.LegalEntityName == episode.LegalEntityName &&
+                e.Episode.Ukprn == episode.Ukprn &&
+                e.Episode.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship &&
+                e.Episode.Prices.Count == expectedNumberOfPrices &&
+                e.Episode.Prices.MaxBy(x => x.StartDate).TotalPrice == episodePrice.TotalPrice &&
+                e.Episode.FundingType == episode.FundingType &&
+                e.Episode.Prices.MaxBy(x => x.StartDate).StartDate == episodePrice.StartDate &&
+                e.Episode.Prices.MaxBy(x => x.StartDate).EndDate == episodePrice.EndDate &&
+                e.Episode.FundingPlatform == episode.FundingPlatform;
         }
     }
 }

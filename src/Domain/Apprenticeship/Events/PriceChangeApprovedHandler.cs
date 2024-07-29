@@ -1,4 +1,5 @@
 ﻿using NServiceBus;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Types;
@@ -19,22 +20,15 @@ public class PriceChangeApprovedHandler : IDomainEventHandler<PriceChangeApprove
     public async Task Handle(PriceChangeApproved @event, CancellationToken cancellationToken = default)
     {
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
-        var episode = apprenticeship.LatestEpisode;
         var priceChange = apprenticeship.PriceHistories.Single(x => x.Key == @event.PriceHistoryKey);
-        var priceChangeApprovedEvent = new OldApprenticeshipPriceChangedEvent
+        var priceChangeApprovedEvent = new ApprenticeshipPriceChangedEvent()
         {
-            ApprenticeshipKey = apprenticeship.Key,
+            ApprenticeshipKey = apprenticeship.Key, 
             ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
-            EmployerAccountId = episode.EmployerAccountId,
+            EffectiveFromDate = priceChange.EffectiveFromDate,
             ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? priceChange.EmployerApprovedDate!.Value : priceChange.ProviderApprovedDate!.Value,
             ApprovedBy = @event.ApprovedBy,
-            AssessmentPrice = priceChange.AssessmentPrice!.Value,
-            TrainingPrice = priceChange.TrainingPrice!.Value,
-            EffectiveFromDate = priceChange.EffectiveFromDate,
-            ProviderId = episode.Ukprn,
-            EpisodeKey = @event.AmendedPrices.ApprenticeshipEpisodeKey,
-            PriceKey = @event.AmendedPrices.LatestEpisodePrice.GetEntity().Key,
-            DeletedPriceKeys = @event.AmendedPrices.DeletedPriceKeys
+            Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
         };
 
         await _messageSession.Publish(priceChangeApprovedEvent);

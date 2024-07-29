@@ -109,6 +109,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             _dbContext.Episodes.Count().Should().Be(1);
             var storedEpisode = _dbContext.Episodes.Single();
             storedEpisode.Should().BeEquivalentTo(episode, x => x
+                .Excluding(y => y.Key)
                 .Excluding(y => y.LatestPrice)
                 .Excluding(y => y.EpisodePrices)
                 .Excluding(y => y.FirstPrice)

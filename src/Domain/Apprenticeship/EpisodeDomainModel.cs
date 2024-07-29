@@ -8,6 +8,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
     {
         private readonly Episode _entity;
         private readonly List<EpisodePriceDomainModel> _episodePrices;
+        public Guid Key => _entity.Key;
         public long Ukprn => _entity.Ukprn;
         public long EmployerAccountId => _entity.EmployerAccountId;
         public FundingType FundingType => _entity.FundingType;

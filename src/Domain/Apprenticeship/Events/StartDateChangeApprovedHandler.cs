@@ -1,4 +1,5 @@
 ﻿using NServiceBus;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Types;
@@ -20,25 +21,18 @@ public class StartDateChangeApprovedHandler : IDomainEventHandler<StartDateChang
     {
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
         var startDateChange = apprenticeship.StartDateChanges.Single(x => x.Key == @event.StartDateChangeKey);
-        var episode = apprenticeship.LatestEpisode;
-        var startDateChangedEvent = new OldApprenticeshipStartDateChangedEvent()
+        var startDateChangedEvent = new ApprenticeshipStartDateChangedEvent()
         {
-            ApprenticeshipKey = apprenticeship.Key,
+            ApprenticeshipKey = apprenticeship.Key, 
             ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
-            EmployerAccountId = episode.EmployerAccountId,
+            StartDate = apprenticeship.StartDate,
             ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? startDateChange.EmployerApprovedDate!.Value : startDateChange.ProviderApprovedDate!.Value,
-            ProviderId = episode.Ukprn,
-            ActualStartDate = startDateChange.ActualStartDate,
-            PlannedEndDate = startDateChange.PlannedEndDate,
-            AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
             ProviderApprovedBy = startDateChange.ProviderApprovedBy,
             EmployerApprovedBy = startDateChange.EmployerApprovedBy,
             Initiator = startDateChange.Initiator.ToString()!,
-            ApprenticeshipEpisodeKey = @event.AmendedPrices.ApprenticeshipEpisodeKey,
-            PriceKey = @event.AmendedPrices.LatestEpisodePrice.GetEntity().Key,
-            DeletedPriceKeys = @event.AmendedPrices.DeletedPriceKeys
+            Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
         };
-
+        
         await _messageSession.Publish(startDateChangedEvent);
     }
 }

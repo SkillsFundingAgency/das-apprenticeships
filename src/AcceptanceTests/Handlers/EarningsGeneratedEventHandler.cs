@@ -4,11 +4,11 @@ using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Apprenticeships.AcceptanceTests.Handlers;
 
-public class ApprenticeshipCreatedEventHandler : IHandleMessages<OldApprenticeshipCreatedEvent>
+public class ApprenticeshipCreatedEventHandler : IHandleMessages<ApprenticeshipCreatedEvent>
 {
-    public static ConcurrentBag<OldApprenticeshipCreatedEvent> ReceivedEvents { get; } = new();
+    public static ConcurrentBag<ApprenticeshipCreatedEvent> ReceivedEvents { get; } = new();
 
-    public Task Handle(OldApprenticeshipCreatedEvent message, IMessageHandlerContext context)
+    public Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
     {
         ReceivedEvents.Add(message);
         return Task.CompletedTask;

@@ -33,7 +33,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         public static async Task StartEndpoint()
         {
             _endpointInstance = await EndpointHelper
-                .StartEndpoint(QueueNames.ApprovalCreated + "TEST", false, new[] { typeof(ApprovalCreatedEvent), typeof(OldApprenticeshipCreatedEvent) });
+                .StartEndpoint(QueueNames.ApprovalCreated + "TEST", false, new[] { typeof(ApprovalCreatedEvent), typeof(ApprenticeshipCreatedEvent) });
         }
 
         [AfterTestRun]
@@ -154,19 +154,19 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 
             publishedEvent.Uln.Should().Be(Apprenticeship.Uln);
             publishedEvent.ApprenticeshipKey.Should().Be(Apprenticeship.Key);
-            int.Parse(publishedEvent.TrainingCode).Should().Be(int.Parse(LatestEpisode.TrainingCode));
-            publishedEvent.ActualStartDate.Should().BeSameDateAs(LatestEpisodePrice.StartDate);
-            publishedEvent.PlannedEndDate.Should().BeSameDateAs(LatestEpisodePrice.EndDate);
-            publishedEvent.AgreedPrice.Should().Be(LatestEpisodePrice.TotalPrice);
+            int.Parse(publishedEvent.Episode.TrainingCode).Should().Be(int.Parse(LatestEpisode.TrainingCode));
+            publishedEvent.Episode.Prices.MaxBy(x => x.StartDate)?.StartDate.Should().BeSameDateAs(LatestEpisodePrice.StartDate);
+            publishedEvent.Episode.Prices.MaxBy(x => x.StartDate)?.EndDate.Should().BeSameDateAs(LatestEpisodePrice.EndDate);
+            publishedEvent.Episode.Prices.MaxBy(x => x.StartDate)?.TotalPrice.Should().Be(LatestEpisodePrice.TotalPrice);
             publishedEvent.ApprovalsApprenticeshipId.Should().Be(Apprenticeship.ApprovalsApprenticeshipId);
-            publishedEvent.EmployerAccountId.Should().Be(LatestEpisode.EmployerAccountId);
-            publishedEvent.FundingEmployerAccountId.Should().Be(LatestEpisode.FundingEmployerAccountId);
-            publishedEvent.FundingType.ToString().Should().Be(LatestEpisode.FundingType.ToString());
-            publishedEvent.LegalEntityName.Should().Be(LatestEpisode.LegalEntityName);
-            publishedEvent.UKPRN.Should().Be(LatestEpisode.Ukprn);
+            publishedEvent.Episode.EmployerAccountId.Should().Be(LatestEpisode.EmployerAccountId);
+            publishedEvent.Episode.FundingEmployerAccountId.Should().Be(LatestEpisode.FundingEmployerAccountId);
+            publishedEvent.Episode.FundingType.ToString().Should().Be(LatestEpisode.FundingType.ToString());
+            publishedEvent.Episode.LegalEntityName.Should().Be(LatestEpisode.LegalEntityName);
+            publishedEvent.Episode.Ukprn.Should().Be(LatestEpisode.Ukprn);
             publishedEvent.FirstName.Should().Be(Apprenticeship.FirstName);
             publishedEvent.LastName.Should().Be(Apprenticeship.LastName);
-            publishedEvent.FundingPlatform.ToString().Should().Be(LatestEpisode.FundingPlatform.ToString());
+            publishedEvent.Episode.FundingPlatform.ToString().Should().Be(LatestEpisode.FundingPlatform.ToString());
 
             _scenarioContext["publishedEvent"] = publishedEvent;
         }
@@ -175,7 +175,12 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         public async Task ThenAnApprenticeshipCreatedEventEventIsPublishedWithTheCorrectFundingBandMaximum()
         {
             await ThenAnApprenticeshipCreatedEventEventIsPublished();
-            ((OldApprenticeshipCreatedEvent)_scenarioContext["publishedEvent"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
+            ((ApprenticeshipCreatedEvent)_scenarioContext["publishedEvent"])
+                .Episode
+                .Prices
+                .MaxBy(x => x.StartDate)?
+                .FundingBandMaximum
+                .Should().Be((int)_scenarioContext["fundingBandMaximum"]);
         }
 
         [Then(@"an ApprenticeshipCreatedEvent event is not published")]
@@ -185,9 +190,9 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         }
 
 
-        private bool EventMatchesExpectation(OldApprenticeshipCreatedEvent oldApprenticeshipCreatedEvent)
+        private bool EventMatchesExpectation(ApprenticeshipCreatedEvent apprenticeshipCreatedEvent)
         {
-            return oldApprenticeshipCreatedEvent.Uln == ApprovalCreatedEvent.Uln;
+            return apprenticeshipCreatedEvent.Uln == ApprovalCreatedEvent.Uln;
         }
 
         public ApprovalCreatedEvent ApprovalCreatedEvent => (ApprovalCreatedEvent)_scenarioContext["ApprovalCreatedEvent"];

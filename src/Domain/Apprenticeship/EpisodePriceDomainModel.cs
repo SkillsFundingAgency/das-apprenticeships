@@ -3,7 +3,7 @@
     public class EpisodePriceDomainModel
     {
         private readonly DataAccess.Entities.Apprenticeship.EpisodePrice _entity;
-
+        public Guid Key => _entity.Key;
         public bool IsDeleted => _entity.IsDeleted; 
         public DateTime StartDate => _entity.StartDate; 
         public DateTime EndDate => _entity.EndDate; 

@@ -29,6 +29,7 @@ public class TestFunction : IDisposable
         HubName = hubName;
         var orchestrationData = new OrchestrationData();
 
+        Environment.SetEnvironmentVariable("EnvironmentName", "LOCAL_ACCEPTANCE_TESTS");
         var appConfig = new Dictionary<string, string>
         {
             { "EnvironmentName", "LOCAL_ACCEPTANCE_TESTS" },
