@@ -26,7 +26,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return;
         }
 
-        var currentEpisode = apprenticeship.GetCurrentEpisode();
+        var currentEpisode = apprenticeship.GetEpisode();
 
         switch (_accountIdClaims.AccountIdClaimsType)
         {
