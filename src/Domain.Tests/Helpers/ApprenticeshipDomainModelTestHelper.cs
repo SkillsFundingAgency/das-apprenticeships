@@ -129,7 +129,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
                 ChangeInitiator.Employer);
         }
 
-        public static bool DoEpisodeDetailsMatchDomainModel(EpisodeUpdatedEvent e, ApprenticeshipDomainModel apprenticeship)
+        public static bool DoEpisodeDetailsMatchDomainModel(ApprenticeshipEvent e, ApprenticeshipDomainModel apprenticeship)
         {
             var episode = apprenticeship.LatestEpisode;
             var expectedNumberOfPrices = apprenticeship.AllPrices.Count();

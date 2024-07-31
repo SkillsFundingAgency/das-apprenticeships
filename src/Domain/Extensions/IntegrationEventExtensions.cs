@@ -9,7 +9,8 @@ public static class IntegrationEventExtensions
     {
         var latestEpisode = apprenticeship.LatestEpisode;
         var activePrices = latestEpisode.ActiveEpisodePrices;
-        var prices = activePrices.Select(price => new ApprenticeshipEpisodePrice()
+        var prices = activePrices.Select(price => 
+            new ApprenticeshipEpisodePrice
             {
                 Key = price.Key,
                 StartDate = price.StartDate,
@@ -18,8 +19,7 @@ public static class IntegrationEventExtensions
                 EndPointAssessmentPrice = price.EndPointAssessmentPrice,
                 TotalPrice = price.TotalPrice,
                 FundingBandMaximum = price.FundingBandMaximum
-            })
-            .ToList();
+            }).ToList();
 
         return new ApprenticeshipEpisode()
         {
