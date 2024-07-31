@@ -204,8 +204,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
         if (pendingPriceChange.Initiator == ChangeInitiator.Provider)
         {
             pendingPriceChange.ApproveByEmployer(userApprovedBy, DateTime.Now);
-            var amendedEpisodeDetails = UpdatePrices(pendingPriceChange);
-            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer, amendedEpisodeDetails));
+            UpdatePrices(pendingPriceChange);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
         }
         else
         {
@@ -219,8 +219,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
                                                     $"training price ({trainingPrice}) and the assessment price ({assessmentPrice}).");
 
             pendingPriceChange.ApproveByProvider(userApprovedBy, DateTime.Now, trainingPrice.Value, assessmentPrice.Value);
-            var amendedEpisodeDetails = UpdatePrices(pendingPriceChange);
-            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider, amendedEpisodeDetails));   
+            UpdatePrices(pendingPriceChange);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));   
         }
     }
 
@@ -235,8 +235,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
             throw new InvalidOperationException($"{nameof(ProviderAutoApprovePriceChange)} is only valid for provider-initiated changes");
 
         pendingPriceChange.AutoApprove();
-        var amendedEpisodeDetails = UpdatePrices(pendingPriceChange);
-        AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider, amendedEpisodeDetails));
+        UpdatePrices(pendingPriceChange);
+        AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
     }
 
     public void CancelPendingPriceChange()
@@ -287,7 +287,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _entity.StartDateChanges.Add(startDateChange.GetEntity());
     }
 
-    public void ApproveStartDateChange(string? userApprovedBy, int fundingBandMaximum)
+    public void ApproveStartDateChange(string? userApprovedBy)
     {
         var pendingStartDateChange = _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
         if(pendingStartDateChange == null)
@@ -295,8 +295,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         var approver = pendingStartDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
         pendingStartDateChange.Approve(approver, userApprovedBy, DateTime.UtcNow);
-        var amendedEpisodeDetails = LatestEpisode.UpdatePricesForApprovedStartDateChange(pendingStartDateChange, fundingBandMaximum);
-        AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver, amendedEpisodeDetails));
+        LatestEpisode.UpdatePricesForApprovedStartDateChange(pendingStartDateChange);
+        AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver));
     }
 
     public void RejectStartDateChange(string? reason)
@@ -339,7 +339,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         }
     }
 
-    private EpisodeDomainModel.AmendedPrices UpdatePrices(PriceHistoryDomainModel priceChangeRequest)
+    private void UpdatePrices(PriceHistoryDomainModel priceChangeRequest)
     {
         if (priceChangeRequest!.TrainingPrice == null || priceChangeRequest!.AssessmentPrice == null)
             throw new InvalidOperationException("Both training and assessment prices must be recorded on the pending request in order to approve it.");
@@ -347,11 +347,10 @@ public class ApprenticeshipDomainModel : AggregateRoot
         if (LatestPrice.StartDate == priceChangeRequest.EffectiveFromDate)
         {
             LatestPrice.UpdatePrice(priceChangeRequest.TrainingPrice.Value, priceChangeRequest.AssessmentPrice.Value, priceChangeRequest.TotalPrice);
-            return new EpisodeDomainModel.AmendedPrices(LatestPrice, LatestEpisode.GetEntity().Key, new List<Guid>());
         }
         else
         {
-            return LatestEpisode.UpdatePricesForApprovedPriceChange(priceChangeRequest);
+            LatestEpisode.UpdatePricesForApprovedPriceChange(priceChangeRequest);
         }
     }
 }

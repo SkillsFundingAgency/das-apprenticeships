@@ -39,7 +39,7 @@ public class WhenHandlePriceChangeApproved
         ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeProviderInitiated(apprenticeship, effectiveFromDate:apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>()));
         apprenticeship.ApprovePriceChange("Bob", null, null);
         var priceChange = apprenticeship.PriceHistories.First(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Approved);
-        var domainEvent = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Employer, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
+        var domainEvent = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Employer);
 
         _apprenticeshipRepository.Setup(x => x.Get(domainEvent.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
@@ -65,7 +65,7 @@ public class WhenHandlePriceChangeApproved
             effectiveFromDate:apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>()));
         apprenticeship.ApprovePriceChange("Bob", trainingPrice, assessmentPrice);
         var priceChange = apprenticeship.PriceHistories.First(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Approved);
-        var domainEvent = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Provider, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
+        var domainEvent = new PriceChangeApproved(apprenticeship.Key, priceChange.Key, ApprovedBy.Provider);
 
         _apprenticeshipRepository.Setup(x => x.Get(domainEvent.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 

@@ -44,7 +44,7 @@ public class WhenHandleStartDateChangeApproved
         var approvingUserId = _fixture.Create<string>();
         apprenticeship.ApproveStartDateChange(approvingUserId);
         var startDateChangeDomainModel = apprenticeship.StartDateChanges.First(x => x.RequestStatus == ChangeRequestStatus.Approved);
-        var command = new StartDateChangeApproved(apprenticeship.Key, apprenticeship.StartDateChanges.Single().Key, ApprovedBy.Employer, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
+        var command = new StartDateChangeApproved(apprenticeship.Key, apprenticeship.StartDateChanges.Single().Key, ApprovedBy.Employer);
 
         _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
@@ -70,7 +70,7 @@ public class WhenHandleStartDateChangeApproved
         var approvingUserId = _fixture.Create<string>();
         apprenticeship.ApproveStartDateChange(approvingUserId);
         var startDateChangeDomainModel = apprenticeship.StartDateChanges.First(x => x.RequestStatus == ChangeRequestStatus.Approved);
-        var command = new StartDateChangeApproved(apprenticeship.Key, apprenticeship.StartDateChanges.Single().Key, ApprovedBy.Provider, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
+        var command = new StartDateChangeApproved(apprenticeship.Key, apprenticeship.StartDateChanges.Single().Key, ApprovedBy.Provider);
 
         _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 

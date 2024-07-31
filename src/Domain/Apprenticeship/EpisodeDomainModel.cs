@@ -39,13 +39,13 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
         {
             get
             {
-                var latestPrice = _episodePrices.Where(y => !y.IsDeleted).MinBy(x => x.StartDate);
-                if (latestPrice == null)
+                var firstPrice = _episodePrices.Where(y => !y.IsDeleted).MinBy(x => x.StartDate);
+                if (firstPrice == null)
                 {
                     throw new InvalidOperationException($"Unexpected error. {nameof(FirstPrice)} could not be found in the {nameof(EpisodeDomainModel)}.");
                 }
 
-                return latestPrice;
+                return firstPrice;
             }
         }
 
@@ -75,7 +75,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             });
         }
 
-        internal EpisodePriceDomainModel AddEpisodePrice(
+        internal void AddEpisodePrice(
             DateTime startDate,
             DateTime endDate,
             decimal totalPrice,
@@ -99,42 +99,33 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
 
             _episodePrices.Add(newEpisodePrice);
             _entity.Prices.Add(newEpisodePrice.GetEntity());
-
-            return newEpisodePrice;
         }
 
-        internal AmendedPrices UpdatePricesForApprovedPriceChange(PriceHistoryDomainModel priceChangeRequest)
+        internal void UpdatePricesForApprovedPriceChange(PriceHistoryDomainModel priceChangeRequest)
         {
             var endDate = LatestPrice.EndDate;
             var fundingBandMaximum = LatestPrice.FundingBandMaximum;
-            var deletedPrices = DeletePricesStartingAfterDate(priceChangeRequest.EffectiveFromDate);
+            DeletePricesStartingAfterDate(priceChangeRequest.EffectiveFromDate);
 
             var remainingPrices = _entity.Prices.Where(x => !x.IsDeleted).ToList();
             var latestActivePrice = remainingPrices.MaxBy(x => x.StartDate);
 
-            var shouldSupersedePreviousPrice = false;
+            var shouldSupersedePreviousPrice = latestActivePrice != null && latestActivePrice.StartDate < priceChangeRequest.EffectiveFromDate;
 
-            if(latestActivePrice != null && latestActivePrice.StartDate < priceChangeRequest.EffectiveFromDate)
-            {
-                shouldSupersedePreviousPrice = true;
-            }
-
-            var newEpisode = AddEpisodePrice(priceChangeRequest.EffectiveFromDate,
+            AddEpisodePrice(priceChangeRequest.EffectiveFromDate,
                 endDate,
                 priceChangeRequest.TotalPrice,
                 priceChangeRequest.TrainingPrice,
                 priceChangeRequest.AssessmentPrice,
                 fundingBandMaximum,
                 shouldSupersedePreviousPrice);
-            
-            return new AmendedPrices(newEpisode, _entity.Key, deletedPrices.ToList());
         }
 
-        internal AmendedPrices UpdatePricesForApprovedStartDateChange(StartDateChangeDomainModel startDateChangeRequest, int fundingBandMaximum)
+        internal void UpdatePricesForApprovedStartDateChange(StartDateChangeDomainModel startDateChangeRequest)
         {
             var latestPrice = LatestPrice;
-            var deletedPrices = DeletePricesEndingBeforeDate(startDateChangeRequest.ActualStartDate).ToList();
-            deletedPrices.AddRange(DeletePricesStartingAfterDate(startDateChangeRequest.PlannedEndDate));
+            DeletePricesEndingBeforeDate(startDateChangeRequest.ActualStartDate);
+            DeletePricesStartingAfterDate(startDateChangeRequest.PlannedEndDate);
 
             if (ActiveEpisodePrices.Count == 0)
             {
@@ -144,7 +135,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                     latestPrice.TotalPrice,
                     latestPrice.TrainingPrice,
                     latestPrice.EndPointAssessmentPrice,
-                    fundingBandMaximum);
+                    latestPrice.FundingBandMaximum);
             }
             else
             {
@@ -158,10 +149,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
                     LatestPrice.UpdateEndDate(startDateChangeRequest.PlannedEndDate);
                 }
             }
-
-            UpdateAllActivePricesWithNewFundingBandMaximum(fundingBandMaximum);
-
-            return new AmendedPrices(LatestPrice, _entity.Key, deletedPrices.ToList());
         }
 
         internal void UpdatePaymentStatus(bool isFrozen)
@@ -179,47 +166,19 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
             return new EpisodeDomainModel(entity);
         }
 
-        public class AmendedPrices
+        private void DeletePricesStartingAfterDate(DateTime date)
         {
-            public AmendedPrices(EpisodePriceDomainModel latestEpisodePrice, Guid apprenticeshipEpisodeKey, List<Guid> deletedPriceKeys)
-            {
-                DeletedPriceKeys = deletedPriceKeys;
-                LatestEpisodePrice = latestEpisodePrice;
-                ApprenticeshipEpisodeKey = apprenticeshipEpisodeKey;
-            }
-
-            public Guid ApprenticeshipEpisodeKey { get; set; }
-            public List<Guid> DeletedPriceKeys { get; set; }
-            public EpisodePriceDomainModel LatestEpisodePrice { get; set; }
-        }
-
-        private void UpdateAllActivePricesWithNewFundingBandMaximum(int fundingBandMaximum)
-        {
-            foreach (var price in _entity.Prices.Where(x => !x.IsDeleted))
-            {
-                price.FundingBandMaximum = fundingBandMaximum;
-            }
-        }
-
-        private IEnumerable<Guid> DeletePricesStartingAfterDate(DateTime date)
-        {
-            var deletedPriceKeys = new List<Guid>();
-
             foreach (var price in _entity.Prices.Where(x => x.StartDate > date && !x.IsDeleted))
             {
                 price.IsDeleted = true;
-                deletedPriceKeys.Add(price.Key);
             }
-
-            return deletedPriceKeys;
         }
 
-        private IEnumerable<Guid> DeletePricesEndingBeforeDate(DateTime date)
+        private void DeletePricesEndingBeforeDate(DateTime date)
         {
             foreach (var price in _entity.Prices.Where(x => x.EndDate < date && !x.IsDeleted))
             {
                 price.IsDeleted = true;
-                yield return price.Key;
             }
         }
 
