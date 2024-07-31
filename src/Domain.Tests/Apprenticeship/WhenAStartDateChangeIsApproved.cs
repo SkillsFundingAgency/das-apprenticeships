@@ -29,7 +29,7 @@ public class WhenAStartDateChangeIsApproved
 
         //Act
         var now = DateTime.UtcNow;
-        apprenticeship.ApproveStartDateChange(approverUserId, _fixture.Create<int>());
+        apprenticeship.ApproveStartDateChange(approverUserId);
 
         //Assert
         var entity = apprenticeship.GetEntity();
@@ -51,7 +51,7 @@ public class WhenAStartDateChangeIsApproved
 
         //Act
         var now = DateTime.UtcNow;
-        apprenticeship.ApproveStartDateChange(approverUserId, _fixture.Create<int>());
+        apprenticeship.ApproveStartDateChange(approverUserId);
 
         //Assert
         var entity = apprenticeship.GetEntity();
@@ -74,7 +74,7 @@ public class WhenAStartDateChangeIsApproved
         var apprenticeship = ApprenticeshipDomainModelTestHelper.BuildApprenticeshipWithPendingStartDateChange();
 
         //Act
-        apprenticeship.ApproveStartDateChange(employerUserId, _fixture.Create<int>());
+        apprenticeship.ApproveStartDateChange(userId);
 
         //Assert
         var events = apprenticeship.FlushEvents();

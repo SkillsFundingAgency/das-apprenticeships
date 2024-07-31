@@ -42,7 +42,7 @@ public class WhenHandleStartDateChangeApproved
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         ApprenticeshipDomainModelTestHelper.AddPendingStartDateChangeProviderInitiated(apprenticeship, startDateChange);
         var approvingUserId = _fixture.Create<string>();
-        apprenticeship.ApproveStartDateChange(approvingUserId, _fixture.Create<int>());
+        apprenticeship.ApproveStartDateChange(approvingUserId);
         var startDateChangeDomainModel = apprenticeship.StartDateChanges.First(x => x.RequestStatus == ChangeRequestStatus.Approved);
         var command = new StartDateChangeApproved(apprenticeship.Key, apprenticeship.StartDateChanges.Single().Key, ApprovedBy.Employer, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
 
@@ -68,7 +68,7 @@ public class WhenHandleStartDateChangeApproved
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         ApprenticeshipDomainModelTestHelper.AddPendingStartDateChangeEmployerInitiated(apprenticeship, startDateChange);
         var approvingUserId = _fixture.Create<string>();
-        apprenticeship.ApproveStartDateChange(approvingUserId, _fixture.Create<int>());
+        apprenticeship.ApproveStartDateChange(approvingUserId);
         var startDateChangeDomainModel = apprenticeship.StartDateChanges.First(x => x.RequestStatus == ChangeRequestStatus.Approved);
         var command = new StartDateChangeApproved(apprenticeship.Key, apprenticeship.StartDateChanges.Single().Key, ApprovedBy.Provider, _fixture.Create<EpisodeDomainModel.AmendedPrices>());
 
