@@ -67,11 +67,33 @@ public class WhenAStartDateChangeIsApproved
     //TODO start date change - Add unit tests for the correct handing of episodes and prices
 
     [Test]
-    public void ThenAStartDateChangeApprovedEventIsAdded()
+    public void ToEarlierDateThenExistingEpisodePriceIsOverwritten()
     {
         //Arrange
-        var employerUserId = _fixture.Create<string>();
-        var apprenticeship = ApprenticeshipDomainModelTestHelper.BuildApprenticeshipWithPendingStartDateChange();
+        var approverUserId = _fixture.Create<string>();
+        var apprenticeship = ApprenticeshipDomainModelTestHelper.BuildApprenticeshipWithPendingStartDateChange(
+            originalStartDate: new DateTime(2022, 03, 02),
+            newStartDate: new DateTime(2021, 12, 14),
+            originalEndDate: new DateTime(2025, 06, 23),
+            newEndDate: new DateTime(2024, 03, 11));
+
+        //Act
+        apprenticeship.ApproveStartDateChange(approverUserId);
+
+        //Assert
+        apprenticeship.Episodes.Count.Should().Be(1);
+        apprenticeship.LatestEpisode.EpisodePrices.Count.Should().Be(1);
+        apprenticeship.LatestEpisode.LatestPrice.StartDate.Should().Be(new DateTime(2021, 12, 14));
+        apprenticeship.LatestEpisode.LatestPrice.EndDate.Should().Be(new DateTime(2024, 03, 11));
+    }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public void ThenAStartDateChangeApprovedEventIsAdded(bool isApprovedByProvider)
+    {
+        //Arrange
+        var userId = _fixture.Create<string>();
+        var apprenticeship = ApprenticeshipDomainModelTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval: isApprovedByProvider);
 
         //Act
         apprenticeship.ApproveStartDateChange(userId);

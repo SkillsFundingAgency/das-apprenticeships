@@ -15,14 +15,19 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers
     {
         private static readonly Fixture _fixture = new();
 
-        public static ApprenticeshipDomainModel BuildApprenticeshipWithPendingStartDateChange(bool pendingProviderApproval = false)
+        public static ApprenticeshipDomainModel BuildApprenticeshipWithPendingStartDateChange(
+            bool pendingProviderApproval = false, 
+            DateTime? originalStartDate = null, 
+            DateTime? newStartDate = null,
+            DateTime? originalEndDate = null, 
+            DateTime? newEndDate = null)
         {
             _fixture.Customize(new ApprenticeshipCustomization());
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            AddEpisode(apprenticeship);
+            AddEpisode(apprenticeship, originalStartDate, originalEndDate);
 
-            var startDateEntity = _fixture.Create<StartDateChange>();
-            startDateEntity.PlannedEndDate = startDateEntity.ActualStartDate.AddMonths(24);
+            var startDateEntity = _fixture.Build<StartDateChange>().With(x => x.ActualStartDate, newStartDate ?? _fixture.Create<DateTime>()).Create();
+            startDateEntity.PlannedEndDate = newEndDate ?? startDateEntity.ActualStartDate.AddMonths(24);
             var startDateChange = StartDateChangeDomainModel.Get(startDateEntity);
 
             if (pendingProviderApproval)
