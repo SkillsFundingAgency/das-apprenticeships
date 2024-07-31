@@ -44,6 +44,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         }
 
         [Given(@"An apprenticeship has been created as part of the approvals journey")]
+        [Given(@"An apprenticeship exists")]
         public async Task GivenAnApprenticeshipHasBeenCreatedAsPartOfTheApprovalsJourney()
         {
             var approvalCreatedEvent = _fixture.Build<ApprovalCreatedEvent>() 

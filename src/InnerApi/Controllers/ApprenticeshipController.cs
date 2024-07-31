@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
@@ -13,6 +10,7 @@ using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
+using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 
@@ -119,4 +117,20 @@ public class ApprenticeshipController : ControllerBase
         }
         return Ok(response.ApprenticeshipKey);
     }
+
+    /// <summary>
+    /// Gets the Learner Status of the apprenticeship
+    /// </summary>
+    /// <param name="apprenticeshipKey">Guid</param>
+    /// <returns>GetLearnerStatusResponse containing LearnerStatus</returns>
+    [HttpGet("{apprenticeshipKey}/LearnerStatus")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetLearnerStatus(Guid apprenticeshipKey)
+    {
+        var request = new GetLearnerStatusRequest { ApprenticeshipKey = apprenticeshipKey };
+        var response = await _queryDispatcher.Send<GetLearnerStatusRequest, GetLearnerStatusResponse?>(request);
+        if (response == null) return NotFound();
+        return Ok(response);
+    }
+
 }

@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<ICommandDispatcher, CommandDispatcher>()
             .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
             .AddScoped<IFundingBandMaximumService, FundingBandMaximumService>()
+            .AddSingleton<ISystemClockService, SystemClockService>()
             .AddEncodingServices(configuration)
             .AddPersistenceServices();
 
