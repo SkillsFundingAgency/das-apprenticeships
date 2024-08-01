@@ -25,7 +25,7 @@ public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusReques
 
         if(startDate == null)
         {
-            _logger.LogError($"No start date found for apprenticeship key {query.ApprenticeshipKey}");
+            _logger.LogError("No start date found for apprenticeship key {apprenticeshipKey}", query.ApprenticeshipKey);
             return null;
         }
 
@@ -34,6 +34,6 @@ public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusReques
             return new GetLearnerStatusResponse { LearnerStatus = LearnerStatus.WaitingToStart };
         }
 
-        return new GetLearnerStatusResponse { LearnerStatus = LearnerStatus.InLearning }; //TODO: Add logic for break in learning, withdrawn and completed
+        return new GetLearnerStatusResponse { LearnerStatus = LearnerStatus.InLearning }; 
     }
 }
