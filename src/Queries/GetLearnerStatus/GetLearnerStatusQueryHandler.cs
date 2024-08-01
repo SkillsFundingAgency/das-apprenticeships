@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
+using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
 

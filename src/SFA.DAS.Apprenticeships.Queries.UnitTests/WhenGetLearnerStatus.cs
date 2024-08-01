@@ -6,6 +6,7 @@ using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
+using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
 
