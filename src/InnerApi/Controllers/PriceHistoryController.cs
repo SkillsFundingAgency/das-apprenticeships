@@ -115,6 +115,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         [ProducesResponseType(200)]
         public async Task<IActionResult> RejectPendingPriceChange(Guid apprenticeshipKey, [FromBody]PatchRejectPriceChangeRequest request)
         {
+            _logger.LogInformation("FLP-107 - reason: {reason}, key:{key}", request.Reason, apprenticeshipKey);
             await _commandDispatcher.Send(new RejectPendingPriceChangeRequest(apprenticeshipKey, request.Reason));
 
             return Ok();
