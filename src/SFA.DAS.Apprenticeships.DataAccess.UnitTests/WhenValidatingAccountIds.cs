@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using AutoFixture;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Infrastructure;
 
 namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
 {
@@ -25,13 +22,13 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
         public void ProviderAccountIdMismatch_ThrowsUnauthorizedAccessException()
         {
             // Arrange
-            var apprenticeship = _fixture.Build<Apprenticeship>().With(x => x.Ukprn, 12345).Create();
-            var idsInClaims = new List<long>() { 54321, 98765 };
-            var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Provider);
+            var apprenticeship = AccountIdAuthorizerTestHelper.BuildApprenticeshipWithAccountId(12345);
+            var idsInClaims = new List<long> { 54321, 98765 };
+            var authorizer = AccountIdAuthorizerTestHelper.SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Provider);
 
             // Act 
-            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-            
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
+
             // Assert
             act.Should().Throw<UnauthorizedAccessException>();
         }
@@ -40,13 +37,14 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
         public void EmployerAccountIdMismatch_ThrowsUnauthorizedAccessException()
         {
             // Arrange
-            var apprenticeship = new Apprenticeship { EmployerAccountId = 98765 };
-            var idsInClaims = new List<long>() { 5534534321, 0129843 };
-            var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Employer);
+            var apprenticeship = AccountIdAuthorizerTestHelper.BuildApprenticeshipWithAccountId(null, 98765);
+
+            var idsInClaims = new List<long> { 5534534321, 0129843 };
+            var authorizer = AccountIdAuthorizerTestHelper.SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Employer);
 
             // Act 
-            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-            
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
+
             // Assert
             act.Should().Throw<UnauthorizedAccessException>();
         }
@@ -56,26 +54,26 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
         {
             // Arrange
             var apprenticeship = new Apprenticeship();
-            var authorizer = SetUpAuthorizer(false);
+            var authorizer = AccountIdAuthorizerTestHelper.SetUpAuthorizer(false);
 
             // Act 
-            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-            
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
+
             // Assert
             act.Should().NotThrow();
         }
 
-        [TestCase()]
+        [Test]
         public void ValidEmployerAccountId_DoesNothing()
         {
             // Arrange
-            var apprenticeship = new Apprenticeship { EmployerAccountId = 98765 };
-            var idsInClaims = new List<long>() { 98765, 0129843 };
-            var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Employer);
+            var apprenticeship = AccountIdAuthorizerTestHelper.BuildApprenticeshipWithAccountId(null, 98765);
+            var idsInClaims = new List<long> { 98765, 0129843 };
+            var authorizer = AccountIdAuthorizerTestHelper.SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Employer);
 
             // Act 
-            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-    
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
+
             // Assert
             act.Should().NotThrow();
         }
@@ -84,28 +82,15 @@ namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
         public void ValidUkPrn_DoesNothing()
         {
             // Arrange
-            var apprenticeship = new Apprenticeship { Ukprn = 54321 };
-            var idsInClaims = new List<long>() { 98765, 54321 };
-            var authorizer = SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Provider);
+            var apprenticeship = AccountIdAuthorizerTestHelper.BuildApprenticeshipWithAccountId(54321, null);
+            var idsInClaims = new List<long> { 98765, 54321 };
+            var authorizer = AccountIdAuthorizerTestHelper.SetUpAuthorizer(true, idsInClaims, AccountIdClaimsType.Provider);
 
             // Act 
-            var act = () => authorizer.AuthorizeAccountId(apprenticeship);
-    
+            Action act = () => authorizer.AuthorizeAccountId(apprenticeship);
+
             // Assert
             act.Should().NotThrow();
-        }
-
-        private static AccountIdAuthorizer SetUpAuthorizer(bool isClaimsValidationRequired, List<long>? accountIds = null, AccountIdClaimsType? accountIdClaimsType = null)
-        {
-            var mockClaimsHandler = new Mock<IAccountIdClaimsHandler>();
-            mockClaimsHandler
-                .Setup(x => x.GetAccountIdClaims())
-                .Returns(new AccountIdClaims
-                {
-                    IsClaimsValidationRequired = isClaimsValidationRequired, AccountIds = accountIds, AccountIdClaimsType = accountIdClaimsType
-                });
-            var mockLogger = new Mock<ILogger<AccountIdAuthorizer>>();
-            return new AccountIdAuthorizer(mockClaimsHandler.Object, mockLogger.Object);
         }
     }
 }

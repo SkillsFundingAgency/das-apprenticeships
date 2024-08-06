@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 
@@ -17,7 +18,7 @@ public class WhenGetUserIdFromHttpContext
         var result = mockHttpContext.Object.GetUserId();
 
         // Assert
-        Assert.That(result.Equals("testUserId"));
+       result.Should().Be("testUserId");
     }
 
     [Test]
@@ -27,9 +28,11 @@ public class WhenGetUserIdFromHttpContext
         var mockHttpContext = new Mock<HttpContext>();
         mockHttpContext.Setup(x => x.Items).Returns(new Dictionary<object, object?>());
 
-        // Act & Assert
-        var exception = Assert.Throws<UnauthorizedAccessException>(() => mockHttpContext.Object.GetUserId());
-        Assert.That(exception.Message.Equals("User Id not found in HttpContext"));
+        // Act 
+        var action = () => mockHttpContext.Object.GetUserId();
+
+        // Assert
+        action.Should().Throw<UnauthorizedAccessException>().WithMessage("User Id not found in HttpContext");
     }
 
     [Test]
@@ -39,8 +42,10 @@ public class WhenGetUserIdFromHttpContext
         var mockHttpContext = new Mock<HttpContext>();
         mockHttpContext.Setup(x => x.Items).Returns(new Dictionary<object, object?> { { "UserId", "" } });
 
-        // Act & Assert
-        var exception = Assert.Throws<UnauthorizedAccessException>(() => mockHttpContext.Object.GetUserId());
-        Assert.That(exception.Message.Equals("User Id Key exists in HttpContext, but the value is empty"));
+        // Act 
+        var action = () => mockHttpContext.Object.GetUserId();
+
+        // Assert
+        action.Should().Throw<UnauthorizedAccessException>().WithMessage("User Id Key exists in HttpContext, but the value is empty");
     }
 }

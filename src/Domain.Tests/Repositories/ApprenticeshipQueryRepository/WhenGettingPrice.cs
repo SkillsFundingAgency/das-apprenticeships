@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
@@ -46,14 +48,37 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         {
             //Arrange
             SetUpApprenticeshipQueryRepository();
+
             var apprenticeshipKey = _fixture.Create<Guid>();
+            var episodeKey = _fixture.Create<Guid>();
+            
+            var episodePrice1 = _fixture.Build<EpisodePrice>()
+                .With(x => x.EpisodeKey, episodeKey)
+                .With(x => x.StartDate, new DateTime(2021, 3, 1))
+                .With(x => x.IsDeleted, false)
+                .Create();
+            var episodePrice2 = _fixture.Build<EpisodePrice>()
+                .With(x => x.EpisodeKey, episodeKey)
+                .With(x => x.StartDate, new DateTime(2021, 8, 18))
+                .With(x => x.IsDeleted, false)
+                .Create();
+            var episodePrice3 = _fixture.Build<EpisodePrice>()
+                .With(x => x.EpisodeKey, episodeKey)
+                .With(x => x.StartDate, new DateTime(2022, 8, 18))
+                .With(x => x.IsDeleted, true)
+                .Create();
+
+            var episode = _fixture.Build<Episode>()
+                .With(x => x.Key, episodeKey)
+                .With(x => x.Prices, new List<EpisodePrice> { episodePrice1, episodePrice2, episodePrice3 })
+                .Create();
 
             var apprenticeships = new[]
             {
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Key, apprenticeshipKey).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Key, _fixture.Create<Guid>()).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Key, _fixture.Create<Guid>()).Create(),
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>().With(x => x.Key, _fixture.Create<Guid>()).Create()
+                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
+                    .With(x => x.Key, apprenticeshipKey)
+                    .With(x => x.Episodes, new List<Episode>() { episode })
+                    .Create(), 
             };
 
             await _dbContext.AddRangeAsync(apprenticeships);
@@ -64,13 +89,13 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
 
             // Assert
             result.Should().NotBeNull();
-            result.TotalPrice = apprenticeships[0].TotalPrice;
-            result.AssessmentPrice = apprenticeships[0].EndPointAssessmentPrice;
-            result.TrainingPrice = apprenticeships[0].TrainingPrice;
-            result.FundingBandMaximum = apprenticeships[0].FundingBandMaximum;
-            result.ApprenticeshipActualStartDate = apprenticeships[0].ActualStartDate;
-            result.ApprenticeshipPlannedEndDate = apprenticeships[0].PlannedEndDate;
-            result.AccountLegalEntityId = apprenticeships[0].AccountLegalEntityId;
+            result.TotalPrice = episodePrice2.TotalPrice;
+            result.AssessmentPrice = episodePrice2.EndPointAssessmentPrice;
+            result.TrainingPrice = episodePrice2.TrainingPrice;
+            result.FundingBandMaximum = episodePrice2.FundingBandMaximum;
+            result.ApprenticeshipActualStartDate = episodePrice1.StartDate;
+            result.ApprenticeshipPlannedEndDate = episodePrice2.EndDate;
+            result.AccountLegalEntityId = episode.AccountLegalEntityId;
         }
 
         private void SetUpApprenticeshipQueryRepository()

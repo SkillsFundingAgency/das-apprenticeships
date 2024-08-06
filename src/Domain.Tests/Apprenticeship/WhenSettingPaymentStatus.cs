@@ -1,55 +1,62 @@
 ﻿using AutoFixture;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Factories;
 using System;
+using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
+using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using SFA.DAS.Apprenticeships.Domain.Factories;
 using System.Linq;
+using FluentAssertions;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 
 public class WhenSettingPaymentStatus
 {
     private Fixture _fixture;
+    private const string _userId = "AnyUserId";
     private ApprenticeshipFactory _apprenticeshipFactory;
 
     [SetUp]
     public void SetUp()
     {
         _fixture = new Fixture();
-        _apprenticeshipFactory = new ApprenticeshipFactory();
+        _fixture.Customize(new ApprenticeshipCustomization());
     }
 
     [Test]
     public void And_NewStatusIsSameAsOld_Then_Throws()
     {
         //Arrange
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var userId = _fixture.Create<string>();
-        var apprenticeship = CreateApprenticeshipDomainModel();
 
         //Act / Assert
-        var exception = Assert.Throws<InvalidOperationException>(()=>apprenticeship.SetPaymentsFrozen(false, userId, DateTime.Now));
-        Assert.That(exception.Message, Is.EqualTo($"Payments are already unfrozen for this apprenticeship: {apprenticeship.Key}."));
+        var action = () => apprenticeship.SetPaymentsFrozen(false, userId, DateTime.Now);
 
+        //Assert
+        action.Should().Throw<InvalidOperationException>().WithMessage($"Payments are already unfrozen for this apprenticeship: {apprenticeship.Key}.");
     }
 
     [Test]
     public void And_NewStatusIsFrozen_Then_PaymentsAreFrozen()
     {
         //Arrange
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var userId = _fixture.Create<string>();
         var timeChanged = DateTime.Now;
-        var apprenticeship = CreateApprenticeshipDomainModel();
 
         //Act 
         apprenticeship.SetPaymentsFrozen(true, userId, timeChanged);
 
         //Assert
-        Assert.That(apprenticeship.PaymentsFrozen.Equals(true));
-        Assert.That(apprenticeship.FreezeRequests.Count(x => 
+        apprenticeship.LatestEpisode.PaymentsFrozen.Should().Be(true);
+        apprenticeship.FreezeRequests.Count.Should().Be(1);
+        apprenticeship.FreezeRequests.Count( x=> 
             x.FrozenBy == userId && 
             x.FrozenDateTime == timeChanged && 
-            !x.Unfrozen), 
-            Is.EqualTo(1));
+            !x.Unfrozen).Should().Be(1);
     }
 
     [Test]
@@ -60,44 +67,20 @@ public class WhenSettingPaymentStatus
         var userIdUnfreeze = _fixture.Create<string>();
         var timefreeze = DateTime.Now.AddMinutes(-10);
         var timeUnfreeze = DateTime.Now;
-        var apprenticeship = CreateApprenticeshipDomainModel();
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         apprenticeship.SetPaymentsFrozen(true, userIdFreeze, timefreeze);
 
         //Act 
         apprenticeship.SetPaymentsFrozen(false, userIdUnfreeze, timeUnfreeze);
 
         //Assert
-        Assert.That(apprenticeship.PaymentsFrozen.Equals(false));
-        Assert.That(apprenticeship.FreezeRequests.Count(x => 
+        apprenticeship.LatestEpisode.PaymentsFrozen.Should().Be(false);
+        apprenticeship.FreezeRequests.Count(x => 
             x.FrozenBy == userIdFreeze && 
             x.FrozenDateTime == timefreeze &&
             x.UnfrozenBy == userIdUnfreeze &&
             x.UnfrozenDateTime == timeUnfreeze &&
-            x.Unfrozen), 
-            Is.EqualTo(1));
-    }
-
-    private ApprenticeshipDomainModel CreateApprenticeshipDomainModel()
-    {
-        
-        return _apprenticeshipFactory.CreateNew(
-            "1234435",
-            "TRN",
-            new DateTime(2000,
-                10,
-                16),
-            "Ron",
-            "Swanson",
-            _fixture.Create<decimal?>(),
-            _fixture.Create<decimal?>(),
-            _fixture.Create<decimal>(),
-            _fixture.Create<string>(),
-            _fixture.Create<int>(),
-            _fixture.Create<DateTime>(),
-            _fixture.Create<DateTime>(),
-            _fixture.Create<long>(),
-            _fixture.Create<long>(),
-            _fixture.Create<long>(),
-            _fixture.Create<string>());
+            x.Unfrozen).Should().Be(1);
     }
 }

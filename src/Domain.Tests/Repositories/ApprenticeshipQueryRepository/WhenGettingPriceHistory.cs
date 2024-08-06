@@ -50,12 +50,39 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             //Arrange
             SetUpApprenticeshipQueryRepository();
             
-            //Act
             var apprenticeshipKey = _fixture.Create<Guid>();
-            var otherApprenticeshipKey = _fixture.Create<Guid>();
+            var episode1Key = _fixture.Create<Guid>();
+            var episode2Key = _fixture.Create<Guid>();
+            var episodePrice1 = _fixture.Build<EpisodePrice>()
+                .With(x => x.EpisodeKey, episode1Key)
+                .With(x => x.StartDate, new DateTime(2021, 3, 1))
+                .With(x => x.IsDeleted, false)
+                .Create();
+            var episodePrice2 = _fixture.Build<EpisodePrice>()
+                .With(x => x.EpisodeKey, episode2Key)
+                .With(x => x.StartDate, new DateTime(2021, 8, 18))
+                .With(x => x.IsDeleted, false)
+                .Create();
+            var episodePrice3 = _fixture.Build<EpisodePrice>()
+                .With(x => x.EpisodeKey, episode2Key)
+                .With(x => x.StartDate, new DateTime(2022, 8, 18))
+                .With(x => x.IsDeleted, true)
+                .Create();
+            var episodePrice4 = _fixture.Build<EpisodePrice>()
+                .With(x => x.EpisodeKey, episode2Key)
+                .With(x => x.StartDate, new DateTime(2023, 8, 18))
+                .With(x => x.IsDeleted, false)
+                .Create();
             var priceHistoryKey = _fixture.Create<Guid>();
             var effectiveFromDate = DateTime.UtcNow.AddDays(-5).Date;
-            
+            var episode1 = _fixture.Build<Episode>()
+                .With(x => x.Key, episode1Key)
+                .With(x => x.Prices, new List<EpisodePrice> { episodePrice1})
+                .Create();
+            var episode2 = _fixture.Build<Episode>()
+                .With(x => x.Key, episode2Key)
+                .With(x => x.Prices, new List<EpisodePrice> { episodePrice2, episodePrice3, episodePrice4 })
+                .Create();
             var apprenticeships = new[]
             {
                 _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
@@ -72,30 +99,27 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
                             ChangeReason = "testReason"
                         }
                     })
+                    .With(x => x.Episodes, new List<Episode>() { episode1, episode2 })
                     .Create(), 
-                _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
-                    .With(x => x.Key, otherApprenticeshipKey)
-                    .With(x => x.PriceHistories, new List<PriceHistory>() { new() { ApprenticeshipKey = otherApprenticeshipKey}})
-                    .Create()
             };
 
             await _dbContext.AddRangeAsync(apprenticeships);
             await _dbContext.SaveChangesAsync();
-
+            
             // Act
             var result = await _sut.GetPendingPriceChange(apprenticeshipKey);
 
             // Assert
             result.Should().NotBeNull();
-            result.OriginalTrainingPrice = apprenticeships[0].TrainingPrice;
-            result.OriginalAssessmentPrice = apprenticeships[0].EndPointAssessmentPrice;
-            result.OriginalTotalPrice = apprenticeships[0].TotalPrice;
+            result.OriginalTrainingPrice = episodePrice4.TrainingPrice;
+            result.OriginalAssessmentPrice = episodePrice4.EndPointAssessmentPrice;
+            result.OriginalTotalPrice = episodePrice4.TotalPrice;
             result.PendingTrainingPrice = 10000;
             result.PendingAssessmentPrice = 3000;
             result.PendingTotalPrice = 13000;
             result.EffectiveFrom = effectiveFromDate;
             result.Reason = "testReason";
-            result.Ukprn = apprenticeships[0].Ukprn;
+            result.Ukprn = episode2.Ukprn;
         }
         
         private void SetUpApprenticeshipQueryRepository()

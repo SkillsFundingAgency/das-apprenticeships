@@ -37,10 +37,11 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
     public async Task<ApprenticeshipDomainModel> Get(Guid key)
     {
         var apprenticeship = await DbContext.Apprenticeships
-            .Include(x => x.Approvals)
             .Include(x => x.PriceHistories)
             .Include(x => x.StartDateChanges)
             .Include(x => x.FreezeRequests)
+            .Include(x => x.Episodes)
+            .ThenInclude(y => y.Prices)
             .SingleAsync(x => x.Key == key);
 
         return _apprenticeshipFactory.GetExisting(apprenticeship);
@@ -53,7 +54,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
         DbContext.Update(entity);
 
         await DbContext.SaveChangesAsync();
-            
+  
         foreach (dynamic domainEvent in apprenticeship.FlushEvents())
         {
             await _domainEventDispatcher.Send(domainEvent);

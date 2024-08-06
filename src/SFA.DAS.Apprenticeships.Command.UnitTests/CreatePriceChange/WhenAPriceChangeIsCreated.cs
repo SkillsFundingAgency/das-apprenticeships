@@ -32,10 +32,11 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         [Test]
         public async Task ThenPriceHistoryIsAddedToApprenticeship()
         {
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
             var command = _fixture.Create<CreatePriceChangeCommand>();
             command.Initiator = ChangeInitiator.Provider.ToString();
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-
+            command.EffectiveFromDate = apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>());
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
             
             await _commandHandler.Handle(command);
@@ -46,18 +47,20 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
         [TestCase("Provider")]
         [TestCase("Employer")]
         public async Task ThenCorrectPriceHistoryValuesAreSet(string initiator)
-        {           
+        {
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
             var command = _fixture.Create<CreatePriceChangeCommand>();
             command.Initiator = initiator;
-            command.AssessmentPrice = apprenticeship.GetEntity().EndPointAssessmentPrice + 1;
-            command.TrainingPrice = apprenticeship.GetEntity().TrainingPrice + 1;
+            command.AssessmentPrice = apprenticeship.LatestPrice.GetEntity().EndPointAssessmentPrice + 1;
+            command.TrainingPrice = apprenticeship.LatestPrice.GetEntity().TrainingPrice + 1;
             command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
+            command.EffectiveFromDate = apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>());
 
-            apprenticeship.GetEntity().TotalPrice = command.TotalPrice - 1;
+            apprenticeship.LatestPrice.GetEntity().TotalPrice = command.TotalPrice - 1;
 
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
-            
+
             await _commandHandler.Handle(command);
 
             if (initiator == ChangeInitiator.Provider.ToString())
@@ -92,13 +95,15 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange
 		public async Task ThenPriceChangeIsAutoApprovedCorrectly(decimal oldTotal, decimal newTotal, bool expectAutoApprove)
 		{
 			var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
 			var command = _fixture.Create<CreatePriceChangeCommand>();
 			command.Initiator = ChangeInitiator.Provider.ToString();
 			command.AssessmentPrice = newTotal*0.25m;
 			command.TrainingPrice = newTotal - command.AssessmentPrice;
 			command.TotalPrice = (decimal)(command.TrainingPrice! + command.AssessmentPrice!);
+            command.EffectiveFromDate = apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>());
 
-			apprenticeship.GetEntity().TotalPrice = oldTotal;
+			apprenticeship.LatestPrice.GetEntity().TotalPrice = oldTotal;
 
 			_apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 

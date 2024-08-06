@@ -47,14 +47,17 @@ resources:
 stages:
 - stage: Build
   jobs:
-  - template: pipeline-templates/job/code-build.yml
-    parameters:
-      SolutionBaseName: $(SolutionBaseName)
-      BuildConfiguration: $(BuildConfiguration)
   - template: azure-pipelines-templates/build/job/dacpac-template.yml@das-platform-building-blocks
     parameters:
       SolutionBaseName: $(DACPACSolutionBaseName)
       SqlProjectPath: src/Database/$(DACPACSolutionBaseName).sqlproj
+  - template: pipeline-templates/job/code-build.yml
+    parameters:
+      SolutionBaseName: $(SolutionBaseName)
+      BuildConfiguration: $(BuildConfiguration)
+  - template: pipeline-templates/job/acceptance-test.yml
+    parameters:
+      BuildConfiguration: $(BuildConfiguration)
 
 - template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks
    

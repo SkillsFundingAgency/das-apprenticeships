@@ -1,8 +1,8 @@
 ﻿using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.Command.AddApproval
+namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship
 {
-    public class AddApprovalCommand : ICommand
+    public class AddApprenticeshipCommand : ICommand
     {
         public string Uln { get; set; }
         public string TrainingCode { get; set; }
@@ -12,7 +12,7 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
         public string LegalEntityName { get; set; }
         public DateTime? ActualStartDate { get; set; }
         public DateTime PlannedEndDate { get; set; }
-        public decimal AgreedPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public decimal? TrainingPrice { get; set; } 
         public decimal? EndPointAssessmentPrice { get; set; }
         public long? FundingEmployerAccountId { get; set; }
@@ -20,7 +20,6 @@ namespace SFA.DAS.Apprenticeships.Command.AddApproval
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public DateTime? PlannedStartDate { get; set; }
         public FundingPlatform? FundingPlatform { get; set; }
         public string ApprenticeshipHashedId { get; set; }
         public long AccountLegalEntityId { get; set; }

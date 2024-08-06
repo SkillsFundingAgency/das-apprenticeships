@@ -1,45 +1,24 @@
-﻿
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 
 namespace SFA.DAS.Apprenticeships.Domain.Factories
 {
     public class ApprenticeshipFactory : IApprenticeshipFactory
     {
         public ApprenticeshipDomainModel CreateNew(
+            long approvalsApprenticeshipId,
             string uln, 
-            string trainingCode, 
             DateTime dateOfBirth,
             string firstName, 
             string lastName, 
-            decimal? trainingPrice, 
-            decimal? endpointAssessmentPrice,
-            decimal totalPrice, 
-            string apprenticeshipHashedId, 
-            int fundingBandMaximum, 
-            DateTime? actualStartDate,
-            DateTime plannedEndDate,
-            long accountLegalEntityId,
-            long ukprn,
-            long employerAccountId,
-            string trainingCourseVersion)
+            string apprenticeshipHashedId)
         {
             return ApprenticeshipDomainModel.New(
+                approvalsApprenticeshipId,
                 uln,
-                trainingCode,
                 dateOfBirth,
                 firstName,
                 lastName,
-                trainingPrice,
-                endpointAssessmentPrice,
-                totalPrice,
-                apprenticeshipHashedId,
-                fundingBandMaximum,
-                actualStartDate,
-                plannedEndDate,
-                accountLegalEntityId,
-                ukprn,
-                employerAccountId,
-                trainingCourseVersion);
+                apprenticeshipHashedId);
         }
 
         public ApprenticeshipDomainModel GetExisting(DataAccess.Entities.Apprenticeship.Apprenticeship entity)

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
 using System;
+using FluentAssertions;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.SetPaymentsFrozen;
 
@@ -18,6 +19,6 @@ public class WhenSetPaymentsFrozenCommandConstructed
         var command = new SetPaymentsFrozenCommand(apprenticeshipKey, userId, setPayments);
 
         // Assert
-        Assert.That(command.NewPaymentsFrozenStatus.Equals(expectedFrozenStatus));
+        command.NewPaymentsFrozenStatus.Should().Be(expectedFrozenStatus);
     }
 }

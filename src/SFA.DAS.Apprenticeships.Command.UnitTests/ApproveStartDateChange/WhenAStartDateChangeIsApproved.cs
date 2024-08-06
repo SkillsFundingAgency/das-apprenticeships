@@ -8,6 +8,7 @@ using SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApproveStartDateChange;
@@ -35,20 +36,21 @@ public class WhenAStartDateChangeIsApproved
         //Arrange
         var command = _fixture.Create<ApproveStartDateChangeCommand>();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var startDate = _fixture.Create<DateTime>();
-        CreatePendingStartDateChange(apprenticeship, startDate, ChangeInitiator.Provider);
+        ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Provider, startDate);
         _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
         //Act
         await _commandHandler.Handle(command);
-            
+
         //Assert
         _apprenticeshipRepository.Verify(x => x.Update(
             It.Is<ApprenticeshipDomainModel>(y => 
                 y.GetEntity().StartDateChanges
-                .Count(z => z.RequestStatus == ChangeRequestStatus.Approved 
+                .Count(z => z.RequestStatus == ChangeRequestStatus.Approved
                             && z.EmployerApprovedBy == command.UserId) == 1
-                && y.GetEntity().ActualStartDate == startDate)));
+                && y.StartDate == startDate)));
     }
 
     [Test]
@@ -57,26 +59,20 @@ public class WhenAStartDateChangeIsApproved
         //Arrange
         var command = _fixture.Create<ApproveStartDateChangeCommand>();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var startDate = _fixture.Create<DateTime>();
-        CreatePendingStartDateChange(apprenticeship, startDate, ChangeInitiator.Employer);
+        ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Employer, startDate);
         _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
         //Act
         await _commandHandler.Handle(command);
-            
+
         //Assert
         _apprenticeshipRepository.Verify(x => x.Update(
-            It.Is<ApprenticeshipDomainModel>(y => 
+            It.Is<ApprenticeshipDomainModel>(y =>
                 y.GetEntity().StartDateChanges
-                    .Count(z => z.RequestStatus == ChangeRequestStatus.Approved 
+                    .Count(z => z.RequestStatus == ChangeRequestStatus.Approved
                                 && z.ProviderApprovedBy == command.UserId) == 1
-                && y.GetEntity().ActualStartDate == startDate)));
-    }
-
-    private void CreatePendingStartDateChange(ApprenticeshipDomainModel apprenticeship, DateTime startDate, ChangeInitiator changeInitiator)
-    {
-        apprenticeship.AddStartDateChange(startDate, _fixture.Create<DateTime>(), _fixture.Create<string>(), _fixture.Create<string>(),
-            _fixture.Create<DateTime>(), _fixture.Create<string>(), _fixture.Create<DateTime>(),
-            _fixture.Create<DateTime>(), ChangeRequestStatus.Created, changeInitiator);
+                && y.StartDate == startDate)));
     }
 }

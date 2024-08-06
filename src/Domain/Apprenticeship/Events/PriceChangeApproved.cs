@@ -7,7 +7,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
         public Guid ApprenticeshipKey { get; }
         public Guid PriceHistoryKey { get; }
         public ApprovedBy ApprovedBy { get; }
-
         public PriceChangeApproved(Guid apprenticeshipKey, Guid priceHistoryKey, ApprovedBy approvedBy)
         {
             ApprenticeshipKey = apprenticeshipKey;

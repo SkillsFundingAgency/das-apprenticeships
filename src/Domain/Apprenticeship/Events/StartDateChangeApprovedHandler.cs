@@ -1,4 +1,5 @@
 ﻿using NServiceBus;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Types;
@@ -16,26 +17,22 @@ public class StartDateChangeApprovedHandler : IDomainEventHandler<StartDateChang
         _messageSession = messageSession;
     }
 
-    public async Task Handle(StartDateChangeApproved @event, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task Handle(StartDateChangeApproved @event, CancellationToken cancellationToken = default)
     {
         var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
-        var approval = apprenticeship.Approvals.Single();
         var startDateChange = apprenticeship.StartDateChanges.Single(x => x.Key == @event.StartDateChangeKey);
         var startDateChangedEvent = new ApprenticeshipStartDateChangedEvent()
         {
-            ApprenticeshipKey = apprenticeship.Key,
-            ApprenticeshipId = approval.ApprovalsApprenticeshipId,
-            EmployerAccountId = apprenticeship.EmployerAccountId,
+            ApprenticeshipKey = apprenticeship.Key, 
+            ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
+            StartDate = apprenticeship.StartDate,
             ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? startDateChange.EmployerApprovedDate!.Value : startDateChange.ProviderApprovedDate!.Value,
-            ProviderId = apprenticeship.Ukprn,
-            ActualStartDate = startDateChange.ActualStartDate,
-            PlannedEndDate = startDateChange.PlannedEndDate,
-            AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
             ProviderApprovedBy = startDateChange.ProviderApprovedBy,
             EmployerApprovedBy = startDateChange.EmployerApprovedBy,
-            Initiator = startDateChange.Initiator.ToString()!
+            Initiator = startDateChange.Initiator.ToString()!,
+            Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
         };
-
+        
         await _messageSession.Publish(startDateChangedEvent);
     }
 }

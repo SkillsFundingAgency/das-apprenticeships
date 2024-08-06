@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Infrastructure;
 
@@ -25,16 +26,20 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return;
         }
 
+        var currentEpisode = apprenticeship.GetEpisode();
+
         switch (_accountIdClaims.AccountIdClaimsType)
         {
             case AccountIdClaimsType.Provider:
-                if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.Ukprn)) {
-                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.Ukprn), apprenticeship.Ukprn));
+                if (_accountIdClaims.AccountIds!.All(x => x != currentEpisode.Ukprn))
+                {
+                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(currentEpisode.Ukprn), currentEpisode.Ukprn));
                 }
                 break;
             case AccountIdClaimsType.Employer:
-                if (!_accountIdClaims.AccountIds.Any(x => x == apprenticeship.EmployerAccountId)) {
-                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(apprenticeship.EmployerAccountId),apprenticeship.EmployerAccountId));
+                if (_accountIdClaims.AccountIds!.All(x => x != currentEpisode.EmployerAccountId))
+                {
+                    throw new UnauthorizedAccessException(InvalidAccountIdErrorMessage(nameof(currentEpisode.EmployerAccountId), currentEpisode.EmployerAccountId));
                 }
                 break;
             default:
@@ -42,7 +47,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         }
     }
             
-    public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(DbSet<Apprenticeship> apprenticeships)
+    public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(IQueryable<Apprenticeship> apprenticeships)
     {
         if (!apprenticeships.Any())
         {
@@ -55,12 +60,45 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return apprenticeships;
         }
 
+        if (_accountIdClaims.AccountIds == null)
+        {
+            _logger.LogInformation("There are no account IDs in the account ID claims.");
+            return apprenticeships;
+        }
+
+        var apprenticeshipsWithEpisodes = apprenticeships
+            .Include(x => x.Episodes);
+
+        var currentDateTime = DateTime.UtcNow;
+
         switch (_accountIdClaims.AccountIdClaimsType)
         {
             case AccountIdClaimsType.Provider:
-                return apprenticeships.Where(x => _accountIdClaims.AccountIds.Contains(x.Ukprn));
+                return apprenticeshipsWithEpisodes
+                    .Select(a => new
+                    {
+                        Apprenticeship = a,
+                        CurrentEpisode = a.Episodes
+                            .FirstOrDefault(e => e.Prices.Any(price => 
+                                price.StartDate <= currentDateTime && price.EndDate >= currentDateTime
+                                || price.StartDate >= currentDateTime
+                                || price.EndDate <= currentDateTime))
+                    })
+                    .Where(x => x.CurrentEpisode != null && _accountIdClaims.AccountIds.Contains(x.CurrentEpisode.Ukprn))
+                    .Select(x => x.Apprenticeship); ;
             case AccountIdClaimsType.Employer:
-                return apprenticeships.Where(x => _accountIdClaims.AccountIds.Contains(x.EmployerAccountId));
+                return apprenticeshipsWithEpisodes
+                    .Select(a => new
+                    {
+                        Apprenticeship = a,
+                        CurrentEpisode = a.Episodes
+                            .FirstOrDefault(e => e.Prices.Any(price =>
+                                price.StartDate <= currentDateTime && price.EndDate >= currentDateTime
+                                || price.StartDate >= currentDateTime
+                                || price.EndDate <= currentDateTime))
+                    })
+                    .Where(x => x.CurrentEpisode != null && _accountIdClaims.AccountIds.Contains(x.CurrentEpisode.EmployerAccountId))
+                    .Select(x => x.Apprenticeship); ;
             default:
                 throw new ArgumentOutOfRangeException(InvalidAccountIdClaimsTypeErrorMessage());
         }
