@@ -98,7 +98,8 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             apprenticeship.Ukprn.Should().Be(ApprovalCreatedEvent.UKPRN);
             int.Parse(apprenticeship.TrainingCode).Should().Be(int.Parse(ApprovalCreatedEvent.TrainingCode));
             apprenticeship.Key.Should().NotBe(Guid.Empty);
-           
+            apprenticeship.Ukprn.Should().Be(ApprovalCreatedEvent.UKPRN);
+
             var approval = (await dbConnection.GetAllAsync<Approval>()).Single(x => x.ApprenticeshipKey == apprenticeship.Key);
             approval.ActualStartDate.Should().BeSameDateAs(ApprovalCreatedEvent.ActualStartDate!.Value);
             approval.ApprovalsApprenticeshipId.Should().Be(ApprovalCreatedEvent.ApprovalsApprenticeshipId);
