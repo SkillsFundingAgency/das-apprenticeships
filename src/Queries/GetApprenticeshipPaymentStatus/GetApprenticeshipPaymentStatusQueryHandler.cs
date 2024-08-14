@@ -15,9 +15,15 @@ public class GetApprenticeshipPaymentStatusQueryHandler : IQueryHandler<GetAppre
     {
         var paymentsFrozen = await _apprenticeshipQueryRepository.GetPaymentStatus(query.ApprenticeshipKey);
 
+        if(paymentsFrozen == null)
+            return null;
+
         return new GetApprenticeshipPaymentStatusResponse
         {
-            PaymentsFrozen = paymentsFrozen
+            ApprenticeshipKey = query.ApprenticeshipKey,
+            PaymentsFrozen = paymentsFrozen.IsFrozen,
+            ReasonFrozen = paymentsFrozen.Reason,
+            FrozenOn = paymentsFrozen.FrozenOn
         };
     }
 }

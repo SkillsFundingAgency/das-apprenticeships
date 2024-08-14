@@ -1,7 +1,7 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -21,47 +21,99 @@ using SFA.DAS.Apprenticeships.Enums;
 
      public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
      {
-         var dataModels = await DbContext.Apprenticeships
-             .Where(x => x.Ukprn == ukprn)
-             .Include(x => x.Approvals)
-             .Where(a => a.Approvals.Any(c => (fundingPlatform == null || c.FundingPlatform == fundingPlatform)))
+         var apprenticeships = await DbContext.Apprenticeships
+             .Include(x => x.Episodes)
+             .Where(x => x.Episodes.Any(y => y.Ukprn == ukprn && (fundingPlatform == null || y.FundingPlatform == fundingPlatform)))
              .ToListAsync();
         
-         var result = dataModels.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
+         var result = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
          return result;
+     }
+     public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
+     {
+         var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
+             .SingleOrDefaultAsync(x => x.ApprovalsApprenticeshipId == apprenticeshipId);
+         return apprenticeshipWithMatchingId?.Key;
      }
 
      public async Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey)
      {
-         var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
-             x.Key == apprenticeshipKey);
-         return apprenticeship == null ? null :  new ApprenticeshipPrice
+         var apprenticeship = await DbContext.Apprenticeships
+             .Include(x => x.Episodes)
+             .ThenInclude(x => x.Prices)
+             .FirstOrDefaultAsync(x => x.Key == apprenticeshipKey);
+
+         var episodes = apprenticeship?.Episodes.ToList(); 
+         var prices = episodes?.SelectMany(x => x.Prices).Where(x => !x.IsDeleted).ToList();
+
+         var latestPrice = prices?.MaxBy(x => x.StartDate);
+         if (latestPrice == null)
          {
-             TotalPrice = apprenticeship.TotalPrice,
-             AssessmentPrice = apprenticeship.EndPointAssessmentPrice,
-             TrainingPrice = apprenticeship.TrainingPrice,
-             FundingBandMaximum = apprenticeship.FundingBandMaximum,
-             ApprenticeshipActualStartDate = apprenticeship.ActualStartDate,
-             ApprenticeshipPlannedEndDate = apprenticeship.PlannedEndDate,
-             AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
-             UKPRN = apprenticeship.Ukprn
+             return null;
+         }
+
+         var latestEpisode = episodes?.MaxBy(x => x.Prices.Where(x => !x.IsDeleted).Select(x => x.StartDate));
+         if (latestEpisode == null)
+         {
+             return null;
+         }
+
+         var firstPrice = prices?.MinBy(x => x.StartDate);
+         if (firstPrice == null)
+         {
+             return null;
+         }
+         
+         return new ApprenticeshipPrice
+         {
+             TotalPrice = latestPrice.TotalPrice,
+             AssessmentPrice = latestPrice.EndPointAssessmentPrice,
+             TrainingPrice = latestPrice.TrainingPrice,
+             FundingBandMaximum = latestPrice.FundingBandMaximum,
+             ApprenticeshipActualStartDate = firstPrice.StartDate,
+             ApprenticeshipPlannedEndDate = latestPrice.EndDate,
+             AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
+             UKPRN = latestEpisode.Ukprn
          };
      }
      public async Task<ApprenticeshipStartDate?> GetStartDate(Guid apprenticeshipKey)
      {
-         var apprenticeship = await DbContext.Apprenticeships.FirstOrDefaultAsync(x =>
-             x.Key == apprenticeshipKey);
+         var apprenticeship = await DbContext.Apprenticeships
+             .Include(x => x.Episodes)
+             .ThenInclude(x => x.Prices)
+             .FirstOrDefaultAsync(x => x.Key == apprenticeshipKey);
+
+         var episodes = apprenticeship?.Episodes.ToList(); 
+         var prices = episodes?.SelectMany(x => x.Prices).Where(x => !x.IsDeleted).ToList();
+
+         var latestPrice = prices?.MaxBy(x => x.StartDate);
+         if (latestPrice == null)
+         {
+             return null;
+         }
+
+         var latestEpisode = episodes?.MaxBy(x => x.Prices.Where(y => !y.IsDeleted).Max(y => y.StartDate));
+         if (latestEpisode == null)
+         {
+             return null;
+         }
+
+         var firstPrice = prices?.MinBy(x => x.StartDate);
+         if (firstPrice == null)
+         {
+             return null;
+         }
 
          return apprenticeship == null ? null : new ApprenticeshipStartDate
          {
 	         ApprenticeshipKey = apprenticeship.Key,
-	         ActualStartDate = apprenticeship.ActualStartDate,
-	         PlannedEndDate = apprenticeship.PlannedEndDate,
-	         AccountLegalEntityId = apprenticeship.AccountLegalEntityId,
-	         UKPRN = apprenticeship.Ukprn,
+	         ActualStartDate = firstPrice.StartDate,
+	         PlannedEndDate = latestPrice.EndDate,
+	         AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
+	         UKPRN = latestEpisode.Ukprn,
 	         ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
-	         CourseCode = apprenticeship.TrainingCode,
-	         CourseVersion = apprenticeship.TrainingCourseVersion
+	         CourseCode = latestEpisode.TrainingCode,
+	         CourseVersion = latestEpisode.TrainingCourseVersion
          };
      }
 
@@ -73,11 +125,47 @@ using SFA.DAS.Apprenticeships.Enums;
 
          try
          {
-             pendingPriceChange = await DbContext.Apprenticeships
+             var apprenticeship = await DbContext.Apprenticeships
                  .Include(x => x.PriceHistories)
+                 .Include(x => x.Episodes).ThenInclude(x => x.Prices)
                  .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created))
-                 .Select(PriceHistoryToPendingPriceChange())
                  .SingleOrDefaultAsync();
+
+             var episodes = apprenticeship?.Episodes.ToList(); 
+             var prices = episodes?.SelectMany(x => x.Prices).Where(x => !x.IsDeleted).ToList();
+
+             var latestPrice = prices?.MaxBy(x => x.StartDate);
+             if (latestPrice == null)
+             {
+                 return null;
+             }
+
+             var latestEpisode = episodes?.MaxBy(x => x.Prices.Where(y => !y.IsDeleted).Max(y => y.StartDate));
+             if (latestEpisode == null)
+             {
+                 return null;
+             }
+
+             var priceHistory = apprenticeship!.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created);
+
+             return new PendingPriceChange
+             {
+                 FirstName = apprenticeship!.FirstName,
+                 LastName = apprenticeship.LastName,
+                 OriginalTrainingPrice = latestPrice.TrainingPrice,
+                 OriginalAssessmentPrice = latestPrice.EndPointAssessmentPrice,
+                 OriginalTotalPrice = latestPrice.TotalPrice,
+                 PendingTrainingPrice = priceHistory.TrainingPrice,
+                 PendingAssessmentPrice = priceHistory.AssessmentPrice,
+                 PendingTotalPrice = priceHistory.TotalPrice,
+                 EffectiveFrom = priceHistory.EffectiveFromDate,
+                 Reason = priceHistory.ChangeReason,
+                 Ukprn = latestEpisode.Ukprn,
+                 ProviderApprovedDate = priceHistory.ProviderApprovedDate,
+                 EmployerApprovedDate = priceHistory.EmployerApprovedDate,
+                 AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
+                 Initiator = priceHistory.Initiator.ToString()
+             };
          }
          catch(Exception e)
          {
@@ -85,28 +173,6 @@ using SFA.DAS.Apprenticeships.Enums;
          }
 
          return pendingPriceChange;
-     }
-
-     private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingPriceChange>> PriceHistoryToPendingPriceChange()
-     {
-         return x => new PendingPriceChange
-         {
-             FirstName = x.FirstName,
-             LastName = x.LastName,
-             OriginalTrainingPrice = x.TrainingPrice,
-             OriginalAssessmentPrice = x.EndPointAssessmentPrice,
-             OriginalTotalPrice = x.TotalPrice,
-             PendingTrainingPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).TrainingPrice,
-             PendingAssessmentPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).AssessmentPrice,
-             PendingTotalPrice = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).TotalPrice,
-             EffectiveFrom = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).EffectiveFromDate,
-             Reason = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).ChangeReason,
-             Ukprn = x.Ukprn,
-             ProviderApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).ProviderApprovedDate,
-             EmployerApprovedDate = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).EmployerApprovedDate,
-             AccountLegalEntityId = x.AccountLegalEntityId,
-             Initiator = x.PriceHistories.Single(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created).Initiator.ToString()
-         };
      }
 
      public async Task<Guid?> GetKey(string apprenticeshipHashedId)
@@ -124,11 +190,47 @@ using SFA.DAS.Apprenticeships.Enums;
 
          try
          {
-             pendingStartDateChange = await DbContext.Apprenticeships
+             var apprenticeship = await DbContext.Apprenticeships
                  .Include(x => x.StartDateChanges)
+                 .Include(x => x.Episodes).ThenInclude(x => x.Prices)
                  .Where(x => x.Key == apprenticeshipKey && x.StartDateChanges.Any(y => y.RequestStatus == ChangeRequestStatus.Created))
-                 .Select(StartDateChangeToPendingStartDateChange())
                  .SingleOrDefaultAsync();
+             var episodes = apprenticeship?.Episodes.ToList(); 
+             var prices = episodes?.SelectMany(x => x.Prices).Where(x => !x.IsDeleted).ToList();
+
+             var latestPrice = prices?.MaxBy(x => x.StartDate);
+             if (latestPrice == null)
+             {
+                 return null;
+             }
+
+             var latestEpisode = episodes?.MaxBy(x => x.Prices.Where(x => !x.IsDeleted).Select(x => x.StartDate));
+             if (latestEpisode == null)
+             {
+                 return null;
+             }
+
+             var firstPrice = prices?.MinBy(x => x.StartDate);
+             if (firstPrice == null)
+             {
+                 return null;
+             }
+
+             var startDateChange = apprenticeship!.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created);
+
+             return new PendingStartDateChange
+             {
+                 Reason = startDateChange.Reason,
+                 Ukprn = latestEpisode.Ukprn,
+                 ProviderApprovedDate = startDateChange.ProviderApprovedDate,
+                 EmployerApprovedDate = startDateChange.EmployerApprovedDate,
+                 AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
+                 Initiator = startDateChange.Initiator.ToString(),
+                 OriginalActualStartDate = firstPrice.StartDate,
+                 PendingActualStartDate = startDateChange.ActualStartDate,
+                 OriginalPlannedEndDate = latestPrice.EndDate,
+                 PendingPlannedEndDate = startDateChange.PlannedEndDate
+             };
          }
          catch (Exception e)
          {
@@ -138,39 +240,38 @@ using SFA.DAS.Apprenticeships.Enums;
          return pendingStartDateChange;
      }
 
-     public async Task<bool?> GetPaymentStatus(Guid apprenticeshipKey)
+     public async Task<PaymentStatus?> GetPaymentStatus(Guid apprenticeshipKey)
      {
-	     bool? paymentsFrozen = null;
+        PaymentStatus? paymentStatus = null;
 
 	     try
-	     {
-            paymentsFrozen = await DbContext.Apprenticeships
-	            .Where(x => x.Key == apprenticeshipKey)
-	            .Select(x => x.PaymentsFrozen)
-	            .SingleAsync();
+	     { 
+             var apprenticeship = await DbContext.Apprenticeships
+                 .Include(x => x.Episodes)
+                 .Include(x => x.FreezeRequests)
+                 .FirstOrDefaultAsync(x => x.Key == apprenticeshipKey);
+
+             var episodes = apprenticeship?.Episodes.ToList(); 
+             var latestEpisode = episodes?.MaxBy(x => x.Prices.Where(x => !x.IsDeleted).Select(x => x.StartDate));
+             if (latestEpisode == null)
+             {
+                 return null;
+             }
+
+             paymentStatus = new PaymentStatus() { IsFrozen = latestEpisode.PaymentsFrozen };
+             
+             if (paymentStatus.IsFrozen)
+             {
+                 var activeFreezeRequest = apprenticeship!.FreezeRequests.Single(x => x.ApprenticeshipKey == apprenticeshipKey && !x.Unfrozen);
+                 paymentStatus.Reason = activeFreezeRequest.Reason;
+                 paymentStatus.FrozenOn = activeFreezeRequest.FrozenDateTime;
+             }
 	     }
 	     catch (Exception e)
 	     {
 		     _logger.LogError(e, "Error getting payment status for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
 		 }
 
-	     return paymentsFrozen;
-     }
-
-     private static Expression<Func<DataAccess.Entities.Apprenticeship.Apprenticeship, PendingStartDateChange>> StartDateChangeToPendingStartDateChange()
-     {
-         return x => new PendingStartDateChange
-         {
-             Reason = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Reason,
-             Ukprn = x.Ukprn,
-             ProviderApprovedDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ProviderApprovedDate,
-             EmployerApprovedDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).EmployerApprovedDate,
-             AccountLegalEntityId = x.AccountLegalEntityId,
-             Initiator = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).Initiator.ToString(),
-             OriginalActualStartDate = x.ActualStartDate.GetValueOrDefault(),
-             PendingActualStartDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).ActualStartDate,
-			 OriginalPlannedEndDate = x.PlannedEndDate.GetValueOrDefault(),
-			 PendingPlannedEndDate = x.StartDateChanges.Single(y => y.RequestStatus == ChangeRequestStatus.Created).PlannedEndDate
-		 };
+	     return paymentStatus;
      }
  }

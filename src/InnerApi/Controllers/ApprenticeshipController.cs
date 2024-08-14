@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Command;
+using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
@@ -21,13 +25,17 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 public class ApprenticeshipController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
+    private readonly ICommandDispatcher _commandDispatcher;
     private readonly ILogger<ApprenticeshipController> _logger;
 
     /// <summary>Initializes a new instance of the <see cref="ApprenticeshipController"/> class.</summary>
-    /// <param name="queryDispatcher"></param>
-    public ApprenticeshipController(IQueryDispatcher queryDispatcher, ILogger<ApprenticeshipController> logger)
+    /// <param name="queryDispatcher">Gets data</param>
+    /// <param name="commandDispatcher">updates data</param>
+    /// <param name="logger">ILogger</param>
+    public ApprenticeshipController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<ApprenticeshipController> logger)
     {
         _queryDispatcher = queryDispatcher;
+        _commandDispatcher = commandDispatcher;
         _logger = logger;
     }
 
@@ -79,26 +87,11 @@ public class ApprenticeshipController : ControllerBase
     }
 
     /// <summary>
-    /// Get Apprenticeship Payment Status (Frozen/Unfrozen)
+    /// Get Apprenticeship Key
     /// </summary>
-    /// <param name="apprenticeshipKey"></param>
-    /// <returns>Apprenticeship Payment Status (Frozen/Unfrozen)</returns>
-    [HttpGet("{apprenticeshipKey}/paymentStatus")]
-    [ProducesResponseType(200)]
-    public async Task<IActionResult> GetApprenticeshipPaymentStatus(Guid apprenticeshipKey)
-    {
-	    var request = new GetApprenticeshipPaymentStatusRequest { ApprenticeshipKey = apprenticeshipKey };
-	    var response = await _queryDispatcher.Send<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse?>(request);
-	    if (response == null) return NotFound();
-	    return Ok(response);
-    }
-
-	/// <summary>
-	/// Get Apprenticeship Key
-	/// </summary>
-	/// <param name="apprenticeshipHashedId">This should be the hashed id for the apprenticeship not the commitment</param>
-	/// <returns>Apprenticeship Key</returns>
-	[HttpGet("{apprenticeshipHashedId}/key")]
+    /// <param name="apprenticeshipHashedId">This should be the hashed id for the apprenticeship not the commitment</param>
+    /// <returns>Apprenticeship Key</returns>
+    [HttpGet("{apprenticeshipHashedId}/key")]
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetApprenticeshipKey(string apprenticeshipHashedId)
     {

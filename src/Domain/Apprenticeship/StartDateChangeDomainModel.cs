@@ -58,7 +58,7 @@ public class StartDateChangeDomainModel
         return _entity;
     }
 
-    internal static StartDateChangeDomainModel Get(StartDateChange entity)
+    public static StartDateChangeDomainModel Get(StartDateChange entity)
     {
         return new StartDateChangeDomainModel(entity);
     }

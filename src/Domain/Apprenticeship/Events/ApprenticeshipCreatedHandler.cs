@@ -1,4 +1,5 @@
 ﻿using NServiceBus;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Types;
 
@@ -18,28 +19,15 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events
         public async Task Handle(ApprenticeshipCreated @event, CancellationToken cancellationToken = default(CancellationToken))
         {
             var apprenticeship = await _repository.Get(@event.ApprenticeshipKey);
-            var approval = apprenticeship.Approvals.Single();
             var apprenticeshipCreatedEvent = new ApprenticeshipCreatedEvent
             {
                 ApprenticeshipKey = apprenticeship.Key, 
                 Uln = apprenticeship.Uln,
-                TrainingCode = apprenticeship.TrainingCode,
-                FundingEmployerAccountId = approval.FundingEmployerAccountId,
-                AgreedPrice = approval.AgreedPrice,
-                FundingType = (FundingType)approval.FundingType,
-                ActualStartDate = approval.ActualStartDate,
-                ApprovalsApprenticeshipId = approval.ApprovalsApprenticeshipId,
-                EmployerAccountId = apprenticeship.EmployerAccountId,
-                LegalEntityName = approval.LegalEntityName,
-                PlannedEndDate = approval.PlannedEndDate,
-                UKPRN = apprenticeship.Ukprn,
-                FundingBandMaximum = approval.FundingBandMaximum,
+                ApprovalsApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
                 DateOfBirth = apprenticeship.DateOfBirth,
                 FirstName = apprenticeship.FirstName, 
                 LastName = apprenticeship.LastName,
-                AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
-                PlannedStartDate = approval.PlannedStartDate,
-                FundingPlatform = (FundingPlatform?)approval.FundingPlatform
+                Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
             };
 
             await _messageSession.Publish(apprenticeshipCreatedEvent);

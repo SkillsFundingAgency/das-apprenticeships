@@ -8,78 +8,91 @@ namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 public class ApprenticeshipDomainModel : AggregateRoot
 {
     private readonly DataAccess.Entities.Apprenticeship.Apprenticeship _entity;
-    private readonly List<ApprovalDomainModel> _approvals;
+    private readonly List<EpisodeDomainModel> _episodes;
     private readonly List<PriceHistoryDomainModel> _priceHistories;
     private readonly List<StartDateChangeDomainModel> _startDateChanges;
+    private readonly List<FreezeRequestDomainModel> _freezeRequests;
 
     public Guid Key => _entity.Key;
-    public string TrainingCode => _entity.TrainingCode;
+    public long ApprovalsApprenticeshipId => _entity.ApprovalsApprenticeshipId;
     public string Uln => _entity.Uln;
     public string FirstName => _entity.FirstName;
     public string LastName => _entity.LastName;
     public DateTime DateOfBirth => _entity.DateOfBirth;
-    public long EmployerAccountId => _entity.EmployerAccountId;
-    public long Ukprn => _entity.Ukprn;
-    public bool PaymentsFrozen => _entity.PaymentsFrozen.GetValueOrDefault();
-    public IReadOnlyCollection<ApprovalDomainModel> Approvals => new ReadOnlyCollection<ApprovalDomainModel>(_approvals);
+    public IReadOnlyCollection<EpisodeDomainModel> Episodes => new ReadOnlyCollection<EpisodeDomainModel>(_episodes);
     public IReadOnlyCollection<PriceHistoryDomainModel> PriceHistories => new ReadOnlyCollection<PriceHistoryDomainModel>(_priceHistories);
     public IReadOnlyCollection<StartDateChangeDomainModel> StartDateChanges => new ReadOnlyCollection<StartDateChangeDomainModel>(_startDateChanges);
-
-    public int? AgeAtStartOfApprenticeship
+    public IReadOnlyCollection<FreezeRequestDomainModel> FreezeRequests => new ReadOnlyCollection<FreezeRequestDomainModel>(_freezeRequests);
+    public DateTime StartDate
     {
         get
         {
-            if (_entity.ActualStartDate.HasValue && _approvals.Single().FundingPlatform == FundingPlatform.DAS)
+            var startDate = AllPrices.MinBy(x => x.StartDate)?.StartDate;
+            if (startDate == null)
             {
-                return DateOfBirth.CalculateAgeAtDate(_entity.ActualStartDate.Value);
+                throw new InvalidOperationException($"Unexpected error. {nameof(StartDate)} could not be found in the {nameof(ApprenticeshipDomainModel)}.");
             }
-            
-            return null;
+
+            return startDate.Value;
         }
     }
 
+    public DateTime? EndDate => AllPrices.MaxBy(x => x.StartDate)?.EndDate;
+    public IEnumerable<EpisodePriceDomainModel> AllPrices => 
+        _episodes.SelectMany(x => x.EpisodePrices).Where(x => !x.IsDeleted);
+    public EpisodePriceDomainModel LatestPrice
+    {
+        get
+        {
+            var latestPrice = AllPrices.MaxBy(x => x.StartDate);
+            if (latestPrice == null)
+            {
+                throw new InvalidOperationException($"Unexpected error. {nameof(LatestPrice)} could not be found in the {nameof(ApprenticeshipDomainModel)}.");
+            }
+
+            return latestPrice;
+        }
+    }
+    public EpisodeDomainModel LatestEpisode
+    {
+        get
+        {
+            var latestEpisode = _episodes.MaxBy(x => x.EpisodePrices.Where(y => !y.IsDeleted).Max(y => y.StartDate));
+            if (latestEpisode == null)
+            {
+                throw new InvalidOperationException($"Unexpected error. {nameof(LatestEpisode)} could not be found in the {nameof(ApprenticeshipDomainModel)}.");
+            }
+
+            return latestEpisode;
+        }
+    }
+
+    public PriceHistoryDomainModel? PendingPriceChange => _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
+    public StartDateChangeDomainModel? PendingStartDateChange => _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
+
+    public int AgeAtStartOfApprenticeship => DateOfBirth.CalculateAgeAtDate(StartDate);
+
     internal static ApprenticeshipDomainModel New(
+        long approvalsApprenticeshipId,
         string uln,
-        string trainingCode,
         DateTime dateOfBirth,
         string firstName,
         string lastName,
-        decimal? trainingPrice,
-        decimal? endpointAssessmentPrice,
-        decimal totalPrice,
-        string apprenticeshipHashedId,
-        int fundingBandMaximum,
-        DateTime? actualStartDate,
-        DateTime? plannedEndDate,
-        long accountLegalEntityId,
-        long ukprn,
-        long employerAccountId,
-        string? trainingCourseVersion)
+        string apprenticeshipHashedId)
     {
         return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
         {
             Key = Guid.NewGuid(),
+            ApprovalsApprenticeshipId = approvalsApprenticeshipId,
             Uln = uln,
-            TrainingCode = trainingCode,
             FirstName = firstName,
             LastName = lastName,
             DateOfBirth = dateOfBirth,
-            ApprenticeshipHashedId = apprenticeshipHashedId,
-            TrainingPrice = trainingPrice,
-            EndPointAssessmentPrice = endpointAssessmentPrice,
-            TotalPrice = totalPrice,
-            FundingBandMaximum = fundingBandMaximum,
-            ActualStartDate = actualStartDate,
-            PlannedEndDate = plannedEndDate,
-            AccountLegalEntityId = accountLegalEntityId,
-            EmployerAccountId = employerAccountId,
-            Ukprn = ukprn, 
-            TrainingCourseVersion = trainingCourseVersion,
-            PaymentsFrozen = false
+            ApprenticeshipHashedId = apprenticeshipHashedId
         });
     }
 
-    internal static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+    public static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
     {
         return new ApprenticeshipDomainModel(entity, false);
     }
@@ -87,20 +100,55 @@ public class ApprenticeshipDomainModel : AggregateRoot
     private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity, bool newApprenticeship = true)
     {
         _entity = entity;
-        _approvals = entity.Approvals.Select(ApprovalDomainModel.Get).ToList();
+        _episodes = entity.Episodes.Select(EpisodeDomainModel.Get).ToList();
         _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
         _startDateChanges = entity.StartDateChanges.Select(StartDateChangeDomainModel.Get).ToList();
+        _freezeRequests = entity.FreezeRequests.Select(FreezeRequestDomainModel.Get).ToList();
+        
         if (newApprenticeship)
         {
             AddEvent(new ApprenticeshipCreated(_entity.Key));
         }
     }
 
-    public void AddApproval(long approvalsApprenticeshipId, string legalEntityName, DateTime? actualStartDate, DateTime plannedEndDate, decimal agreedPrice, long? fundingEmployerAccountId, FundingType fundingType, int fundingBandMaximum, DateTime? plannedStartDate, FundingPlatform? fundingPlatform)
+    public void AddEpisode(
+        long ukprn,
+        long employerAccountId,
+        DateTime startDate,
+        DateTime endDate,
+        decimal totalPrice,
+        decimal? trainingPrice,
+        decimal? endpointAssessmentPrice,
+        FundingType fundingType, 
+        FundingPlatform? fundingPlatform,
+        int fundingBandMaximum,
+        long? fundingEmployerAccountId, 
+        string legalEntityName, 
+        long? accountLegalEntityId,
+        string trainingCode,
+        string? trainingCourseVersion)
     {
-        var approval = ApprovalDomainModel.New(approvalsApprenticeshipId, legalEntityName, actualStartDate, plannedEndDate, agreedPrice, fundingEmployerAccountId, fundingType, fundingBandMaximum, plannedStartDate, fundingPlatform);
-        _approvals.Add(approval);
-        _entity.Approvals.Add(approval.GetEntity());
+        var episode = EpisodeDomainModel.New(
+            ukprn,
+            employerAccountId,
+            fundingType,
+            fundingPlatform,
+            fundingEmployerAccountId,
+            legalEntityName,
+            accountLegalEntityId,
+            trainingCode,
+            trainingCourseVersion); 
+        
+        episode.AddEpisodePrice(
+            startDate,
+            endDate,
+            totalPrice,
+            trainingPrice,
+            endpointAssessmentPrice,
+            fundingBandMaximum);
+
+        _episodes.Add(episode);
+        _entity.Episodes.Add(episode.GetEntity());
     }
 
     public DataAccess.Entities.Apprenticeship.Apprenticeship GetEntity()
@@ -127,7 +175,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
             throw new InvalidOperationException("There is already a pending price change for this apprenticeship.");
         }
 
-        var priceHistory = PriceHistoryDomainModel.New(this.Key,
+        var priceHistory = PriceHistoryDomainModel.New(
+            Key,
             trainingPrice,
             assessmentPrice,
             totalPrice,
@@ -149,33 +198,33 @@ public class ApprenticeshipDomainModel : AggregateRoot
     {
         var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
-        if(pendingPriceChange == null)
+        if (pendingPriceChange == null)
             throw new InvalidOperationException("There is no pending price change to approve for this apprenticeship.");
 
-        if(pendingPriceChange.Initiator == ChangeInitiator.Provider)
+        if (pendingPriceChange.Initiator == ChangeInitiator.Provider)
         {
-            // Employer Approving
-            pendingPriceChange?.Approve(userApprovedBy, DateTime.Now);
+            pendingPriceChange.ApproveByEmployer(userApprovedBy, DateTime.Now);
+            UpdatePrices(pendingPriceChange);
             AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
-            return;
         }
+        else
+        {
+            if (trainingPrice == null || assessmentPrice == null)
+                throw new InvalidOperationException("Both training and assessment prices must be provided when " +
+                                                    "approving an employer-initiated price change request.");
 
-        // Provider Approving
-        if (trainingPrice == null || assessmentPrice == null)
-            throw new InvalidOperationException("Both training and assessment prices must be provided when approving an employer-initiated price change.");
+            if (pendingPriceChange.TotalPrice != trainingPrice + assessmentPrice)
+                throw new InvalidOperationException($"The total price ({pendingPriceChange.TotalPrice}) for this " +
+                                                    $"employer-initiated price change request does not match the sum of the " +
+                                                    $"training price ({trainingPrice}) and the assessment price ({assessmentPrice}).");
 
-        if (pendingPriceChange.TotalPrice != trainingPrice + assessmentPrice)
-            throw new InvalidOperationException($"The total price ({pendingPriceChange.TotalPrice}) does not match the sum of the training price ({pendingPriceChange.TrainingPrice}) and the assessment ({pendingPriceChange.AssessmentPrice}) price.");
-
-        pendingPriceChange?.Approve(userApprovedBy, DateTime.Now, trainingPrice.Value, assessmentPrice.Value);
-        AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
+            pendingPriceChange.ApproveByProvider(userApprovedBy, DateTime.Now, trainingPrice.Value, assessmentPrice.Value);
+            UpdatePrices(pendingPriceChange);
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));   
+        }
     }
 
-    /// <summary>
-    /// If provider initiates a price change at a lower price than the current price, 
-    /// then the employer does not need to approve the price change and its status can be set to Approved.
-    /// </summary>
-    public void ProviderSelfApprovePriceChange()
+    public void ProviderAutoApprovePriceChange()
     {
         var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
@@ -183,22 +232,26 @@ public class ApprenticeshipDomainModel : AggregateRoot
             throw new InvalidOperationException("There is no pending price change request to approve");
 
         if (pendingPriceChange.Initiator != ChangeInitiator.Provider)
-            throw new InvalidOperationException($"{nameof(ProviderSelfApprovePriceChange)} is only valid for provider-initiated changes");
+            throw new InvalidOperationException($"{nameof(ProviderAutoApprovePriceChange)} is only valid for provider-initiated changes");
 
-        pendingPriceChange?.Approve();
-        AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange!.Key, ApprovedBy.Provider));
+        pendingPriceChange.AutoApprove();
+        UpdatePrices(pendingPriceChange);
+        AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
     }
 
     public void CancelPendingPriceChange()
     {
-        var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
-        pendingPriceChange.Cancel();
+        if (PendingPriceChange == null)
+            throw new InvalidOperationException("There is no pending price change request to cancel");
+
+        PendingPriceChange.Cancel();
     }
 
     public void RejectPendingPriceChange(string? reason)
     {
-        var pendingPriceChange = _priceHistories.Single(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
-        pendingPriceChange.Reject(reason);
+        if (PendingPriceChange == null)
+            throw new InvalidOperationException("There is no pending price change request to reject");
+        PendingPriceChange.Reject(reason);
     }
 
     public void AddStartDateChange(
@@ -233,6 +286,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _startDateChanges.Add(startDateChange);
         _entity.StartDateChanges.Add(startDateChange.GetEntity());
     }
+
     public void ApproveStartDateChange(string? userApprovedBy)
     {
         var pendingStartDateChange = _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
@@ -241,24 +295,62 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         var approver = pendingStartDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
         pendingStartDateChange.Approve(approver, userApprovedBy, DateTime.UtcNow);
-        _entity.ActualStartDate = pendingStartDateChange.ActualStartDate;
-        _entity.PlannedEndDate = pendingStartDateChange.PlannedEndDate;
-
+        LatestEpisode.UpdatePricesForApprovedStartDateChange(pendingStartDateChange);
         AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver));
     }
 
     public void RejectStartDateChange(string? reason)
     {
-        var pendingStartDateChange = _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
-        if (pendingStartDateChange == null)
+        if (PendingStartDateChange == null)
             throw new InvalidOperationException("There is no pending start date request to reject for this apprenticeship.");
 
-        pendingStartDateChange.Reject(reason);
+        PendingStartDateChange.Reject(reason);
     }
 
     public void CancelPendingStartDateChange()
     {
-	    var pendingStartDateChange = _startDateChanges.Single(x => x.RequestStatus == ChangeRequestStatus.Created);
-	    pendingStartDateChange.Cancel();
+        if (PendingStartDateChange == null)
+            throw new InvalidOperationException("There is no pending start date request to cancel for this apprenticeship.");
+
+        PendingStartDateChange.Cancel();
+    }
+
+    public void SetPaymentsFrozen(bool newPaymentsFrozenStatus, string userId, DateTime changeDateTime, string? reason = null)
+    {
+        if (LatestEpisode.PaymentsFrozen == newPaymentsFrozenStatus)
+        {
+            throw new InvalidOperationException($"Payments are already {(newPaymentsFrozenStatus ? "frozen" : "unfrozen")} for this apprenticeship: {Key}.");
+        }
+
+        LatestEpisode.UpdatePaymentStatus(newPaymentsFrozenStatus); 
+
+        if (newPaymentsFrozenStatus)
+        {
+            var freezeRequest = FreezeRequestDomainModel.New(_entity.Key, userId, changeDateTime, reason);
+            _freezeRequests.Add(freezeRequest);
+            _entity.FreezeRequests.Add(freezeRequest.GetEntity());
+            AddEvent(new PaymentsFrozen(_entity.Key));
+        }
+        else
+        {
+            var freezeRequest = _freezeRequests.Single(x => !x.Unfrozen);
+            freezeRequest.Unfreeze(userId, changeDateTime);
+            AddEvent(new PaymentsUnfrozen(_entity.Key));
+        }
+    }
+
+    private void UpdatePrices(PriceHistoryDomainModel priceChangeRequest)
+    {
+        if (priceChangeRequest!.TrainingPrice == null || priceChangeRequest!.AssessmentPrice == null)
+            throw new InvalidOperationException("Both training and assessment prices must be recorded on the pending request in order to approve it.");
+
+        if (LatestPrice.StartDate == priceChangeRequest.EffectiveFromDate)
+        {
+            LatestPrice.UpdatePrice(priceChangeRequest.TrainingPrice.Value, priceChangeRequest.AssessmentPrice.Value, priceChangeRequest.TotalPrice);
+        }
+        else
+        {
+            LatestEpisode.UpdatePricesForApprovedPriceChange(priceChangeRequest);
+        }
     }
 }

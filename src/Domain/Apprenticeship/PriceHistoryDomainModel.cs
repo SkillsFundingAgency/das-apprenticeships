@@ -63,41 +63,38 @@ public class PriceHistoryDomainModel
         return _entity;
     }
 
-    internal static PriceHistoryDomainModel Get(DataAccess.Entities.Apprenticeship.PriceHistory entity)
+    public static PriceHistoryDomainModel Get(DataAccess.Entities.Apprenticeship.PriceHistory entity)
     {
         return new PriceHistoryDomainModel(entity);
     }
 
     public void Cancel()
     {
-        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Cancelled;
+        _entity.PriceChangeRequestStatus = ChangeRequestStatus.Cancelled;
     }
 
     public void Reject(string? reason)
     {
-        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Rejected;
+        _entity.PriceChangeRequestStatus = ChangeRequestStatus.Rejected;
         _entity.RejectReason = reason;
     }
 
-    // Price change set to approved when approval by the employer is not required 
-    // (Provider initiates a price change to a lower price)
-    public void Approve()
+    // Only applicable when Provider initiates a price change to a lower price
+    public void AutoApprove()
     {
-        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Approved;
+        _entity.PriceChangeRequestStatus = ChangeRequestStatus.Approved;
     }
 
-    // Employer Approving Provider Initiated Price Change
-    public void Approve(string? employerApprovedBy, DateTime employerApprovedDate)
+    public void ApproveByEmployer(string? employerApprovedBy, DateTime employerApprovedDate)
     {
-        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Approved;
+        _entity.PriceChangeRequestStatus = ChangeRequestStatus.Approved;
         _entity.EmployerApprovedBy = employerApprovedBy;
         _entity.EmployerApprovedDate = employerApprovedDate;
     }
 
-    // Provider Approving Employer Initiated Price Change
-    public void Approve(string? providerApprovedBy, DateTime providerApprovedDate, decimal trainingPrice, decimal assementPrice)
+    public void ApproveByProvider(string? providerApprovedBy, DateTime providerApprovedDate, decimal trainingPrice, decimal assementPrice)
     {
-        _entity.PriceChangeRequestStatus = Enums.ChangeRequestStatus.Approved;
+        _entity.PriceChangeRequestStatus = ChangeRequestStatus.Approved;
         _entity.ProviderApprovedBy = providerApprovedBy;
         _entity.ProviderApprovedDate = providerApprovedDate;
         _entity.TrainingPrice = trainingPrice;

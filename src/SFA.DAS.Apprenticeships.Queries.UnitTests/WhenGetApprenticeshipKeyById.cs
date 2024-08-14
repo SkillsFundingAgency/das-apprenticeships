@@ -9,7 +9,7 @@ namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
 public class WhenGetApprenticeshipKeyById
 {
     private Fixture _fixture;
-    private Mock<IApprovalQueryRepository> _approvalQueryRepository;
+    private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
     private GetApprenticeshipKeyByApprenticeshipIdQueryHandler _sut;
 
     [SetUp]
@@ -17,8 +17,8 @@ public class WhenGetApprenticeshipKeyById
     {
 
         _fixture = new Fixture();
-        _approvalQueryRepository = new Mock<IApprovalQueryRepository>();
-        _sut = new GetApprenticeshipKeyByApprenticeshipIdQueryHandler(_approvalQueryRepository.Object);
+        _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
+        _sut = new GetApprenticeshipKeyByApprenticeshipIdQueryHandler(_apprenticeshipQueryRepository.Object);
     }
 
     [Test]
@@ -28,7 +28,7 @@ public class WhenGetApprenticeshipKeyById
         var query = _fixture.Create<GetApprenticeshipKeyByApprenticeshipIdRequest>();
         var expectedResult = _fixture.Create<GetApprenticeshipKeyByApprenticeshipIdResponse>();
 
-        _approvalQueryRepository
+        _apprenticeshipQueryRepository
             .Setup(x => x.GetKeyByApprenticeshipId(query.ApprenticeshipId))
             .ReturnsAsync(expectedResult.ApprenticeshipKey);
 
