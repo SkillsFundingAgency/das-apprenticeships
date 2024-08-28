@@ -286,7 +286,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories;
         {
             var apprenticeship = await DbContext.Apprenticeships
                 .Include(x => x.Episodes)
-                .Include(x => x.PriceHistories)
+                .ThenInclude(x => x.Prices)
                 .FirstOrDefaultAsync(x => x.Episodes.Any(e => e.Ukprn == ukprn) && x.Uln == uln);
 
             if (apprenticeship == null) return null;
