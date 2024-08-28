@@ -278,34 +278,36 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 	     return paymentStatus;
      }
 
-     public async Task<ApprenticeshipWithEpisodes?> GetApprenticeshipWithEpisodes(long ukprn, string uln)
-     {
-         ApprenticeshipWithEpisodes? apprenticeshipWithEpisodes = null;
-
-        try
-        {
-            var apprenticeship = await DbContext.Apprenticeships
-                .Include(x => x.Episodes)
-                .ThenInclude(x => x.Prices)
-                .FirstOrDefaultAsync(x => x.Episodes.Any(e => e.Ukprn == ukprn) && x.Uln == uln);
-
-            if (apprenticeship == null) return null;
-
-            apprenticeshipWithEpisodes = new ApprenticeshipWithEpisodes(
-                apprenticeship.Key,
-                apprenticeship.Uln,
-                apprenticeship.GetStartDate(),
-                apprenticeship.GetPlannedEndDate(),
-                apprenticeship.Episodes.Select(ep => 
-                    new Episode(ep.Key, ep.TrainingCode, ep.Prices.Select(p => 
-                        new EpisodePrice(p.StartDate, p.EndDate, p.TrainingPrice, p.EndPointAssessmentPrice, p.TotalPrice, p.FundingBandMaximum)).ToList()))
-                    .ToList(),
-                apprenticeship.GetAgeAtStartOfApprenticeship());
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Error getting apprenticeship with episodes for provider UKPRN {Ukprn} and ULN {Uln}", ukprn, uln);
-        }
+     public async Task<List<ApprenticeshipWithEpisodes>?> GetApprenticeshipsWithEpisodes(long ukprn)
+     { 
+         List<ApprenticeshipWithEpisodes>? apprenticeshipWithEpisodes = null;
+         try
+         {
+             var apprenticeships = await DbContext.Apprenticeships
+                 .Include(x => x.Episodes)
+                 .ThenInclude(x => x.Prices)
+                 .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
+                 .ToListAsync();
+         
+             if (!apprenticeships.Any()) return null;
+         
+             apprenticeshipWithEpisodes = apprenticeships.Select(apprenticeship =>
+                 new ApprenticeshipWithEpisodes(
+                     apprenticeship.Key,
+                     apprenticeship.Uln,
+                     apprenticeship.GetStartDate(),
+                     apprenticeship.GetPlannedEndDate(),
+                     apprenticeship.Episodes.Select(ep =>
+                             new Episode(ep.Key, ep.TrainingCode, ep.Prices.Select(p =>
+                                 new EpisodePrice(p.StartDate, p.EndDate, p.TrainingPrice, p.EndPointAssessmentPrice, p.TotalPrice, p.FundingBandMaximum)).ToList()))
+                         .ToList(),
+                     apprenticeship.GetAgeAtStartOfApprenticeship())
+             ).ToList();
+         }
+         catch (Exception e)
+         {
+             _logger.LogError(e, "Error getting apprenticeships with episodes for provider UKPRN {Ukprn}", ukprn);
+         }
 
         return apprenticeshipWithEpisodes;
      }

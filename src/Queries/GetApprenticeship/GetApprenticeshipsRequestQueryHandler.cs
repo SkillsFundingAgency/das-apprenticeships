@@ -2,13 +2,12 @@
 
 namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeship;
 
-public class GetApprenticeshipRequest : IQuery
+public class GetApprenticeshipsRequest : IQuery
 {
     public long Ukprn { get; set; }
-    public string Uln { get; set; } = null!;
 }
 
-public class GetApprenticeshipsRequestQueryHandler : IQueryHandler<GetApprenticeshipRequest, GetApprenticeshipResponse?>
+public class GetApprenticeshipsRequestQueryHandler : IQueryHandler<GetApprenticeshipsRequest, GetApprenticeshipsResponse?>
 {
     private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
 
@@ -17,12 +16,12 @@ public class GetApprenticeshipsRequestQueryHandler : IQueryHandler<GetApprentice
         _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
     }
 
-    public async Task<GetApprenticeshipResponse?> Handle(GetApprenticeshipRequest query, CancellationToken cancellationToken = default)
+    public async Task<GetApprenticeshipsResponse?> Handle(GetApprenticeshipsRequest query, CancellationToken cancellationToken = default)
     {
-        var apprenticeship = await _apprenticeshipQueryRepository.GetApprenticeshipWithEpisodes(query.Ukprn, query.Uln);
+        var apprenticeships = await _apprenticeshipQueryRepository.GetApprenticeshipsWithEpisodes(query.Ukprn);
 
-        if (apprenticeship == null) return null;
+        if (apprenticeships == null) return null;
 
-        return new GetApprenticeshipResponse(query.Ukprn, apprenticeship);
+        return new GetApprenticeshipsResponse(query.Ukprn, apprenticeships);
     }
 }

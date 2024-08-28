@@ -2,15 +2,15 @@
 
 namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeship;
 
-public class GetApprenticeshipResponse
+public class GetApprenticeshipsResponse
 {
-    public GetApprenticeshipResponse(long ukprn, ApprenticeshipWithEpisodes apprenticeship)
+    public GetApprenticeshipsResponse(long ukprn, List<ApprenticeshipWithEpisodes> apprenticeships)
     {
         Ukprn = ukprn;
-        Apprenticeship = apprenticeship;
+        Apprenticeships = apprenticeships;
     }
 
     public long Ukprn { get; set; }
-    public ApprenticeshipWithEpisodes Apprenticeship { get; set; }
+    public List<ApprenticeshipWithEpisodes> Apprenticeships { get; set; }
 }
 
