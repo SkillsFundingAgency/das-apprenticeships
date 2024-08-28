@@ -1,10 +1,10 @@
 ﻿using SFA.DAS.Apprenticeships.DataTransferObjects;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeship;
+namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 
-public class GetApprenticeshipsResponse
+public class GetApprenticeshipsWithEpisodesResponse
 {
-    public GetApprenticeshipsResponse(long ukprn, List<ApprenticeshipWithEpisodes> apprenticeships)
+    public GetApprenticeshipsWithEpisodesResponse(long ukprn, List<ApprenticeshipWithEpisodes> apprenticeships)
     {
         Ukprn = ukprn;
         Apprenticeships = apprenticeships;

@@ -4,17 +4,15 @@ using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeship;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
 using Apprenticeship = SFA.DAS.Apprenticeships.DataTransferObjects.Apprenticeship;
-using GetApprenticeshipsRequest = SFA.DAS.Apprenticeships.Queries.GetApprenticeship.GetApprenticeshipsRequest;
-using GetApprenticeshipsResponse = SFA.DAS.Apprenticeships.Queries.GetApprenticeship.GetApprenticeshipsResponse;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 
@@ -146,8 +144,8 @@ public class ApprenticeshipController : ControllerBase
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetApprenticeships(long ukprn)
     {
-        var request = new GetApprenticeshipsRequest { Ukprn = ukprn };
-        var response = await _queryDispatcher.Send<GetApprenticeshipsRequest, GetApprenticeshipsResponse?>(request);
+        var request = new GetApprenticeshipsWithEpisodesRequest { Ukprn = ukprn };
+        var response = await _queryDispatcher.Send<GetApprenticeshipsWithEpisodesRequest, GetApprenticeshipsWithEpisodesResponse?>(request);
         if (response == null) return NotFound();
         return Ok(response);
     }
