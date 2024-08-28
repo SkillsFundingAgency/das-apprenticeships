@@ -146,7 +146,7 @@ public class ApprenticeshipController : ControllerBase
     public async Task<IActionResult> Get(long ukprn, string uln)
     {
         var request = new GetApprenticeshipRequest { Ukprn = ukprn, Uln = uln };
-        var response = await _queryDispatcher.Send<GetApprenticeshipRequest, GetLearnerStatusResponse?>(request);
+        var response = await _queryDispatcher.Send<GetApprenticeshipRequest, GetApprenticeshipResponse?>(request);
         if (response == null) return NotFound();
         return Ok(response);
     }
