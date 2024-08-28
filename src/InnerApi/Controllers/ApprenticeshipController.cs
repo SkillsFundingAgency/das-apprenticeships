@@ -4,6 +4,7 @@ using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeship;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
@@ -11,6 +12,7 @@ using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
 using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
+using Apprenticeship = SFA.DAS.Apprenticeships.DataTransferObjects.Apprenticeship;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 
@@ -133,4 +135,19 @@ public class ApprenticeshipController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Gets the apprenticeship with episode & price data
+    /// </summary>
+    /// <param name="ukprn">Ukprn</param>
+    /// <param name="uln">Uln</param>
+    /// <returns>GetApprenticeshipResponse containing apprenticeship, episode, & price data</returns>
+    [HttpGet("{ukprn}/{uln}")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> Get(long ukprn, string uln)
+    {
+        var request = new GetApprenticeshipRequest { Ukprn = ukprn, Uln = uln };
+        var response = await _queryDispatcher.Send<GetApprenticeshipRequest, GetLearnerStatusResponse?>(request);
+        if (response == null) return NotFound();
+        return Ok(response);
+    }
 }

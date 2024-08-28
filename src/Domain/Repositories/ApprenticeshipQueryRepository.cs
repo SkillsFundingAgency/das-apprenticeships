@@ -2,10 +2,13 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
+using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
+using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
 
- namespace SFA.DAS.Apprenticeships.Domain.Repositories; 
+namespace SFA.DAS.Apprenticeships.Domain.Repositories; 
 
  public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
  {
@@ -273,5 +276,37 @@ using SFA.DAS.Apprenticeships.Enums;
 		 }
 
 	     return paymentStatus;
+     }
+
+     public async Task<ApprenticeshipWithEpisodes?> GetApprenticeshipWithEpisodes(long ukprn, string uln)
+     {
+         ApprenticeshipWithEpisodes? apprenticeshipWithEpisodes = null;
+
+        try
+        {
+            var apprenticeship = await DbContext.Apprenticeships
+                .Include(x => x.Episodes)
+                .Include(x => x.PriceHistories)
+                .FirstOrDefaultAsync(x => x.Episodes.Any(e => e.Ukprn == ukprn) && x.Uln == uln);
+
+            if (apprenticeship == null) return null;
+
+            apprenticeshipWithEpisodes = new ApprenticeshipWithEpisodes(
+                apprenticeship.Key,
+                apprenticeship.Uln,
+                apprenticeship.GetStartDate(),
+                apprenticeship.GetPlannedEndDate(),
+                apprenticeship.Episodes.Select(ep => 
+                    new Episode(ep.Key, ep.TrainingCode, ep.Prices.Select(p => 
+                        new EpisodePrice(p.StartDate, p.EndDate, p.TrainingPrice, p.EndPointAssessmentPrice, p.TotalPrice, p.FundingBandMaximum)).ToList()))
+                    .ToList(),
+                apprenticeship.GetAgeAtStartOfApprenticeship());
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error getting apprenticeship with episodes for provider UKPRN {Ukprn} and ULN {Uln}", ukprn, uln);
+        }
+
+        return apprenticeshipWithEpisodes;
      }
  }
