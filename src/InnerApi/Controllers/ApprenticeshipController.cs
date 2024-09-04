@@ -10,7 +10,9 @@ using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
+using Apprenticeship = SFA.DAS.Apprenticeships.DataTransferObjects.Apprenticeship;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 
@@ -48,8 +50,8 @@ public class ApprenticeshipController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Apprenticeship>), 200)]
     public async Task<IActionResult> GetAll(long ukprn, FundingPlatform? fundingPlatform)
     {
-        var request = new GetApprenticeshipsRequest(ukprn, fundingPlatform);
-        var response = await _queryDispatcher.Send<GetApprenticeshipsRequest, GetApprenticeshipsResponse>(request);
+        var request = new Queries.GetApprenticeships.GetApprenticeshipsRequest(ukprn, fundingPlatform);
+        var response = await _queryDispatcher.Send<Queries.GetApprenticeships.GetApprenticeshipsRequest, Queries.GetApprenticeships.GetApprenticeshipsResponse>(request);
 
         return Ok(response.Apprenticeships);
     }
@@ -133,4 +135,18 @@ public class ApprenticeshipController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Gets all apprenticeships for a given provider with episode & price data
+    /// </summary>
+    /// <param name="ukprn">Ukprn</param>
+    /// <returns>GetApprenticeshipResponse containing apprenticeship, episode, & price data</returns>
+    [HttpGet("{ukprn}")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetApprenticeships(long ukprn)
+    {
+        var request = new GetApprenticeshipsWithEpisodesRequest { Ukprn = ukprn };
+        var response = await _queryDispatcher.Send<GetApprenticeshipsWithEpisodesRequest, GetApprenticeshipsWithEpisodesResponse?>(request);
+        if (response == null) return NotFound();
+        return Ok(response);
+    }
 }

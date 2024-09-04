@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Apprenticeships.DataAccess.Extensions
 {
-    internal static class ApprenticeshipExtensions
+    public static class ApprenticeshipExtensions
     {
         internal static Episode GetEpisode(this Apprenticeship apprenticeship)
         {
@@ -29,6 +29,26 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Extensions
         {
             var episode = apprenticeship.Episodes.MaxBy(x => x.Prices.Max(y => y.StartDate));
             return episode;
+        }
+
+        public static int GetAgeAtStartOfApprenticeship(this Apprenticeship apprenticeship)
+        {
+            var startDate = apprenticeship.Episodes.SelectMany(e => e.Prices).Min(p => p.StartDate);
+            var age = startDate.Year - apprenticeship.DateOfBirth.Year;
+
+            if (startDate < apprenticeship.DateOfBirth.AddYears(age)) age--;
+
+            return age;
+        }
+
+        public static DateTime GetStartDate(this Apprenticeship apprenticeship)
+        {
+            return apprenticeship.Episodes.SelectMany(e => e.Prices).Min(p => p.StartDate);
+        }
+
+        public static DateTime GetPlannedEndDate(this Apprenticeship apprenticeship)
+        {
+            return apprenticeship.Episodes.SelectMany(e => e.Prices).Max(p => p.EndDate);
         }
     }
 }
