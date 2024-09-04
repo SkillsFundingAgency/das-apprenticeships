@@ -289,8 +289,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories;
                  .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
                  .ToListAsync();
          
-             if (!apprenticeships.Any()) return null;
-         
              apprenticeshipWithEpisodes = apprenticeships.Select(apprenticeship =>
                  new ApprenticeshipWithEpisodes(
                      apprenticeship.Key,

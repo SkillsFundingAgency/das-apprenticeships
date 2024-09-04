@@ -32,7 +32,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
     }
 
     [Test]
-    public async Task ThenReturnNullWhenNoApprenticeshipsFoundForUkprn()
+    public async Task ThenReturnEmptyListWhenNoApprenticeshipsFoundForUkprn()
     {
         //Arrange
         SetUpApprenticeshipQueryRepository();
@@ -41,7 +41,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         var result = await _sut.GetApprenticeshipsWithEpisodes(_fixture.Create<long>());
 
         //Assert
-        result.Should().BeNull();
+        result.Should().BeEmpty();
     }
 
     [Test]
