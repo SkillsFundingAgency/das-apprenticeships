@@ -28,6 +28,8 @@ public class PriceChangeApprovedHandler : IDomainEventHandler<PriceChangeApprove
             EffectiveFromDate = priceChange.EffectiveFromDate,
             ApprovedDate = @event.ApprovedBy == ApprovedBy.Employer ? priceChange.EmployerApprovedDate!.Value : priceChange.ProviderApprovedDate!.Value,
             ApprovedBy = @event.ApprovedBy,
+            ProviderApprovedBy = priceChange.ProviderApprovedBy,
+            EmployerApprovedBy = priceChange.EmployerApprovedBy,
             Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
         };
 

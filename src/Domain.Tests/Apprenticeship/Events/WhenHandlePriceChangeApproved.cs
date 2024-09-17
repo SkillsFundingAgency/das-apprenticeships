@@ -46,7 +46,8 @@ public class WhenHandlePriceChangeApproved
         await _handler.Handle(domainEvent);
 
         _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipPriceChangedEvent>(e =>
-            DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) && 
+            DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) &&
+            SendsApproverAndInittorDetails(e, priceChange) &&
             IsMarkedApprovedByEmployer(e, priceChange) &&
             e.EffectiveFromDate == priceChange.EffectiveFromDate &&
             ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>()));
@@ -73,6 +74,7 @@ public class WhenHandlePriceChangeApproved
 
         _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipPriceChangedEvent>(e =>
             DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) && 
+            SendsApproverAndInittorDetails(e, priceChange) &&
             IsMarkedApprovedByProvider(e, priceChange) &&
             e.EffectiveFromDate == priceChange.EffectiveFromDate &&
             ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>()));
@@ -97,5 +99,12 @@ public class WhenHandlePriceChangeApproved
         return
             e.ApprenticeshipKey == apprenticeship.Key &&
             e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId;
+    }
+
+    private static bool SendsApproverAndInittorDetails(ApprenticeshipPriceChangedEvent e, PriceHistoryDomainModel priceChange)
+    {
+        return
+            e.ProviderApprovedBy == priceChange.ProviderApprovedBy &&
+            e.EmployerApprovedBy == priceChange.EmployerApprovedBy;
     }
 }
