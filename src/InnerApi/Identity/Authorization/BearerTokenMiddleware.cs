@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 
@@ -25,6 +26,14 @@ public class BearerTokenMiddleware
     /// </summary>
     public async Task Invoke(HttpContext context)
     {
+        var endpoint = context.GetEndpoint();
+        if (endpoint != null && endpoint.Metadata.GetMetadata<AllowAnonymousAttribute>() != null)
+        {
+            // If the endpoint has the [AllowAnonymous] attribute, skip the authorization logic
+            await _next(context);
+            return;
+        }
+
         if (DisableAccountAuthorization())
         {
             _logger.LogInformation("Account-level authorization has been disabled.");
