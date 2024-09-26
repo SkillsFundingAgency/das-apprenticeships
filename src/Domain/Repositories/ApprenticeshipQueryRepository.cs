@@ -285,7 +285,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories;
          {
              var apprenticeships = await DbContext.Apprenticeships
                  .Include(x => x.Episodes)
-                 .ThenInclude(x => x.Prices)
+                 .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
                  .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
                  .ToListAsync();
          

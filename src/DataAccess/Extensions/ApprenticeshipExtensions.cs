@@ -4,7 +4,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Extensions
 {
     public static class ApprenticeshipExtensions
     {
-        internal static Episode GetEpisode(this Apprenticeship apprenticeship)
+        public static Episode GetEpisode(this Apprenticeship apprenticeship)
         {
             var episode = GetLatestActiveEpisode(apprenticeship);
 
@@ -19,21 +19,9 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Extensions
             return episode;
         }
 
-        private static Episode? GetLatestActiveEpisode(Apprenticeship apprenticeship)
-        {
-            var episode = apprenticeship.Episodes.MaxBy(x => x.Prices.Where(y => !y.IsDeleted).Max(y => y.StartDate));
-            return episode;
-        }
-
-        private static Episode? GetLatestEpisode(Apprenticeship apprenticeship)
-        {
-            var episode = apprenticeship.Episodes.MaxBy(x => x.Prices.Max(y => y.StartDate));
-            return episode;
-        }
-
         public static int GetAgeAtStartOfApprenticeship(this Apprenticeship apprenticeship)
         {
-            var startDate = apprenticeship.Episodes.SelectMany(e => e.Prices).Min(p => p.StartDate);
+            var startDate = apprenticeship.Episodes.SelectMany(e => e.Prices).Where(y => !y.IsDeleted).Min(p => p.StartDate);
             var age = startDate.Year - apprenticeship.DateOfBirth.Year;
 
             if (startDate < apprenticeship.DateOfBirth.AddYears(age)) age--;
@@ -43,12 +31,28 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Extensions
 
         public static DateTime GetStartDate(this Apprenticeship apprenticeship)
         {
-            return apprenticeship.Episodes.SelectMany(e => e.Prices).Min(p => p.StartDate);
+            return apprenticeship.Episodes.SelectMany(e => e.Prices).Where(y => !y.IsDeleted).Min(p => p.StartDate);
         }
 
         public static DateTime GetPlannedEndDate(this Apprenticeship apprenticeship)
         {
-            return apprenticeship.Episodes.SelectMany(e => e.Prices).Max(p => p.EndDate);
+            return apprenticeship.Episodes.SelectMany(e => e.Prices).Where(y => !y.IsDeleted).Max(p => p.EndDate);
+        }
+
+        private static Episode? GetLatestActiveEpisode(Apprenticeship apprenticeship)
+        {
+            var episode = apprenticeship.Episodes
+                .MaxBy(x => x.Prices
+                    .Where(y => !y.IsDeleted)
+                    .Select(y => (DateTime?)y.StartDate).DefaultIfEmpty(null) //Ensures that we return null if there are no active prices
+                    .Max());
+            return episode;
+        }
+
+        private static Episode? GetLatestEpisode(Apprenticeship apprenticeship)
+        {
+            var episode = apprenticeship.Episodes.MaxBy(x => x.Prices.Max(y => y.StartDate));
+            return episode;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using AutoFixture;
+using Castle.Core.Logging;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
@@ -18,7 +20,7 @@ public class WhenGetApprenticeshipsWithEpisodes
     {
         _fixture = new Fixture();
         _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
-        _sut = new GetApprenticeshipsWithEpisodesRequestQueryHandler(_apprenticeshipQueryRepository.Object);
+        _sut = new GetApprenticeshipsWithEpisodesRequestQueryHandler(_apprenticeshipQueryRepository.Object, Mock.Of<ILogger<GetApprenticeshipsWithEpisodesRequestQueryHandler>>());
     }
 
     [Test]
