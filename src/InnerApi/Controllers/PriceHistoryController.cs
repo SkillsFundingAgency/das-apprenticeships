@@ -10,6 +10,7 @@ using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Responses;
+using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
 {
@@ -18,8 +19,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
     /// </summary>
     [Route("")]
     [ApiController]
-	[Authorize]
-	public class PriceHistoryController : ControllerBase
+    [AuthorizeUserType(UserType.Provider | UserType.Employer)]
+    public class PriceHistoryController : ControllerBase
     {
         private readonly IQueryDispatcher _queryDispatcher;
         private readonly ICommandDispatcher _commandDispatcher;

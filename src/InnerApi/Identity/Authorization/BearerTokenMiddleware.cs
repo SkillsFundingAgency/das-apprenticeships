@@ -40,8 +40,6 @@ public class BearerTokenMiddleware
             await _next(context);
             return;
         }
-
-        RequireAccountIdClaimsValidation(context);
             
         var token = ReadTokenFromRequestHeader(context);
         if (string.IsNullOrEmpty(token))
@@ -52,9 +50,9 @@ public class BearerTokenMiddleware
         }
 
         var claims = GetClaimsFromToken(token);
-        if (!HandleProviderAccountClaim(context, claims) && !HandleEmployerAccountClaim(context, claims))
+        if (!HandleProviderAccountClaim(context, claims) && !HandleEmployerAccountClaim(context, claims) && !HandleServiceAccountClaim(context, claims))
         {
-            _logger.LogError("Invalid bearer token. An account id claim was not found for a provider or employer in the token.");
+            _logger.LogError("Invalid bearer token. Token does not have claims that match, provider, employer or serviceAccount tokens");
             await Write401Response(context, "Invalid bearer token.");
             return;
         }
@@ -94,8 +92,7 @@ public class BearerTokenMiddleware
 
     private bool HandleProviderAccountClaim(HttpContext context, IEnumerable<Claim> claims)
     {
-        const string ukprnClaimName = "http://schemas.portal.com/ukprn";
-        var ukprns = claims.Where(x => x.Type == ukprnClaimName).Select(x => x.Value).ToArray();
+        var ukprns = claims.Where(x => x.Type == SFAClaimTypes.UkprnClaimName).Select(x => x.Value).ToArray();
         if (!ukprns.Any())
         {
             return false;
@@ -103,15 +100,16 @@ public class BearerTokenMiddleware
         var accountIds = string.Join(";", ukprns);
         context.Items["Ukprn"] = accountIds;
         context.Items["UserId"] = claims.Single(x => x.Type == ClaimTypes.Name).Value;
+
+        RequireAccountIdClaimsValidation(context);
+
         return true;
     }
 
     private bool HandleEmployerAccountClaim(HttpContext context, IEnumerable<Claim> claims)
     {
-        const string employerAccountIdClaimName = "http://das/employer/identity/claims/account";
-        const string UserIdClaimName = "http://das/employer/identity/claims/id";
 
-        var employerAccountIds = claims.Where(x => x.Type == employerAccountIdClaimName).Select(x => x.Value).ToArray();
+        var employerAccountIds = claims.Where(x => x.Type == SFAClaimTypes.EmployerAccountIdClaimName).Select(x => x.Value).ToArray();
         if (!employerAccountIds.Any())
         {
             return false;
@@ -119,7 +117,25 @@ public class BearerTokenMiddleware
 
         var accountIds = string.Join(";", employerAccountIds);
         context.Items["EmployerAccountId"] = accountIds;
-        context.Items["UserId"] = claims.Single(x => x.Type == UserIdClaimName).Value;
+        context.Items["UserId"] = claims.Single(x => x.Type == SFAClaimTypes.EmployerUserIdClaimName).Value;
+
+        RequireAccountIdClaimsValidation(context);
+
+        return true;
+    }
+
+    private bool HandleServiceAccountClaim(HttpContext context, IEnumerable<Claim> claims)
+    {
+
+        var serviceAccount = claims.Where(x => x.Type == SFAClaimTypes.ServiceAccountClaimName).FirstOrDefault();
+        if (serviceAccount == null)
+        {
+            return false;
+        }
+
+
+        context.Items["ServiceAccount"] = serviceAccount.Value;
+        context.Items["sub"] = claims.Single(x => x.Type == "sub").Value;
         return true;
     }
 }
