@@ -9,7 +9,5 @@ public class ApprenticeshipPriceChangedEvent : ApprenticeshipEvent
     public DateTime EffectiveFromDate { get; set; }
     public DateTime ApprovedDate { get; set; }
     public ApprovedBy ApprovedBy { get; set; }
-    public string ProviderApprovedBy { get; set; }
-    public string EmployerApprovedBy { get; set; }
 }
 #pragma warning restore CS8618
