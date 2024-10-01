@@ -46,7 +46,7 @@ public class WhenHandlePriceChangeApproved
         await _handler.Handle(domainEvent);
 
         _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipPriceChangedEvent>(e =>
-            DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) &&
+            DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) && 
             IsMarkedApprovedByEmployer(e, priceChange) &&
             e.EffectiveFromDate == priceChange.EffectiveFromDate &&
             ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>()));
@@ -72,7 +72,7 @@ public class WhenHandlePriceChangeApproved
         await _handler.Handle(domainEvent);
 
         _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipPriceChangedEvent>(e =>
-            DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) &&
+            DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) && 
             IsMarkedApprovedByProvider(e, priceChange) &&
             e.EffectiveFromDate == priceChange.EffectiveFromDate &&
             ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>()));
