@@ -126,8 +126,6 @@ public class BearerTokenMiddleware
 
     private bool HandleServiceAccountClaim(HttpContext context, IEnumerable<Claim> claims)
     {
-        _logger.LogError("TempMessage {token}", context.Request.Headers.Authorization);
-
         var serviceAccount = claims.Where(x => x.Type == SFAClaimTypes.ServiceAccountClaimName).FirstOrDefault();
         if (serviceAccount == null)
         {
