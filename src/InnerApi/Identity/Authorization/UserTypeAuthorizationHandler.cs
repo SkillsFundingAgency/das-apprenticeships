@@ -16,7 +16,13 @@ public class UserTypeAuthorizationHandler : AuthorizationHandler<UserTypeRequire
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, UserTypeRequirement requirement)
     {
-        if(IsOverriden(context, requirement))
+        if(context.User.Identity?.IsAuthenticated == false)
+        {
+            context.Fail(); // Deny access
+            return Task.CompletedTask;
+        }
+
+        if (IsOverriden(context, requirement))
         {
             context.Succeed(requirement);
             return Task.CompletedTask; // This policy is overriden by another policy, therefore do not process this policy

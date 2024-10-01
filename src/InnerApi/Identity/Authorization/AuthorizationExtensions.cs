@@ -18,6 +18,7 @@ public static class AuthorizationExtensions
             {
                 {
                     x.AddPolicy("default", policy =>policy.AllowAnonymousUser());
+                    x.AddAnonymousUserTypeAuthorization();
                     x.DefaultPolicy = x.GetPolicy("default")!;
                 }
             });
