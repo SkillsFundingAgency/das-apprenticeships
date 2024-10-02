@@ -1,16 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
 using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
 
-namespace SFA.DAS.Apprenticeships.Domain.Repositories; 
+namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 
- public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
+public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
  {
      private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
      private readonly ILogger<ApprenticeshipQueryRepository> _logger;

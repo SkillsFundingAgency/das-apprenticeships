@@ -60,12 +60,6 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return apprenticeships;
         }
 
-        if (_accountIdClaims.AccountIds == null)
-        {
-            _logger.LogInformation("There are no account IDs in the account ID claims.");
-            return apprenticeships;
-        }
-
         var apprenticeshipsWithEpisodes = apprenticeships
             .Include(x => x.Episodes);
 

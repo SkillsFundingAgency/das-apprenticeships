@@ -1,14 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
@@ -21,7 +18,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 /// </summary>
 [Route("")]
 [ApiController]
-[Authorize]
+[AuthorizeUserType(UserType.Provider | UserType.Employer)]
 public class ApprenticeshipController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
@@ -142,6 +139,7 @@ public class ApprenticeshipController : ControllerBase
     /// <returns>GetApprenticeshipResponse containing apprenticeship, episode, & price data</returns>
     [HttpGet("{ukprn}")]
     [ProducesResponseType(200)]
+    [AuthorizeUserType(UserType.ServiceAccount, UserTypeRequirement.AuthorizeMode.Override)]
     public async Task<IActionResult> GetApprenticeships(long ukprn)
     {
         var request = new GetApprenticeshipsWithEpisodesRequest { Ukprn = ukprn };
