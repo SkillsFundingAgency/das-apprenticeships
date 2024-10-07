@@ -13,4 +13,5 @@ public interface IApprenticeshipQueryRepository
     Task<Guid?> GetKey(string apprenticeshipHashedId);
     Task<PendingStartDateChange?> GetPendingStartDateChange(Guid apprenticeshipKey);
     Task<PaymentStatus?> GetPaymentStatus(Guid apprenticeshipKey);
+    Task<List<ApprenticeshipWithEpisodes>?> GetApprenticeshipsWithEpisodes(long ukprn);
 }

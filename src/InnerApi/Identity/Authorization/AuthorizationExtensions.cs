@@ -12,24 +12,31 @@ public static class AuthorizationExtensions
 	public static IServiceCollection AddApiAuthorization(this IServiceCollection services, bool isDevelopment = false)
 	{
 
-		services.AddAuthorization(x =>
-		{
-			{
-				x.AddPolicy("default", policy =>
-				{
-					if (isDevelopment)
-						policy.AllowAnonymousUser();
-					else
-						policy.RequireAuthenticatedUser();
+        if (isDevelopment)
+        {
+            services.AddAuthorization(x =>
+            {
+                {
+                    x.AddPolicy("default", policy =>policy.AllowAnonymousUser());
+                    x.AddAnonymousUserTypeAuthorization();
+                    x.DefaultPolicy = x.GetPolicy("default")!;
+                }
+            });
+            services.AddSingleton<IAuthorizationHandler, LocalAuthorizationHandler>();
+        }
+        else
+        {
+            services.AddAuthorization(x =>
+            {
+                {
+                    x.AddPolicy("default", policy => policy.RequireAuthenticatedUser());
+                    x.AddUserTypeAuthorization();
+                    x.DefaultPolicy = x.GetPolicy("default")!;
+                }
+            });
+            services.AddSingleton<IAuthorizationHandler, UserTypeAuthorizationHandler>();
+        }
 
-				});
-
-
-				x.DefaultPolicy = x.GetPolicy("default")!;
-			}
-		});
-		if (isDevelopment)
-			services.AddSingleton<IAuthorizationHandler, LocalAuthorizationHandler>();
-		return services;
+        return services;
 	}
 }
