@@ -5,6 +5,7 @@ using SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
 using SFA.DAS.Apprenticeships.Command.CancelPendingStartDateChange;
 using SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
 using SFA.DAS.Apprenticeships.Command.RejectStartDateChange;
+using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetPendingStartDateChange;
@@ -16,7 +17,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 /// </summary>
 [Route("")]
 [ApiController]
-[Authorize]
+[AuthorizeUserType(UserType.Provider | UserType.Employer)]
 public class StartDateChangeController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;

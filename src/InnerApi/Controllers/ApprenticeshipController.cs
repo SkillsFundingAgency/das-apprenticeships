@@ -1,18 +1,15 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
+using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
+using Apprenticeship = SFA.DAS.Apprenticeships.DataTransferObjects.Apprenticeship;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 
@@ -21,7 +18,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 /// </summary>
 [Route("")]
 [ApiController]
-[Authorize]
+[AuthorizeUserType(UserType.Provider | UserType.Employer)]
 public class ApprenticeshipController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
@@ -50,8 +47,8 @@ public class ApprenticeshipController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Apprenticeship>), 200)]
     public async Task<IActionResult> GetAll(long ukprn, FundingPlatform? fundingPlatform)
     {
-        var request = new GetApprenticeshipsRequest(ukprn, fundingPlatform);
-        var response = await _queryDispatcher.Send<GetApprenticeshipsRequest, GetApprenticeshipsResponse>(request);
+        var request = new Queries.GetApprenticeships.GetApprenticeshipsRequest(ukprn, fundingPlatform);
+        var response = await _queryDispatcher.Send<Queries.GetApprenticeships.GetApprenticeshipsRequest, Queries.GetApprenticeships.GetApprenticeshipsResponse>(request);
 
         return Ok(response.Apprenticeships);
     }
@@ -118,5 +115,36 @@ public class ApprenticeshipController : ControllerBase
             return NotFound();
         }
         return Ok(response.ApprenticeshipKey);
+    }
+
+    /// <summary>
+    /// Gets the Learner Status of the apprenticeship
+    /// </summary>
+    /// <param name="apprenticeshipKey">Guid</param>
+    /// <returns>GetLearnerStatusResponse containing LearnerStatus</returns>
+    [HttpGet("{apprenticeshipKey}/LearnerStatus")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetLearnerStatus(Guid apprenticeshipKey)
+    {
+        var request = new GetLearnerStatusRequest { ApprenticeshipKey = apprenticeshipKey };
+        var response = await _queryDispatcher.Send<GetLearnerStatusRequest, GetLearnerStatusResponse?>(request);
+        if (response == null) return NotFound();
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Gets all apprenticeships for a given provider with episode & price data
+    /// </summary>
+    /// <param name="ukprn">Ukprn</param>
+    /// <returns>GetApprenticeshipResponse containing apprenticeship, episode, & price data</returns>
+    [HttpGet("{ukprn}")]
+    [ProducesResponseType(200)]
+    [AuthorizeUserType(UserType.ServiceAccount, UserTypeRequirement.AuthorizeMode.Override)]
+    public async Task<IActionResult> GetApprenticeships(long ukprn)
+    {
+        var request = new GetApprenticeshipsWithEpisodesRequest { Ukprn = ukprn };
+        var response = await _queryDispatcher.Send<GetApprenticeshipsWithEpisodesRequest, GetApprenticeshipsWithEpisodesResponse?>(request);
+        if (response == null) return NotFound();
+        return Ok(response);
     }
 }

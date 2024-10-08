@@ -1,13 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
+using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
+using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
 
- namespace SFA.DAS.Apprenticeships.Domain.Repositories; 
+namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 
- public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
+public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
  {
      private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
      private readonly ILogger<ApprenticeshipQueryRepository> _logger;
@@ -274,5 +276,37 @@ using SFA.DAS.Apprenticeships.Enums;
 		 }
 
 	     return paymentStatus;
+     }
+
+     public async Task<List<ApprenticeshipWithEpisodes>?> GetApprenticeshipsWithEpisodes(long ukprn)
+     { 
+         List<ApprenticeshipWithEpisodes>? apprenticeshipWithEpisodes = null;
+         try
+         {
+             var apprenticeships = await DbContext.Apprenticeships
+                 .Include(x => x.Episodes)
+                 .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
+                 .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
+                 .ToListAsync();
+         
+             apprenticeshipWithEpisodes = apprenticeships.Select(apprenticeship =>
+                 new ApprenticeshipWithEpisodes(
+                     apprenticeship.Key,
+                     apprenticeship.Uln,
+                     apprenticeship.GetStartDate(),
+                     apprenticeship.GetPlannedEndDate(),
+                     apprenticeship.Episodes.Select(ep =>
+                             new Episode(ep.Key, ep.TrainingCode, ep.Prices.Select(p =>
+                                 new EpisodePrice(p.StartDate, p.EndDate, p.TrainingPrice, p.EndPointAssessmentPrice, p.TotalPrice, p.FundingBandMaximum)).ToList()))
+                         .ToList(),
+                     apprenticeship.GetAgeAtStartOfApprenticeship())
+             ).ToList();
+         }
+         catch (Exception e)
+         {
+             _logger.LogError(e, "Error getting apprenticeships with episodes for provider UKPRN {Ukprn}", ukprn);
+         }
+
+        return apprenticeshipWithEpisodes;
      }
  }
