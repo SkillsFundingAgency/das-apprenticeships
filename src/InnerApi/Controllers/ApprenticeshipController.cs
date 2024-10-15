@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+using SFA.DAS.Apprenticeships.InnerApi.Responses;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
@@ -147,4 +148,19 @@ public class ApprenticeshipController : ControllerBase
         if (response == null) return NotFound();
         return Ok(response);
     }
+
+
+    /// <summary>
+    /// Get the provider and employer ids for the current state of the apprenticeship, this may differ from the original owner
+    /// </summary>
+    /// <param name="apprenticeshipKey">Guid</param>
+    /// <returns>Provider and employer ids</returns>
+    [HttpGet("{apprenticeshipKey}/currentPartyIds")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> GetCurrentPartyIds(Guid apprenticeshipKey)
+    {
+
+        return Ok(new CurrentPartyIdsResponse { Ukprn = 10005077 , EmployerAccountId = 8194, ApprovalsApprenticeshipId = 15} );
+    }
+
 }
