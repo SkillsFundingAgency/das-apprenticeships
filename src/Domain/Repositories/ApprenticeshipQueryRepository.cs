@@ -308,4 +308,28 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
 
         return apprenticeshipWithEpisodes;
     }
+    public async Task<CurrentPartyIds?> GetCurrentPartyIds(Guid apprenticeshipKey)
+    {
+        CurrentPartyIds? currentPartyIds = null;
+
+        try
+        {
+            var apprenticeship = await DbContext.Apprenticeships
+                .Where(a => a.Key == apprenticeshipKey)
+                .Include(a => a.Episodes)
+                .SingleOrDefaultAsync();
+
+            if (apprenticeship == null)
+                return null;
+
+            var episode = apprenticeship.GetEpisode();
+            currentPartyIds = new CurrentPartyIds(episode.Ukprn, episode.EmployerAccountId, apprenticeship.ApprovalsApprenticeshipId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error getting current party ids for apprenticeship key {key}", apprenticeshipKey);
+        }
+
+        return currentPartyIds;
+    }
 }

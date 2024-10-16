@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Enums;
@@ -9,6 +10,7 @@ using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
+using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
 using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
 using Apprenticeship = SFA.DAS.Apprenticeships.DataTransferObjects.Apprenticeship;
 
@@ -159,8 +161,10 @@ public class ApprenticeshipController : ControllerBase
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetCurrentPartyIds(Guid apprenticeshipKey)
     {
-
-        return Ok(new CurrentPartyIdsResponse { Ukprn = 10005077 , EmployerAccountId = 8194, ApprovalsApprenticeshipId = 15} );
+        var request = new GetCurrentPartyIdsRequest { ApprenticeshipKey = apprenticeshipKey };
+        var response = await _queryDispatcher.Send<GetCurrentPartyIdsRequest, GetCurrentPartyIdsResponse?>(request);
+        if (response == null) return NotFound();
+        return Ok(response);
     }
 
 }
