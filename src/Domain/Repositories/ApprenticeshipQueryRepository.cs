@@ -116,7 +116,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
 	         ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
 	         CourseCode = latestEpisode.TrainingCode,
 	         CourseVersion = latestEpisode.TrainingCourseVersion,
-             SimplifiedPayentsMinimumStartDate = Constants.SimplifiedPayentsMinimumStartDate
+             SimplifiedPaymentsMinimumStartDate = Constants.SimplifiedPaymentsMinimumStartDate
          };
      }
 

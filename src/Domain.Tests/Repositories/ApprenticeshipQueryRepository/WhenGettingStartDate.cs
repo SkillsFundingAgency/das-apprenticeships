@@ -69,7 +69,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             result.ApprenticeDateOfBirth.Should().Be(apprenticeship.DateOfBirth);
             result.CourseCode.Should().Be(episode.TrainingCode);
             result.CourseVersion.Should().Be(episode.TrainingCourseVersion);
-            result.SimplifiedPayentsMinimumStartDate.Should().Be(new DateTime(2024, 10, 1));
+            result.SimplifiedPaymentsMinimumStartDate.Should().Be(new DateTime(2024, 11, 1));
         }
 
         private void SetUpApprenticeshipQueryRepository()
