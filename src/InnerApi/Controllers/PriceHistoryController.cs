@@ -79,17 +79,18 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
             return Ok(response);
         }
 
-		/// <summary>
-		/// Approves a pending price change
-		/// </summary>
-		/// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
-		[HttpPatch("{apprenticeshipKey}/priceHistory/pending")]
+        /// <summary>
+        /// Approves a pending price change
+        /// </summary>
+        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+        /// <param name="request">Details of the approval</param>
+        [HttpPatch("{apprenticeshipKey}/priceHistory/pending")]
 		[ProducesResponseType(200)]
 		public async Task<IActionResult> ApprovePriceChange(Guid apprenticeshipKey, [FromBody] ApprovePriceChangeRequest request)
 		{
-			await _commandDispatcher.Send(new ApprovePriceChangeCommand(apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice));
-			return Ok();
-		}
+			var approver = await _commandDispatcher.Send<ApprovePriceChangeCommand, ChangeApprover>(new ApprovePriceChangeCommand(apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice));
+            return Ok(new { Approver = approver.ToString() });
+        }
 
 		/// <summary>
 		/// Removes a pending price change
