@@ -3,7 +3,7 @@ using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Command.ApprovePriceChange
 {
-    public class ApprovePriceChangeCommandHandler : ICommandHandler<ApprovePriceChangeCommand, ChangeApprover>
+    public class ApprovePriceChangeCommandHandler : ICommandHandler<ApprovePriceChangeCommand, ApprovedBy>
     {
         private readonly IApprenticeshipRepository _apprenticeshipRepository;
 
@@ -12,7 +12,7 @@ namespace SFA.DAS.Apprenticeships.Command.ApprovePriceChange
             _apprenticeshipRepository = apprenticeshipRepository;
         }
 
-        public async Task<ChangeApprover> Handle(ApprovePriceChangeCommand command,
+        public async Task<ApprovedBy> Handle(ApprovePriceChangeCommand command,
             CancellationToken cancellationToken = default)
         {
             var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
