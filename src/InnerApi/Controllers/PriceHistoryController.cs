@@ -119,7 +119,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         {
             await _commandDispatcher.Send(new RejectPendingPriceChangeRequest(apprenticeshipKey, request.Reason));
 
-            return Ok();
+            return Ok(new { Rejector = HttpContext.GetUserType()});
         }
     }
 }
