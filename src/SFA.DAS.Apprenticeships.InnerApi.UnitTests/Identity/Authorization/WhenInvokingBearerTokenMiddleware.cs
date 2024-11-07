@@ -1,18 +1,16 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Moq;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using Microsoft.Extensions.Configuration;
-using System.Security.Claims;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
+using Moq;
+using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+using System.Net;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
 {
@@ -38,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         {
             // Arrange
             var claims = new List<Claim> { new ("http://schemas.portal.com/ukprn", "12345"), new(ClaimTypes.Name, "ProviderUserName") };
-            var token = CreateValidToken(ValidSigningKey, claims);
+            var token = TestAuthorizationHelper.CreateValidToken(ValidSigningKey, claims);
             _httpContext.Request.Headers["Authorization"] = $"{token}";
             SetUserBearerTokenSigningKeyConfig(ValidSigningKey);
             SetDisableAccountAuthorisationConfig(false);
@@ -56,7 +54,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         {
             // Arrange
             var claims = new List<Claim> { new ("http://das/employer/identity/claims/account", "98765"), new("http://das/employer/identity/claims/id", "EmployerUserName") };
-            var token = CreateValidToken(ValidSigningKey, claims);
+            var token = TestAuthorizationHelper.CreateValidToken(ValidSigningKey, claims);
             _httpContext.Request.Headers["Authorization"] = $"{token}";
             SetUserBearerTokenSigningKeyConfig(ValidSigningKey);
             SetDisableAccountAuthorisationConfig(false);
@@ -126,18 +124,6 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
         private void SetUserBearerTokenSigningKeyConfig(string signingKey)
         {
             _mockConfiguration.Setup(x => x["UserBearerTokenSigningKey"]).Returns(signingKey);
-        }
-        private static string CreateValidToken(string signingKey, List<Claim> claims)
-        {
-            var securityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(signingKey));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: credentials
-            );
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
