@@ -194,7 +194,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _entity.PriceHistories.Add(priceHistory.GetEntity());
     }
 
-    public void ApprovePriceChange(string? userApprovedBy, decimal? trainingPrice, decimal? assessmentPrice)
+    public ApprovedBy ApprovePriceChange(string? userApprovedBy, decimal? trainingPrice, decimal? assessmentPrice)
     {
         var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
@@ -206,6 +206,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
             pendingPriceChange.ApproveByEmployer(userApprovedBy, DateTime.Now);
             UpdatePrices(pendingPriceChange);
             AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
+            return ApprovedBy.Employer;
         }
         else
         {
@@ -220,7 +221,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
             pendingPriceChange.ApproveByProvider(userApprovedBy, DateTime.Now, trainingPrice.Value, assessmentPrice.Value);
             UpdatePrices(pendingPriceChange);
-            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));   
+            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
+            return ApprovedBy.Provider;
         }
     }
 

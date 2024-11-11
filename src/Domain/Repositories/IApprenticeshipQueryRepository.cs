@@ -14,4 +14,5 @@ public interface IApprenticeshipQueryRepository
     Task<PendingStartDateChange?> GetPendingStartDateChange(Guid apprenticeshipKey);
     Task<PaymentStatus?> GetPaymentStatus(Guid apprenticeshipKey);
     Task<List<ApprenticeshipWithEpisodes>?> GetApprenticeshipsWithEpisodes(long ukprn);
+    Task<CurrentPartyIds?> GetCurrentPartyIds(Guid apprenticeshipKey);
 }
