@@ -55,7 +55,7 @@ public class Startup : FunctionsStartup
         Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
 
         builder.Services.AddNServiceBus(applicationSettings);
-        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(configuration));
+        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocal(configuration));
 
         builder.Services.AddCommandServices(Configuration).AddEventServices();
 
@@ -73,5 +73,13 @@ public class Startup : FunctionsStartup
     private static bool NotAcceptanceTests(IConfiguration configuration)
     {
         return !configuration!["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    private static bool NotLocal(IConfiguration configuration)
+    {
+        var env = configuration!["EnvironmentName"];
+        var isLocal = env.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
+        var isLocalAcceptanceTests = env.Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
+        return !isLocal && !isLocalAcceptanceTests;
     }
 }
