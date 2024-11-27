@@ -11,9 +11,4 @@
     <ProjectReference Include="..\Infrastructure\SFA.DAS.Apprenticeships.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.12.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.62.0" />
-  </ItemGroup>
-
 </Project>
