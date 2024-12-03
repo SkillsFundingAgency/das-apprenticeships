@@ -7,8 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Approvals.EventHandlers.Messages;
-using FundingType = SFA.DAS.Approvals.EventHandlers.Messages.FundingType;
+using SFA.DAS.CommitmentsV2.Messages.Events;
 
 namespace SFA.DAS.Apprenticeships.Functions.UnitTests
 {
@@ -18,8 +17,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
         public async Task ThenApprovalIsAdded()
         {
             var fixture = new Fixture();
-            var @event = fixture.Create<ApprovalCreatedEvent>();
-            @event.FundingType = FundingType.Transfer;
+            var @event = fixture.Create<ApprenticeshipCreatedEvent>();
             var commandDispatcher = new Mock<ICommandDispatcher>();
             var handler = new HandleApprovalCreated(commandDispatcher.Object);
             await handler.HandleCommand(@event, new Mock<ILogger>().Object);
@@ -28,16 +26,16 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                 x.Send(It.Is<AddApprenticeshipCommand>(c =>
                         c.TrainingCode == @event.TrainingCode &&
                         c.ActualStartDate == @event.ActualStartDate &&
-                        c.TotalPrice == @event.AgreedPrice &&
-                        c.TrainingPrice == @event.TrainingPrice &&
-                        c.EndPointAssessmentPrice == @event.EndPointAssessmentPrice &&
-                        c.ApprovalsApprenticeshipId == @event.ApprovalsApprenticeshipId &&
-                        c.EmployerAccountId == @event.EmployerAccountId &&
-                        c.FundingEmployerAccountId == @event.FundingEmployerAccountId &&
+                        c.TotalPrice == @event.PriceEpisodes[0].Cost &&
+                        c.TrainingPrice == @event.PriceEpisodes[0].TrainingPrice &&
+                        c.EndPointAssessmentPrice == @event.PriceEpisodes[0].EndPointAssessmentPrice &&
+                        c.ApprovalsApprenticeshipId == @event.ApprenticeshipId &&
+                        c.EmployerAccountId == @event.AccountId &&
+                        c.FundingEmployerAccountId == @event.TransferSenderId &&
                         c.FundingType == Enums.FundingType.Transfer &&
                         c.LegalEntityName == @event.LegalEntityName &&
-                        c.PlannedEndDate == @event.PlannedEndDate &&
-                        c.UKPRN == @event.UKPRN &&
+                        c.PlannedEndDate == @event.EndDate &&
+                        c.UKPRN == @event.ProviderId &&
                         c.Uln == @event.Uln &&
                         c.DateOfBirth == @event.DateOfBirth &&
                         c.FundingPlatform == (@event.IsOnFlexiPaymentPilot.HasValue ? (@event.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null)

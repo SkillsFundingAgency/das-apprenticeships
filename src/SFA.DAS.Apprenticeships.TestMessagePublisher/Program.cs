@@ -3,8 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NServiceBus;
 using SFA.DAS.Apprenticeships.TestMessagePublisher;
-using SFA.DAS.Approvals.EventHandlers.Messages;
-using FundingType = SFA.DAS.Approvals.EventHandlers.Messages.FundingType;
+using SFA.DAS.CommitmentsV2.Messages.Events;
 
 IConfiguration config = new ConfigurationBuilder()
     .AddJsonFile("local.settings.json")
@@ -33,7 +32,7 @@ async Task PublishCreatedEvent(IServiceProvider services)
     IServiceProvider provider = serviceScope.ServiceProvider;
     var messagePublisher = provider.GetRequiredService<IMessageSession>();
 
-    await messagePublisher.Send(new ApprovalCreatedEvent {FundingEmployerAccountId = 123436, Uln = "2135546", FundingType = FundingType.Levy, ApprovalsApprenticeshipId = 34254, UKPRN = 4536546, ActualStartDate = DateTime.Now, EmployerAccountId = 2344536, LegalEntityName = "Test", AgreedPrice = 122345m, PlannedEndDate = DateTime.Now.AddYears(1), TrainingCode = "ABC123"});
+    await messagePublisher.Send(new ApprenticeshipCreatedEvent {TransferSenderId = 123436, Uln = "2135546", ApprenticeshipId = 34254, ProviderId = 4536546, ActualStartDate = DateTime.Now, AccountId = 2344536, LegalEntityName = "Test", PriceEpisodes = new[] { new PriceEpisode { Cost = 122345m } }, EndDate = DateTime.Now.AddYears(1), TrainingCode = "ABC123"});
 
     Console.WriteLine("Message published.");
     Console.WriteLine("Press enter to quit");
