@@ -4,7 +4,7 @@ namespace SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 
 internal static class WithdrawApprenticeshipCommandValidator
 {
-    internal static bool IsValidWithdrawal(this WithdrawApprenticeshipCommand command, ApprenticeshipDomainModel? apprenticeship, out string message)
+    internal static bool IsValidWithdrawal(this WithdrawApprenticeshipCommand command, ApprenticeshipDomainModel? apprenticeship, DateTime currentAcademicYearEnd, out string message)
     {
         message = string.Empty;
         
@@ -22,7 +22,7 @@ internal static class WithdrawApprenticeshipCommandValidator
             return false;
 
         // Validate Withdrawal Date
-        if (!command.ValidateWithdrawlDate(apprenticeship, out message))
+        if (!command.ValidateWithdrawlDate(apprenticeship, currentAcademicYearEnd, out message))
             return false;
 
         message = string.Empty;
@@ -50,7 +50,7 @@ internal static class WithdrawApprenticeshipCommandValidator
         return true;
     }
 
-    private static bool ValidateWithdrawlDate(this WithdrawApprenticeshipCommand command, ApprenticeshipDomainModel apprenticeship, out string message)
+    private static bool ValidateWithdrawlDate(this WithdrawApprenticeshipCommand command, ApprenticeshipDomainModel apprenticeship, DateTime currentAcademicYearEnd, out string message)
     {
         message = string.Empty;
 
@@ -60,7 +60,6 @@ internal static class WithdrawApprenticeshipCommandValidator
         if (command.LastDayOfLearning > apprenticeship.EndDate)
             return FailwithMessage(out message, "LastDayOfLearning cannot be after the planned end date");
 
-        var currentAcademicYearEnd = new DateTime(DateTime.Now.Year, 8, 31);//TODO: Get this from API
         if (command.LastDayOfLearning > currentAcademicYearEnd)
             return FailwithMessage(out message, "LastDayOfLearning cannot be after the end of the current academic year");
 

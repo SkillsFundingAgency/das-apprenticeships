@@ -1,38 +1,46 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 
 public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawApprenticeshipCommand, WithdrawApprenticeshipResponse>
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
+    private readonly IApprenticeshipsOuterApiClient _apprenticeshipsOuterApiClient;
+    private readonly ISystemClockService _systemClockService;
     private ILogger<WithdrawApprenticeshipCommandHandler> _logger;
 
-    public WithdrawApprenticeshipCommandHandler(IApprenticeshipRepository apprenticeshipRepository, ILogger<WithdrawApprenticeshipCommandHandler> logger)
+    public WithdrawApprenticeshipCommandHandler(
+        IApprenticeshipRepository apprenticeshipRepository, 
+        IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient,
+        ISystemClockService systemClockService,
+        ILogger<WithdrawApprenticeshipCommandHandler> logger)
     {
         _apprenticeshipRepository = apprenticeshipRepository;
+        _apprenticeshipsOuterApiClient = apprenticeshipsOuterApiClient;
+        _systemClockService = systemClockService;
         _logger = logger;
     }
 
     public async Task<WithdrawApprenticeshipResponse> Handle(WithdrawApprenticeshipCommand command, CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation($"Handling WithdrawApprenticeshipCommand for ULN {command.ULN}");
         var apprenticeship = await _apprenticeshipRepository.GetByUln(command.ULN);
 
-        if(!command.IsValidWithdrawal(apprenticeship, out var message))
+        var academicYear = await _apprenticeshipsOuterApiClient.GetAcademicYear(_systemClockService.UtcNow.DateTime);
+
+        if (!command.IsValidWithdrawal(apprenticeship, academicYear.EndDate, out var message))
         {
             return new WithdrawApprenticeshipResponse { IsSuccess = false, Message = message };
         }
 
-        apprenticeship!.WithdrawApprenticeship(command.ProviderApprovedBy, command.LastDayOfLearning, GetReason(command));
-
+        _logger.LogInformation($"Validation passed, Withdrawing apprenticeship for ULN {command.ULN}");
+        apprenticeship!.WithdrawApprenticeship(command.ProviderApprovedBy, command.LastDayOfLearning, GetReason(command), _systemClockService.UtcNow.DateTime);
         await _apprenticeshipRepository.Update(apprenticeship);
+
+        _logger.LogInformation($"Apprenticeship withdrawn for ULN {command.ULN}");
         return new WithdrawApprenticeshipResponse { IsSuccess = true };
     }
 

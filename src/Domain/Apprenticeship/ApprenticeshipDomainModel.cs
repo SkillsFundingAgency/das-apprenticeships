@@ -341,11 +341,20 @@ public class ApprenticeshipDomainModel : AggregateRoot
         }
     }
 
-    public void WithdrawApprenticeship(string userId, DateTime lastDateOfLearning, string? reason = null)
+    public void WithdrawApprenticeship(string userId, DateTime lastDateOfLearning, string reason, DateTime changeDateTime)
     {
-        LatestEpisode.Withdraw(userId, lastDateOfLearning);
-        CancelPendingPriceChange();
-        CancelPendingStartDateChange();
+        var currentEpisode = LatestEpisode;
+
+        var withdrawRequest = WithdrawalRequestDomainModel.New(_entity.Key, currentEpisode.Key, reason, lastDateOfLearning, changeDateTime, userId);
+        _entity.WithdrawalRequests.Add(withdrawRequest.GetEntity());
+
+        currentEpisode.Withdraw(userId, lastDateOfLearning);
+
+        if (PendingPriceChange != null)
+            CancelPendingPriceChange();
+
+        if(PendingStartDateChange != null)
+            CancelPendingStartDateChange();
     }
 
     private void UpdatePrices(PriceHistoryDomainModel priceChangeRequest)
