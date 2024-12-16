@@ -341,6 +341,13 @@ public class ApprenticeshipDomainModel : AggregateRoot
         }
     }
 
+    public void WithdrawApprenticeship(string userId, DateTime lastDateOfLearning, string? reason = null)
+    {
+        LatestEpisode.Withdraw(userId, lastDateOfLearning);
+        CancelPendingPriceChange();
+        CancelPendingStartDateChange();
+    }
+
     private void UpdatePrices(PriceHistoryDomainModel priceChangeRequest)
     {
         if (priceChangeRequest!.TrainingPrice == null || priceChangeRequest!.AssessmentPrice == null)
