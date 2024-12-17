@@ -13,6 +13,9 @@ internal static class WithdrawApprenticeshipCommandValidator
         if (apprenticeship == null)
             return FailwithMessage(out message, $"No apprenticeship found for ULN {command.ULN}");
 
+        if(apprenticeship.LatestEpisode.Ukprn != command.UKPRN) // This check should really be part of authorization, but is currently passedd in as part of the request body
+            return FailwithMessage(out message, $"Apprenticeship not found for ULN {command.ULN} and UKPRN {command.UKPRN}");
+
         // Validate if already withdrawn
         if (apprenticeship.LatestEpisode.LearningStatus == LearnerStatus.Withdrawn)
             return FailwithMessage(out message, $"Apprenticeship already withdrawn for ULN {command.ULN}");

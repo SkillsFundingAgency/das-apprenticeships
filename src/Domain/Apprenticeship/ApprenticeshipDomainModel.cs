@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Enums;
@@ -355,6 +356,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         if(PendingStartDateChange != null)
             CancelPendingStartDateChange();
+
+        AddEvent(new WithdrawnEvent(_entity.Key, _entity.ApprovalsApprenticeshipId, reason, lastDateOfLearning));
     }
 
     private void UpdatePrices(PriceHistoryDomainModel priceChangeRequest)
