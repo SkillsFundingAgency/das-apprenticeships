@@ -15,11 +15,14 @@ public class WithdrawnEventHandler : IDomainEventHandler<WithdrawnEvent>
 
     public async Task Handle(WithdrawnEvent @event, CancellationToken cancellationToken = default)
     {
-        await _messageSession.Publish(new ApprenticeshipWithdrawn { 
+        var message = new ApprenticeshipWithdrawnEvent
+        {
             ApprenticeshipKey = @event.ApprenticeshipKey,
             ApprenticeshipId = @event.ApprenticeshipId,
             Reason = @event.Reason,
             LastDayOfLearning = @event.LastDayOfLearning
-        });
+        };
+
+        await _messageSession.Publish(message);
     }
 }

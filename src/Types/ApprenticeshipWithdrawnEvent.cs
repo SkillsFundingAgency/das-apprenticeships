@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Apprenticeships.Types;
 
-public class ApprenticeshipWithdrawn : ApprenticeshipEvent
+public class ApprenticeshipWithdrawnEvent
 {
     public Guid ApprenticeshipKey { get; set; }
     public long ApprenticeshipId { get; set; }
