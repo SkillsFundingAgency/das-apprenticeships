@@ -43,11 +43,9 @@ public class WhenHandleWithdrawCommand
     {
         // Arrange
         ResetMockRepository();
-        _validator.Setup(x => x.IsValid(It.IsAny<WithdrawApprenticeshipCommand>(), out It.Ref<string>.IsAny, It.IsAny<ApprenticeshipDomainModel>(), It.IsAny<DateTime>()))
-            .Callback((WithdrawApprenticeshipCommand c, out string m, ApprenticeshipDomainModel? a, DateTime d) => {
-                m = "Test Error";
-                return false;
-            });
+        string message = "TestMessage";
+        _validator.Setup(x => x.IsValid(It.IsAny<WithdrawApprenticeshipCommand>(), out message, It.IsAny<object?[]>()))
+            .Returns(false);
         var sut = new WithdrawApprenticeshipCommandHandler(
             _apprenticeshipRepository.Object,
             _apprenticeshipsOuterApiClient.Object,
@@ -62,7 +60,7 @@ public class WhenHandleWithdrawCommand
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Message.Should().Contain($"No apprenticeship found for ULN {InValidUln}");
+        result.Message.Should().Be("TestMessage");
     }
 
     private Mock<IApprenticeshipRepository> ResetMockRepository()
