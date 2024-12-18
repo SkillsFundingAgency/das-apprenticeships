@@ -25,5 +25,5 @@ public class Apprenticeship
     public List<StartDateChange> StartDateChanges { get; set; }
     public List<FreezeRequest> FreezeRequests { get; set; }
     public List<Episode> Episodes { get; set; }
-	public List<WithdrawalRequest> WithdrawalRequests { get; set; }
+    public List<WithdrawalRequest> WithdrawalRequests { get; set; }
 }
