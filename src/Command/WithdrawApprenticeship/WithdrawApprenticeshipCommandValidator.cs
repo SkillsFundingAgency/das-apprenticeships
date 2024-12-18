@@ -12,7 +12,6 @@ public class WithdrawApprenticeshipCommandValidator : IValidator<WithdrawApprent
         _systemClockService = systemClockService;    
     }
 
-    //, ApprenticeshipDomainModel? apprenticeship, DateTime currentAcademicYearEnd
     public bool IsValid(WithdrawApprenticeshipCommand command, out string message, params object?[] args)
     {
         message = string.Empty;
