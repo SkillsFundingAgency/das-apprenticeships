@@ -10,6 +10,7 @@ using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.WithdrawApprenticeship;
@@ -63,13 +64,43 @@ public class WhenHandleWithdrawCommand
         result.Message.Should().Be("TestMessage");
     }
 
+    [Test]
+    public async Task WhenValidRequestWithdrawCompleted()
+    {
+        // Arrange
+        ResetMockRepository();
+        string message = "";
+        _validator.Setup(x => x.IsValid(It.IsAny<WithdrawApprenticeshipCommand>(), out message, It.IsAny<object?[]>()))
+            .Returns(true);
+
+        var sut = new WithdrawApprenticeshipCommandHandler(
+            _apprenticeshipRepository.Object,
+            _apprenticeshipsOuterApiClient.Object,
+            _systemClockService.Object,
+            _validator.Object,
+            _logger.Object);
+
+        var command = _fixture.Create<WithdrawApprenticeshipCommand>();
+
+        // Act
+        var result = await sut.Handle(command);
+
+        // Assert
+        _apprenticeshipRepository.Verify(x => x.Update(
+            It.Is<ApprenticeshipDomainModel>(y =>
+                y.GetEntity().WithdrawalRequests
+                    .Count(z => z.Reason == command.Reason
+                                && z.LastDayOfLearning == command.LastDayOfLearning) == 1
+                && y.LatestEpisode.LearningStatus == LearnerStatus.Withdrawn)));
+    }
+
     private Mock<IApprenticeshipRepository> ResetMockRepository()
     {
         var apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
 
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, ukprn: ValidUkprn);
 
-        _apprenticeshipRepository.Setup(x => x.GetByUln(ValidUln)).ReturnsAsync(apprenticeship);
+        _apprenticeshipRepository.Setup(x => x.GetByUln(It.IsAny<string>())).ReturnsAsync(apprenticeship);
 
         return _apprenticeshipRepository;
     }

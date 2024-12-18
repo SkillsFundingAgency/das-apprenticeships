@@ -67,6 +67,7 @@ public class WithdrawApprenticeshipCommandValidator : IValidator<WithdrawApprent
     private bool ValidateWithdrawlDate(WithdrawApprenticeshipCommand command, ApprenticeshipDomainModel apprenticeship, DateTime currentAcademicYearEnd, out string message)
     {
         message = string.Empty;
+        var now = _systemClockService.UtcNow;
 
         if (command.LastDayOfLearning < apprenticeship.StartDate)
             return FailwithMessage(out message, "LastDayOfLearning cannot be before the start date");
@@ -77,7 +78,7 @@ public class WithdrawApprenticeshipCommandValidator : IValidator<WithdrawApprent
         if (command.LastDayOfLearning > currentAcademicYearEnd)
             return FailwithMessage(out message, "LastDayOfLearning cannot be after the end of the current academic year");
 
-        if (command.LastDayOfLearning > DateTime.Now && apprenticeship.StartDate > DateTime.Now)
+        if (command.LastDayOfLearning > now && apprenticeship.StartDate < now)
             return FailwithMessage(out message, "LastDayOfLearning cannot be in the future unless the start date is in the future");
 
         message = string.Empty;
