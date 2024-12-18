@@ -2,7 +2,7 @@
 
 public class WithdrawApprenticeshipCommand : ICommand
 {
-    public int UKPRN { get; set; }
+    public long UKPRN { get; set; }
     public string ULN { get; set; }
     public string Reason { get; set; }
     public string ReasonText { get; set; }

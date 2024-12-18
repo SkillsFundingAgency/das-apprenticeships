@@ -1,13 +1,24 @@
 ﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 
-internal static class WithdrawApprenticeshipCommandValidator
+public class WithdrawApprenticeshipCommandValidator : IValidator<WithdrawApprenticeshipCommand>
 {
-    internal static bool IsValidWithdrawal(this WithdrawApprenticeshipCommand command, ApprenticeshipDomainModel? apprenticeship, DateTime currentAcademicYearEnd, out string message)
+    private readonly ISystemClockService _systemClockService;
+
+    public WithdrawApprenticeshipCommandValidator(ISystemClockService systemClockService)
+    {
+        _systemClockService = systemClockService;    
+    }
+
+    //, ApprenticeshipDomainModel? apprenticeship, DateTime currentAcademicYearEnd
+    public bool IsValid(WithdrawApprenticeshipCommand command, out string message, params object?[] args)
     {
         message = string.Empty;
-        
+
+        var apprenticeship = args.OfType<ApprenticeshipDomainModel>().FirstOrDefault();
+        var currentAcademicYearEnd = args.OfType<DateTime>().FirstOrDefault();
 
         // Validate if apprenticeship exists
         if (apprenticeship == null)
@@ -21,11 +32,11 @@ internal static class WithdrawApprenticeshipCommandValidator
             return FailwithMessage(out message, $"Apprenticeship already withdrawn for ULN {command.ULN}");
 
         // Validate Reason
-        if (!command.ValidateReason(out message))
+        if (!ValidateReason(command, out message))
             return false;
 
         // Validate Withdrawal Date
-        if (!command.ValidateWithdrawlDate(apprenticeship, currentAcademicYearEnd, out message))
+        if (!ValidateWithdrawlDate(command, apprenticeship, currentAcademicYearEnd, out message))
             return false;
 
         message = string.Empty;
@@ -33,7 +44,7 @@ internal static class WithdrawApprenticeshipCommandValidator
         return true;
     }
 
-    private static bool ValidateReason(this WithdrawApprenticeshipCommand command, out string message)
+    private bool ValidateReason(WithdrawApprenticeshipCommand command, out string message)
     {
         WithdrawReason reason;
 
@@ -53,7 +64,7 @@ internal static class WithdrawApprenticeshipCommandValidator
         return true;
     }
 
-    private static bool ValidateWithdrawlDate(this WithdrawApprenticeshipCommand command, ApprenticeshipDomainModel apprenticeship, DateTime currentAcademicYearEnd, out string message)
+    private bool ValidateWithdrawlDate(WithdrawApprenticeshipCommand command, ApprenticeshipDomainModel apprenticeship, DateTime currentAcademicYearEnd, out string message)
     {
         message = string.Empty;
 

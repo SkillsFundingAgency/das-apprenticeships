@@ -10,17 +10,20 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IApprenticeshipsOuterApiClient _apprenticeshipsOuterApiClient;
     private readonly ISystemClockService _systemClockService;
+    private readonly IValidator<WithdrawApprenticeshipCommand> _validator;
     private ILogger<WithdrawApprenticeshipCommandHandler> _logger;
 
     public WithdrawApprenticeshipCommandHandler(
         IApprenticeshipRepository apprenticeshipRepository, 
         IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient,
         ISystemClockService systemClockService,
+        IValidator<WithdrawApprenticeshipCommand> validator,
         ILogger<WithdrawApprenticeshipCommandHandler> logger)
     {
         _apprenticeshipRepository = apprenticeshipRepository;
         _apprenticeshipsOuterApiClient = apprenticeshipsOuterApiClient;
         _systemClockService = systemClockService;
+        _validator = validator;
         _logger = logger;
     }
 
@@ -31,7 +34,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
 
         var academicYear = await _apprenticeshipsOuterApiClient.GetAcademicYear(_systemClockService.UtcNow.DateTime);
 
-        if (!command.IsValidWithdrawal(apprenticeship, academicYear.EndDate, out var message))
+        if (!_validator.IsValid(command, out var message, apprenticeship, academicYear.EndDate))
         {
             return new WithdrawApprenticeshipResponse { IsSuccess = false, Message = message };
         }
