@@ -47,6 +47,24 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
         return _apprenticeshipFactory.GetExisting(apprenticeship);
     }
 
+    public async Task<ApprenticeshipDomainModel?> GetByUln(string uln)
+    {
+        var apprenticeship = await DbContext.Apprenticeships
+            .Include(x => x.PriceHistories)
+            .Include(x => x.StartDateChanges)
+            .Include(x => x.FreezeRequests)
+            .Include(x => x.Episodes)
+            .ThenInclude(y => y.Prices)
+            .SingleOrDefaultAsync(x => x.Uln == uln);
+
+        if (apprenticeship == null)
+        {
+            return null;
+        }
+
+        return _apprenticeshipFactory.GetExisting(apprenticeship);
+    }
+
     public async Task Update(ApprenticeshipDomainModel apprenticeship)
     {
         var entity = apprenticeship.GetEntity();

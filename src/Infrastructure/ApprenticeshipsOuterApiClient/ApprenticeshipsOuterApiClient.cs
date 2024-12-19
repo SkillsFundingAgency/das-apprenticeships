@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 
@@ -10,6 +12,7 @@ public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
     private readonly HttpClient _httpClient;
 
     private const string GetStandardUrl = "TrainingCourses/standards";
+    private const string GetAcademicYearUrl = "CollectionCalendar/academicYear";
 
     public ApprenticeshipsOuterApiClient(HttpClient httpClient)
     {
@@ -28,6 +31,24 @@ public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
         {
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<GetStandardResponse>(json);
+        }
+
+        throw new Exception($"Status code: {response.StatusCode} returned from apprenticeships outer api.");
+    }
+
+    public async Task<GetAcademicYearsResponse> GetAcademicYear(DateTime searchYear)
+    {
+        var response = await _httpClient.GetAsync($"{GetAcademicYearUrl}/{searchYear.ToString("yyyy-MM-dd")}").ConfigureAwait(false);
+
+        if (response.StatusCode.Equals(HttpStatusCode.NotFound))
+        {
+            throw new Exception("Academic year not found.");
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<GetAcademicYearsResponse>(json);
         }
 
         throw new Exception($"Status code: {response.StatusCode} returned from apprenticeships outer api.");

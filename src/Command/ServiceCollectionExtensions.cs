@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +54,7 @@ public static class ServiceCollectionExtensions
 
         return serviceCollection;
     }
-        
+
     private static IServiceCollection AddPersistenceServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

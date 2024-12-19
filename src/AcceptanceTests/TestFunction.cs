@@ -8,6 +8,7 @@ using Moq;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Encoding;

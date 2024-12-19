@@ -12,7 +12,9 @@
     [AccountLegalEntityId] BIGINT NULL,
     [TrainingCode] NCHAR(10) NOT NULL,
     [TrainingCourseVersion] NVARCHAR(10) NULL,
-    [PaymentsFrozen] BIT NOT NULL DEFAULT (0)
+    [PaymentsFrozen] BIT NOT NULL DEFAULT (0), 
+    [LearningStatus] NVARCHAR(50) NOT NULL DEFAULT 'Active', 
+    [LastDayOfLearning] DATETIME NULL
 )
 GO
 ALTER TABLE dbo.Episode

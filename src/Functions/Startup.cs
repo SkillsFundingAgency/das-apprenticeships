@@ -57,7 +57,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddNServiceBus(applicationSettings);
         builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocal(configuration));
 
-        builder.Services.AddCommandServices(Configuration).AddEventServices();
+        builder.Services.AddCommandServices(Configuration).AddEventServices().AddValidators();
 
         if(NotAcceptanceTests(configuration))
             builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
