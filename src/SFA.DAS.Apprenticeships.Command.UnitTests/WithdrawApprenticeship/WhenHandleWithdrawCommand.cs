@@ -23,10 +23,7 @@ public class WhenHandleWithdrawCommand
     private Mock<ISystemClockService> _systemClockService;
     private Mock<IValidator<WithdrawApprenticeshipCommand>> _validator;
     private Mock<ILogger<WithdrawApprenticeshipCommandHandler>> _logger;
-    private ApprenticeshipDomainModel _apprenticeship;
 
-    private const string ValidUln = "1234567890";
-    private const string InValidUln = "000000000";
     private const long ValidUkprn = 1000000;
 
     public WhenHandleWithdrawCommand()
