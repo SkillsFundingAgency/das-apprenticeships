@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 
-public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawApprenticeshipCommand, WithdrawApprenticeshipResponse>
+public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawApprenticeshipCommand, Outcome>
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IApprenticeshipsOuterApiClient _apprenticeshipsOuterApiClient;
@@ -27,7 +28,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
         _logger = logger;
     }
 
-    public async Task<WithdrawApprenticeshipResponse> Handle(WithdrawApprenticeshipCommand command, CancellationToken cancellationToken = default)
+    public async Task<Outcome> Handle(WithdrawApprenticeshipCommand command, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation($"Handling WithdrawApprenticeshipCommand for ULN {command.ULN}");
         var apprenticeship = await _apprenticeshipRepository.GetByUln(command.ULN);
@@ -36,7 +37,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
 
         if (!_validator.IsValid(command, out var message, apprenticeship, academicYear.EndDate))
         {
-            return new WithdrawApprenticeshipResponse { IsSuccess = false, Message = message };
+            return Outcome.Fail(message);
         }
 
         _logger.LogInformation($"Validation passed, Withdrawing apprenticeship for ULN {command.ULN}");
@@ -44,7 +45,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
         await _apprenticeshipRepository.Update(apprenticeship);
 
         _logger.LogInformation($"Apprenticeship withdrawn for ULN {command.ULN}");
-        return new WithdrawApprenticeshipResponse { IsSuccess = true };
+        return Outcome.Success();
     }
 
     private string GetReason(WithdrawApprenticeshipCommand command)

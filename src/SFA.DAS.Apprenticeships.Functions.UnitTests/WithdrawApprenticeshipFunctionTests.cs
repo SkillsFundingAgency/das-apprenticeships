@@ -1,17 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
-using SFA.DAS.Apprenticeships.Functions;
+using SFA.DAS.Apprenticeships.Domain;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Functions.UnitTests;
 
@@ -35,9 +32,9 @@ public class WithdrawApprenticeshipFunctionTests
     {
         // Arrange
         var command = new WithdrawApprenticeshipCommand();
-        var response = new WithdrawApprenticeshipResponse { IsSuccess = true };
+        var response = Outcome.Success();
         _commandDispatcherMock
-            .Setup(x => x.Send<WithdrawApprenticeshipCommand, WithdrawApprenticeshipResponse>(It.IsAny<WithdrawApprenticeshipCommand>(), default))
+            .Setup(x => x.Send<WithdrawApprenticeshipCommand, Outcome>(It.IsAny<WithdrawApprenticeshipCommand>(), default))
             .ReturnsAsync(response);
 
         var request = CreateHttpRequest(command);
@@ -56,9 +53,9 @@ public class WithdrawApprenticeshipFunctionTests
     {
         // Arrange
         var command = new WithdrawApprenticeshipCommand();
-        var response = new WithdrawApprenticeshipResponse { IsSuccess = false, Message = "Error" };
+        var response = Outcome.Fail("Error");
         _commandDispatcherMock
-            .Setup(x => x.Send<WithdrawApprenticeshipCommand, WithdrawApprenticeshipResponse>(It.IsAny<WithdrawApprenticeshipCommand>(), default))
+            .Setup(x => x.Send<WithdrawApprenticeshipCommand, Outcome>(It.IsAny<WithdrawApprenticeshipCommand>(), default))
             .ReturnsAsync(response);
 
         var request = CreateHttpRequest(command);

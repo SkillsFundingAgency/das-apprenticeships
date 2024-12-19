@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 using SFA.DAS.Apprenticeships.Functions.Extensions;
+using SFA.DAS.Apprenticeships.Domain;
 
 namespace SFA.DAS.Apprenticeships.Functions;
 
@@ -42,11 +43,11 @@ public class WithdrawApprenticeshipFunction
             return new BadRequestObjectResult("Invalid request body");
         }
 
-        var withdrawResult = await _commandDispatcher.Send<WithdrawApprenticeshipCommand, WithdrawApprenticeshipResponse>(command);
+        var withdrawResult = await _commandDispatcher.Send<WithdrawApprenticeshipCommand, Outcome>(command);
 
         if(!withdrawResult.IsSuccess)
         {
-            return new BadRequestObjectResult(withdrawResult.Message);
+            return new BadRequestObjectResult(withdrawResult.GetResult<string>());
         }
 
         return new OkObjectResult("Completed");

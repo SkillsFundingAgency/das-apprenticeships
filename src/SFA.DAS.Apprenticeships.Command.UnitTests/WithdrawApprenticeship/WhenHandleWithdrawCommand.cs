@@ -58,7 +58,7 @@ public class WhenHandleWithdrawCommand
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Message.Should().Be("TestMessage");
+        result.GetResult<string>().Should().Be("TestMessage");
     }
 
     [Test]
