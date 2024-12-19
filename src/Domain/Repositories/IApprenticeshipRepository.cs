@@ -6,5 +6,6 @@ public interface IApprenticeshipRepository
 {
     Task Add(ApprenticeshipDomainModel apprenticeship);
     Task<ApprenticeshipDomainModel> Get(Guid key);
+    Task<ApprenticeshipDomainModel?> GetByUln(string uln);
     Task Update(ApprenticeshipDomainModel apprenticeship);
 }

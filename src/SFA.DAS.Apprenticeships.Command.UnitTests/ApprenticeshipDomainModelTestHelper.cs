@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using AutoFixture;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
@@ -9,12 +11,46 @@ public static class ApprenticeshipDomainModelTestHelper
 {
     private static readonly Fixture _fixture = new();
 
-    public static void AddEpisode(ApprenticeshipDomainModel apprenticeship, DateTime? startDate = null, DateTime? endDate = null)
+    // If this method isn't a sign that we need to refactor this project then I don't know what is
+    internal static ApprenticeshipDomainModel CreateBasicTestModel()
+    {
+        // Create an instance with default constructor or Activator
+        var apprenticeship = (ApprenticeshipDomainModel)Activator.CreateInstance(
+            typeof(ApprenticeshipDomainModel),
+            BindingFlags.NonPublic | BindingFlags.Instance,
+            null,
+            new object[] { new DataAccess.Entities.Apprenticeship.Apprenticeship(), false },
+            null
+        );
+
+        // Set private fields to empty lists using reflection
+        typeof(ApprenticeshipDomainModel)
+            .GetField("_episodes", BindingFlags.NonPublic | BindingFlags.Instance)
+            .SetValue(apprenticeship, new List<EpisodeDomainModel>());
+
+        typeof(ApprenticeshipDomainModel)
+            .GetField("_priceHistories", BindingFlags.NonPublic | BindingFlags.Instance)
+            .SetValue(apprenticeship, new List<PriceHistoryDomainModel>());
+
+        typeof(ApprenticeshipDomainModel)
+            .GetField("_startDateChanges", BindingFlags.NonPublic | BindingFlags.Instance)
+            .SetValue(apprenticeship, new List<StartDateChangeDomainModel>());
+
+        typeof(ApprenticeshipDomainModel)
+            .GetField("_freezeRequests", BindingFlags.NonPublic | BindingFlags.Instance)
+            .SetValue(apprenticeship, new List<FreezeRequestDomainModel>());
+
+        return apprenticeship;
+    }
+
+    public static void AddEpisode(ApprenticeshipDomainModel apprenticeship, DateTime? startDate = null, DateTime? endDate = null, long? ukprn = null)
     {
         var start = startDate ?? _fixture.Create<DateTime>();
         var end = endDate ?? (start.AddDays(_fixture.Create<int>()));
+        var ukprnValue = ukprn ?? _fixture.Create<long>();
+
         apprenticeship.AddEpisode(
-            _fixture.Create<long>(),
+            ukprnValue,
             _fixture.Create<long>(), 
             start,
             end,

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
