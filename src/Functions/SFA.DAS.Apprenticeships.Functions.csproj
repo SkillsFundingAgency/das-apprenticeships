@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.6.0" />
     <PackageReference Include="SFA.DAS.Approvals.EventHandlers.Messages" Version="1.1.7-prerelease-2" />
     <PackageReference Include="NServiceBus" Version="7.8.4" />
+    <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="100.0.43" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
     <PackageReference Include="SFA.DAS.NServiceBus.AzureFunction" Version="17.0.49" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
