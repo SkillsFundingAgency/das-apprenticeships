@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
@@ -9,9 +10,11 @@ using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
+using SFA.DAS.Apprenticeships.Types;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using LearnerStatus = SFA.DAS.Apprenticeships.Domain.Apprenticeship.LearnerStatus;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.WithdrawApprenticeship;
 
@@ -22,6 +25,7 @@ public class WhenHandleWithdrawCommand
     private Mock<IApprenticeshipsOuterApiClient> _apprenticeshipsOuterApiClient;
     private Mock<ISystemClockService> _systemClockService;
     private Mock<IValidator<WithdrawApprenticeshipCommand>> _validator;
+    private Mock<IMessageSession> _messageSession;
     private Mock<ILogger<WithdrawApprenticeshipCommandHandler>> _logger;
 
     private const long ValidUkprn = 1000000;
@@ -33,6 +37,7 @@ public class WhenHandleWithdrawCommand
         _apprenticeshipsOuterApiClient = MockOuterApiAcademicYearEnd(2025, 7, 22);
         _validator = new Mock<IValidator<WithdrawApprenticeshipCommand>>();
         _systemClockService = MockSystemClock(2024, 12, 17);
+        _messageSession = new Mock<IMessageSession>();
         _logger = new Mock<ILogger<WithdrawApprenticeshipCommandHandler>>();
     }
 
@@ -49,6 +54,7 @@ public class WhenHandleWithdrawCommand
             _apprenticeshipsOuterApiClient.Object,
             _systemClockService.Object,
             _validator.Object,
+            _messageSession.Object,
             _logger.Object);
 
         var command = _fixture.Create<WithdrawApprenticeshipCommand>();
@@ -75,6 +81,7 @@ public class WhenHandleWithdrawCommand
             _apprenticeshipsOuterApiClient.Object,
             _systemClockService.Object,
             _validator.Object,
+            _messageSession.Object,
             _logger.Object);
 
         var command = _fixture.Create<WithdrawApprenticeshipCommand>();
@@ -89,6 +96,11 @@ public class WhenHandleWithdrawCommand
                     .Count(z => z.Reason == command.Reason
                                 && z.LastDayOfLearning == command.LastDayOfLearning) == 1
                 && y.LatestEpisode.LearningStatus == LearnerStatus.Withdrawn)));
+
+        _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipWithdrawnEvent>(e =>
+            e.Reason == command.Reason &&
+            e.LastDayOfLearning == command.LastDayOfLearning
+            ), It.IsAny<PublishOptions>()));
     }
 
     private Mock<IApprenticeshipRepository> ResetMockRepository()

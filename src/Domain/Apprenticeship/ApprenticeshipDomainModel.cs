@@ -357,7 +357,6 @@ public class ApprenticeshipDomainModel : AggregateRoot
         if(PendingStartDateChange != null)
             CancelPendingStartDateChange();
 
-        AddEvent(new WithdrawnEvent(_entity.Key, _entity.ApprovalsApprenticeshipId, reason, lastDateOfLearning));
     }
 
     private void UpdatePrices(PriceHistoryDomainModel priceChangeRequest)
