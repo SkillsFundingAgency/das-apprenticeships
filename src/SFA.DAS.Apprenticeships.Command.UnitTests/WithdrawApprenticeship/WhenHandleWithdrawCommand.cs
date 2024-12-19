@@ -7,9 +7,11 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Domain.Validators;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
+using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.Types;
 using System;
 using System.Linq;
@@ -24,7 +26,7 @@ public class WhenHandleWithdrawCommand
     private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
     private Mock<IApprenticeshipsOuterApiClient> _apprenticeshipsOuterApiClient;
     private Mock<ISystemClockService> _systemClockService;
-    private Mock<IValidator<WithdrawApprenticeshipCommand>> _validator;
+    private Mock<IValidator<WithdrawDomainRequest>> _validator;
     private Mock<IMessageSession> _messageSession;
     private Mock<ILogger<WithdrawApprenticeshipCommandHandler>> _logger;
 
@@ -35,7 +37,7 @@ public class WhenHandleWithdrawCommand
         _fixture = new Fixture();
         _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
         _apprenticeshipsOuterApiClient = MockOuterApiAcademicYearEnd(2025, 7, 22);
-        _validator = new Mock<IValidator<WithdrawApprenticeshipCommand>>();
+        _validator = new Mock<IValidator<WithdrawDomainRequest>>();
         _systemClockService = MockSystemClock(2024, 12, 17);
         _messageSession = new Mock<IMessageSession>();
         _logger = new Mock<ILogger<WithdrawApprenticeshipCommandHandler>>();
@@ -47,7 +49,7 @@ public class WhenHandleWithdrawCommand
         // Arrange
         ResetMockRepository();
         string message = "TestMessage";
-        _validator.Setup(x => x.IsValid(It.IsAny<WithdrawApprenticeshipCommand>(), out message, It.IsAny<object?[]>()))
+        _validator.Setup(x => x.IsValid(It.IsAny<WithdrawDomainRequest>(), out message, It.IsAny<object?[]>()))
             .Returns(false);
         var sut = new WithdrawApprenticeshipCommandHandler(
             _apprenticeshipRepository.Object,
@@ -73,7 +75,7 @@ public class WhenHandleWithdrawCommand
         // Arrange
         ResetMockRepository();
         string message = "";
-        _validator.Setup(x => x.IsValid(It.IsAny<WithdrawApprenticeshipCommand>(), out message, It.IsAny<object?[]>()))
+        _validator.Setup(x => x.IsValid(It.IsAny<WithdrawDomainRequest>(), out message, It.IsAny<object?[]>()))
             .Returns(true);
 
         var sut = new WithdrawApprenticeshipCommandHandler(

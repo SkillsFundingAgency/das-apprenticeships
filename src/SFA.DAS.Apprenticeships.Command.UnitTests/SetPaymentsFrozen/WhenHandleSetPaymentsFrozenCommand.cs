@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using System;
 using System.Collections.Generic;

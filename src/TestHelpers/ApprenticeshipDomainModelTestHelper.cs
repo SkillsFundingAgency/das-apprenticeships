@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using AutoFixture;
+﻿using AutoFixture;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
+using System.Reflection;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests;
+namespace SFA.DAS.Apprenticeships.TestHelpers;
 
 public static class ApprenticeshipDomainModelTestHelper
 {
     private static readonly Fixture _fixture = new();
 
     // If this method isn't a sign that we need to refactor this project then I don't know what is
-    internal static ApprenticeshipDomainModel CreateBasicTestModel()
+    public static ApprenticeshipDomainModel CreateBasicTestModel()
     {
         // Create an instance with default constructor or Activator
         var apprenticeship = (ApprenticeshipDomainModel)Activator.CreateInstance(
@@ -51,7 +49,7 @@ public static class ApprenticeshipDomainModelTestHelper
 
         apprenticeship.AddEpisode(
             ukprnValue,
-            _fixture.Create<long>(), 
+            _fixture.Create<long>(),
             start,
             end,
             _fixture.Create<decimal>(),
@@ -87,17 +85,17 @@ public static class ApprenticeshipDomainModelTestHelper
     public static void AddPendingPriceChangeProviderInitiated(ApprenticeshipDomainModel apprenticeship, DateTime? effectiveFromDate = null)
     {
         apprenticeship.AddPriceHistory(
-            _fixture.Create<decimal>(), 
-            _fixture.Create<decimal>(), 
-            _fixture.Create<decimal>(), 
+            _fixture.Create<decimal>(),
+            _fixture.Create<decimal>(),
+            _fixture.Create<decimal>(),
             effectiveFromDate ?? _fixture.Create<DateTime>(),
-            _fixture.Create<DateTime>(), 
-            ChangeRequestStatus.Created, 
-            _fixture.Create<string>(), 
-            _fixture.Create<string>(), 
-            null, 
-            _fixture.Create<DateTime>(), 
-            null, 
+            _fixture.Create<DateTime>(),
+            ChangeRequestStatus.Created,
+            _fixture.Create<string>(),
+            _fixture.Create<string>(),
+            null,
+            _fixture.Create<DateTime>(),
+            null,
             ChangeInitiator.Provider);
     }
 

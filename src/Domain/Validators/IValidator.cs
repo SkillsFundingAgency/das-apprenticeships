@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command;
+﻿namespace SFA.DAS.Apprenticeships.Domain.Validators;
 
 public interface IValidator<T>
 {

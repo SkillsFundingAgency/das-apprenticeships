@@ -2,14 +2,15 @@
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Validators;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
+using SFA.DAS.Apprenticeships.TestHelpers;
 using System;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.WithdrawApprenticeship;
+namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Validators;
 
-public class WhenValidatingWithdrawApprenticeshipCommand
+public class WhenValidatingWithdrawRequest
 {
     private Fixture _fixture;
     private Mock<ISystemClockService> _systemClockService;
@@ -22,7 +23,7 @@ public class WhenValidatingWithdrawApprenticeshipCommand
     private const string StringLongerThan100 = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
 
 
-    public WhenValidatingWithdrawApprenticeshipCommand()
+    public WhenValidatingWithdrawRequest()
     {
         _fixture = new Fixture();
         _systemClockService = new Mock<ISystemClockService>();
@@ -34,8 +35,8 @@ public class WhenValidatingWithdrawApprenticeshipCommand
     {
         // Arrange
         ApprenticeshipDomainModel? apprenticeship = null;
-        var validator = new WithdrawApprenticeshipCommandValidator(_systemClockService.Object);
-        var command = new WithdrawApprenticeshipCommand
+        var validator = new WithdrawValidator(_systemClockService.Object);
+        var command = new WithdrawDomainRequest
         {
             ULN = InValidUln,
             UKPRN = ValidUkprn,
@@ -54,10 +55,10 @@ public class WhenValidatingWithdrawApprenticeshipCommand
     public void WhenApprenticeshipDoesNotBelongToUkprnThenReturnsExpectedValidationError()
     {
         // Arrange
-        var validator = new WithdrawApprenticeshipCommandValidator(_systemClockService.Object);
+        var validator = new WithdrawValidator(_systemClockService.Object);
         var apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, ukprn: ValidUkprn);
-        var command = new WithdrawApprenticeshipCommand
+        var command = new WithdrawDomainRequest
         {
             ULN = ValidUln,
             UKPRN = InValidUkprn,
@@ -76,12 +77,12 @@ public class WhenValidatingWithdrawApprenticeshipCommand
     public void WhenApprenticeshipAlreadyWithdrawnThenReturnsExpectedValidationError()
     {
         // Arrange
-        var validator = new WithdrawApprenticeshipCommandValidator(_systemClockService.Object);
+        var validator = new WithdrawValidator(_systemClockService.Object);
         var apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, ukprn: ValidUkprn);
         apprenticeship.WithdrawApprenticeship("ProviderApprovedBy", DateTime.UtcNow, "Reason", DateTime.UtcNow);
 
-        var command = new WithdrawApprenticeshipCommand
+        var command = new WithdrawDomainRequest
         {
             ULN = ValidUln,
             UKPRN = ValidUkprn,
@@ -102,11 +103,11 @@ public class WhenValidatingWithdrawApprenticeshipCommand
     public void WhenInvalidReasonThenReturnsExpectedValidationError(string expectedMessage, string reason, string reasonText)
     {
         // Arrange
-        var validator = new WithdrawApprenticeshipCommandValidator(_systemClockService.Object);
+        var validator = new WithdrawValidator(_systemClockService.Object);
         var apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, ukprn: ValidUkprn);
 
-        var command = new WithdrawApprenticeshipCommand
+        var command = new WithdrawDomainRequest
         {
             ULN = ValidUln,
             UKPRN = ValidUkprn,
@@ -129,11 +130,11 @@ public class WhenValidatingWithdrawApprenticeshipCommand
     public void WhenInvalidLastDayThenReturnsExpectedValidationError(string expectedMessage, string lastDayOfLearning)
     {
         // Arrange
-        var validator = new WithdrawApprenticeshipCommandValidator(_systemClockService.Object);
+        var validator = new WithdrawValidator(_systemClockService.Object);
         var apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
-        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, startDate:new DateTime(2024, 9, 1), endDate:new DateTime(2026,7,15), ukprn: ValidUkprn);
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, startDate: new DateTime(2024, 9, 1), endDate: new DateTime(2026, 7, 15), ukprn: ValidUkprn);
 
-        var command = new WithdrawApprenticeshipCommand
+        var command = new WithdrawDomainRequest
         {
             ULN = ValidUln,
             UKPRN = ValidUkprn,

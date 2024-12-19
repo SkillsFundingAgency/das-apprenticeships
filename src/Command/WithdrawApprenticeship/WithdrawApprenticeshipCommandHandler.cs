@@ -3,6 +3,7 @@ using NServiceBus;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Apprenticeships.Domain.Validators;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.Types;
@@ -15,7 +16,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IApprenticeshipsOuterApiClient _apprenticeshipsOuterApiClient;
     private readonly ISystemClockService _systemClockService;
-    private readonly IValidator<WithdrawApprenticeshipCommand> _validator;
+    private readonly IValidator<WithdrawDomainRequest> _validator;
     private readonly IMessageSession _messageSession;
     private ILogger<WithdrawApprenticeshipCommandHandler> _logger;
 
@@ -23,7 +24,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
         IApprenticeshipRepository apprenticeshipRepository, 
         IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient,
         ISystemClockService systemClockService,
-        IValidator<WithdrawApprenticeshipCommand> validator,
+        IValidator<WithdrawDomainRequest> validator,
         IMessageSession messageSession,
         ILogger<WithdrawApprenticeshipCommandHandler> logger)
     {
@@ -42,7 +43,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
 
         var academicYear = await _apprenticeshipsOuterApiClient.GetAcademicYear(_systemClockService.UtcNow.DateTime);
 
-        if (!_validator.IsValid(command, out var message, apprenticeship, academicYear.EndDate))
+        if (!_validator.IsValid(command.ToDomainRequest(), out var message, apprenticeship, academicYear.EndDate))
         {
             return Outcome.Fail(message);
         }

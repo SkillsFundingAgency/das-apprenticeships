@@ -1,4 +1,7 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
+﻿#pragma warning disable 8618
+using SFA.DAS.Apprenticeships.Domain.Validators;
+
+namespace SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 
 public class WithdrawApprenticeshipCommand : ICommand
 {
@@ -10,10 +13,18 @@ public class WithdrawApprenticeshipCommand : ICommand
     public string ProviderApprovedBy { get; set; }
 }
 
-public enum WithdrawReason
+public static class WithdrawApprenticeshipCommandExtensions
 {
-    WithdrawFromStart,
-    WithdrawDuringLearning,
-    WithdrawFromBeta,
-    Other
+    public static WithdrawDomainRequest ToDomainRequest(this WithdrawApprenticeshipCommand command)
+    {
+        return new WithdrawDomainRequest
+        {
+            UKPRN = command.UKPRN,
+            ULN = command.ULN,
+            Reason = command.Reason,
+            ReasonText = command.ReasonText,
+            LastDayOfLearning = command.LastDayOfLearning,
+            ProviderApprovedBy = command.ProviderApprovedBy
+        };
+    }
 }
