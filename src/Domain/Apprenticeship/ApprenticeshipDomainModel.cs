@@ -331,13 +331,11 @@ public class ApprenticeshipDomainModel : AggregateRoot
             var freezeRequest = FreezeRequestDomainModel.New(_entity.Key, userId, changeDateTime, reason);
             _freezeRequests.Add(freezeRequest);
             _entity.FreezeRequests.Add(freezeRequest.GetEntity());
-            AddEvent(new PaymentsFrozen(_entity.Key));
         }
         else
         {
             var freezeRequest = _freezeRequests.Single(x => !x.Unfrozen);
             freezeRequest.Unfreeze(userId, changeDateTime);
-            AddEvent(new PaymentsUnfrozen(_entity.Key));
         }
     }
 
