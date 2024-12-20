@@ -1,6 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -95,21 +93,16 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
     public static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
     {
-        return new ApprenticeshipDomainModel(entity, false);
+        return new ApprenticeshipDomainModel(entity);
     }
 
-    private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity, bool newApprenticeship = true)
+    private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
     {
         _entity = entity;
         _episodes = entity.Episodes.Select(EpisodeDomainModel.Get).ToList();
         _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
         _startDateChanges = entity.StartDateChanges.Select(StartDateChangeDomainModel.Get).ToList();
         _freezeRequests = entity.FreezeRequests.Select(FreezeRequestDomainModel.Get).ToList();
-        
-        if (newApprenticeship)
-        {
-            AddEvent(new ApprenticeshipCreated(_entity.Key));
-        }
     }
 
     public void AddEpisode(

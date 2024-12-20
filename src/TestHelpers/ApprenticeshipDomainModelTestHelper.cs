@@ -22,7 +22,7 @@ public static class ApprenticeshipDomainModelTestHelper
             typeof(ApprenticeshipDomainModel),
             BindingFlags.NonPublic | BindingFlags.Instance,
             null,
-            new object[] { new DataAccess.Entities.Apprenticeship.Apprenticeship(), false },
+            new object[] { new DataAccess.Entities.Apprenticeship.Apprenticeship() },
             null
         );
 

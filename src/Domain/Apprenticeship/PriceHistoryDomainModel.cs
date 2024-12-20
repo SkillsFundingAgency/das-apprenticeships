@@ -1,8 +1,4 @@
-﻿using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Enums;
-using System.Net.NetworkInformation;
-using static Dapper.SqlMapper;
+﻿using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 

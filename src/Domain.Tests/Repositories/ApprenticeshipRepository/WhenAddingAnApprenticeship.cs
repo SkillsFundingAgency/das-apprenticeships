@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRepository
 {
@@ -117,20 +116,6 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
                 .Excluding(y => y.FirstPrice)
                 .Excluding(y => y.ActiveEpisodePrices)
                 .Excluding(y => y.LearningStatus));
-        }
-
-        [Test]
-        public async Task ThenDomainEventsPublished()
-        {
-            // Arrange
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            SetUpApprenticeshipRepository();
-			
-            // Act
-            await _sut.Add(apprenticeship);
-            
-            // Assert
-            _domainEventDispatcher.Verify(x => x.Send(It.Is<ApprenticeshipCreated>(e => e.ApprenticeshipKey == apprenticeship.Key), It.IsAny<CancellationToken>()), Times.Once());
         }
 
         private void SetUpApprenticeshipRepository()

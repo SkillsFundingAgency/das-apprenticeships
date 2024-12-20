@@ -1,63 +1,97 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Factories;
+﻿using Microsoft.Extensions.Logging;
+using NServiceBus;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
+using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
+using SFA.DAS.Apprenticeships.Types;
 
-namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship
+namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship;
+
+public class AddApprenticeshipCommandHandler : ICommandHandler<AddApprenticeshipCommand>
 {
-    public class AddApprenticeshipCommandHandler : ICommandHandler<AddApprenticeshipCommand>
+    private readonly IApprenticeshipFactory _apprenticeshipFactory;
+    private readonly IApprenticeshipRepository _apprenticeshipRepository;
+    private readonly IFundingBandMaximumService _fundingBandMaximumService;
+    private readonly IMessageSession _messageSession;
+    private readonly ILogger<AddApprenticeshipCommandHandler> _logger;
+
+    public AddApprenticeshipCommandHandler(
+        IApprenticeshipFactory apprenticeshipFactory, 
+        IApprenticeshipRepository apprenticeshipRepository, 
+        IFundingBandMaximumService fundingBandMaximumService,
+        IMessageSession messageSession,
+        ILogger<AddApprenticeshipCommandHandler> logger)
     {
-        private readonly IApprenticeshipFactory _apprenticeshipFactory;
-        private readonly IApprenticeshipRepository _apprenticeshipRepository;
-        private readonly IFundingBandMaximumService _fundingBandMaximumService;
+        _apprenticeshipFactory = apprenticeshipFactory;
+        _apprenticeshipRepository = apprenticeshipRepository;
+        _fundingBandMaximumService = fundingBandMaximumService;
+        _messageSession = messageSession;
+        _logger = logger;
+    }
 
-        public AddApprenticeshipCommandHandler(IApprenticeshipFactory apprenticeshipFactory, IApprenticeshipRepository apprenticeshipRepository, IFundingBandMaximumService fundingBandMaximumService)
+    public async Task Handle(AddApprenticeshipCommand command, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Handling AddApprenticeshipCommand for Approvals Apprenticeship Id: {approvalsApprenticeshipId}", command.ApprovalsApprenticeshipId);
+
+        if (command.ActualStartDate == null)
         {
-            _apprenticeshipFactory = apprenticeshipFactory;
-            _apprenticeshipRepository = apprenticeshipRepository;
-            _fundingBandMaximumService = fundingBandMaximumService;
+            throw new Exception(
+                $"{nameof(command.ActualStartDate)} for Apprenticeship ({command.ApprenticeshipHashedId} (Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}) is null. " +
+                $"Apprenticeships funded by DAS should always have an actual start date. ");
         }
+        var startDate = command.ActualStartDate.Value;
+        var fundingBandMaximum = await _fundingBandMaximumService.GetFundingBandMaximum(int.Parse(command.TrainingCode), startDate);
 
-        public async Task Handle(AddApprenticeshipCommand command, CancellationToken cancellationToken = default)
+        if (fundingBandMaximum == null)
+            throw new Exception(
+                $"No funding band maximum found for course {command.TrainingCode} for given date {startDate:u}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
+        
+        var apprenticeship = _apprenticeshipFactory.CreateNew(
+            command.ApprovalsApprenticeshipId,
+            command.Uln,
+            command.DateOfBirth,
+            command.FirstName,
+            command.LastName,
+            command.ApprenticeshipHashedId);
+
+        apprenticeship.AddEpisode(
+            command.UKPRN,
+            command.EmployerAccountId,
+            startDate,
+            command.PlannedEndDate,
+            command.TotalPrice,
+            command.TrainingPrice,
+            command.EndPointAssessmentPrice,
+            command.FundingType,
+            command.FundingPlatform,
+            fundingBandMaximum.Value,
+            command.FundingEmployerAccountId,
+            command.LegalEntityName,
+            command.AccountLegalEntityId,
+            command.TrainingCode,
+            command.TrainingCourseVersion);
+
+        await _apprenticeshipRepository.Add(apprenticeship);
+
+        await SendEvent(apprenticeship);
+    }
+
+    private async Task SendEvent(ApprenticeshipDomainModel apprenticeship)
+    {
+        _logger.LogInformation("Sending ApprenticeshipCreatedEvent for Approvals Apprenticeship Id: {approvalsApprenticeshipId}", apprenticeship.ApprovalsApprenticeshipId);
+        var apprenticeshipCreatedEvent = new ApprenticeshipCreatedEvent
         {
-            if (command.ActualStartDate == null)
-            {
-                throw new Exception(
-                    $"{nameof(command.ActualStartDate)} for Apprenticeship ({command.ApprenticeshipHashedId} (Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}) is null. " +
-                    $"Apprenticeships funded by DAS should always have an actual start date. ");
-            }
-            var startDate = command.ActualStartDate.Value;
-            var fundingBandMaximum = await _fundingBandMaximumService.GetFundingBandMaximum(int.Parse(command.TrainingCode), startDate);
+            ApprenticeshipKey = apprenticeship.Key,
+            Uln = apprenticeship.Uln,
+            ApprovalsApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
+            DateOfBirth = apprenticeship.DateOfBirth,
+            FirstName = apprenticeship.FirstName,
+            LastName = apprenticeship.LastName,
+            Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
+        };
 
-            if (fundingBandMaximum == null)
-                throw new Exception(
-                    $"No funding band maximum found for course {command.TrainingCode} for given date {startDate:u}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
-            
-            var apprenticeship = _apprenticeshipFactory.CreateNew(
-                command.ApprovalsApprenticeshipId,
-                command.Uln,
-                command.DateOfBirth,
-                command.FirstName,
-                command.LastName,
-                command.ApprenticeshipHashedId);
-
-            apprenticeship.AddEpisode(
-                command.UKPRN,
-                command.EmployerAccountId,
-                startDate,
-                command.PlannedEndDate,
-                command.TotalPrice,
-                command.TrainingPrice,
-                command.EndPointAssessmentPrice,
-                command.FundingType,
-                command.FundingPlatform,
-                fundingBandMaximum.Value,
-                command.FundingEmployerAccountId,
-                command.LegalEntityName,
-                command.AccountLegalEntityId,
-                command.TrainingCode,
-                command.TrainingCourseVersion);
-
-            await _apprenticeshipRepository.Add(apprenticeship);
-        }
+        await _messageSession.Publish(apprenticeshipCreatedEvent);
     }
 }

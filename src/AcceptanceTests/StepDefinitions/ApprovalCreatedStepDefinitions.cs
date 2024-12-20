@@ -6,7 +6,6 @@ using NServiceBus;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Handlers;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 using SFA.DAS.Apprenticeships.Types;
@@ -148,7 +147,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         [Then(@"an ApprenticeshipCreatedEvent event is published")]
         public async Task ThenAnApprenticeshipCreatedEventEventIsPublished()
         {
-            await WaitHelper.WaitForIt(() => ApprenticeshipCreatedEventHandler.ReceivedEvents.Any(EventMatchesExpectation), $"Failed to find published {nameof(ApprenticeshipCreated)} event");
+            await WaitHelper.WaitForIt(() => ApprenticeshipCreatedEventHandler.ReceivedEvents.Any(EventMatchesExpectation), $"Failed to find published {nameof(ApprenticeshipCreatedEvent)} event");
 
             var publishedEvent = ApprenticeshipCreatedEventHandler.ReceivedEvents.Single(EventMatchesExpectation);
 
@@ -186,7 +185,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         [Then(@"an ApprenticeshipCreatedEvent event is not published")]
         public async Task ThenAnApprenticeshipCreatedEventEventIsNotPublished()
         {
-            await WaitHelper.WaitForUnexpected(() => ApprenticeshipCreatedEventHandler.ReceivedEvents.Any(EventMatchesExpectation), $"Found unexpected {nameof(ApprenticeshipCreated)} event");
+            await WaitHelper.WaitForUnexpected(() => ApprenticeshipCreatedEventHandler.ReceivedEvents.Any(EventMatchesExpectation), $"Found unexpected {nameof(ApprenticeshipCreatedEvent)} event");
         }
 
 
