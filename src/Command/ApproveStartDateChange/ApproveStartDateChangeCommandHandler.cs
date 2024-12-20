@@ -27,7 +27,7 @@ public class ApproveStartDateChangeCommandHandler : ICommandHandler<ApproveStart
     public async Task Handle(ApproveStartDateChangeCommand command,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation($"Approving start date change for apprenticeship {command.ApprenticeshipKey}");
+        _logger.LogInformation("Approving start date change for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
 
         var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
 
@@ -36,12 +36,12 @@ public class ApproveStartDateChangeCommandHandler : ICommandHandler<ApproveStart
 
         await SendEvent(apprenticeship, startDateChange);
 
-        _logger.LogInformation($"Start date change approved for apprenticeship {command.ApprenticeshipKey}");
+        _logger.LogInformation("Start date change approved for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
     }
 
     private async Task SendEvent(ApprenticeshipDomainModel apprenticeship, StartDateChangeDomainModel startDateChange)
     {
-        _logger.LogInformation($"Sending ApprenticeshipStartDateChangedEvent for apprenticeship {apprenticeship.Key}");
+        _logger.LogInformation("Sending ApprenticeshipStartDateChangedEvent for apprenticeship {apprenticeshipKey}", apprenticeship.Key);
         var approver = startDateChange.GetApprover();
 
         var eventMessage = new ApprenticeshipStartDateChangedEvent()

@@ -1,4 +1,8 @@
-﻿using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Apprenticeships.DataTransferObjects;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
+using SFA.DAS.Apprenticeships.Enums;
+using System.Net.NetworkInformation;
+using static Dapper.SqlMapper;
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 
@@ -99,5 +103,35 @@ public class PriceHistoryDomainModel
         _entity.ProviderApprovedDate = providerApprovedDate;
         _entity.TrainingPrice = trainingPrice;
         _entity.AssessmentPrice = assementPrice;
+    }
+}
+
+public static class PriceHistoryDomainModelExtensions
+{
+    public static DateTime ApprovalDate(this PriceHistoryDomainModel priceHistory)
+    {
+        if (priceHistory.Initiator == ChangeInitiator.Provider)
+        {
+            return priceHistory.EmployerApprovedDate!.Value;
+        }
+        else
+        {
+            return priceHistory.ProviderApprovedDate!.Value;
+        }
+    }
+
+    public static ApprovedBy ChangeApprovedBy(this PriceHistoryDomainModel priceHistory)
+    {
+        if (priceHistory.Initiator == ChangeInitiator.Provider && priceHistory.ApproveByEmployer != null)
+        {
+            return ApprovedBy.Employer;
+        }
+
+        if (priceHistory.Initiator == ChangeInitiator.Employer && priceHistory.ApproveByProvider != null)
+        {
+            return ApprovedBy.Provider;
+        }
+
+        throw new InvalidOperationException("Price change has not been approved by either employer or provider");
     }
 }

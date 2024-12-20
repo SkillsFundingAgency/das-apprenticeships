@@ -195,7 +195,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _entity.PriceHistories.Add(priceHistory.GetEntity());
     }
 
-    public ApprovedBy ApprovePriceChange(string? userApprovedBy, decimal? trainingPrice, decimal? assessmentPrice)
+    public PriceHistoryDomainModel ApprovePriceChange(string? userApprovedBy, decimal? trainingPrice, decimal? assessmentPrice, DateTime approvedDate)
     {
         var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
@@ -204,10 +204,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         if (pendingPriceChange.Initiator == ChangeInitiator.Provider)
         {
-            pendingPriceChange.ApproveByEmployer(userApprovedBy, DateTime.Now);
+            pendingPriceChange.ApproveByEmployer(userApprovedBy, approvedDate);
             UpdatePrices(pendingPriceChange);
-            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
-            return ApprovedBy.Employer;
         }
         else
         {
@@ -220,14 +218,14 @@ public class ApprenticeshipDomainModel : AggregateRoot
                                                     $"employer-initiated price change request does not match the sum of the " +
                                                     $"training price ({trainingPrice}) and the assessment price ({assessmentPrice}).");
 
-            pendingPriceChange.ApproveByProvider(userApprovedBy, DateTime.Now, trainingPrice.Value, assessmentPrice.Value);
+            pendingPriceChange.ApproveByProvider(userApprovedBy, approvedDate, trainingPrice.Value, assessmentPrice.Value);
             UpdatePrices(pendingPriceChange);
-            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
-            return ApprovedBy.Provider;
         }
+
+        return pendingPriceChange;
     }
 
-    public void ProviderAutoApprovePriceChange()
+    public PriceHistoryDomainModel ProviderAutoApprovePriceChange()
     {
         var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
@@ -239,7 +237,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         pendingPriceChange.AutoApprove();
         UpdatePrices(pendingPriceChange);
-        AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
+        return pendingPriceChange;
     }
 
     public void CancelPendingPriceChange()
