@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.TestHelpers;
+using System;
+using System.Linq;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 
@@ -85,21 +84,5 @@ public class WhenAStartDateChangeIsApproved
         apprenticeship.LatestEpisode.EpisodePrices.Count.Should().Be(1);
         apprenticeship.LatestEpisode.LatestPrice.StartDate.Should().Be(new DateTime(2021, 12, 14));
         apprenticeship.LatestEpisode.LatestPrice.EndDate.Should().Be(new DateTime(2024, 03, 11));
-    }
-
-    [TestCase(true)]
-    [TestCase(false)]
-    public void ThenAStartDateChangeApprovedEventIsAdded(bool isApprovedByProvider)
-    {
-        //Arrange
-        var userId = _fixture.Create<string>();
-        var apprenticeship = ApprenticeshipDomainModelTestHelper.BuildApprenticeshipWithPendingStartDateChange(pendingProviderApproval: isApprovedByProvider);
-
-        //Act
-        apprenticeship.ApproveStartDateChange(userId);
-
-        //Assert
-        var events = apprenticeship.FlushEvents();
-        events.Should().ContainSingle(x => x.GetType() == typeof(StartDateChangeApproved));
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
@@ -87,5 +88,13 @@ public class StartDateChangeDomainModel
     public void Cancel()
     {
 	    _entity.RequestStatus = ChangeRequestStatus.Cancelled;
+    }
+}
+
+public static class StartDateChangeDomainModelExtensions
+{
+    public static ApprovedBy GetApprover(this StartDateChangeDomainModel startDateChange)
+    {
+        return startDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
     }
 }

@@ -290,16 +290,17 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _entity.StartDateChanges.Add(startDateChange.GetEntity());
     }
 
-    public void ApproveStartDateChange(string? userApprovedBy)
+    public StartDateChangeDomainModel ApproveStartDateChange(string? userApprovedBy)
     {
         var pendingStartDateChange = _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
         if(pendingStartDateChange == null)
             throw new InvalidOperationException("There is no pending start date request to approve for this apprenticeship.");
 
-        var approver = pendingStartDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
+        var approver = pendingStartDateChange.GetApprover();
         pendingStartDateChange.Approve(approver, userApprovedBy, DateTime.UtcNow);
         LatestEpisode.UpdatePricesForApprovedStartDateChange(pendingStartDateChange);
-        AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver));
+
+       return pendingStartDateChange;
     }
 
     public void RejectStartDateChange(string? reason)

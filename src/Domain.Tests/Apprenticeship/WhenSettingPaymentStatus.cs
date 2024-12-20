@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using System.Linq;
 using FluentAssertions;
+using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 
