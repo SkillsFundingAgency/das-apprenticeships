@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
 using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
 using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
@@ -95,11 +94,27 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             return null;
         }
 
+<<<<<<< HEAD
+         return apprenticeship == null ? null : new ApprenticeshipStartDate
+         {
+	         ApprenticeshipKey = apprenticeship.Key,
+	         ActualStartDate = firstPrice.StartDate,
+	         PlannedEndDate = latestPrice.EndDate,
+	         AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
+	         UKPRN = latestEpisode.Ukprn,
+	         ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
+	         CourseCode = latestEpisode.TrainingCode,
+	         CourseVersion = latestEpisode.TrainingCourseVersion,
+             SimplifiedPaymentsMinimumStartDate = Constants.SimplifiedPaymentsMinimumStartDate
+         };
+     }
+=======
         var latestEpisode = episodes?.MaxBy(x => x.Prices.Where(y => !y.IsDeleted).Max(y => y.StartDate));
         if (latestEpisode == null)
         {
             return null;
         }
+>>>>>>> PS-Release-7.3
 
         var firstPrice = prices?.MinBy(x => x.StartDate);
         if (firstPrice == null)
@@ -332,32 +347,5 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         }
 
         return currentPartyIds;
-    }
-
-    public async Task<LearnerStatus?> GetLearnerStatus(Guid apprenticeshipKey)
-    {
-        LearnerStatus? learnerStatus = null;
-
-        try
-        {
-            var apprenticeship = await DbContext.Apprenticeships
-                .Where(a => a.Key == apprenticeshipKey)
-                .Include(a => a.Episodes)
-                .SingleOrDefaultAsync();
-
-            if (apprenticeship == null)
-                return null;
-
-            var episode = apprenticeship.GetEpisode();
-
-            if (Enum.TryParse<LearnerStatus>(episode.LearningStatus, out var parsedStatus))
-                learnerStatus = parsedStatus;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Error getting learner status for apprenticeship key {key}", apprenticeshipKey);
-        }
-
-        return learnerStatus;
     }
 }

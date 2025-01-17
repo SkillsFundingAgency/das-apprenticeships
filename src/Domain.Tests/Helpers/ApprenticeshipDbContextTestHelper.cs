@@ -8,6 +8,7 @@ using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using System.Threading.Tasks;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
@@ -31,7 +32,8 @@ public static class ApprenticeshipDbContextTestHelper
         string? initiator = null,
         long? approvalsApprenticeshipId = null,
         FundingPlatform? fundingPlatform = null,
-        DateTime? startDate = null)
+        DateTime? startDate = null,
+        LearnerStatus? learnerStatus = null)
     {
         var episodeKey = _fixture.Create<Guid>();
         var episodePrice = _fixture.Build<EpisodePrice>()
@@ -46,6 +48,7 @@ public static class ApprenticeshipDbContextTestHelper
             .With(x => x.Ukprn, ukprn ?? _fixture.Create<long>())
             .With(x => x.FundingPlatform, fundingPlatform ?? _fixture.Create<FundingPlatform>())
             .With(x => x.Prices, new List<EpisodePrice> { episodePrice })
+            .With(x => x.LearningStatus, learnerStatus != null ? learnerStatus.ToString() : _fixture.Create<LearnerStatus>().ToString())
             .Create();
 
         var apprenticeship = _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
