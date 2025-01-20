@@ -94,7 +94,7 @@ public class TestFunction : IDisposable
 
     public async Task StartHost()
     {
-        var timeout = new TimeSpan(0, 2, 10);
+        var timeout = new TimeSpan(0, 1, 0);
         var delayTask = Task.Delay(timeout);
 
         await Task.WhenAny(Task.WhenAll(_host.StartAsync(), Jobs.Terminate()), delayTask);

@@ -1,4 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Factories;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 
@@ -9,16 +11,25 @@ namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship
         private readonly IApprenticeshipFactory _apprenticeshipFactory;
         private readonly IApprenticeshipRepository _apprenticeshipRepository;
         private readonly IFundingBandMaximumService _fundingBandMaximumService;
+        private readonly ILogger<AddApprenticeshipCommandHandler> _logger;
 
-        public AddApprenticeshipCommandHandler(IApprenticeshipFactory apprenticeshipFactory, IApprenticeshipRepository apprenticeshipRepository, IFundingBandMaximumService fundingBandMaximumService)
+        public AddApprenticeshipCommandHandler(IApprenticeshipFactory apprenticeshipFactory, IApprenticeshipRepository apprenticeshipRepository, IFundingBandMaximumService fundingBandMaximumService, ILogger<AddApprenticeshipCommandHandler> logger)
         {
             _apprenticeshipFactory = apprenticeshipFactory;
             _apprenticeshipRepository = apprenticeshipRepository;
             _fundingBandMaximumService = fundingBandMaximumService;
+            _logger = logger;
         }
 
         public async Task Handle(AddApprenticeshipCommand command, CancellationToken cancellationToken = default)
         {
+            var existingApprenticeship = await _apprenticeshipRepository.Get(command.Uln, command.ApprovalsApprenticeshipId);
+            if (existingApprenticeship != null)
+            {
+                _logger.LogInformation($"Apprenticeship not created as a record already exists with ULN: {command.Uln} and ApprovalsApprenticeshipId: {command.ApprovalsApprenticeshipId}.");
+                return;
+            }
+
             if (command.ActualStartDate == null)
             {
                 throw new Exception(
