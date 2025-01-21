@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,6 +50,19 @@ public class WhenAnAddApprenticeshipCommandIsSent
         _fixture.Customize(new ApprenticeshipCustomization());
     }
 
+    [Test]
+	public async Task WhenAnApprenticeshipAlreadyExistsThenItIsNotCreatedAgain()
+    {
+        var command = _fixture.Create<AddApprenticeshipCommand>();
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+
+		_apprenticeshipRepository.Setup(x => x.Get(command.Uln, command.ApprovalsApprenticeshipId)).ReturnsAsync(apprenticeship);
+
+        await _commandHandler.Handle(command);
+
+        _apprenticeshipRepository.Verify(x => x.Add(It.IsAny<ApprenticeshipDomainModel>()), Times.Never());
+    }
+	
     [Test]
     public async Task ThenAnEpisodeIsCreated()
     {

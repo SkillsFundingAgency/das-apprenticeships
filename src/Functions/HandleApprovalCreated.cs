@@ -5,7 +5,8 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Approvals.EventHandlers.Messages;
+using SFA.DAS.CommitmentsV2.Messages.Events;
+using SFA.DAS.CommitmentsV2.Types;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
@@ -21,7 +22,7 @@ namespace SFA.DAS.Apprenticeships.Functions
         }
 
         [FunctionName("HandleApprovalCreatedEvent")]
-        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprovalCreatedEvent @event,
+        public async Task HandleCommand([NServiceBusTrigger(Endpoint = QueueNames.ApprovalCreated)] ApprenticeshipCreatedEvent @event,
             ILogger log)
         {
             if (!@event.IsOnFlexiPaymentPilot.GetValueOrDefault())
@@ -33,16 +34,16 @@ namespace SFA.DAS.Apprenticeships.Functions
             {
                 TrainingCode = @event.TrainingCode,
                 ActualStartDate = @event.ActualStartDate,
-                TotalPrice = @event.AgreedPrice,
-                TrainingPrice = @event.TrainingPrice,
-                EndPointAssessmentPrice = @event.EndPointAssessmentPrice,
-                ApprovalsApprenticeshipId = @event.ApprovalsApprenticeshipId,
-                EmployerAccountId = @event.EmployerAccountId,
-                FundingEmployerAccountId = @event.FundingEmployerAccountId,
-                FundingType = Enum.Parse<Enums.FundingType>(@event.FundingType.ToString()),
+                TotalPrice = @event.PriceEpisodes[0].Cost,
+                TrainingPrice = @event.PriceEpisodes[0].TrainingPrice,
+                EndPointAssessmentPrice = @event.PriceEpisodes[0].EndPointAssessmentPrice,
+                ApprovalsApprenticeshipId = @event.ApprenticeshipId,
+                EmployerAccountId = @event.AccountId,
+                FundingEmployerAccountId = @event.TransferSenderId,
+                FundingType = GetFundingType(@event),
                 LegalEntityName = @event.LegalEntityName,
-                PlannedEndDate = @event.PlannedEndDate.Value,
-                UKPRN = @event.UKPRN,
+                PlannedEndDate = @event.EndDate,
+                UKPRN = @event.ProviderId,
                 Uln = @event.Uln,
                 DateOfBirth = @event.DateOfBirth,
                 FirstName = @event.FirstName,
@@ -52,6 +53,21 @@ namespace SFA.DAS.Apprenticeships.Functions
                 AccountLegalEntityId = @event.AccountLegalEntityId,
                 TrainingCourseVersion = @event.TrainingCourseVersion
             });
+        }
+
+        private FundingType GetFundingType(ApprenticeshipCreatedEvent @event)
+        {
+            if (@event.TransferSenderId.HasValue)
+            {
+                return FundingType.Transfer;
+            }
+
+            if (@event.ApprenticeshipEmployerTypeOnApproval == ApprenticeshipEmployerType.NonLevy)
+            {
+                return FundingType.NonLevy;
+            }
+
+            return FundingType.Levy;
         }
     }
 }

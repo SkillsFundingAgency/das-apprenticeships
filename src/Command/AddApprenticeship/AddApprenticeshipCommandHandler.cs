@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using NServiceBus;
+using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Factories;
@@ -18,8 +19,8 @@ public class AddApprenticeshipCommandHandler : ICommandHandler<AddApprenticeship
     private readonly ILogger<AddApprenticeshipCommandHandler> _logger;
 
     public AddApprenticeshipCommandHandler(
-        IApprenticeshipFactory apprenticeshipFactory, 
-        IApprenticeshipRepository apprenticeshipRepository, 
+        IApprenticeshipFactory apprenticeshipFactory,
+        IApprenticeshipRepository apprenticeshipRepository,
         IFundingBandMaximumService fundingBandMaximumService,
         IMessageSession messageSession,
         ILogger<AddApprenticeshipCommandHandler> logger)
@@ -33,6 +34,13 @@ public class AddApprenticeshipCommandHandler : ICommandHandler<AddApprenticeship
 
     public async Task Handle(AddApprenticeshipCommand command, CancellationToken cancellationToken = default)
     {
+        var existingApprenticeship = await _apprenticeshipRepository.Get(command.Uln, command.ApprovalsApprenticeshipId);
+        if (existingApprenticeship != null)
+        {
+            _logger.LogInformation($"Apprenticeship not created as a record already exists with ULN: {command.Uln} and ApprovalsApprenticeshipId: {command.ApprovalsApprenticeshipId}.");
+            return;
+        }
+
         _logger.LogInformation("Handling AddApprenticeshipCommand for Approvals Apprenticeship Id: {approvalsApprenticeshipId}", command.ApprovalsApprenticeshipId);
 
         if (command.ActualStartDate == null)
@@ -47,7 +55,7 @@ public class AddApprenticeshipCommandHandler : ICommandHandler<AddApprenticeship
         if (fundingBandMaximum == null)
             throw new Exception(
                 $"No funding band maximum found for course {command.TrainingCode} for given date {startDate:u}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
-        
+
         var apprenticeship = _apprenticeshipFactory.CreateNew(
             command.ApprovalsApprenticeshipId,
             command.Uln,
