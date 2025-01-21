@@ -83,6 +83,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             var episode = EpisodeDomainModel.Get(_fixture.Build<Episode>()
                 .With(x => x.Prices, new List<EpisodePrice>(){ episodePrice })
                 .With(x => x.PaymentsFrozen, false)
+                .With(x => x.LearningStatus, "Active")
+                .With(x => x.LastDayOfLearning, (DateTime?)null)
                 .Create());
 
             apprenticeship.AddEpisode(
@@ -113,7 +115,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
                 .Excluding(y => y.LatestPrice)
                 .Excluding(y => y.EpisodePrices)
                 .Excluding(y => y.FirstPrice)
-                .Excluding(y => y.ActiveEpisodePrices));
+                .Excluding(y => y.ActiveEpisodePrices)
+                .Excluding(y => y.LearningStatus));
         }
 
         [Test]

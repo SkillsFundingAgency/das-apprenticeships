@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Enums;
@@ -339,6 +340,23 @@ public class ApprenticeshipDomainModel : AggregateRoot
             freezeRequest.Unfreeze(userId, changeDateTime);
             AddEvent(new PaymentsUnfrozen(_entity.Key));
         }
+    }
+
+    public void WithdrawApprenticeship(string userId, DateTime lastDateOfLearning, string reason, DateTime changeDateTime)
+    {
+        var currentEpisode = LatestEpisode;
+
+        var withdrawRequest = WithdrawalRequestDomainModel.New(_entity.Key, currentEpisode.Key, reason, lastDateOfLearning, changeDateTime, userId);
+        _entity.WithdrawalRequests.Add(withdrawRequest.GetEntity());
+
+        currentEpisode.Withdraw(userId, lastDateOfLearning);
+
+        if (PendingPriceChange != null)
+            CancelPendingPriceChange();
+
+        if(PendingStartDateChange != null)
+            CancelPendingStartDateChange();
+
     }
 
     private void UpdatePrices(PriceHistoryDomainModel priceChangeRequest)

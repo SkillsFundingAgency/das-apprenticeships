@@ -23,6 +23,7 @@ namespace SFA.DAS.Apprenticeships.DataAccess
         public virtual DbSet<PriceHistory> PriceHistories { get; set; }
         public virtual DbSet<StartDateChange> StartDateChanges { get; set; }
         public virtual DbSet<FreezeRequest> FreezeRequests { get; set; }
+        public virtual DbSet<WithdrawalRequest> WithdrawalRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -82,6 +83,10 @@ namespace SFA.DAS.Apprenticeships.DataAccess
 
             // FreezeRequest
             modelBuilder.Entity<FreezeRequest>()
+                .HasKey(x => x.Key);
+
+            // WithdrawalRequest
+            modelBuilder.Entity<WithdrawalRequest>()
                 .HasKey(x => x.Key);
 
             base.OnModelCreating(modelBuilder);
