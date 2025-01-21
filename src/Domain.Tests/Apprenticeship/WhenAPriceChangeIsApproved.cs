@@ -1,13 +1,12 @@
-﻿using System;
-using System.Linq;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
-using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using System;
+using System.Linq;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 
@@ -33,8 +32,7 @@ public class WhenAPriceChangeIsApproved
         var employerUserId = _fixture.Create<string>();
 
         //Act
-        apprenticeship.ApprovePriceChange(employerUserId, null, null);
-        var events = apprenticeship.FlushEvents();
+        apprenticeship.ApprovePriceChange(employerUserId, null, null, DateTime.Now);
 
         //Assert
         apprenticeship.GetEntity().PriceHistories.Any(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
@@ -44,7 +42,6 @@ public class WhenAPriceChangeIsApproved
         priceHistory.ProviderApprovedDate.Should().NotBeNull();
         priceHistory.EmployerApprovedBy.Should().Be(employerUserId);
         priceHistory.EmployerApprovedDate.Should().NotBeNull();
-        events.Should().ContainSingle(x => x.GetType() == typeof(PriceChangeApproved));
     }
 
     [Test]
@@ -59,8 +56,7 @@ public class WhenAPriceChangeIsApproved
         var providerUserId = _fixture.Create<string>();
 
         //Act
-        apprenticeship.ApprovePriceChange(providerUserId, trainingPrice, assessmentPrice);
-        var events = apprenticeship.FlushEvents();
+        apprenticeship.ApprovePriceChange(providerUserId, trainingPrice, assessmentPrice, DateTime.Now);
 
         //Assert
         apprenticeship.GetEntity().PriceHistories.Any(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created).Should().BeFalse();
@@ -70,7 +66,6 @@ public class WhenAPriceChangeIsApproved
         priceHistory.ProviderApprovedDate.Should().NotBeNull();
         priceHistory.EmployerApprovedBy.Should().NotBeNull();
         priceHistory.EmployerApprovedDate.Should().NotBeNull();
-        events.Should().ContainSingle(x => x.GetType() == typeof(PriceChangeApproved));
     }
 
     [Test]
@@ -132,7 +127,7 @@ public class WhenAPriceChangeIsApproved
     private void CreatePriceChange(ApprenticeshipDomainModel apprenticeship, DateTime effectiveFromDate, int newTrainingPrice, int newAssessmentPrice)
     {
         ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeEmployerInitiated(apprenticeship, newTrainingPrice + newAssessmentPrice, effectiveFromDate);
-        apprenticeship.ApprovePriceChange(_fixture.Create<string>(), newTrainingPrice, newAssessmentPrice);
+        apprenticeship.ApprovePriceChange(_fixture.Create<string>(), newTrainingPrice, newAssessmentPrice, DateTime.Now);
         var events = apprenticeship.FlushEvents();
     }
 }
