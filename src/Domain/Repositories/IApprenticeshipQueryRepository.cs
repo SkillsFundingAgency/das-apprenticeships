@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Apprenticeships.DataTransferObjects;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
 
 namespace SFA.DAS.Apprenticeships.Domain.Repositories;
@@ -15,4 +16,5 @@ public interface IApprenticeshipQueryRepository
     Task<PaymentStatus?> GetPaymentStatus(Guid apprenticeshipKey);
     Task<List<ApprenticeshipWithEpisodes>?> GetApprenticeshipsWithEpisodes(long ukprn);
     Task<CurrentPartyIds?> GetCurrentPartyIds(Guid apprenticeshipKey);
+    Task<LearnerStatus?> GetLearnerStatus(Guid apprenticeshipKey);
 }
