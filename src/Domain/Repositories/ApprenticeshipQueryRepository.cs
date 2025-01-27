@@ -346,7 +346,11 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
                 .SingleOrDefaultAsync();
 
             if (apprenticeship == null)
+            {
+                _logger.LogInformation("Apprenticeship not found for apprenticeship key {key} when attempting to get learner status", apprenticeshipKey);
                 return null;
+            }
+                
 
             var episode = apprenticeship.GetEpisode();
 
