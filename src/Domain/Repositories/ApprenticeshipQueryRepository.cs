@@ -116,7 +116,8 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             UKPRN = latestEpisode.Ukprn,
             ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
             CourseCode = latestEpisode.TrainingCode,
-            CourseVersion = latestEpisode.TrainingCourseVersion
+	         CourseVersion = latestEpisode.TrainingCourseVersion,
+             SimplifiedPaymentsMinimumStartDate = Constants.SimplifiedPaymentsMinimumStartDate
         };
     }
 

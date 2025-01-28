@@ -8,3 +8,6 @@
     [DateOfBirth] DATETIME NOT NULL,
     [ApprenticeshipHashedId] NVARCHAR(100) NULL
 )
+GO
+CREATE INDEX IX_Apprenticeship_Uln ON Apprenticeship (Uln)
+GO
