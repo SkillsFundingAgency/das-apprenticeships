@@ -81,6 +81,25 @@ public class WhenGetLearnerStatus
         result!.LearnerStatus.Should().Be(LearnerStatus.InLearning);
     }
 
+    [Test]
+    public async Task Then_ShouldReturnWithdrawn_WhenDomainLearnerStatusIsWithdrawn()
+    {
+        // Arrange
+        var query = _fixture.Create<GetLearnerStatusRequest>();
+        var pastDate = DateTime.UtcNow.AddDays(-1);
+        MockStartDateInRepository(pastDate);
+        _apprenticeshipQueryRepositoryMock.Setup(repo => repo.GetLearnerStatus(It.IsAny<Guid>()))
+            .ReturnsAsync(Domain.Apprenticeship.LearnerStatus.Withdrawn);
+        _systemClockServiceMock.Setup(clock => clock.UtcNow).Returns(DateTime.UtcNow);
+
+        // Act
+        var result = await _handler.Handle(query);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.LearnerStatus.Should().Be(LearnerStatus.Withdrawn);
+    }
+
     private void MockStartDateInRepository(DateTime? startDate = null)
     {
         ApprenticeshipStartDate? apprenticeshipStartDate = null;
