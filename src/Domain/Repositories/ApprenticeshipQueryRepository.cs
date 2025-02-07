@@ -5,6 +5,8 @@ using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
 using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
 
@@ -287,6 +289,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             var apprenticeships = await DbContext.Apprenticeships
                 .Include(x => x.Episodes)
                 .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
+                .Include(x => x.WithdrawalRequests)
                 .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
                 .ToListAsync();
 
@@ -300,7 +303,8 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
                             new Episode(ep.Key, ep.TrainingCode, ep.Prices.Select(p =>
                                 new EpisodePrice(p.StartDate, p.EndDate, p.TrainingPrice, p.EndPointAssessmentPrice, p.TotalPrice, p.FundingBandMaximum)).ToList()))
                         .ToList(),
-                    apprenticeship.GetAgeAtStartOfApprenticeship())
+                    apprenticeship.GetAgeAtStartOfApprenticeship(),
+                    apprenticeship.GetWithdrawnDate())
             ).ToList();
         }
         catch (Exception e)
