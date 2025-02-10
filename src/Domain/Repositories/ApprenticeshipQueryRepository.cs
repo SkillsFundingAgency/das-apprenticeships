@@ -288,12 +288,13 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         try
         {
             var withdrawFromStartReason = WithdrawReason.WithdrawFromStart.ToString();
+            var withdrawFromPrivateBeta = WithdrawReason.WithdrawFromBeta.ToString();
 
             var apprenticeships = await DbContext.Apprenticeships
                 .Include(x => x.Episodes)
                 .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
                 .Include(x => x.WithdrawalRequests)
-                .Where(x => x.WithdrawalRequests == null || !x.WithdrawalRequests.Any(y => y.Reason == withdrawFromStartReason))
+                .Where(x => x.WithdrawalRequests == null || !x.WithdrawalRequests.Any(y => y.Reason == withdrawFromStartReason || y.Reason == withdrawFromPrivateBeta))
                 .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
                 .ToListAsync();
 
