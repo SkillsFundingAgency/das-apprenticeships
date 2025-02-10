@@ -4,6 +4,7 @@ using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Validators;
 using SFA.DAS.Apprenticeships.Enums;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -286,10 +287,13 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         List<ApprenticeshipWithEpisodes>? apprenticeshipWithEpisodes = null;
         try
         {
+            var withdrawFromStartReason = WithdrawReason.WithdrawFromStart.ToString();
+
             var apprenticeships = await DbContext.Apprenticeships
                 .Include(x => x.Episodes)
                 .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
                 .Include(x => x.WithdrawalRequests)
+                .Where(x => x.WithdrawalRequests == null || !x.WithdrawalRequests.Any(y => y.Reason == withdrawFromStartReason))
                 .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
                 .ToListAsync();
 
