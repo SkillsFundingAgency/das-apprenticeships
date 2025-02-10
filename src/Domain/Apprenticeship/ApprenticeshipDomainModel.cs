@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Enums;
 
@@ -94,21 +93,16 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
     public static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
     {
-        return new ApprenticeshipDomainModel(entity, false);
+        return new ApprenticeshipDomainModel(entity);
     }
 
-    private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity, bool newApprenticeship = true)
+    private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
     {
         _entity = entity;
         _episodes = entity.Episodes.Select(EpisodeDomainModel.Get).ToList();
         _priceHistories = entity.PriceHistories.Select(PriceHistoryDomainModel.Get).ToList();
         _startDateChanges = entity.StartDateChanges.Select(StartDateChangeDomainModel.Get).ToList();
         _freezeRequests = entity.FreezeRequests.Select(FreezeRequestDomainModel.Get).ToList();
-        
-        if (newApprenticeship)
-        {
-            AddEvent(new ApprenticeshipCreated(_entity.Key));
-        }
     }
 
     public void AddEpisode(
@@ -194,7 +188,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _entity.PriceHistories.Add(priceHistory.GetEntity());
     }
 
-    public ApprovedBy ApprovePriceChange(string? userApprovedBy, decimal? trainingPrice, decimal? assessmentPrice)
+    public PriceHistoryDomainModel ApprovePriceChange(string? userApprovedBy, decimal? trainingPrice, decimal? assessmentPrice, DateTime approvedDate)
     {
         var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
@@ -203,10 +197,8 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         if (pendingPriceChange.Initiator == ChangeInitiator.Provider)
         {
-            pendingPriceChange.ApproveByEmployer(userApprovedBy, DateTime.Now);
+            pendingPriceChange.ApproveByEmployer(userApprovedBy, approvedDate);
             UpdatePrices(pendingPriceChange);
-            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Employer));
-            return ApprovedBy.Employer;
         }
         else
         {
@@ -219,14 +211,14 @@ public class ApprenticeshipDomainModel : AggregateRoot
                                                     $"employer-initiated price change request does not match the sum of the " +
                                                     $"training price ({trainingPrice}) and the assessment price ({assessmentPrice}).");
 
-            pendingPriceChange.ApproveByProvider(userApprovedBy, DateTime.Now, trainingPrice.Value, assessmentPrice.Value);
+            pendingPriceChange.ApproveByProvider(userApprovedBy, approvedDate, trainingPrice.Value, assessmentPrice.Value);
             UpdatePrices(pendingPriceChange);
-            AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
-            return ApprovedBy.Provider;
         }
+
+        return pendingPriceChange;
     }
 
-    public void ProviderAutoApprovePriceChange()
+    public PriceHistoryDomainModel ProviderAutoApprovePriceChange()
     {
         var pendingPriceChange = _priceHistories.SingleOrDefault(x => x.PriceChangeRequestStatus == ChangeRequestStatus.Created);
 
@@ -238,7 +230,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
 
         pendingPriceChange.AutoApprove();
         UpdatePrices(pendingPriceChange);
-        AddEvent(new PriceChangeApproved(_entity.Key, pendingPriceChange.Key, ApprovedBy.Provider));
+        return pendingPriceChange;
     }
 
     public void CancelPendingPriceChange()
@@ -289,16 +281,17 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _entity.StartDateChanges.Add(startDateChange.GetEntity());
     }
 
-    public void ApproveStartDateChange(string? userApprovedBy)
+    public StartDateChangeDomainModel ApproveStartDateChange(string? userApprovedBy)
     {
         var pendingStartDateChange = _startDateChanges.SingleOrDefault(x => x.RequestStatus == ChangeRequestStatus.Created);
         if(pendingStartDateChange == null)
             throw new InvalidOperationException("There is no pending start date request to approve for this apprenticeship.");
 
-        var approver = pendingStartDateChange.Initiator == ChangeInitiator.Employer ? ApprovedBy.Provider : ApprovedBy.Employer;
+        var approver = pendingStartDateChange.GetApprover();
         pendingStartDateChange.Approve(approver, userApprovedBy, DateTime.UtcNow);
         LatestEpisode.UpdatePricesForApprovedStartDateChange(pendingStartDateChange);
-        AddEvent(new StartDateChangeApproved(_entity.Key, pendingStartDateChange!.Key, approver));
+
+       return pendingStartDateChange;
     }
 
     public void RejectStartDateChange(string? reason)
@@ -331,14 +324,29 @@ public class ApprenticeshipDomainModel : AggregateRoot
             var freezeRequest = FreezeRequestDomainModel.New(_entity.Key, userId, changeDateTime, reason);
             _freezeRequests.Add(freezeRequest);
             _entity.FreezeRequests.Add(freezeRequest.GetEntity());
-            AddEvent(new PaymentsFrozen(_entity.Key));
         }
         else
         {
             var freezeRequest = _freezeRequests.Single(x => !x.Unfrozen);
             freezeRequest.Unfreeze(userId, changeDateTime);
-            AddEvent(new PaymentsUnfrozen(_entity.Key));
         }
+    }
+
+    public void WithdrawApprenticeship(string userId, DateTime lastDateOfLearning, string reason, DateTime changeDateTime)
+    {
+        var currentEpisode = LatestEpisode;
+
+        var withdrawRequest = WithdrawalRequestDomainModel.New(_entity.Key, currentEpisode.Key, reason, lastDateOfLearning, changeDateTime, userId);
+        _entity.WithdrawalRequests.Add(withdrawRequest.GetEntity());
+
+        currentEpisode.Withdraw(userId, lastDateOfLearning);
+
+        if (PendingPriceChange != null)
+            CancelPendingPriceChange();
+
+        if(PendingStartDateChange != null)
+            CancelPendingStartDateChange();
+
     }
 
     private void UpdatePrices(PriceHistoryDomainModel priceChangeRequest)

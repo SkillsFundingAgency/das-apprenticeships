@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship.Events;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRepository
 {
@@ -83,6 +82,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             var episode = EpisodeDomainModel.Get(_fixture.Build<Episode>()
                 .With(x => x.Prices, new List<EpisodePrice>(){ episodePrice })
                 .With(x => x.PaymentsFrozen, false)
+                .With(x => x.LearningStatus, "Active")
+                .With(x => x.LastDayOfLearning, (DateTime?)null)
                 .Create());
 
             apprenticeship.AddEpisode(
@@ -113,21 +114,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
                 .Excluding(y => y.LatestPrice)
                 .Excluding(y => y.EpisodePrices)
                 .Excluding(y => y.FirstPrice)
-                .Excluding(y => y.ActiveEpisodePrices));
-        }
-
-        [Test]
-        public async Task ThenDomainEventsPublished()
-        {
-            // Arrange
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
-            SetUpApprenticeshipRepository();
-			
-            // Act
-            await _sut.Add(apprenticeship);
-            
-            // Assert
-            _domainEventDispatcher.Verify(x => x.Send(It.Is<ApprenticeshipCreated>(e => e.ApprenticeshipKey == apprenticeship.Key), It.IsAny<CancellationToken>()), Times.Once());
+                .Excluding(y => y.ActiveEpisodePrices)
+                .Excluding(y => y.LearningStatus));
         }
 
         private void SetUpApprenticeshipRepository()

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
+using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
 using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
 using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
@@ -332,5 +333,36 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         }
 
         return currentPartyIds;
+    }
+
+    public async Task<LearnerStatus?> GetLearnerStatus(Guid apprenticeshipKey)
+    {
+        LearnerStatus? learnerStatus = null;
+
+        try
+        {
+            var apprenticeship = await DbContext.Apprenticeships
+                .Where(a => a.Key == apprenticeshipKey)
+                .Include(a => a.Episodes)
+                .SingleOrDefaultAsync();
+
+            if (apprenticeship == null)
+            {
+                _logger.LogInformation("Apprenticeship not found for apprenticeship key {key} when attempting to get learner status", apprenticeshipKey);
+                return null;
+            }
+                
+
+            var episode = apprenticeship.GetEpisode();
+
+            if (Enum.TryParse<LearnerStatus>(episode.LearningStatus, out var parsedStatus))
+                learnerStatus = parsedStatus;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error getting learner status for apprenticeship key {key}", apprenticeshipKey);
+        }
+
+        return learnerStatus;
     }
 }

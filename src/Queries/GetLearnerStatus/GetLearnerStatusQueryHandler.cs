@@ -29,6 +29,13 @@ public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusReques
             return null;
         }
 
+        var domainLearnerStatus = await _apprenticeshipQueryRepository.GetLearnerStatus(query.ApprenticeshipKey);
+
+        if (domainLearnerStatus == Domain.Apprenticeship.LearnerStatus.Withdrawn)
+        {
+            return new GetLearnerStatusResponse { LearnerStatus = LearnerStatus.Withdrawn };
+        }
+
         if(startDate.ActualStartDate > _systemClockService.UtcNow.DateTime)
         {
             return new GetLearnerStatusResponse { LearnerStatus = LearnerStatus.WaitingToStart };
