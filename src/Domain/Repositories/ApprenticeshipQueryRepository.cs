@@ -6,8 +6,6 @@ using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Validators;
 using SFA.DAS.Apprenticeships.Enums;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
 using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
 
