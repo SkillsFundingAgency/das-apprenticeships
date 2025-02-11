@@ -77,7 +77,8 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
             ApprenticeshipKey = apprenticeship.Key,
             ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
             Reason = reason,
-            LastDayOfLearning = lastDayOfLearning
+            LastDayOfLearning = lastDayOfLearning,
+            EmployerAccountId = apprenticeship.LatestEpisode.EmployerAccountId
         };
 
         await _messageSession.Publish(message);
