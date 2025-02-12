@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
@@ -89,7 +90,7 @@ public class WhenGetLearnerStatus
         var pastDate = DateTime.UtcNow.AddDays(-1);
         MockStartDateInRepository(pastDate);
         _apprenticeshipQueryRepositoryMock.Setup(repo => repo.GetLearnerStatus(It.IsAny<Guid>()))
-            .ReturnsAsync(Domain.Apprenticeship.LearnerStatus.Withdrawn);
+            .ReturnsAsync(new LearnerStatusWithWithdrawalChangedDate{ LearnerStatus = Domain.Apprenticeship.LearnerStatus.Withdrawn, }); //todo
         _systemClockServiceMock.Setup(clock => clock.UtcNow).Returns(DateTime.UtcNow);
 
         // Act
