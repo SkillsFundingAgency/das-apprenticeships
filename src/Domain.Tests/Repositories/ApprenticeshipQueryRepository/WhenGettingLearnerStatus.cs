@@ -78,6 +78,7 @@ public class WhenGettingLearnerStatus
         result?.LearnerStatus.Should().Be(Enum.Parse<LearnerStatus>(apprenticeship.Episodes.First().LearningStatus));
         result?.WithdrawalChangedDate.Should().Be(apprenticeship.WithdrawalRequests.First().CreatedDate);
         result?.WithdrawalReason.Should().Be(apprenticeship.WithdrawalRequests.First().Reason);
+        result?.LastDayOfLearning.Should().Be(apprenticeship.WithdrawalRequests.First().LastDayOfLearning);
     }
 
     private void SetUpApprenticeshipQueryRepository()

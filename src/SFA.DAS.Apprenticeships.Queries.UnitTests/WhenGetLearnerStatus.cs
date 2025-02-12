@@ -82,17 +82,19 @@ public class WhenGetLearnerStatus
         result!.LearnerStatus.Should().Be(LearnerStatus.InLearning);
     }
 
-    [Test]
-    public async Task Then_ShouldReturnWithdrawn_WhenDomainLearnerStatusIsWithdrawn()
+    [TestCase(31, 12, 2024, 31, 12, 2024)]
+    [TestCase(30, 12, 2024, 30, 11, 2024)]
+    public async Task Then_ShouldReturnWithdrawn_WhenDomainLearnerStatusIsWithdrawn(int lastDayOfLearningDay, int lastDayOfLearningMonth, int lastDayOfLearningYear, int lastCensusDateDay, int lastCensusDateMonth, int lastCensusDateYear)
     {
         // Arrange
         var query = _fixture.Create<GetLearnerStatusRequest>();
-        var pastDate = DateTime.UtcNow.AddDays(-1);
+        var pastDate = DateTime.UtcNow.AddDays(-2);
+        var lastDayOfLearning = new DateTime(lastDayOfLearningYear, lastDayOfLearningMonth, lastDayOfLearningDay);
         var withdrawalChangedDate = DateTime.UtcNow;
         var withdrawalReason = _fixture.Create<string>();
         MockStartDateInRepository(pastDate);
         _apprenticeshipQueryRepositoryMock.Setup(repo => repo.GetLearnerStatus(It.IsAny<Guid>()))
-            .ReturnsAsync(new LearnerStatusWithWithdrawalDetails{ LearnerStatus = Domain.Apprenticeship.LearnerStatus.Withdrawn, WithdrawalChangedDate = withdrawalChangedDate, WithdrawalReason = withdrawalReason});
+            .ReturnsAsync(new LearnerStatusWithWithdrawalDetails{ LearnerStatus = Domain.Apprenticeship.LearnerStatus.Withdrawn, WithdrawalChangedDate = withdrawalChangedDate, WithdrawalReason = withdrawalReason, LastDayOfLearning = lastDayOfLearning});
         _systemClockServiceMock.Setup(clock => clock.UtcNow).Returns(DateTime.UtcNow);
 
         // Act
@@ -103,6 +105,7 @@ public class WhenGetLearnerStatus
         result!.LearnerStatus.Should().Be(LearnerStatus.Withdrawn);
         result.WithdrawalChangedDate.Should().Be(withdrawalChangedDate);
         result.WithdrawalReason.Should().Be(withdrawalReason);
+        result.LastCensusDateOfLearning?.Date.Should().Be(new DateTime(lastCensusDateYear, lastCensusDateMonth, lastCensusDateDay));
     }
 
     private void MockStartDateInRepository(DateTime? startDate = null)

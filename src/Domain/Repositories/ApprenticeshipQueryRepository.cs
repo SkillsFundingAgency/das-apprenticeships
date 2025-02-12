@@ -357,12 +357,16 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             var episode = apprenticeship.GetEpisode();
 
             if (Enum.TryParse<LearnerStatus>(episode.LearningStatus, out var parsedStatus))
+            {
+                var withdrawalRequest = apprenticeship.WithdrawalRequests.SingleOrDefault(x => x.EpisodeKey == episode.Key);
                 learnerStatus = new LearnerStatusWithWithdrawalDetails
                 {
                     LearnerStatus = parsedStatus,
-                    WithdrawalChangedDate = apprenticeship.WithdrawalRequests.SingleOrDefault(x => x.EpisodeKey == episode.Key)?.CreatedDate,
-                    WithdrawalReason = apprenticeship.WithdrawalRequests.SingleOrDefault(x => x.EpisodeKey == episode.Key)?.Reason
+                    WithdrawalChangedDate = withdrawalRequest?.CreatedDate,
+                    WithdrawalReason = withdrawalRequest?.Reason,
+                    LastDayOfLearning = withdrawalRequest?.LastDayOfLearning
                 };
+            }
         }
         catch (Exception e)
         {

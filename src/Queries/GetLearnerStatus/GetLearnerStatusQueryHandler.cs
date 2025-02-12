@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.Types;
@@ -33,7 +34,13 @@ public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusReques
 
         if (domainLearnerStatus?.LearnerStatus == Domain.Apprenticeship.LearnerStatus.Withdrawn)
         {
-            return new GetLearnerStatusResponse { LearnerStatus = LearnerStatus.Withdrawn, WithdrawalChangedDate = domainLearnerStatus.WithdrawalChangedDate, WithdrawalReason = domainLearnerStatus.WithdrawalReason };
+            return new GetLearnerStatusResponse
+            {
+                LearnerStatus = LearnerStatus.Withdrawn,
+                WithdrawalChangedDate = domainLearnerStatus.WithdrawalChangedDate,
+                WithdrawalReason = domainLearnerStatus.WithdrawalReason,
+                LastCensusDateOfLearning = domainLearnerStatus.LastDayOfLearning?.GetLastCensusDateBefore()
+            };
         }
 
         if(startDate.ActualStartDate > _systemClockService.UtcNow.DateTime)
