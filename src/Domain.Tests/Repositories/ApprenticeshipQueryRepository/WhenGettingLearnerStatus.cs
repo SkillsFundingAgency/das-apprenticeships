@@ -44,22 +44,39 @@ public class WhenGettingLearnerStatus
         result.Should().BeNull();
     }
 
-    [TestCase(LearnerStatus.Active)]
-    [TestCase(LearnerStatus.Withdrawn)]
-    public async Task ThenTheCorrectLearnerStatusIsReturned(LearnerStatus learnerStatus)
+    [Test]
+    public async Task ThenTheCorrectLearnerStatusIsReturned()
     {
         // Arrange
         SetUpApprenticeshipQueryRepository();
         var apprenticeshipKey = _fixture.Create<Guid>();
 
-        var apprenticeship = await _dbContext.AddApprenticeship(apprenticeshipKey, false, learnerStatus: learnerStatus);
+        var apprenticeship = await _dbContext.AddApprenticeship(apprenticeshipKey, false, learnerStatus: LearnerStatus.Active);
 
         // Act
         var result = await _sut.GetLearnerStatus(apprenticeshipKey);
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().Be(Enum.Parse<LearnerStatus>(apprenticeship.Episodes.First().LearningStatus));
+        result?.LearnerStatus.Should().Be(Enum.Parse<LearnerStatus>(apprenticeship.Episodes.First().LearningStatus));
+    }
+
+    [Test]
+    public async Task ThenTheCorrectLearnerStatusIsReturnedWhenWithdrawn()
+    {
+        // Arrange
+        SetUpApprenticeshipQueryRepository();
+        var apprenticeshipKey = _fixture.Create<Guid>();
+
+        var apprenticeship = await _dbContext.AddApprenticeship(apprenticeshipKey, false, learnerStatus: LearnerStatus.Withdrawn, addWithdrawalRequest: true);
+
+        // Act
+        var result = await _sut.GetLearnerStatus(apprenticeshipKey);
+
+        // Assert
+        result.Should().NotBeNull();
+        result?.LearnerStatus.Should().Be(Enum.Parse<LearnerStatus>(apprenticeship.Episodes.First().LearningStatus));
+        result?.WithdrawalChangedDate.Should().Be(apprenticeship.WithdrawalRequests.First().CreatedDate);
     }
 
     private void SetUpApprenticeshipQueryRepository()
