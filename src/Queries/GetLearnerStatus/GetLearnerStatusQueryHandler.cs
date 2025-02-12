@@ -33,7 +33,7 @@ public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusReques
 
         if (domainLearnerStatus?.LearnerStatus == Domain.Apprenticeship.LearnerStatus.Withdrawn)
         {
-            return new GetLearnerStatusResponse { LearnerStatus = LearnerStatus.Withdrawn, WithdrawalChangedDate = domainLearnerStatus.WithdrawalChangedDate};
+            return new GetLearnerStatusResponse { LearnerStatus = LearnerStatus.Withdrawn, WithdrawalChangedDate = domainLearnerStatus.WithdrawalChangedDate, WithdrawalReason = domainLearnerStatus.WithdrawalReason };
         }
 
         if(startDate.ActualStartDate > _systemClockService.UtcNow.DateTime)

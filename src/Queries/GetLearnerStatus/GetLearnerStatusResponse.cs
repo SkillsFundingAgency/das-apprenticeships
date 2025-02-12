@@ -6,4 +6,5 @@ public class GetLearnerStatusResponse
 {
     public LearnerStatus LearnerStatus { get; set; }
     public DateTime? WithdrawalChangedDate { get; set; }
+    public string? WithdrawalReason { get; set; }
 }

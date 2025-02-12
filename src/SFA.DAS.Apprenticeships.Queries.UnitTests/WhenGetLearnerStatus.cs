@@ -89,9 +89,10 @@ public class WhenGetLearnerStatus
         var query = _fixture.Create<GetLearnerStatusRequest>();
         var pastDate = DateTime.UtcNow.AddDays(-1);
         var withdrawalChangedDate = DateTime.UtcNow;
+        var withdrawalReason = _fixture.Create<string>();
         MockStartDateInRepository(pastDate);
         _apprenticeshipQueryRepositoryMock.Setup(repo => repo.GetLearnerStatus(It.IsAny<Guid>()))
-            .ReturnsAsync(new LearnerStatusWithWithdrawalChangedDate{ LearnerStatus = Domain.Apprenticeship.LearnerStatus.Withdrawn, WithdrawalChangedDate = withdrawalChangedDate});
+            .ReturnsAsync(new LearnerStatusWithWithdrawalDetails{ LearnerStatus = Domain.Apprenticeship.LearnerStatus.Withdrawn, WithdrawalChangedDate = withdrawalChangedDate, WithdrawalReason = withdrawalReason});
         _systemClockServiceMock.Setup(clock => clock.UtcNow).Returns(DateTime.UtcNow);
 
         // Act
@@ -100,7 +101,8 @@ public class WhenGetLearnerStatus
         // Assert
         result.Should().NotBeNull();
         result!.LearnerStatus.Should().Be(LearnerStatus.Withdrawn);
-        result!.WithdrawalChangedDate.Should().Be(withdrawalChangedDate);
+        result.WithdrawalChangedDate.Should().Be(withdrawalChangedDate);
+        result.WithdrawalReason.Should().Be(withdrawalReason);
     }
 
     private void MockStartDateInRepository(DateTime? startDate = null)
