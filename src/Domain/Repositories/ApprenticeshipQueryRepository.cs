@@ -335,9 +335,9 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         return currentPartyIds;
     }
 
-    public async Task<LearnerStatusWithWithdrawalDetails?> GetLearnerStatus(Guid apprenticeshipKey)
+    public async Task<LearnerStatusDetails?> GetLearnerStatus(Guid apprenticeshipKey)
     {
-        LearnerStatusWithWithdrawalDetails? learnerStatus = null;
+        LearnerStatusDetails? learnerStatus = null;
 
         try
         {
@@ -359,7 +359,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             if (Enum.TryParse<LearnerStatus>(episode.LearningStatus, out var parsedStatus))
             {
                 var withdrawalRequest = apprenticeship.WithdrawalRequests.SingleOrDefault(x => x.EpisodeKey == episode.Key);
-                learnerStatus = new LearnerStatusWithWithdrawalDetails
+                learnerStatus = new LearnerStatusDetails
                 {
                     LearnerStatus = parsedStatus,
                     WithdrawalChangedDate = withdrawalRequest?.CreatedDate,

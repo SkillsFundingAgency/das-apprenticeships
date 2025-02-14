@@ -15,5 +15,5 @@ public interface IApprenticeshipQueryRepository
     Task<PaymentStatus?> GetPaymentStatus(Guid apprenticeshipKey);
     Task<List<ApprenticeshipWithEpisodes>?> GetApprenticeshipsWithEpisodes(long ukprn);
     Task<CurrentPartyIds?> GetCurrentPartyIds(Guid apprenticeshipKey);
-    Task<LearnerStatusWithWithdrawalDetails?> GetLearnerStatus(Guid apprenticeshipKey);
+    Task<LearnerStatusDetails?> GetLearnerStatus(Guid apprenticeshipKey);
 }
