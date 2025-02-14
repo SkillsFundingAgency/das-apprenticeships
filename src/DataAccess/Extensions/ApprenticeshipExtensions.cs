@@ -39,6 +39,24 @@ namespace SFA.DAS.Apprenticeships.DataAccess.Extensions
             return apprenticeship.Episodes.SelectMany(e => e.Prices).Where(y => !y.IsDeleted).Max(p => p.EndDate);
         }
 
+        /// <summary>
+        /// NOTE **** This can be replaced in the future with LastDayOfLearning ****
+        /// 
+        /// This currently returns the Withdraw date which is the last day of learning when the apprenticeship was withdrawn
+        /// 
+        /// This is needed for some of the FM36 block details which are assembled in the earnings outer API
+        /// At some point an actual LastDayOfLearning field will be added to the apprenticeship entity which will either have 
+        /// actual last day of learning on the course or withdrawn date as its value. 
+        /// At that time LastDayOfLearning can replace this method
+        /// </summary>
+        public static DateTime? GetWithdrawnDate(this Apprenticeship apprenticeship)
+        {
+            if(!apprenticeship.WithdrawalRequests.Any())
+                return null;
+
+            return apprenticeship.WithdrawalRequests.Select(x=>x.LastDayOfLearning)?.Max();
+        }
+
         private static Episode? GetLatestActiveEpisode(Apprenticeship apprenticeship)
         {
             var episode = apprenticeship.Episodes
