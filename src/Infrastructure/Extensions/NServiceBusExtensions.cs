@@ -8,7 +8,7 @@ public static class NServiceBusExtensions
 {
     public static void ConfigureNServiceBusForSend(this IServiceCollection services, string fullyQualifiedNamespace)
     {
-        var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Funding.ApprenticeshipEarnings");
+        var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Apprenticeships");
         endpointConfiguration.UseSerialization<SystemJsonSerializer>();
         endpointConfiguration.SendOnly();
 
@@ -49,7 +49,7 @@ public static class NServiceBusExtensions
 
     private static bool IsEvent(Type t)
     {
-        if (t.Namespace != null && (t.Namespace.StartsWith("SFA.DAS.Apprenticeships", StringComparison.CurrentCultureIgnoreCase)) && Regex.IsMatch(t.Name, "Event(V\\d+)?$"))
+        if (t.Namespace != null && (t.Namespace.StartsWith("SFA.", StringComparison.CurrentCultureIgnoreCase)) && Regex.IsMatch(t.Name, "Event(V\\d+)?$"))
         {
             return true;
         }
