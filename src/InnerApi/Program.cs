@@ -10,6 +10,7 @@ using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
 
 namespace SFA.DAS.Apprenticeships.InnerApi;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
@@ -53,7 +54,7 @@ public static class Program
         builder.Services.AddSingleton(x => applicationSettings);
         builder.Services.AddQueryServices();
         builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
-        builder.Services.AddNServiceBus(applicationSettings);
+        builder.Services.ConfigureNServiceBusForSend(applicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace());
         builder.Services.AddCommandServices(builder.Configuration).AddEventServices().AddValidators();
         builder.Services.AddHealthChecks();
         builder.Services.AddApiAuthentication(builder.Configuration, builder.Environment.IsDevelopment());

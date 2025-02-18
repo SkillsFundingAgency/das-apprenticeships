@@ -7,7 +7,6 @@ using SFA.DAS.Apprenticeships.Domain.Validators;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.Types;
-using SFA.DAS.NServiceBus;
 
 namespace SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 

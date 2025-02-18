@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -11,6 +10,7 @@ using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
 using SFA.DAS.Apprenticeships.Functions.Extensions;
 using SFA.DAS.Apprenticeships.Domain;
+using Microsoft.Azure.Functions.Worker;
 
 namespace SFA.DAS.Apprenticeships.Functions;
 
@@ -23,7 +23,7 @@ public class WithdrawApprenticeshipFunction
         _commandDispatcher = commandDispatcher;
     }
 
-    [FunctionName("WithdrawApprenticeship")]
+    [Function("WithdrawApprenticeship")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
         ILogger log)

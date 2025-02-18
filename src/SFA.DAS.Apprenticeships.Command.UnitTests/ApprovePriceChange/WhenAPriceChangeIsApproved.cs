@@ -13,6 +13,7 @@ using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Apprenticeships.Types;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
@@ -110,7 +111,8 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
                 e.ApprovedDate == _approvedDate &&
                 e.ApprovedBy == approvedBy &&
                 e.EffectiveFromDate == effectiveFromDate &&
-                ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>()));
+                ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>(),
+                It.IsAny<CancellationToken>()));
         }
 
         private static bool DoApprenticeshipDetailsMatchDomainModel(ApprenticeshipPriceChangedEvent e, ApprenticeshipDomainModel apprenticeship)

@@ -1,40 +1,72 @@
-﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NServiceBus;
 using SFA.DAS.Apprenticeships.Command;
+using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Functions;
-using SFA.DAS.Apprenticeships.Infrastructure;
+using SFA.DAS.Apprenticeships.Functions.AppStart;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
+using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Configuration.AzureTableStorage;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.DataAccess;
 
-[assembly: FunctionsStartup(typeof(Startup))]
+//[assembly: NServiceBusTriggerFunction("SFA.DAS.Apprenticeships")]
 namespace SFA.DAS.Apprenticeships.Functions;
 
 [ExcludeFromCodeCoverage]
-public class Startup : FunctionsStartup
+public class Startup
 {
     public IConfiguration Configuration { get; set; }
 
-    public override void Configure(IFunctionsHostBuilder builder)
+    private ApplicationSettings _applicationSettings;
+    public ApplicationSettings ApplicationSettings
     {
-        var serviceProvider = builder.Services.BuildServiceProvider();
-        var configuration = serviceProvider.GetService<IConfiguration>();
-
-        var configBuilder = new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddEnvironmentVariables();
-
-        if (NotAcceptanceTests(configuration))
+        get
         {
-            configBuilder.AddAzureTableStorage(options =>
+            if (_applicationSettings == null)
+            {
+                _applicationSettings = new ApplicationSettings();
+                Configuration.Bind(nameof(ApplicationSettings), _applicationSettings);
+            }
+            return _applicationSettings;
+        }
+    }
+
+    public Startup()
+    {
+        ForceAssemblyLoad();
+    }
+
+    public void Configure(IHostBuilder builder)
+    {
+        builder
+            .ConfigureAppConfiguration(PopulateConfig)
+            .ConfigureNServiceBusForSubscribe()
+            .ConfigureServices((c, s) =>
+            {
+                SetupServices(s);
+                s.ConfigureNServiceBusForSend(ApplicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace());
+            });
+    }
+
+    private void PopulateConfig(IConfigurationBuilder configurationBuilder)
+    {
+        Environment.SetEnvironmentVariable("ENDPOINT_NAME", "SFA.DAS.Apprenticeships");
+
+        configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
+                .AddEnvironmentVariables()
+                .AddJsonFile("local.settings.json", true);
+
+        var configuration = configurationBuilder.Build();
+        if (NotAcceptanceTests(configuration))// May not need this check, Fail PR if this comment is still here
+        {
+            configurationBuilder.AddAzureTableStorage(options =>
             {
                 options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
                 options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
@@ -42,33 +74,31 @@ public class Startup : FunctionsStartup
                 options.PreFixConfigurationKeys = false;
                 options.ConfigurationKeysRawJsonResult = new[] { "SFA.DAS.Encoding" };
             });
-            configBuilder.AddJsonFile("local.settings.json", optional: true);
         }
 
-        Configuration = configBuilder.Build();
-        builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
-        builder.Services.AddOptions();
+        Configuration = configurationBuilder.Build();
+    }
 
-        builder.Services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
-        var applicationSettings = Configuration.GetSection("ApplicationSettings").Get<ApplicationSettings>();
+    public void SetupServices(IServiceCollection services)
+    {
+        services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
+        services.AddOptions();
 
-        Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
+        services.AddEntityFrameworkForApprenticeships(ApplicationSettings, NotLocal(Configuration));
 
-        builder.Services.AddNServiceBus(applicationSettings);
-        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocal(configuration));
+        services.AddCommandServices(Configuration).AddEventServices().AddValidators();
 
-        builder.Services.AddCommandServices(Configuration).AddEventServices().AddValidators();
+        if (NotAcceptanceTests(Configuration))
+            services.AddApprenticeshipsOuterApiClient(ApplicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, ApplicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
 
-        if(NotAcceptanceTests(configuration))
-            builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
-
-        builder.Services.AddLogging((options) =>
+        services.AddLogging((options) =>
         {
             options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
             options.SetMinimumLevel(LogLevel.Trace);
         });
 
     }
+
 
     private static bool NotAcceptanceTests(IConfiguration configuration)
     {
@@ -81,5 +111,14 @@ public class Startup : FunctionsStartup
         var isLocal = env.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
         var isLocalAcceptanceTests = env.Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
         return !isLocal && !isLocalAcceptanceTests;
+    }
+
+    /// <summary>
+    /// This method is used to force the assembly to load so that the NServiceBus assembly scanner can find the events.
+    /// This has to be called before builder configuration steps are called as these don't get executed until build() is called.
+    /// </summary>
+    private static void ForceAssemblyLoad()
+    {
+        var apprenticeshipEarningsTypes = new ApprenticeshipCreatedEvent();
     }
 }
