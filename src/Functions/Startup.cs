@@ -63,17 +63,14 @@ public class Startup
                 .AddJsonFile("local.settings.json", true);
 
         var configuration = configurationBuilder.Build();
-        if (NotAcceptanceTests(configuration))// May not need this check, Fail PR if this comment is still here
+        configurationBuilder.AddAzureTableStorage(options =>
         {
-            configurationBuilder.AddAzureTableStorage(options =>
-            {
-                options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
-                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                options.EnvironmentName = configuration["EnvironmentName"];
-                options.PreFixConfigurationKeys = false;
-                options.ConfigurationKeysRawJsonResult = new[] { "SFA.DAS.Encoding" };
-            });
-        }
+            options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+            options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+            options.EnvironmentName = configuration["EnvironmentName"];
+            options.PreFixConfigurationKeys = false;
+            options.ConfigurationKeysRawJsonResult = new[] { "SFA.DAS.Encoding" };
+        });
 
         Configuration = configurationBuilder.Build();
     }
