@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using NServiceBus;
+using SFA.DAS.Apprenticeships.Command.Notifications.WithdrawApprenticeship;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
@@ -19,6 +20,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
     private readonly IValidator<WithdrawDomainRequest> _validator;
     private readonly IMessageSession _messageSession;
     private ILogger<WithdrawApprenticeshipCommandHandler> _logger;
+    private ICommandHandler<WithdrawApprenticeshipNotificationCommand, Outcome> _notificationHandler;
 
     public WithdrawApprenticeshipCommandHandler(
         IApprenticeshipRepository apprenticeshipRepository, 
@@ -54,6 +56,9 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
         await _apprenticeshipRepository.Update(apprenticeship);
 
         await SendEvent(apprenticeship, reason, command.LastDayOfLearning);
+
+        _logger.LogInformation($"Sending Notification(s) for withdrawal of apprenticeship for ULN {command.ULN}");
+        await 
 
         _logger.LogInformation($"Apprenticeship withdrawn for ULN {command.ULN}");
         return Outcome.Success();
