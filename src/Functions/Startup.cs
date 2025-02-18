@@ -16,7 +16,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
-//[assembly: NServiceBusTriggerFunction("SFA.DAS.Apprenticeships")]
 namespace SFA.DAS.Apprenticeships.Functions;
 
 [ExcludeFromCodeCoverage]
