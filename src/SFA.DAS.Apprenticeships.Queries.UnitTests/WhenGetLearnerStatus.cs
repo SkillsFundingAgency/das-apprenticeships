@@ -106,6 +106,7 @@ public class WhenGetLearnerStatus
         result.WithdrawalChangedDate.Should().Be(withdrawalChangedDate);
         result.WithdrawalReason.Should().Be(withdrawalReason);
         result.LastCensusDateOfLearning?.Date.Should().Be(new DateTime(lastCensusDateYear, lastCensusDateMonth, lastCensusDateDay));
+        result.LastDayOfLearning?.Date.Should().Be(lastDayOfLearning);
     }
 
     private void MockStartDateInRepository(DateTime? startDate = null)

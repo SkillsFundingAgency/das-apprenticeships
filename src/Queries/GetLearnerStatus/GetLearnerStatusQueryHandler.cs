@@ -39,7 +39,8 @@ public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusReques
                 LearnerStatus = LearnerStatus.Withdrawn,
                 WithdrawalChangedDate = domainLearnerStatus.WithdrawalChangedDate,
                 WithdrawalReason = domainLearnerStatus.WithdrawalReason,
-                LastCensusDateOfLearning = domainLearnerStatus.LastDayOfLearning?.GetLastCensusDateBefore()
+                LastCensusDateOfLearning = domainLearnerStatus.LastDayOfLearning?.GetLastCensusDateBefore(),
+                LastDayOfLearning = domainLearnerStatus.LastDayOfLearning
             };
         }
 
