@@ -6,13 +6,13 @@ Scenario: Create Apprenticeship from approved commitment
 	And an ApprenticeshipCreatedEvent event is published
 
 Scenario: Create Apprenticeship from approved commitment with funding band maximum
-	Given An apprenticeship has been created as part of the approvals journey
-	And the funding band maximum for that apprenticeship is set
+	Given the funding band maximum for that apprenticeship is set
+	And An apprenticeship has been created as part of the approvals journey
 	Then an Apprenticeship record is created with the correct funding band maximum
 	And an ApprenticeshipCreatedEvent event is published with the correct funding band maximum
 
 Scenario: Create Apprenticeship from approved commitment with funding band maximum outside date range
-	Given An apprenticeship has been created as part of the approvals journey
-	And a funding band maximum for that apprenticeship and date range is not available
+	Given a funding band maximum for that apprenticeship and date range is not available
+	And An apprenticeship has been created as part of the approvals journey
 	Then an Apprenticeship record is not created
 	And an ApprenticeshipCreatedEvent event is not published
