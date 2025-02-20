@@ -6,11 +6,17 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests
     {
         public TestFunction? TestFunction { get; set; }
         public SqlDatabase? SqlDatabase { get; set; }
+        public TestMessageSession MessageSession { get; set; }
 
         public void Dispose()
         {
             TestFunction?.Dispose();
             SqlDatabase?.Dispose();
+        }
+
+        public TestContext()
+        {
+            MessageSession = new TestMessageSession();
         }
     }
 }

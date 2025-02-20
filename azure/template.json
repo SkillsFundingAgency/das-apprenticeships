@@ -440,7 +440,11 @@
                                 },
                                 {
                                     "name": "FUNCTIONS_WORKER_RUNTIME",
-                                    "value": "dotnet"
+                                    "value": "dotnet-isolated"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                                    "value": "[concat(parameters('sharedServiceBusName'), '.servicebus.windows.net')]"
                                 },
                                 {
                                     "name": "WEBSITE_RUN_FROM_PACKAGE",

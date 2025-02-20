@@ -27,8 +27,8 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
         {
             var @event = _fixture.Create<ApprenticeshipCreatedEvent>();
             var commandDispatcher = new Mock<ICommandDispatcher>();
-            var handler = new HandleApprovalCreated(commandDispatcher.Object);
-            await handler.HandleCommand(@event, new Mock<ILogger>().Object);
+            var handler = new HandleApprovalCreated(commandDispatcher.Object, new Mock<ILogger<HandleApprovalCreated>>().Object);
+            await handler.HandleCommand(@event);
 
             commandDispatcher.Verify(x =>
                 x.Send(It.Is<AddApprenticeshipCommand>(c =>
@@ -61,8 +61,8 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
         {
             var @event = _fixture.Build<ApprenticeshipCreatedEvent>().With(x => x.TransferSenderId, (long?)null).With(x => x.ApprenticeshipEmployerTypeOnApproval, ApprenticeshipEmployerType.Levy).Create();
             var commandDispatcher = new Mock<ICommandDispatcher>();
-            var handler = new HandleApprovalCreated(commandDispatcher.Object);
-            await handler.HandleCommand(@event, new Mock<ILogger>().Object);
+            var handler = new HandleApprovalCreated(commandDispatcher.Object, new Mock<ILogger<HandleApprovalCreated>>().Object);
+            await handler.HandleCommand(@event);
 
             commandDispatcher.Verify(x =>
                 x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == Enums.FundingType.Levy),
@@ -74,8 +74,8 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
         {
             var @event = _fixture.Build<ApprenticeshipCreatedEvent>().With(x => x.TransferSenderId, (long?)null).With(x => x.ApprenticeshipEmployerTypeOnApproval, ApprenticeshipEmployerType.NonLevy).Create();
             var commandDispatcher = new Mock<ICommandDispatcher>();
-            var handler = new HandleApprovalCreated(commandDispatcher.Object);
-            await handler.HandleCommand(@event, new Mock<ILogger>().Object);
+            var handler = new HandleApprovalCreated(commandDispatcher.Object, new Mock<ILogger<HandleApprovalCreated>>().Object);
+            await handler.HandleCommand(@event);
 
             commandDispatcher.Verify(x =>
                 x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == Enums.FundingType.NonLevy),
@@ -87,8 +87,8 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
         {
             var @event = _fixture.Build<ApprenticeshipCreatedEvent>().With(x => x.TransferSenderId, 1234).Create();
             var commandDispatcher = new Mock<ICommandDispatcher>();
-            var handler = new HandleApprovalCreated(commandDispatcher.Object);
-            await handler.HandleCommand(@event, new Mock<ILogger>().Object);
+            var handler = new HandleApprovalCreated(commandDispatcher.Object, new Mock<ILogger<HandleApprovalCreated>>().Object);
+            await handler.HandleCommand(@event);
 
             commandDispatcher.Verify(x =>
                 x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == Enums.FundingType.Transfer),
@@ -100,8 +100,8 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
         {
             var @event = _fixture.Build<ApprenticeshipCreatedEvent>().With(x => x.IsOnFlexiPaymentPilot, false).Create();
             var commandDispatcher = new Mock<ICommandDispatcher>();
-            var handler = new HandleApprovalCreated(commandDispatcher.Object);
-            await handler.HandleCommand(@event, new Mock<ILogger>().Object);
+            var handler = new HandleApprovalCreated(commandDispatcher.Object, new Mock<ILogger<HandleApprovalCreated>>().Object);
+            await handler.HandleCommand(@event);
 
             commandDispatcher.Verify(x => x.Send(It.IsAny<AddApprenticeshipCommand>(), It.IsAny<CancellationToken>()), Times.Never);
         }

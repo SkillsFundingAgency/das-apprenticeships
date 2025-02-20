@@ -10,6 +10,7 @@ using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Apprenticeships.Types;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.SetPaymentsFrozen;
@@ -63,14 +64,16 @@ public class WhenHandleSetPaymentsFrozenCommand
             case SetPayments.Freeze:
                 _messageSession.Verify(x => x.Publish(
                     It.Is<PaymentsFrozenEvent>(e => e.ApprenticeshipKey == command.ApprenticeshipKey),
-                    It.IsAny<PublishOptions>()),
+                    It.IsAny<PublishOptions>(),
+                    It.IsAny<CancellationToken>()),
                     Times.Once);
                 break;
 
             case SetPayments.Unfreeze:
                 _messageSession.Verify(x => x.Publish(
                     It.Is<PaymentsUnfrozenEvent>(e => e.ApprenticeshipKey == command.ApprenticeshipKey),
-                    It.IsAny<PublishOptions>()),
+                    It.IsAny<PublishOptions>(),
+                    It.IsAny<CancellationToken>()),
                     Times.Once);
                 break;
         }

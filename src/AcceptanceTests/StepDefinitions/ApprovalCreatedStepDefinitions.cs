@@ -2,11 +2,8 @@ using AutoFixture;
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 using Moq;
-using NServiceBus;
-using SFA.DAS.Apprenticeships.AcceptanceTests.Handlers;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
 using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 using SFA.DAS.Apprenticeships.Types;
 
@@ -15,7 +12,6 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
     [Binding]
     public class ApprovalCreatedStepDefinitions
     {
-        private static IEndpointInstance? _endpointInstance;
         private readonly ScenarioContext _scenarioContext;
         private readonly TestContext _testContext;
         private readonly Fixture _fixture;
@@ -25,20 +21,6 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             _scenarioContext = scenarioContext;
             _testContext = testContext;
             _fixture = new Fixture();
-        }
-
-        [BeforeTestRun]
-        public static async Task StartEndpoint()
-        {
-            _endpointInstance = await EndpointHelper
-                .StartEndpoint(QueueNames.ApprovalCreated + "TEST", false, new[] { typeof(CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent), typeof(ApprenticeshipCreatedEvent) });
-        }
-
-        [AfterTestRun]
-        public static async Task StopEndpoint()
-        {
-            await _endpointInstance!.Stop()
-                .ConfigureAwait(false);
         }
 
         [Given(@"An apprenticeship has been created as part of the approvals journey")]
@@ -51,7 +33,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
                 .With(_ => _.TrainingCode, _fixture.Create<int>().ToString)
                 .Create();
 
-            await _endpointInstance.Publish(approvalCreatedEvent);
+            await _testContext.TestFunction.PublishEvent(approvalCreatedEvent);
 
             _scenarioContext["ApprovalCreatedEvent"] = approvalCreatedEvent;
         }
@@ -61,6 +43,8 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         {
             var fundingBandMaximum = _fixture.Create<int>();
             _scenarioContext["fundingBandMaximum"] = fundingBandMaximum;
+
+            _testContext.TestFunction.mockApprenticeshipsOuterApiClient.Reset();
             _testContext.TestFunction.mockApprenticeshipsOuterApiClient
                 .Setup(x => x.GetStandard(It.IsAny<int>()))
                 .ReturnsAsync(new GetStandardResponse { MaxFunding = fundingBandMaximum, ApprenticeshipFunding = 
@@ -145,9 +129,9 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         [Then(@"an ApprenticeshipCreatedEvent event is published")]
         public async Task ThenAnApprenticeshipCreatedEventEventIsPublished()
         {
-            await WaitHelper.WaitForIt(() => ApprenticeshipCreatedEventHandler.ReceivedEvents.Any(EventMatchesExpectation), $"Failed to find published {nameof(ApprenticeshipCreatedEvent)} event");
+            await WaitHelper.WaitForIt(() => _testContext.MessageSession.ReceivedEvents<ApprenticeshipCreatedEvent>().Any(EventMatchesExpectation), $"Failed to find published {nameof(ApprenticeshipCreatedEvent)} event");
 
-            var publishedEvent = ApprenticeshipCreatedEventHandler.ReceivedEvents.Single(EventMatchesExpectation);
+            var publishedEvent = _testContext.MessageSession.ReceivedEvents<ApprenticeshipCreatedEvent>().Single(EventMatchesExpectation);
 
             publishedEvent.Uln.Should().Be(Apprenticeship.Uln);
             publishedEvent.ApprenticeshipKey.Should().Be(Apprenticeship.Key);
@@ -183,7 +167,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         [Then(@"an ApprenticeshipCreatedEvent event is not published")]
         public async Task ThenAnApprenticeshipCreatedEventEventIsNotPublished()
         {
-            await WaitHelper.WaitForUnexpected(() => ApprenticeshipCreatedEventHandler.ReceivedEvents.Any(EventMatchesExpectation), $"Found unexpected {nameof(ApprenticeshipCreatedEvent)} event");
+            await WaitHelper.WaitForUnexpected(() => _testContext.MessageSession.ReceivedEvents<ApprenticeshipCreatedEvent>().Any(EventMatchesExpectation), $"Found unexpected {nameof(ApprenticeshipCreatedEvent)} event");
         }
 
 

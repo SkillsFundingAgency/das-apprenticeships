@@ -33,7 +33,8 @@ public static class ApprenticeshipDbContextTestHelper
         long? approvalsApprenticeshipId = null,
         FundingPlatform? fundingPlatform = null,
         DateTime? startDate = null,
-        LearnerStatus? learnerStatus = null)
+        LearnerStatus? learnerStatus = null,
+        bool addWithdrawalRequest = false)
     {
         var episodeKey = _fixture.Create<Guid>();
         var episodePrice = _fixture.Build<EpisodePrice>()
@@ -79,6 +80,23 @@ public static class ApprenticeshipDbContextTestHelper
                     ProviderApprovedBy = initiator == "Provider" ? "Mr Provider" : null,
                     EmployerApprovedBy = initiator == "Employer" ? "Mr Employer" : null,
                     Initiator = initiator == "Employer" ? ChangeInitiator.Employer : ChangeInitiator.Provider
+                }
+            };
+        }
+
+        if (addWithdrawalRequest)
+        {
+            apprenticeship.WithdrawalRequests = new List<WithdrawalRequest>()
+            {
+                new()
+                {
+                    ApprenticeshipKey = apprenticeshipKey,
+                    CreatedDate = DateTime.UtcNow,
+                    EpisodeKey = episodeKey,
+                    Key = Guid.NewGuid(),
+                    LastDayOfLearning = DateTime.UtcNow.AddDays(-1),
+                    ProviderApprovedBy = _fixture.Create<string>(),
+                    Reason = "WithdrawDuringLearning"
                 }
             };
         }

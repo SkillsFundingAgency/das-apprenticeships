@@ -15,6 +15,7 @@ using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.Types;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using LearnerStatus = SFA.DAS.Apprenticeships.Domain.Apprenticeship.LearnerStatus;
 
@@ -104,7 +105,8 @@ public class WhenHandleWithdrawCommand
             e.Reason == command.Reason &&
             e.LastDayOfLearning == command.LastDayOfLearning &&
             e.EmployerAccountId == _apprenticeship!.LatestEpisode.EmployerAccountId
-            ), It.IsAny<PublishOptions>()));
+            ), It.IsAny<PublishOptions>(),
+            It.IsAny<CancellationToken>()));
     }
 
     private void ResetMockRepository()
