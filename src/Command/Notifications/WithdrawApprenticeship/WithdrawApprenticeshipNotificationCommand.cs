@@ -23,7 +23,7 @@ namespace SFA.DAS.Apprenticeships.Command.Notifications.WithdrawApprenticeship
         {
             //todo
             //call commitments - inner? outer? to get provider name, employer name, apprentice name we have but if it comes back on the same call is it better to use the version from commitments?
-            //[Route("/provider/{providerId}/apprentices/{apprenticeshipId}/details")] call the outer like this
+            //[Route("/provider/{providerId}/apprentices/{apprenticeshipId}/details")] call the approvals outer like this
             throw new NotImplementedException();
         }
     }
