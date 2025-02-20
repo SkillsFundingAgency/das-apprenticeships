@@ -26,7 +26,7 @@ public class WithdrawApprenticeshipFunction
     [Function("WithdrawApprenticeship")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
-        ILogger log)
+        ILogger<WithdrawApprenticeshipFunction> log)
     {
         log.LogInformation("WithdrawApprenticeship triggered");
 

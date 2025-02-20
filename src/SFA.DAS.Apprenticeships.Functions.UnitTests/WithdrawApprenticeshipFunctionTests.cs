@@ -16,14 +16,14 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests;
 public class WithdrawApprenticeshipFunctionTests
 {
     private Mock<ICommandDispatcher> _commandDispatcherMock;
-    private Mock<ILogger> _loggerMock;
+    private Mock<ILogger<WithdrawApprenticeshipFunction>> _loggerMock;
     private WithdrawApprenticeshipFunction _function;
 
     [SetUp]
     public void SetUp()
     {
         _commandDispatcherMock = new Mock<ICommandDispatcher>();
-        _loggerMock = new Mock<ILogger>();
+        _loggerMock = new Mock<ILogger<WithdrawApprenticeshipFunction>>();
         _function = new WithdrawApprenticeshipFunction(_commandDispatcherMock.Object);
     }
 
