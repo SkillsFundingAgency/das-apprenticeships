@@ -17,18 +17,21 @@ namespace SFA.DAS.Apprenticeships.Functions;
 public class WithdrawApprenticeshipFunction
 {
     private readonly ICommandDispatcher _commandDispatcher;
+    private readonly ILogger<WithdrawApprenticeshipFunction> _logger;
 
-    public WithdrawApprenticeshipFunction(ICommandDispatcher commandDispatcher)
+    public WithdrawApprenticeshipFunction(
+        ICommandDispatcher commandDispatcher,
+        ILogger<WithdrawApprenticeshipFunction> logger)
     {
         _commandDispatcher = commandDispatcher;
+        _logger = logger;
     }
 
     [Function("WithdrawApprenticeship")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
-        ILogger<WithdrawApprenticeshipFunction> log)
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
     {
-        log.LogInformation("WithdrawApprenticeship triggered");
+        _logger.LogInformation("WithdrawApprenticeship triggered");
 
         req.HttpContext.MarkAsBackOfficeRequest();
 
@@ -39,7 +42,7 @@ public class WithdrawApprenticeshipFunction
         }
         catch(Exception ex)
         {
-            log.LogError(ex, "Failed to parse request body");
+            _logger.LogError(ex, "Failed to parse request body");
             return new BadRequestObjectResult("Invalid request body");
         }
 

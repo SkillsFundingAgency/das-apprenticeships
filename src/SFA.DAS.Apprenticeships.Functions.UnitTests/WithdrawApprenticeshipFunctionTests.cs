@@ -24,7 +24,7 @@ public class WithdrawApprenticeshipFunctionTests
     {
         _commandDispatcherMock = new Mock<ICommandDispatcher>();
         _loggerMock = new Mock<ILogger<WithdrawApprenticeshipFunction>>();
-        _function = new WithdrawApprenticeshipFunction(_commandDispatcherMock.Object);
+        _function = new WithdrawApprenticeshipFunction(_commandDispatcherMock.Object, _loggerMock.Object);
     }
 
     [Test]
@@ -40,7 +40,7 @@ public class WithdrawApprenticeshipFunctionTests
         var request = CreateHttpRequest(command);
 
         // Act
-        var result = await _function.Run(request, _loggerMock.Object);
+        var result = await _function.Run(request);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -61,7 +61,7 @@ public class WithdrawApprenticeshipFunctionTests
         var request = CreateHttpRequest(command);
 
         // Act
-        var result = await _function.Run(request, _loggerMock.Object);
+        var result = await _function.Run(request);
 
         // Assert
         result.Should().BeOfType<BadRequestObjectResult>();
@@ -77,7 +77,7 @@ public class WithdrawApprenticeshipFunctionTests
         request.Body = new MemoryStream(System.Text.Encoding.UTF8.GetBytes("Invalid body"));
 
         // Act
-        var result = await _function.Run(request, _loggerMock.Object);
+        var result = await _function.Run(request);
 
         // Assert
         result.Should().BeOfType<BadRequestObjectResult>();
