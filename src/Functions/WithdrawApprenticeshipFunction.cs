@@ -38,7 +38,7 @@ public class WithdrawApprenticeshipFunction
         WithdrawApprenticeshipCommand command;
         try
         {
-            command = GetCommandFromRequest(req);
+            command = await GetCommandFromRequest(req);
         }
         catch(Exception ex)
         {
@@ -56,11 +56,11 @@ public class WithdrawApprenticeshipFunction
         return new OkObjectResult("Completed");
     }
 
-    private WithdrawApprenticeshipCommand GetCommandFromRequest(HttpRequest req)
+    private async Task<WithdrawApprenticeshipCommand> GetCommandFromRequest(HttpRequest req)
     {
         using (var reader = new StreamReader(req.Body))
         {
-            var body = reader.ReadToEnd();
+            var body = await reader.ReadToEndAsync();
             var command = JsonConvert.DeserializeObject<WithdrawApprenticeshipCommand>(body);
             return command;
         }
