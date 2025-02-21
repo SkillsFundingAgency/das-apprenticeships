@@ -107,6 +107,9 @@ public class WhenHandleWithdrawCommand
             e.EmployerAccountId == _apprenticeship!.LatestEpisode.EmployerAccountId
             ), It.IsAny<PublishOptions>(),
             It.IsAny<CancellationToken>()));
+
+        _apprenticeshipsOuterApiClient.Verify(x => x.HandleWithdrawalNotifications(_apprenticeship!.Key,
+            It.Is<HandleWithdrawalNotificationsRequest>(x => x.LastDayOfLearning == command.LastDayOfLearning)));
     }
 
     private void ResetMockRepository()
