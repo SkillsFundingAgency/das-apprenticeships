@@ -1,22 +1,21 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using AutoFixture;
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
-using FluentAssertions;
-using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
-using Castle.Core.Logging;
-using Microsoft.Extensions.Logging;
-using NServiceBus;
-using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Apprenticeships.TestHelpers;
+using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using SFA.DAS.Apprenticeships.Types;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval;
 
@@ -189,7 +188,8 @@ public class WhenAnAddApprenticeshipCommandIsSent
         // Assert
         _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipCreatedEvent>(e =>
             DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship)
-            && ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>()));
+            && ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>(),
+            It.IsAny<CancellationToken>()));
 
     }
 
