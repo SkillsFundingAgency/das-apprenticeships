@@ -59,7 +59,7 @@ public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
     public async Task HandleWithdrawalNotifications(Guid apprenticeshipKey, HandleWithdrawalNotificationsRequest request)
     {
         var response = await _httpClient.PostAsync(
-            $"{ApprenticeshipControllerUrl}/{apprenticeshipKey}/{HandleWithdrawalNotificationsUrl}/",
+            $"{ApprenticeshipControllerUrl}/{apprenticeshipKey}/{HandleWithdrawalNotificationsUrl}",
             new StringContent(JsonConvert.SerializeObject(request))).ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
