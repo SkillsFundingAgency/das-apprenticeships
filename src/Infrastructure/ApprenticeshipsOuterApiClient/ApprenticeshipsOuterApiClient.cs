@@ -60,7 +60,7 @@ public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient
     {
         var response = await _httpClient.PostAsync(
             $"{ApprenticeshipControllerUrl}/{apprenticeshipKey}/{HandleWithdrawalNotificationsUrl}",
-            new StringContent(JsonConvert.SerializeObject(request))).ConfigureAwait(false);
+            new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8, "application/json")).ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
     }
