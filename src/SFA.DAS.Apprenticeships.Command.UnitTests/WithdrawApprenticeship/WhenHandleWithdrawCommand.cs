@@ -109,7 +109,7 @@ public class WhenHandleWithdrawCommand
             It.IsAny<CancellationToken>()));
 
         _apprenticeshipsOuterApiClient.Verify(x => x.HandleWithdrawalNotifications(_apprenticeship!.Key,
-            It.Is<HandleWithdrawalNotificationsRequest>(x => x.LastDayOfLearning == command.LastDayOfLearning)));
+            It.Is<HandleWithdrawalNotificationsRequest>(x => x.LastDayOfLearning == command.LastDayOfLearning), command.ServiceBearerToken));
     }
 
     private void ResetMockRepository()
