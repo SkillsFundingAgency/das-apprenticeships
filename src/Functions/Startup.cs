@@ -56,7 +56,7 @@ public class Startup
 
     private void PopulateConfig(IConfigurationBuilder configurationBuilder)
     {
-        Environment.SetEnvironmentVariable("ENDPOINT_NAME", "SFA.DAS.Apprenticeships");
+        Environment.SetEnvironmentVariable("ENDPOINT_NAME", Constants.EndpointName);
 
         configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables()
