@@ -5,8 +5,8 @@
 	<OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
-	  <FrameworkReference Include="Microsoft.AspNetCore.App" />
-	  <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -22,8 +22,8 @@
     <PackageReference Include="NServiceBus.AzureFunctions.Worker.ServiceBus" Version="5.2.2" />
     <PackageReference Include="NServiceBus.Extensions.Hosting" Version="3.0.1" />
     <PackageReference Include="NServiceBus.Transport.AzureStorageQueues" Version="13.0.2" />
-	  <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="100.0.43" />
-	  <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="17.1.113" />
+    <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="100.0.43" />
+    <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="17.1.113" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Command\SFA.DAS.Apprenticeships.Command.csproj" />
