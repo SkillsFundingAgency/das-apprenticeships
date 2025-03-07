@@ -11,11 +11,8 @@ internal static class NServiceBusConfiguration
 {
     internal static IHostBuilder ConfigureNServiceBusForSubscribe(this IHostBuilder hostBuilder)
     {
-
         hostBuilder.UseNServiceBus((config, endpointConfiguration) =>
         {
-            endpointConfiguration.LogDiagnostics();
-
             endpointConfiguration.Transport.SubscriptionRuleNamingConvention = AzureRuleNameShortener.Shorten;
             endpointConfiguration.AdvancedConfiguration.SendFailedMessagesTo($"{Constants.EndpointName}-error");
             endpointConfiguration.AdvancedConfiguration.Conventions().SetConventions();

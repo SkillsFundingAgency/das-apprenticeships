@@ -9,7 +9,6 @@ using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Functions.AppStart;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
-using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Configuration.AzureTableStorage;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -38,7 +37,6 @@ public class Startup
 
     public Startup()
     {
-        ForceAssemblyLoad();
     }
 
     public void Configure(IHostBuilder builder)
@@ -88,8 +86,8 @@ public class Startup
 
         services.AddLogging((options) =>
         {
-            options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
-            options.SetMinimumLevel(LogLevel.Trace);
+            options.AddFilter("SFA.DAS", LogLevel.Information); // this is because all logging is filtered out by default
+            options.SetMinimumLevel(LogLevel.Information);
         });
 
     }
@@ -106,14 +104,5 @@ public class Startup
         var isLocal = env.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
         var isLocalAcceptanceTests = env.Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
         return !isLocal && !isLocalAcceptanceTests;
-    }
-
-    /// <summary>
-    /// This method is used to force the assembly to load so that the NServiceBus assembly scanner can find the events.
-    /// This has to be called before builder configuration steps are called as these don't get executed until build() is called.
-    /// </summary>
-    private static void ForceAssemblyLoad()
-    {
-        var apprenticeshipEarningsTypes = new ApprenticeshipCreatedEvent();
     }
 }
