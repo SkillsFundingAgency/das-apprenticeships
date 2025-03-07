@@ -2,6 +2,6 @@
 {
     public static class Constants
     {
-        public static readonly string EndpointName = "SFA.DAS.Apprenticeships";
+        public const string EndpointName = "SFA.DAS.Apprenticeships";
     }
 }

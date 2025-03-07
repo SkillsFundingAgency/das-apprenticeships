@@ -35,7 +35,6 @@ internal static class NServiceBusConfiguration
         return hostBuilder;
     }
 
-
     internal static class AzureRuleNameShortener
     {
         private const int AzureServiceBusRuleNameMaxLength = 50;
@@ -53,6 +52,4 @@ internal static class NServiceBusConfiguration
             return new Guid(hash).ToString();
         }
     }
-
 }
-
