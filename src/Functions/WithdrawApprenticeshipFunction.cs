@@ -19,6 +19,8 @@ public class WithdrawApprenticeshipFunction
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly ILogger<WithdrawApprenticeshipFunction> _logger;
 
+    private const string ServiceBearerTokenKey = "ServiceBearerToken";
+
     public WithdrawApprenticeshipFunction(
         ICommandDispatcher commandDispatcher,
         ILogger<WithdrawApprenticeshipFunction> logger)
@@ -62,6 +64,7 @@ public class WithdrawApprenticeshipFunction
         {
             var body = await reader.ReadToEndAsync();
             var command = JsonConvert.DeserializeObject<WithdrawApprenticeshipCommand>(body);
+            command.ServiceBearerToken = req.Headers[ServiceBearerTokenKey];
             return command;
         }
     }
