@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 using Moq;
+using NServiceBus.Testing;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
 using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
@@ -13,7 +14,7 @@ public class TestFunction : IDisposable
 {
     private readonly TestContext _testContext;
     private readonly TestServer _testServer;
-    private readonly IEnumerable<QueueTriggeredFunction> _queueTriggeredFunctions;
+    private readonly IEnumerable<MessageHandler> _queueTriggeredFunctions;
     private bool _isDisposed;
 
     public string HubName { get; }
@@ -26,7 +27,7 @@ public class TestFunction : IDisposable
         HubName = hubName;
         _testContext = testContext;
         var _ = new Startup();// This forces the AzureFunction assembly to load
-        _queueTriggeredFunctions = QueueFunctionResolver.GetQueueTriggeredFunctions();
+        _queueTriggeredFunctions = MessageHandlerHelper.GetMessageHandlers();
         mockApprenticeshipsOuterApiClient = GetMockOuterApi();
 
         _testServer = new TestServer(new WebHostBuilder()
@@ -37,21 +38,20 @@ public class TestFunction : IDisposable
 
     public async Task PublishEvent<T>(T eventObject)
     {
-        var function = _queueTriggeredFunctions.FirstOrDefault(x => x.Endpoints.Where(e => e.EventType == typeof(T)).Any());
-        var handler = _testServer.Services.GetService(function.ClassType);
-        var method = function.Endpoints.FirstOrDefault(x => x.EventType == typeof(T)).MethodInfo;
-
-        if (method.GetParameters().Length != 1)
+        var function = _queueTriggeredFunctions.FirstOrDefault(x => x.HandledEventType == typeof(T));
+        var handler = _testServer.Services.GetService(function.HandlerType) as IHandleMessages<T>;
+        var context = new TestableMessageHandlerContext
         {
-            throw new InvalidOperationException("To trigger events for functions with multiple parameters more development is required");
-        }
+            CancellationToken = new CancellationToken()
+        };
+
         try
         {
-            await (Task)method.Invoke(handler, new object[] { eventObject });
+            await handler.Handle(eventObject, context);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Failed to invoke method {method.Name} on class {function.ClassType.Name}", ex);// Some of the tests verify the behaviour on handler errors, for this reason the exception is swallowed
+            Console.WriteLine($"Exception occurred in {handler.GetType().Name}", ex);// Some of the tests verify the behaviour on handler errors, for this reason the exception is swallowed
         }
     }
 

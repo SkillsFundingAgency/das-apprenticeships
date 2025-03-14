@@ -158,6 +158,7 @@ public class ApprenticeshipController : ControllerBase
     /// <returns>Provider and employer ids</returns>
     [HttpGet("{apprenticeshipKey}/currentPartyIds")]
     [ProducesResponseType(200)]
+    [AuthorizeUserType(UserType.ServiceAccount, UserTypeRequirement.AuthorizeMode.Override)]
     public async Task<IActionResult> GetCurrentPartyIds(Guid apprenticeshipKey)
     {
         var request = new GetCurrentPartyIdsRequest { ApprenticeshipKey = apprenticeshipKey };

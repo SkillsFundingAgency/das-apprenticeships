@@ -14,13 +14,13 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests;
 internal class TestFunctionStartup
 {
     private readonly Startup _startUp;
-    private readonly IEnumerable<QueueTriggeredFunction> _queueTriggeredFunctions;
+    private readonly IEnumerable<MessageHandler> _queueTriggeredFunctions;
     private readonly IMessageSession _messageSession;
     private readonly Mock<IApprenticeshipsOuterApiClient> _mockApprenticeshipsOuterApiClient;
 
     public TestFunctionStartup(
         TestContext testContext,
-        IEnumerable<QueueTriggeredFunction> queueTriggeredFunctions,
+        IEnumerable<MessageHandler> queueTriggeredFunctions,
         IMessageSession messageSession,
         Mock<IApprenticeshipsOuterApiClient> mockApprenticeshipsOuterApiClient)
     {
@@ -44,7 +44,7 @@ internal class TestFunctionStartup
 
         foreach (var queueTriggeredFunction in _queueTriggeredFunctions)
         {
-            collection.AddTransient(queueTriggeredFunction.ClassType);
+            collection.AddTransient(queueTriggeredFunction.HandlerType);
         }
 
         collection.AddScoped<IApprenticeshipsOuterApiClient>(_ => _mockApprenticeshipsOuterApiClient.Object);
