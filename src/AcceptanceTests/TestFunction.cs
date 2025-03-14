@@ -1,113 +1,62 @@
-﻿using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
 using SFA.DAS.Apprenticeships.Functions;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
-using SFA.DAS.Apprenticeships.TestHelpers;
-using SFA.DAS.Encoding;
-using System;
 
 namespace SFA.DAS.Apprenticeships.AcceptanceTests;
 
 public class TestFunction : IDisposable
 {
-    private readonly IHost _host;
+    private readonly TestContext _testContext;
+    private readonly TestServer _testServer;
+    private readonly IEnumerable<QueueTriggeredFunction> _queueTriggeredFunctions;
     private bool _isDisposed;
 
-    private IJobHost Jobs => _host.Services.GetService<IJobHost>()!;
     public string HubName { get; }
+
     public Mock<IApprenticeshipsOuterApiClient> mockApprenticeshipsOuterApiClient  { get; }
 
     public TestFunction(TestContext testContext, string hubName)
     {
+
         HubName = hubName;
-        var orchestrationData = new OrchestrationData();
+        _testContext = testContext;
+        var _ = new Startup();// This forces the AzureFunction assembly to load
+        _queueTriggeredFunctions = QueueFunctionResolver.GetQueueTriggeredFunctions();
+        mockApprenticeshipsOuterApiClient = GetMockOuterApi();
 
-        Environment.SetEnvironmentVariable("EnvironmentName", "LOCAL_ACCEPTANCE_TESTS");
-        var appConfig = new Dictionary<string, string>
-        {
-            { "EnvironmentName", "LOCAL_ACCEPTANCE_TESTS" },
-            { "FUNCTIONS_WORKER_RUNTIME", "dotnet" },
-            { "AzureWebJobsStorage", "UseDevelopmentStorage=true" },
-            { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true" },
-            { "ApplicationSettings:LogLevel", "DEBUG" },
-            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! },
-            { "SFA.DAS.Encoding", MockEncodingConfig() }
-        };
+        _testServer = new TestServer(new WebHostBuilder()
+        .UseEnvironment(Environments.Development)
+            .UseStartup<TestFunctionStartup>((_) => new TestFunctionStartup(testContext, _queueTriggeredFunctions, _testContext.MessageSession, mockApprenticeshipsOuterApiClient)));
 
-        mockApprenticeshipsOuterApiClient = new Mock<IApprenticeshipsOuterApiClient>();
-        mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse { MaxFunding = int.MaxValue, ApprenticeshipFunding = new List<GetStandardFundingResponse>
-        {
-            new GetStandardFundingResponse{ EffectiveFrom = DateTime.MinValue, EffectiveTo = null, MaxEmployerLevyCap = int.MaxValue }
-        }});
-
-        _host = new HostBuilder()
-            .ConfigureAppConfiguration(a =>
-            {
-                a.Sources.Clear();
-                a.AddInMemoryCollection(appConfig);
-            })
-            .ConfigureWebJobs(builder => builder
-                .AddDurableTask(options =>
-                {
-                    options.HubName = HubName;
-                    options.UseAppLease = false;
-                    options.UseGracefulShutdown = false;
-                    options.ExtendedSessionsEnabled = false;
-                    options.StorageProvider["maxQueuePollingInterval"] = new TimeSpan(0, 0, 0, 0, 500);
-                    options.StorageProvider["partitionCount"] = 1;
-                })
-                .AddAzureStorageCoreServices()
-                .ConfigureServices(s =>
-                {
-                    builder.Services.AddLogging(options =>
-                    {
-                        options.SetMinimumLevel(LogLevel.Trace);
-                        options.AddConsole();
-                    });
-                    s.Configure<ApplicationSettings>(a =>
-                    {
-                        a.AzureWebJobsStorage = appConfig["AzureWebJobsStorage"];
-                        a.NServiceBusConnectionString = appConfig["NServiceBusConnectionString"];
-                        a.DbConnectionString = appConfig["DbConnectionString"];
-                    });
-
-                    new Startup().Configure(builder);
-
-                    s.AddSingleton(typeof(IOrchestrationData), orchestrationData);
-                })
-            )
-            .ConfigureServices(s =>
-            {
-                s.AddHostedService<PurgeBackgroundJob>();
-                s.AddScoped<IApprenticeshipsOuterApiClient>(_ => mockApprenticeshipsOuterApiClient.Object);
-            })
-            .Build();
     }
 
-    public async Task StartHost()
+    public async Task PublishEvent<T>(T eventObject)
     {
-        var timeout = new TimeSpan(0, 1, 0);
-        var delayTask = Task.Delay(timeout);
+        var function = _queueTriggeredFunctions.FirstOrDefault(x => x.Endpoints.Where(e => e.EventType == typeof(T)).Any());
+        var handler = _testServer.Services.GetService(function.ClassType);
+        var method = function.Endpoints.FirstOrDefault(x => x.EventType == typeof(T)).MethodInfo;
 
-        await Task.WhenAny(Task.WhenAll(_host.StartAsync(), Jobs.Terminate()), delayTask);
-
-        if (delayTask.IsCompleted)
+        if (method.GetParameters().Length != 1)
         {
-            throw new Exception($"Failed to start test function host within {timeout.Seconds} seconds.  Check the AzureStorageEmulator is running. ");
+            throw new InvalidOperationException("To trigger events for functions with multiple parameters more development is required");
+        }
+        try
+        {
+            await (Task)method.Invoke(handler, new object[] { eventObject });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to invoke method {method.Name} on class {function.ClassType.Name}", ex);// Some of the tests verify the behaviour on handler errors, for this reason the exception is swallowed
         }
     }
-    
+
     public async Task DisposeAsync()
     {
-        await Jobs.StopAsync();
         Dispose();
     }
 
@@ -123,21 +72,25 @@ public class TestFunction : IDisposable
 
         if (disposing)
         {
-            _host.Dispose();
+            // no components to dispose
         }
 
         _isDisposed = true;
     }
 
-    private string MockEncodingConfig()
+    private static Mock<IApprenticeshipsOuterApiClient> GetMockOuterApi()
     {
-        var config = new List<object>();
+        var mockApprenticeshipsOuterApiClient = new Mock<IApprenticeshipsOuterApiClient>();
 
-        foreach (var encodingType in Enum.GetValues(typeof(EncodingType)))
+        mockApprenticeshipsOuterApiClient.Setup(x => x.GetStandard(It.IsAny<int>())).ReturnsAsync(new GetStandardResponse
         {
-            config.Add(new { EncodingType = encodingType, Salt = "AnyString", MinHashLength = 6, Alphabet = "ABCDEFGHJKMNPRSTUVWXYZ23456789" });
-        }
+            MaxFunding = int.MaxValue,
+            ApprenticeshipFunding = new List<GetStandardFundingResponse>
+            {
+            new GetStandardFundingResponse{ EffectiveFrom = DateTime.MinValue, EffectiveTo = null, MaxEmployerLevyCap = int.MaxValue }
+            }
+        });
 
-        return JsonConvert.SerializeObject(new { Encodings = config });
-	}
+        return mockApprenticeshipsOuterApiClient;
+    }
 }

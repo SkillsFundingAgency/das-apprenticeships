@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
@@ -81,15 +82,19 @@ public class WhenGetLearnerStatus
         result!.LearnerStatus.Should().Be(LearnerStatus.InLearning);
     }
 
-    [Test]
-    public async Task Then_ShouldReturnWithdrawn_WhenDomainLearnerStatusIsWithdrawn()
+    [TestCase(31, 12, 2024, 31, 12, 2024)]
+    [TestCase(30, 12, 2024, 30, 11, 2024)]
+    public async Task Then_ShouldReturnWithdrawn_WhenDomainLearnerStatusIsWithdrawn(int lastDayOfLearningDay, int lastDayOfLearningMonth, int lastDayOfLearningYear, int lastCensusDateDay, int lastCensusDateMonth, int lastCensusDateYear)
     {
         // Arrange
         var query = _fixture.Create<GetLearnerStatusRequest>();
-        var pastDate = DateTime.UtcNow.AddDays(-1);
+        var pastDate = DateTime.UtcNow.AddDays(-2);
+        var lastDayOfLearning = new DateTime(lastDayOfLearningYear, lastDayOfLearningMonth, lastDayOfLearningDay);
+        var withdrawalChangedDate = DateTime.UtcNow;
+        var withdrawalReason = _fixture.Create<string>();
         MockStartDateInRepository(pastDate);
         _apprenticeshipQueryRepositoryMock.Setup(repo => repo.GetLearnerStatus(It.IsAny<Guid>()))
-            .ReturnsAsync(Domain.Apprenticeship.LearnerStatus.Withdrawn);
+            .ReturnsAsync(new LearnerStatusDetails { LearnerStatus = Domain.Apprenticeship.LearnerStatus.Withdrawn, WithdrawalChangedDate = withdrawalChangedDate, WithdrawalReason = withdrawalReason, LastDayOfLearning = lastDayOfLearning});
         _systemClockServiceMock.Setup(clock => clock.UtcNow).Returns(DateTime.UtcNow);
 
         // Act
@@ -98,6 +103,10 @@ public class WhenGetLearnerStatus
         // Assert
         result.Should().NotBeNull();
         result!.LearnerStatus.Should().Be(LearnerStatus.Withdrawn);
+        result.WithdrawalChangedDate.Should().Be(withdrawalChangedDate);
+        result.WithdrawalReason.Should().Be(withdrawalReason);
+        result.LastCensusDateOfLearning?.Date.Should().Be(new DateTime(lastCensusDateYear, lastCensusDateMonth, lastCensusDateDay));
+        result.LastDayOfLearning?.Date.Should().Be(lastDayOfLearning);
     }
 
     private void MockStartDateInRepository(DateTime? startDate = null)

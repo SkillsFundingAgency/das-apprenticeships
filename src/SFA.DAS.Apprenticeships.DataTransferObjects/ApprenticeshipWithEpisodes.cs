@@ -5,7 +5,8 @@ namespace SFA.DAS.Apprenticeships.DataTransferObjects;
 [ExcludeFromCodeCoverage]
 public class ApprenticeshipWithEpisodes
 {
-    public ApprenticeshipWithEpisodes(Guid key, string uln, DateTime startDate, DateTime plannedEndDate, List<Episode> episodes, int ageAtStartOfApprenticeship)
+    public ApprenticeshipWithEpisodes(
+        Guid key, string uln, DateTime startDate, DateTime plannedEndDate, List<Episode> episodes, int ageAtStartOfApprenticeship, DateTime? withdrawnDate)
     {
         Key = key;
         Uln = uln;
@@ -13,6 +14,7 @@ public class ApprenticeshipWithEpisodes
         PlannedEndDate = plannedEndDate;
         Episodes = episodes;
         AgeAtStartOfApprenticeship = ageAtStartOfApprenticeship;
+        WithdrawnDate = withdrawnDate;
     }
 
     public Guid Key { get; set; }
@@ -21,4 +23,5 @@ public class ApprenticeshipWithEpisodes
     public DateTime PlannedEndDate { get; set; }
     public List<Episode> Episodes { get; set; }
     public int AgeAtStartOfApprenticeship { get; set; }
+    public DateTime? WithdrawnDate { get; set; }
 }

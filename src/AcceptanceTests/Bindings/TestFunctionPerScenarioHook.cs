@@ -16,7 +16,6 @@ public class TestFunctionPerScenarioHook
     public async Task CreateConfig()
     {
         _testContext.TestFunction = new TestFunction(_testContext, $"TEST{_featureContext.FeatureInfo.Title.Replace(" ", "")}");
-        await _testContext.TestFunction.StartHost();
     }
 
     [AfterScenario]
