@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
@@ -55,6 +56,16 @@ public class ApprenticeshipController : ControllerBase
         return Ok(response.Apprenticeships);
     }
 
+    [HttpGet("{ukprn:long}/academicyears/{academicyear}/apprenticeships")]
+    [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
+    public async Task<IActionResult> GetAllForAcademicYear(long ukprn, string academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
+    {
+        var request = new GetApprenticeshipsByAcademicYearRequest(ukprn, academicYear, page, pageSize);
+        var response = await _queryDispatcher.Send<GetApprenticeshipsByAcademicYearRequest, Queries.GetApprenticeships.GetApprenticeshipsResponse>(request);
+        
+        return Ok(response);
+    }
+
     /// <summary>
     /// Get Apprenticeship Price
     /// </summary>
@@ -64,7 +75,7 @@ public class ApprenticeshipController : ControllerBase
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetApprenticeshipPrice(Guid apprenticeshipKey)
     {
-        var request = new GetApprenticeshipPriceRequest{ ApprenticeshipKey = apprenticeshipKey };
+        var request = new GetApprenticeshipPriceRequest { ApprenticeshipKey = apprenticeshipKey };
         var response = await _queryDispatcher.Send<GetApprenticeshipPriceRequest, GetApprenticeshipPriceResponse?>(request);
         if (response == null) return NotFound();
         return Ok(response);
@@ -116,6 +127,7 @@ public class ApprenticeshipController : ControllerBase
             _logger.LogInformation("{p1} could not be found.", nameof(response.ApprenticeshipKey));
             return NotFound();
         }
+
         return Ok(response.ApprenticeshipKey);
     }
 
@@ -165,5 +177,4 @@ public class ApprenticeshipController : ControllerBase
         if (response == null) return NotFound();
         return Ok(response);
     }
-
 }
