@@ -5,6 +5,7 @@ using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.InnerApi.Responses;
 using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
 using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
 
@@ -32,6 +33,35 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         var result = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
         return result;
     }
+
+    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetAllForAcademicYear(long ukprn, DateRange academicYearDates, int page, int? pageSize, int limit, int offset)
+    {
+        var apprenticeshipsQuery = DbContext.Apprenticeships
+            .Include(apprenticeship => apprenticeship.Episodes)
+            .Where(apprenticeship => apprenticeship.Episodes.Any(episode => episode.Ukprn == ukprn && episode.LastDayOfLearning >= academicYearDates.Start && episode.LastDayOfLearning <= academicYearDates.End))
+            .AsNoTracking();
+
+        var totalApprenticeships = await apprenticeshipsQuery.CountAsync();
+
+        var apprenticeships = await apprenticeshipsQuery
+            .Skip(offset)
+            .Take(limit)
+            .ToListAsync();
+
+        return new PagedResult<DataTransferObjects.Apprenticeship>
+        {
+            Data = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship
+            {
+                Uln = x.Uln,
+                FirstName = x.FirstName,
+                LastName = x.LastName
+            }),
+            TotalItems = totalApprenticeships,
+            PageSize = pageSize ?? int.MaxValue,
+            Page = page,
+        };
+    }
+
     public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
     {
         var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
@@ -79,6 +109,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             UKPRN = latestEpisode.Ukprn
         };
     }
+
     public async Task<ApprenticeshipStartDate?> GetStartDate(Guid apprenticeshipKey)
     {
         var apprenticeship = await DbContext.Apprenticeships
@@ -107,18 +138,20 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             return null;
         }
 
-        return apprenticeship == null ? null : new ApprenticeshipStartDate
-        {
-            ApprenticeshipKey = apprenticeship.Key,
-            ActualStartDate = firstPrice.StartDate,
-            PlannedEndDate = latestPrice.EndDate,
-            AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
-            UKPRN = latestEpisode.Ukprn,
-            ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
-            CourseCode = latestEpisode.TrainingCode,
-	         CourseVersion = latestEpisode.TrainingCourseVersion,
-             SimplifiedPaymentsMinimumStartDate = Constants.SimplifiedPaymentsMinimumStartDate
-        };
+        return apprenticeship == null
+            ? null
+            : new ApprenticeshipStartDate
+            {
+                ApprenticeshipKey = apprenticeship.Key,
+                ActualStartDate = firstPrice.StartDate,
+                PlannedEndDate = latestPrice.EndDate,
+                AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
+                UKPRN = latestEpisode.Ukprn,
+                ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
+                CourseCode = latestEpisode.TrainingCode,
+                CourseVersion = latestEpisode.TrainingCourseVersion,
+                SimplifiedPaymentsMinimumStartDate = Constants.SimplifiedPaymentsMinimumStartDate
+            };
     }
 
     public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
@@ -310,6 +343,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
 
         return apprenticeshipWithEpisodes;
     }
+
     public async Task<CurrentPartyIds?> GetCurrentPartyIds(Guid apprenticeshipKey)
     {
         CurrentPartyIds? currentPartyIds = null;
@@ -351,7 +385,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
                 _logger.LogInformation("Apprenticeship not found for apprenticeship key {key} when attempting to get learner status", apprenticeshipKey);
                 return null;
             }
-                
+
 
             var episode = apprenticeship.GetEpisode();
 
