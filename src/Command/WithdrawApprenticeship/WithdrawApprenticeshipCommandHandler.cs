@@ -39,6 +39,11 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
         _logger.LogInformation($"Handling WithdrawApprenticeshipCommand for ULN {command.ULN}");
         var apprenticeship = await _apprenticeshipRepository.GetByUln(command.ULN);
 
+        if (apprenticeship == null)
+        {
+            throw new InvalidOperationException($"Unable to find apprenticeship by ULN {command.ULN}");
+        }
+
         var academicYear = await _apprenticeshipsOuterApiClient.GetAcademicYear(_systemClockService.UtcNow.DateTime);
 
         if (!_validator.IsValid(command.ToDomainRequest(), out var message, apprenticeship, academicYear.EndDate))
@@ -47,14 +52,15 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
         }
 
         _logger.LogInformation($"Validation passed, Withdrawing apprenticeship for ULN {command.ULN}");
+
+        _logger.LogInformation($"Sending Notification(s) for withdrawal of apprenticeship for ULN {command.ULN}");
+        await _apprenticeshipsOuterApiClient.HandleWithdrawalNotifications(apprenticeship.Key, new HandleWithdrawalNotificationsRequest { LastDayOfLearning = command.LastDayOfLearning, Reason = command.Reason }, command.ServiceBearerToken);
+
         var reason = GetReason(command);
-        apprenticeship!.WithdrawApprenticeship(command.ProviderApprovedBy, command.LastDayOfLearning, reason, _systemClockService.UtcNow.DateTime);
+        apprenticeship.WithdrawApprenticeship(command.ProviderApprovedBy, command.LastDayOfLearning, reason, _systemClockService.UtcNow.DateTime);
         await _apprenticeshipRepository.Update(apprenticeship);
 
         await SendEvent(apprenticeship, reason, command.LastDayOfLearning);
-
-        _logger.LogInformation($"Sending Notification(s) for withdrawal of apprenticeship for ULN {command.ULN}");
-        await _apprenticeshipsOuterApiClient.HandleWithdrawalNotifications(apprenticeship.Key, new HandleWithdrawalNotificationsRequest{ LastDayOfLearning = command.LastDayOfLearning, Reason = command.Reason }, command.ServiceBearerToken);
 
         _logger.LogInformation($"Apprenticeship withdrawn for ULN {command.ULN}");
         return Outcome.Success();
