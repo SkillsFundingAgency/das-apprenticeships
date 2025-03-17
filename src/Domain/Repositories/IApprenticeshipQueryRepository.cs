@@ -8,7 +8,7 @@ namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 public interface IApprenticeshipQueryRepository
 {
     Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform);
-    Task<PagedResult<DataTransferObjects.Apprenticeship>> GetAllForAcademicYear(long ukprn, DateRange academicYearDates,int page, int? pageSize, int limit, int offset);
+    Task<PagedResult<DataTransferObjects.Apprenticeship>> GetAllForAcademicYear(long ukprn, DateRange academicYearDates,int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken);
     Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId);
     Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey);
     Task<ApprenticeshipStartDate?> GetStartDate(Guid apprenticeshipKey);

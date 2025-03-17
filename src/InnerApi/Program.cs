@@ -54,7 +54,9 @@ public static class Program
         builder.Services.AddQueryServices();
         builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
         builder.Services.AddNServiceBus(applicationSettings);
-        builder.Services.AddCommandServices(builder.Configuration).AddEventServices().AddValidators();
+        builder.Services.AddCommandServices(builder.Configuration)
+            .AddEventServices()
+            .AddValidators();
         builder.Services.AddHealthChecks();
         builder.Services.AddApiAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
         builder.Services.AddApiAuthorization(builder.Environment.IsDevelopment());

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Enums;
@@ -60,16 +61,25 @@ public class ApprenticeshipController : ControllerBase
     /// Get All For AcademicYear
     /// </summary>
     /// <param name="ukprn">Filter by training provider using the unique provider number.</param>
-    /// <param name="academicYear">Academic year in YYYY format. Example: 2526</param>
+    /// <param name="academicYear">Academic year in datetime format.</param>
     /// <param name="page">Page number</param>
     /// <param name="pageSize">Number of iterms per page</param>
     /// <returns code="200">GetApprenticeshipsByAcademicYearResponse</returns>
-    [HttpGet("{ukprn:long}/academicyears/{academicyear}/apprenticeships")]
+    // TODO remove AllowAnonymous
+    [AllowAnonymous]
+    [HttpGet("{ukprn:long}/academicyears/{academicYear}/apprenticeships")]
     [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
     public async Task<IActionResult> GetAllForAcademicYear(long ukprn, string academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
     {
-        var request = new GetApprenticeshipsByAcademicYearRequest(ukprn, academicYear, page, pageSize);
-        var response = await _queryDispatcher.Send<GetApprenticeshipsByAcademicYearRequest, Queries.GetApprenticeships.GetApprenticeshipsResponse>(request);
+        var validDate = DateTime.TryParse(academicYear, out var academicYearValue);
+
+        if (!validDate)
+        {
+            return new BadRequestResult();
+        }
+        
+        var request = new GetApprenticeshipsByAcademicYearRequest(ukprn, academicYearValue, page, pageSize);
+        var response = await _queryDispatcher.Send<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>(request);
         
         return Ok(response);
     }

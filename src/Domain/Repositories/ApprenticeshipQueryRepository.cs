@@ -34,27 +34,33 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         return result;
     }
 
-    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetAllForAcademicYear(long ukprn, DateRange academicYearDates, int page, int? pageSize, int limit, int offset)
+    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetAllForAcademicYear(long ukprn, DateRange academicYearDates, int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken)
     {
+        // Then it's just a case of making sure they started before the end of the year and didn't finish (complete/withdrawal/whatever) before the end of the year.
         var apprenticeshipsQuery = DbContext.Apprenticeships
             .Include(apprenticeship => apprenticeship.Episodes)
-            .Where(apprenticeship => apprenticeship.Episodes.Any(episode => episode.Ukprn == ukprn && episode.LastDayOfLearning >= academicYearDates.Start && episode.LastDayOfLearning <= academicYearDates.End))
+            .ThenInclude(episode => episode.Prices.Where(price => !price.IsDeleted && price.StartDate >= academicYearDates.Start && price.StartDate <= academicYearDates.End).OrderBy(x=> x.StartDate).Take(1))
+            .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
             .AsNoTracking();
-
-        var totalApprenticeships = await apprenticeshipsQuery.CountAsync();
+        
+       
+        var totalApprenticeships = await apprenticeshipsQuery.CountAsync(cancellationToken);
 
         var apprenticeships = await apprenticeshipsQuery
             .Skip(offset)
             .Take(limit)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
+
+        
+
+        var test = apprenticeships.Where(x => x.Uln == "2510972420");
 
         return new PagedResult<DataTransferObjects.Apprenticeship>
         {
             Data = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship
             {
                 Uln = x.Uln,
-                FirstName = x.FirstName,
-                LastName = x.LastName
+
             }),
             TotalItems = totalApprenticeships,
             PageSize = pageSize ?? int.MaxValue,
