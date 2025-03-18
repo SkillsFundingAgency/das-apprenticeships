@@ -87,7 +87,7 @@ public class WhenGettingForAcademicYear
         var result = await _sut.GetForAcademicYear(ukprn, academicYear, pageNumber, pageSize, pageSize, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
-        result.Data.Count().Should().Be(10);
+        result.Data.Count().Should().Be(pageSize);
         result.Page.Should().Be(pageNumber);
         result.PageSize.Should().Be(pageSize);
         result.TotalItems.Should().Be(totalItems);
