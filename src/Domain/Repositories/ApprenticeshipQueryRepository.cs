@@ -38,7 +38,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             .Include(x => x.Episodes)
             .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
             .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
-            .OrderBy(x => x.ApprovalsApprenticeshipId)
+            .OrderBy(x => x.ApprovalsApprenticeshipId) // to ensure skip/take works later
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
@@ -51,14 +51,10 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             )
         );
 
-        // Get all apprenticeships which have a start date within the academic year.
-        var apprenticeshipsInThisAcademicYear
-            = apprenticeshipsWithEpisodes.Where(x => x.StartDate >= academicYearDates.Start && x.StartDate <= academicYearDates.End);
-
         List<ApprenticeshipForAcademicYear> activeApprenticeshipsInAcademicYear = new();
 
-        // filter any which didn't finish before the end of the year ...
-        foreach (var apprenticeship in apprenticeshipsInThisAcademicYear)
+        // filter any which started in academic year and remained active 
+        foreach (var apprenticeship in apprenticeshipsWithEpisodes.Where(x => x.StartDate >= academicYearDates.Start && x.StartDate <= academicYearDates.End))
         {
             if (!Enum.TryParse<LearnerStatus>(apprenticeship.LearningStatus, out var parsedStatus))
             {
