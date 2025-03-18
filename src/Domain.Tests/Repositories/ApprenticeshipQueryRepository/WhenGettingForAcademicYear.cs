@@ -28,6 +28,23 @@ public class WhenGettingForAcademicYear
 
     [TearDown]
     public void CleanUp() => _dbContext.Dispose();
+    
+    [Test]
+    public async Task ThenEmptyResponseIsReturnedWhenNoData()
+    {
+        // Arrange
+        var ukprn = _fixture.Create<long>();
+        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        SetUpApprenticeshipQueryRepository();
+
+        var nonUkPrnApprenticeship = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, 10000, startDate: academicYear.Start.AddDays(4), learnerStatus: LearnerStatus.Active);
+
+        var result = await _sut.GetForAcademicYear(ukprn, academicYear, 1, 100, 100, 0, CancellationToken.None);
+
+        result.Should().NotBeNull();
+        result.Data.Count().Should().Be(0);
+        result.Data.Select(x => x.Uln).Should().NotContain(nonUkPrnApprenticeship.Uln);
+    }
 
     [Test]
     public async Task ThenCorrectApprenticeshipsForUkprnAreRetrievedForAcademicYearAndActive()

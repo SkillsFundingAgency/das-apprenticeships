@@ -42,6 +42,15 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
+        if (!apprenticeships.Any())
+        {
+            return new PagedResult<DataTransferObjects.Apprenticeship>
+            {
+                Data = new List<DataTransferObjects.Apprenticeship>(),
+                Page = 1,
+            };
+        }
+
         var apprenticeshipsWithEpisodes = apprenticeships.Select(apprenticeship => new ApprenticeshipForAcademicYear(
             apprenticeship.Key,
             apprenticeship.Uln,
