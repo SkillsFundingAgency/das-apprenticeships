@@ -15,6 +15,7 @@ using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.Types;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using LearnerStatus = SFA.DAS.Apprenticeships.Domain.Apprenticeship.LearnerStatus;
 
@@ -29,6 +30,7 @@ public class WhenHandleWithdrawCommand
     private Mock<IValidator<WithdrawDomainRequest>> _validator;
     private Mock<IMessageSession> _messageSession;
     private Mock<ILogger<WithdrawApprenticeshipCommandHandler>> _logger;
+    private ApprenticeshipDomainModel? _apprenticeship;
 
     private const long ValidUkprn = 1000000;
 
@@ -89,7 +91,7 @@ public class WhenHandleWithdrawCommand
         var command = _fixture.Create<WithdrawApprenticeshipCommand>();
 
         // Act
-        var result = await sut.Handle(command);
+        await sut.Handle(command);
 
         // Assert
         _apprenticeshipRepository.Verify(x => x.Update(
@@ -101,19 +103,19 @@ public class WhenHandleWithdrawCommand
 
         _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipWithdrawnEvent>(e =>
             e.Reason == command.Reason &&
-            e.LastDayOfLearning == command.LastDayOfLearning
-            ), It.IsAny<PublishOptions>()));
+            e.LastDayOfLearning == command.LastDayOfLearning &&
+            e.EmployerAccountId == _apprenticeship!.LatestEpisode.EmployerAccountId
+            ), It.IsAny<PublishOptions>(),
+            It.IsAny<CancellationToken>()));
     }
 
-    private Mock<IApprenticeshipRepository> ResetMockRepository()
+    private void ResetMockRepository()
     {
-        var apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
+        _apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
 
-        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, ukprn: ValidUkprn);
+        ApprenticeshipDomainModelTestHelper.AddEpisode(_apprenticeship, ukprn: ValidUkprn);
 
-        _apprenticeshipRepository.Setup(x => x.GetByUln(It.IsAny<string>())).ReturnsAsync(apprenticeship);
-
-        return _apprenticeshipRepository;
+        _apprenticeshipRepository.Setup(x => x.GetByUln(It.IsAny<string>())).ReturnsAsync(_apprenticeship);
     }
 
     private static Mock<ISystemClockService> MockSystemClock(int year, byte month, byte date)

@@ -12,6 +12,7 @@ using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Apprenticeships.Types;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApproveStartDateChange;
@@ -93,7 +94,8 @@ public class WhenAStartDateChangeIsApproved
             IsMarkedApprovedByEmployer(e, startDateChangeDomainModel, approvingUserId) &&
             DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) &&
             ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)
-            ), It.IsAny<PublishOptions>()));
+            ), It.IsAny<PublishOptions>(),
+            It.IsAny<CancellationToken>()));
     }
 
     private static bool IsMarkedApprovedByEmployer(ApprenticeshipStartDateChangedEvent e, StartDateChangeDomainModel startDateChange, string approvingUserId)
