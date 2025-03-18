@@ -45,11 +45,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
 
         if (!apprenticeships.Any())
         {
-            return new PagedResult<DataTransferObjects.Apprenticeship>
-            {
-                Data = new List<DataTransferObjects.Apprenticeship>(),
-                Page = 1,
-            };
+            return new PagedResult<DataTransferObjects.Apprenticeship>();
         }
 
         var apprenticeshipsWithEpisodes = apprenticeships.Select(apprenticeship => new ApprenticeshipForAcademicYear(
@@ -59,7 +55,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             apprenticeship.GetEpisode().LearningStatus
         ));
 
-        List<ApprenticeshipForAcademicYear> activeApprenticeshipsInAcademicYear = new();
+        List<ApprenticeshipForAcademicYear> activeApprenticeshipsInAcademicYear = [];
 
         foreach (var apprenticeship in apprenticeshipsWithEpisodes.Where(x => x.StartDate >= academicYearDates.Start && x.StartDate <= academicYearDates.End))
         {

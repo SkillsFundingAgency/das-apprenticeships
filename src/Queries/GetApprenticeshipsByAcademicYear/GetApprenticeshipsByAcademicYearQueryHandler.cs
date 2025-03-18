@@ -1,28 +1,21 @@
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
 
 namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
 
-public class GetApprenticeshipsByAcademicYearQueryHandler : IQueryHandler<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>
+public class GetApprenticeshipsByAcademicYearQueryHandler(
+    IApprenticeshipQueryRepository queryRepository,
+    IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient)
+    : IQueryHandler<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>
 {
-    private readonly IApprenticeshipsOuterApiClient _apprenticeshipsOuterApiClient;
-    private readonly IApprenticeshipQueryRepository _queryRepository;
-
-    public GetApprenticeshipsByAcademicYearQueryHandler(IApprenticeshipQueryRepository queryRepository, IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient)
-    {
-        _queryRepository = queryRepository;
-        _apprenticeshipsOuterApiClient = apprenticeshipsOuterApiClient;
-    }
-    
     public async Task<GetApprenticeshipsByAcademicYearResponse> Handle(GetApprenticeshipsByAcademicYearRequest query, CancellationToken cancellationToken = default)
     {
-        var academicYearsResponse = await _apprenticeshipsOuterApiClient.GetAcademicYear(query.AcademicYear);
+        var academicYearsResponse = await apprenticeshipsOuterApiClient.GetAcademicYear(query.AcademicYear);
 
         var academicYearDates = new DateRange(academicYearsResponse.StartDate, academicYearsResponse.EndDate);
         
-        var response  = await _queryRepository.GetForAcademicYear(
+        var response  = await queryRepository.GetForAcademicYear(
             query.UkPrn,
             academicYearDates, 
             query.Page, 
