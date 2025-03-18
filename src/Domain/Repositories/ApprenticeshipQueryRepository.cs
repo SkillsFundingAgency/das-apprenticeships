@@ -6,8 +6,6 @@ using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Responses;
-using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
-using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
 
 namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 
@@ -34,35 +32,57 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         return result;
     }
 
-    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetAllForAcademicYear(long ukprn, DateRange academicYearDates, int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken)
+    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetForAcademicYear(long ukprn, DateRange academicYearDates, int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken)
     {
-        // Then it's just a case of making sure they started before the end of the year and didn't finish (complete/withdrawal/whatever) before the end of the year.
-        var apprenticeshipsQuery = DbContext.Apprenticeships
-            .Include(apprenticeship => apprenticeship.Episodes)
-            .ThenInclude(episode => episode.Prices.Where(price => !price.IsDeleted && price.StartDate >= academicYearDates.Start && price.StartDate <= academicYearDates.End).OrderBy(x=> x.StartDate).Take(1))
+        var apprenticeships = await DbContext.Apprenticeships
+            .Include(x => x.Episodes)
+            .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
             .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
-            .AsNoTracking();
-        
-       
-        var totalApprenticeships = await apprenticeshipsQuery.CountAsync(cancellationToken);
-
-        var apprenticeships = await apprenticeshipsQuery
-            .Skip(offset)
-            .Take(limit)
+            .OrderBy(x => x.ApprovalsApprenticeshipId)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
 
-        
+        var apprenticeshipsWithEpisodes = apprenticeships.Select(apprenticeship =>
+            new ApprenticeshipForAcademicYear(
+                apprenticeship.Key,
+                apprenticeship.Uln,
+                apprenticeship.GetStartDate(),
+                apprenticeship.GetEpisode().LearningStatus
+            )
+        );
 
-        var test = apprenticeships.Where(x => x.Uln == "2510972420");
+        // Get all apprenticeships which have a start date within the academic year.
+        var apprenticeshipsInThisAcademicYear
+            = apprenticeshipsWithEpisodes.Where(x => x.StartDate >= academicYearDates.Start && x.StartDate <= academicYearDates.End);
+
+        List<ApprenticeshipForAcademicYear> activeApprenticeshipsInAcademicYear = new();
+
+        // filter any which didn't finish before the end of the year ...
+        foreach (var apprenticeship in apprenticeshipsInThisAcademicYear)
+        {
+            if (!Enum.TryParse<LearnerStatus>(apprenticeship.LearningStatus, out var parsedStatus))
+            {
+                continue;
+            }
+
+            if (parsedStatus == LearnerStatus.Active)
+            {
+                activeApprenticeshipsInAcademicYear.Add(apprenticeship);
+            }
+        }
+
+        var responseResult = activeApprenticeshipsInAcademicYear
+            .Skip(offset)
+            .Take(limit)
+            .ToList();
 
         return new PagedResult<DataTransferObjects.Apprenticeship>
         {
-            Data = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship
+            Data = responseResult.Select(x => new DataTransferObjects.Apprenticeship
             {
                 Uln = x.Uln,
-
             }),
-            TotalItems = totalApprenticeships,
+            TotalItems = activeApprenticeshipsInAcademicYear.Count,
             PageSize = pageSize ?? int.MaxValue,
             Page = page,
         };

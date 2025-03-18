@@ -28,7 +28,7 @@ public class GetApprenticeshipsByAcademicYearQueryHandler : IQueryHandler<GetApp
 
         var academicYearDates = new DateRange(academicYearsResponse.StartDate, academicYearsResponse.EndDate);
         
-        var response  = await _queryRepository.GetAllForAcademicYear(
+        var response  = await _queryRepository.GetForAcademicYear(
             query.UkPrn,
             academicYearDates, 
             query.Page, 
