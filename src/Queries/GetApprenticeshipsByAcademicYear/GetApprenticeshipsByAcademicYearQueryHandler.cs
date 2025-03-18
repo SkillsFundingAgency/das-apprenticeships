@@ -18,13 +18,7 @@ public class GetApprenticeshipsByAcademicYearQueryHandler : IQueryHandler<GetApp
     
     public async Task<GetApprenticeshipsByAcademicYearResponse> Handle(GetApprenticeshipsByAcademicYearRequest query, CancellationToken cancellationToken = default)
     {
-        //var academicYearsResponse = await _apprenticeshipsOuterApiClient.GetAcademicYear(query.AcademicYear);
-
-        var academicYearsResponse = new GetAcademicYearsResponse
-        {
-            StartDate = new DateTime(2023, 9, 1),
-            EndDate = new DateTime(2024, 8, 31)
-        };
+        var academicYearsResponse = await _apprenticeshipsOuterApiClient.GetAcademicYear(query.AcademicYear);
 
         var academicYearDates = new DateRange(academicYearsResponse.StartDate, academicYearsResponse.EndDate);
         
@@ -42,7 +36,7 @@ public class GetApprenticeshipsByAcademicYearQueryHandler : IQueryHandler<GetApp
             Items = response.Data.Select(apprenticeship => new GetApprenticeshipsByAcademicYearResponseItem
             {
                 Uln = apprenticeship.Uln
-            }).ToList(),
+            }),
             PageSize = response.PageSize,
             Page = response.Page,
             TotalItems = response.TotalItems,

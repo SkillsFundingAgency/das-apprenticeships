@@ -3,18 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace SFA.DAS.Apprenticeships.DataTransferObjects;
 
 [ExcludeFromCodeCoverage]
-public record ApprenticeshipForAcademicYear
+public record ApprenticeshipForAcademicYear(Guid Key, string Uln, DateTime StartDate, string LearningStatus)
 {
-    public ApprenticeshipForAcademicYear(Guid key, string uln, DateTime startDate, string learningStatus)
-    {
-        Key = key;
-        Uln = uln;
-        StartDate = startDate;
-        LearningStatus = learningStatus;
-    }
-    
-    public Guid Key { get; set; }
-    public string Uln { get; set; }
-    public DateTime StartDate { get; set; }
-    public string LearningStatus { get; set; }
+    public Guid Key { get; } = Key;
+    public string Uln { get; } = Uln;
+    public DateTime StartDate { get; } = StartDate;
+    public string LearningStatus { get; } = LearningStatus;
 }

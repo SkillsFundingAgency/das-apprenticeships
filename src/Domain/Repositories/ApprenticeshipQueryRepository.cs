@@ -42,18 +42,15 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
-        var apprenticeshipsWithEpisodes = apprenticeships.Select(apprenticeship =>
-            new ApprenticeshipForAcademicYear(
-                apprenticeship.Key,
-                apprenticeship.Uln,
-                apprenticeship.GetStartDate(),
-                apprenticeship.GetEpisode().LearningStatus
-            )
-        );
+        var apprenticeshipsWithEpisodes = apprenticeships.Select(apprenticeship => new ApprenticeshipForAcademicYear(
+            apprenticeship.Key,
+            apprenticeship.Uln,
+            apprenticeship.GetStartDate(),
+            apprenticeship.GetEpisode().LearningStatus
+        ));
 
         List<ApprenticeshipForAcademicYear> activeApprenticeshipsInAcademicYear = new();
 
-        // filter any which started in academic year and remained active 
         foreach (var apprenticeship in apprenticeshipsWithEpisodes.Where(x => x.StartDate >= academicYearDates.Start && x.StartDate <= academicYearDates.End))
         {
             if (!Enum.TryParse<LearnerStatus>(apprenticeship.LearningStatus, out var parsedStatus))
@@ -67,18 +64,21 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             }
         }
 
-        var responseResult = activeApprenticeshipsInAcademicYear
+        var totalItems = activeApprenticeshipsInAcademicYear.Count;
+        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize.GetValueOrDefault());
+
+        var result = activeApprenticeshipsInAcademicYear
             .Skip(offset)
-            .Take(limit)
-            .ToList();
+            .Take(limit);
 
         return new PagedResult<DataTransferObjects.Apprenticeship>
         {
-            Data = responseResult.Select(x => new DataTransferObjects.Apprenticeship
+            Data = result.Select(x => new DataTransferObjects.Apprenticeship
             {
                 Uln = x.Uln,
             }),
-            TotalItems = activeApprenticeshipsInAcademicYear.Count,
+            TotalItems = totalItems,
+            TotalPages = totalPages,
             PageSize = pageSize ?? int.MaxValue,
             Page = page,
         };

@@ -61,12 +61,10 @@ public class ApprenticeshipController : ControllerBase
     /// Get All For AcademicYear
     /// </summary>
     /// <param name="ukprn">Filter by training provider using the unique provider number.</param>
-    /// <param name="academicYear">Academic year in datetime format.</param>
+    /// <param name="academicYear">Academic year in ISO date format (e.g. 2025-09-01).</param>
     /// <param name="page">Page number</param>
-    /// <param name="pageSize">Number of iterms per page</param>
+    /// <param name="pageSize">Number of items per page</param>
     /// <returns code="200">GetApprenticeshipsByAcademicYearResponse</returns>
-    // TODO remove AllowAnonymous
-    [AllowAnonymous]
     [HttpGet("{ukprn:long}/academicyears/{academicYear}/apprenticeships")]
     [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
     public async Task<IActionResult> GetAllForAcademicYear(long ukprn, string academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
