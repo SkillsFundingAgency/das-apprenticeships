@@ -16,11 +16,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
 
 public class WhenGettingForAcademicYear
 {
-    // ReSharper disable once NotNullOrRequiredMemberIsNotInitialized
     private Domain.Repositories.ApprenticeshipQueryRepository _sut;
-    // ReSharper disable once NotNullOrRequiredMemberIsNotInitialized
     private Fixture _fixture;
-    // ReSharper disable once NotNullOrRequiredMemberIsNotInitialized
     private ApprenticeshipsDataContext _dbContext;
 
     [SetUp]

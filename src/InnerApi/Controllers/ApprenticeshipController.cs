@@ -58,7 +58,7 @@ public class ApprenticeshipController : ControllerBase
     }
 
     /// <summary>
-    /// Get All For AcademicYear
+    /// Get paginated apprenticeships for a provider for a specific academic year.
     /// </summary>
     /// <param name="ukprn">Filter by training provider using the unique provider number.</param>
     /// <param name="academicYear">Academic year in ISO date format (e.g. 2025-09-01).</param>

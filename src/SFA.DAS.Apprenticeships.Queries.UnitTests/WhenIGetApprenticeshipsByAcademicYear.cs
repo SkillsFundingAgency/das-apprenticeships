@@ -43,12 +43,18 @@ public class WhenIGetApprenticeshipsByAcademicYear
             TotalItems = queryResult.TotalItems
         };
 
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(
+            new DateTime(2025, 9, 1),
+            new DateTime(2026, 8, 31
+            ));
 
-        var query = new GetApprenticeshipsByAcademicYearRequest(1000, academicYear.Start, 1, 20);
+        const int pageSize = 20;
+        const int pageNumber = 1;
+
+        var query = new GetApprenticeshipsByAcademicYearRequest(1000, academicYear.Start, pageNumber, pageSize);
 
         _apprenticeshipQueryRepository
-            .Setup(x => x.GetForAcademicYear(query.UkPrn, academicYear, 1, 20, 20, 0, It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetForAcademicYear(query.UkPrn, academicYear, pageNumber, pageSize, pageSize, 0, It.IsAny<CancellationToken>()))
             .ReturnsAsync(queryResult)
             .Verifiable();
 
