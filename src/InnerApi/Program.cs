@@ -33,6 +33,7 @@ public static class Program
 
         builder.Services.AddApplicationInsightsTelemetry();
         builder.Services.AddApplicationInsightsTelemetryProcessor<NotFoundTelemetryProcessor>();
+        builder.Services.AddApplicationInsightsTelemetryProcessor<NotFoundDependencyTelemetryProcessor>();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
