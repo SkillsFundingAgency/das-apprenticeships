@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using NServiceBus;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
@@ -53,6 +52,9 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
         await _apprenticeshipRepository.Update(apprenticeship);
 
         await SendEvent(apprenticeship, reason, command.LastDayOfLearning);
+
+        _logger.LogInformation($"Sending Notification(s) for withdrawal of apprenticeship for ULN {command.ULN}");
+        await _apprenticeshipsOuterApiClient.HandleWithdrawalNotifications(apprenticeship.Key, new HandleWithdrawalNotificationsRequest{ LastDayOfLearning = command.LastDayOfLearning, Reason = command.Reason }, command.ServiceBearerToken);
 
         _logger.LogInformation($"Apprenticeship withdrawn for ULN {command.ULN}");
         return Outcome.Success();
