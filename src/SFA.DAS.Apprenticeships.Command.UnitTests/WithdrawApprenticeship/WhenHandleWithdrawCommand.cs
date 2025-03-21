@@ -122,6 +122,10 @@ public class WhenHandleWithdrawCommand
         _validator.Setup(x => x.IsValid(It.IsAny<WithdrawDomainRequest>(), out message, It.IsAny<object?[]>()))
             .Returns(true);
 
+        _apprenticeshipsOuterApiClient.Setup(x => x.HandleWithdrawalNotifications(It.IsAny<Guid>(),
+                It.IsAny<HandleWithdrawalNotificationsRequest>(), It.IsAny<string>()))
+            .Returns(() => Task.CompletedTask);
+
         var sut = new WithdrawApprenticeshipCommandHandler(
             _apprenticeshipRepository.Object,
             _apprenticeshipsOuterApiClient.Object,
