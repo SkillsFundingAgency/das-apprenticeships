@@ -35,7 +35,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
     
     public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetForAcademicYear(long ukprn, DateRange academicYearDates, int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken)
     {
-        var query = DbContext.Apprenticeships
+        var query = DbContext.ApprenticeshipsDbSet
             .Include(x => x.Episodes)
             .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
             .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
