@@ -67,6 +67,7 @@ public class ApprenticeshipController : ControllerBase
     /// <returns code="200">GetApprenticeshipsByAcademicYearResponse</returns>
     [HttpGet("{ukprn:long}/academicyears/{academicYear}/apprenticeships")]
     [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
+    [AuthorizeUserType(UserType.Provider)]
     [AuthorizeUserType(UserType.ServiceAccount, UserTypeRequirement.AuthorizeMode.Override)]
     public async Task<IActionResult> GetForAcademicYear(long ukprn, string academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
     {
