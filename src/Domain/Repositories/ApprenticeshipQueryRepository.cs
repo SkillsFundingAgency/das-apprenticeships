@@ -32,57 +32,33 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         var result = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
         return result;
     }
-
+    
     public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetForAcademicYear(long ukprn, DateRange academicYearDates, int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken)
     {
-        var apprenticeships = await DbContext.Apprenticeships
+        var query = DbContext.Apprenticeships
             .Include(x => x.Episodes)
             .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
             .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
-            .OrderBy(x => x.ApprovalsApprenticeshipId) // to ensure skip/take works later
-            .AsNoTracking()
-            .ToListAsync(cancellationToken);
+            .Where(x => x.Episodes.Any(e => e.Prices.Any(p => p.StartDate >= academicYearDates.Start && p.StartDate <= academicYearDates.End)))
+            .Where(x => x.Episodes.Any(e => e.LearningStatus == LearnerStatus.Active.ToString()))
+            .OrderBy(x => x.ApprovalsApprenticeshipId)
+            .AsNoTracking();
 
-        if (!apprenticeships.Any())
-        {
-            return new PagedResult<DataTransferObjects.Apprenticeship>();
-        }
-
-        var apprenticeshipsWithEpisodes = apprenticeships.Select(apprenticeship => new ApprenticeshipForAcademicYear(
-            apprenticeship.Key,
-            apprenticeship.Uln,
-            apprenticeship.GetStartDate(),
-            apprenticeship.GetEpisode().LearningStatus
-        ));
-
-        List<ApprenticeshipForAcademicYear> activeApprenticeshipsInAcademicYear = [];
-
-        foreach (var apprenticeship in apprenticeshipsWithEpisodes.Where(x => x.StartDate >= academicYearDates.Start && x.StartDate <= academicYearDates.End))
-        {
-            if (!Enum.TryParse<LearnerStatus>(apprenticeship.LearningStatus, out var parsedStatus))
-            {
-                continue;
-            }
-
-            if (parsedStatus == LearnerStatus.Active)
-            {
-                activeApprenticeshipsInAcademicYear.Add(apprenticeship);
-            }
-        }
-
-        var totalItems = activeApprenticeshipsInAcademicYear.Count;
+        var totalItems = await query.CountAsync(cancellationToken);
         var totalPages = (int)Math.Ceiling((double)totalItems / pageSize.GetValueOrDefault());
 
-        var result = activeApprenticeshipsInAcademicYear
+        var result = await query
             .Skip(offset)
-            .Take(limit);
+            .Take(limit)
+            .Select(x => new DataTransferObjects.Apprenticeship
+            {
+                Uln = x.Uln,
+            })
+            .ToListAsync(cancellationToken);
 
         return new PagedResult<DataTransferObjects.Apprenticeship>
         {
-            Data = result.Select(x => new DataTransferObjects.Apprenticeship
-            {
-                Uln = x.Uln,
-            }),
+            Data = result,
             TotalItems = totalItems,
             TotalPages = totalPages,
             PageSize = pageSize ?? int.MaxValue,
