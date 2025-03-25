@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.InnerApi.Responses;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByDates;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
@@ -56,30 +56,32 @@ public class ApprenticeshipController : ControllerBase
 
         return Ok(response.Apprenticeships);
     }
-
+    
     /// <summary>
-    /// Get paginated apprenticeships for a provider for a specific academic year.
+    /// Get paginated apprenticeships for a provider between specified dates.
     /// </summary>
-    /// <param name="ukprn">Filter by training provider using the unique provider number.</param>
-    /// <param name="academicYear">Academic year in ISO date format (e.g. 2025-09-01).</param>
+    /// <param name="ukprn">UkPrn filter value</param>
+    /// <param name="startDate">Start date filter value</param>
+    /// <param name="endDate">End date filter value</param>
     /// <param name="page">Page number</param>
     /// <param name="pageSize">Number of items per page</param>
-    /// <returns code="200">GetApprenticeshipsByAcademicYearResponse</returns>
-    [HttpGet("{ukprn:long}/academicyears/{academicYear}/apprenticeships")]
-    [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
+    /// <returns></returns>
+    [HttpGet("{ukprn:long}/apprenticeships/by-dates")]
+    [ProducesResponseType(typeof(GetApprenticeshipsByDatesResponse), 200)]
     [AuthorizeUserType(UserType.Provider)]
     [AuthorizeUserType(UserType.ServiceAccount, UserTypeRequirement.AuthorizeMode.Override)]
-    public async Task<IActionResult> GetForAcademicYear(long ukprn, string academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
+    public async Task<IActionResult> GetByDates(long ukprn, [FromQuery]string startDate, [FromQuery] string endDate, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
     {
-        var validDate = DateTime.TryParse(academicYear, out var academicYearValue);
+        var isValidStartDate = DateTime.TryParse(startDate, out var startDateValue);
+        var isValidEndDate = DateTime.TryParse(endDate, out var endDateValue);
 
-        if (!validDate)
+        if (!isValidStartDate | !isValidEndDate)
         {
             return new BadRequestResult();
         }
         
-        var request = new GetApprenticeshipsByAcademicYearRequest(ukprn, academicYearValue, page, pageSize);
-        var response = await _queryDispatcher.Send<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>(request);
+        var request = new GetApprenticeshipsByDatesRequest(ukprn, new DateRange(startDateValue, endDateValue), page, pageSize);
+        var response = await _queryDispatcher.Send<GetApprenticeshipsByDatesRequest, GetApprenticeshipsByDatesResponse>(request);
         
         return Ok(response);
     }

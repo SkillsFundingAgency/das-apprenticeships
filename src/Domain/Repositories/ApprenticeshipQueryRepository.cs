@@ -33,13 +33,13 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         return result;
     }
     
-    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetForAcademicYear(long ukprn, DateRange academicYearDates, int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken)
+    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken)
     {
         var query = DbContext.ApprenticeshipsDbSet
             .Include(x => x.Episodes)
             .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
             .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
-            .Where(x => x.Episodes.Any(e => e.Prices.Any(p => p.StartDate >= academicYearDates.Start && p.StartDate <= academicYearDates.End)))
+            .Where(x => x.Episodes.Any(e => e.Prices.Any(p => p.StartDate >= dates.Start && p.StartDate <= dates.End)))
             .Where(x => x.Episodes.Any(e => e.LearningStatus == LearnerStatus.Active.ToString()))
             .OrderBy(x => x.ApprovalsApprenticeshipId)
             .AsNoTracking();
