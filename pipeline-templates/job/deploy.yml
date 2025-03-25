@@ -72,7 +72,6 @@ jobs:
             AzureSubscription: ${{ parameters.ServiceConnection }}
             ServerName: $(SharedSQLServerFQDN)
             SqlUsername: $(SharedSQLServerUsername)
-            SqlPassword: $(SharedSQLServerPassword)
             DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/Database/bin/Output/${{ parameters.SolutionBaseName }}.Database.dacpac
             DatabaseName: $(DatabaseName)
             OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
