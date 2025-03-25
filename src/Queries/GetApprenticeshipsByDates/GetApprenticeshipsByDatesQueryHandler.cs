@@ -1,4 +1,3 @@
-using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 
 namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByDates;
@@ -9,11 +8,9 @@ public class GetApprenticeshipsByAcademicYearQueryHandler(
 {
     public async Task<GetApprenticeshipsByDatesResponse> Handle(GetApprenticeshipsByDatesRequest query, CancellationToken cancellationToken = default)
     {
-        var academicYearDates = new DateRange(query.Dates.Start, query.Dates.End);
-        
         var response  = await queryRepository.GetByDates(
             query.UkPrn,
-            academicYearDates, 
+            query.Dates, 
             query.Page, 
             query.PageSize,
             query.Limit,
@@ -22,7 +19,7 @@ public class GetApprenticeshipsByAcademicYearQueryHandler(
 
         return new GetApprenticeshipsByDatesResponse
         {
-            Items = response.Data.Select(apprenticeship => new GetApprenticeshipsByAcademicYearResponseItem
+            Items = response.Data.Select(apprenticeship => new GetApprenticeshipsByDatesResponseItem
             {
                 Uln = apprenticeship.Uln
             }),

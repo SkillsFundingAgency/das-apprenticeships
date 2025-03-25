@@ -14,7 +14,7 @@ using SFA.DAS.Apprenticeships.TestHelpers;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository;
 
-public class WhenGettingForAcademicYear
+public class WhenGettingByDates
 {
     private Domain.Repositories.ApprenticeshipQueryRepository _sut;
     private Fixture _fixture;

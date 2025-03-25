@@ -10,7 +10,7 @@ using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByDates;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
 
-public class WhenIGetApprenticeshipsByAcademicYear
+public class WhenIGetApprenticeshipsByDates
 {
     private Fixture _fixture;
     private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
@@ -33,7 +33,7 @@ public class WhenIGetApprenticeshipsByAcademicYear
         var queryResult = _fixture.Create<PagedResult<Apprenticeship>>();
         var expectedResult = new GetApprenticeshipsByDatesResponse
         {
-            Items = queryResult.Data.Select(x => new GetApprenticeshipsByAcademicYearResponseItem
+            Items = queryResult.Data.Select(x => new GetApprenticeshipsByDatesResponseItem
             {
                 Uln = x.Uln
             }),
