@@ -56,7 +56,7 @@ public class ApprenticeshipController : ControllerBase
 
         return Ok(response.Apprenticeships);
     }
-    
+
     /// <summary>
     /// Get paginated apprenticeships for a provider between specified dates.
     /// </summary>
@@ -68,8 +68,8 @@ public class ApprenticeshipController : ControllerBase
     /// <returns></returns>
     [HttpGet("{ukprn:long}/apprenticeships/by-dates")]
     [ProducesResponseType(typeof(GetApprenticeshipsByDatesResponse), 200)]
-    [AuthorizeUserType(UserType.Provider)]
-    public async Task<IActionResult> GetByDates(long ukprn, [FromQuery]string startDate, [FromQuery] string endDate, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetByDates(long ukprn, [FromQuery] string startDate, [FromQuery] string endDate, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
     {
         var isValidStartDate = DateTime.TryParse(startDate, out var startDateValue);
         var isValidEndDate = DateTime.TryParse(endDate, out var endDateValue);
@@ -78,10 +78,10 @@ public class ApprenticeshipController : ControllerBase
         {
             return new BadRequestResult();
         }
-        
+
         var request = new GetApprenticeshipsByDatesRequest(ukprn, new DateRange(startDateValue, endDateValue), page, pageSize);
         var response = await _queryDispatcher.Send<GetApprenticeshipsByDatesRequest, GetApprenticeshipsByDatesResponse>(request);
-        
+
         return Ok(response);
     }
 
