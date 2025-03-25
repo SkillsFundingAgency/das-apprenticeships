@@ -21,8 +21,8 @@ public static class AuthorizationPolicyBuilderExtensions
 
         foreach (var userType in possibleCombinationsOfUserTypes)
         {
-            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.Add), policy => policy.Requirements.Add(new UserTypeRequirement(userType, UserTypeRequirement.AuthorizeMode.Add)));
-            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.Override), policy => policy.Requirements.Add(new UserTypeRequirement(userType, UserTypeRequirement.AuthorizeMode.Override)));
+            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.AddRequirement), policy => policy.Requirements.Add(new UserTypeRequirement(userType, UserTypeRequirement.AuthorizeMode.AddRequirement)));
+            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.OverrideRequirements), policy => policy.Requirements.Add(new UserTypeRequirement(userType, UserTypeRequirement.AuthorizeMode.OverrideRequirements)));
         }
 
         return options;
@@ -34,8 +34,8 @@ public static class AuthorizationPolicyBuilderExtensions
 
         foreach (var userType in possibleCombinationsOfUserTypes)
         {
-            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.Add), policy => policy.Requirements.Add(new NoneRequirement()));
-            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.Override), policy => policy.Requirements.Add(new NoneRequirement()));
+            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.AddRequirement), policy => policy.Requirements.Add(new NoneRequirement()));
+            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.OverrideRequirements), policy => policy.Requirements.Add(new NoneRequirement()));
         }
 
         return options;
