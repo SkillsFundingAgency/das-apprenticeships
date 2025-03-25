@@ -65,7 +65,7 @@ public class ApprenticeshipController : ControllerBase
     /// <param name="endDate">End date filter value</param>
     /// <param name="page">Page number</param>
     /// <param name="pageSize">Number of items per page</param>
-    /// <returns></returns>
+    /// <returns>GetApprenticeshipsByDatesResponse</returns>
     [HttpGet("{ukprn:long}/apprenticeships/by-dates")]
     [ProducesResponseType(typeof(GetApprenticeshipsByDatesResponse), 200)]
     [AllowAnonymous]
