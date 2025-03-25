@@ -19,7 +19,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
     /// </summary>
     [Route("")]
     [ApiController]
-    [ControllerAuthorizeUserType(UserType.Provider | UserType.Employer)]
+    [AuthorizeUserType(UserType.Provider | UserType.Employer)]
     public class PriceHistoryController : ControllerBase
     {
         private readonly IQueryDispatcher _queryDispatcher;

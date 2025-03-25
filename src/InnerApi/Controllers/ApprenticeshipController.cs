@@ -20,7 +20,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 /// </summary>
 [Route("")]
 [ApiController]
-[ControllerAuthorizeUserType(UserType.Provider | UserType.Employer)]
+[AuthorizeUserType(UserType.Provider | UserType.Employer)]
 public class ApprenticeshipController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
@@ -141,7 +141,7 @@ public class ApprenticeshipController : ControllerBase
     /// <returns>GetApprenticeshipResponse containing apprenticeship, episode, & price data</returns>
     [HttpGet("{ukprn}")]
     [ProducesResponseType(200)]
-    [ActionAuthorizeUserType(UserType.ServiceAccount)]
+    [AuthorizeUserType(UserType.ServiceAccount, UserTypeRequirement.AuthorizeMode.Override)]
     public async Task<IActionResult> GetApprenticeships(long ukprn)
     {
         var request = new GetApprenticeshipsWithEpisodesRequest { Ukprn = ukprn };
@@ -158,7 +158,6 @@ public class ApprenticeshipController : ControllerBase
     /// <returns>Provider and employer ids</returns>
     [HttpGet("{apprenticeshipKey}/currentPartyIds")]
     [ProducesResponseType(200)]
-    [ActionAuthorizeUserType(UserType.ServiceAccount | UserType.Provider | UserType.Employer)]
     public async Task<IActionResult> GetCurrentPartyIds(Guid apprenticeshipKey)
     {
         var request = new GetCurrentPartyIdsRequest { ApprenticeshipKey = apprenticeshipKey };
