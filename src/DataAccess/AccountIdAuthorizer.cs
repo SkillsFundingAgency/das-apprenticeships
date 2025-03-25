@@ -79,7 +79,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
                                 || price.EndDate <= currentDateTime))
                     })
                     .Where(x => x.CurrentEpisode != null && _accountIdClaims.AccountIds.Contains(x.CurrentEpisode.Ukprn))
-                    .Select(x => x.Apprenticeship); ;
+                    .Select(x => x.Apprenticeship);
             case AccountIdClaimsType.Employer:
                 return apprenticeshipsWithEpisodes
                     .Select(a => new
