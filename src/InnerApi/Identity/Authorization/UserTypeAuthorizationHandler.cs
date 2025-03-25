@@ -45,12 +45,12 @@ public class UserTypeAuthorizationHandler : AuthorizationHandler<UserTypeRequire
     {
         var userRequirements = context.Requirements.OfType<UserTypeRequirement>();
 
-        if (!userRequirements.Any(x=>x.Mode == AuthorizeMode.OverrideRequirements))
+        if (!userRequirements.Any(x=>x.Mode == AuthorizeMode.ActionLevelOverrideRequirement))
         {
             return false; // No override policies, therefore this invocation is not overriden
         }
 
-        if(requirement.Mode == AuthorizeMode.OverrideRequirements)
+        if(requirement.Mode == AuthorizeMode.ActionLevelOverrideRequirement)
         {
             return false; // This policy is an override policy, therefore it is not overriden and overrides all other policies
         }
@@ -69,13 +69,13 @@ public class UserTypeRequirement : IAuthorizationRequirement
     public enum AuthorizeMode
     {
         /// <summary>
-        /// Add this requirement to the existing set of requirements already defined at controller level
+        /// Add this requirement to the existing set of requirements for use at controller level
         /// </summary>
-        AddRequirement,
+        ControllerLevelRequirement,
         /// <summary>
         /// Override existing requirements set at controller level and only require this one
         /// </summary>
-        OverrideRequirements
+        ActionLevelOverrideRequirement
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public class ControllerAuthorizeUserTypeAttribute : AuthorizeUserTypeAttribute
     /// Set authorization user type requirements at controller level
     /// </summary>
     /// <param name="userTypes">The user types which are allowed to call actions on this controller</param>
-    public ControllerAuthorizeUserTypeAttribute(UserType userTypes) : base(userTypes, AuthorizeMode.AddRequirement)
+    public ControllerAuthorizeUserTypeAttribute(UserType userTypes) : base(userTypes, AuthorizeMode.ControllerLevelRequirement)
     {
     }
 }
@@ -134,7 +134,7 @@ public class ActionAuthorizeUserTypeAttribute : AuthorizeUserTypeAttribute
     /// Set authorization user type requirements at action level, overrides controller level requirements
     /// </summary>
     /// <param name="userTypes">The user types which are allowed to call this action</param>
-    public ActionAuthorizeUserTypeAttribute(UserType userTypes) : base(userTypes, AuthorizeMode.OverrideRequirements)
+    public ActionAuthorizeUserTypeAttribute(UserType userTypes) : base(userTypes, AuthorizeMode.ActionLevelOverrideRequirement)
     {
     }
 }
