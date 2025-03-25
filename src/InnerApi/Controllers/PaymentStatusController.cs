@@ -14,7 +14,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 /// </summary>
 [Route("{apprenticeshipKey}")]
 [ApiController]
-[ControllerAuthorizeUserType(UserType.Provider | UserType.Employer)]
+[AuthorizeUserType(UserType.Provider | UserType.Employer)]
 public class PaymentStatusController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
