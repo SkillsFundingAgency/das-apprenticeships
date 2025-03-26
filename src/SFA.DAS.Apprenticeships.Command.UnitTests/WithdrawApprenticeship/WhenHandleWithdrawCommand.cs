@@ -15,6 +15,7 @@ using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.Types;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using LearnerStatus = SFA.DAS.Apprenticeships.Domain.Apprenticeship.LearnerStatus;
@@ -72,6 +73,47 @@ public class WhenHandleWithdrawCommand
     }
 
     [Test]
+    public async Task When_OuterApi_Errors_Then_Domain_Is_Not_Updated()
+    {
+        // Arrange
+        ResetMockRepository();
+        string message = "";
+        _validator.Setup(x => x.IsValid(It.IsAny<WithdrawDomainRequest>(), out message, It.IsAny<object?[]>()))
+            .Returns(true);
+
+        _apprenticeshipsOuterApiClient.Setup(x => x.HandleWithdrawalNotifications(It.IsAny<Guid>(),
+                It.IsAny<HandleWithdrawalNotificationsRequest>(), It.IsAny<string>()))
+            .Throws<HttpRequestException>();
+
+        var sut = new WithdrawApprenticeshipCommandHandler(
+            _apprenticeshipRepository.Object,
+            _apprenticeshipsOuterApiClient.Object,
+            _systemClockService.Object,
+            _validator.Object,
+            _messageSession.Object,
+            _logger.Object);
+
+        var command = _fixture.Create<WithdrawApprenticeshipCommand>();
+
+        // Act
+        try
+        {
+            await sut.Handle(command);
+        }
+        catch (HttpRequestException)
+        {
+            //expected exception in this test
+        }
+
+        // Assert
+        _apprenticeshipRepository.Verify(x => x.Update(
+            It.IsAny<ApprenticeshipDomainModel>()), Times.Never);
+
+        _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipWithdrawnEvent>(), It.IsAny<PublishOptions>(),
+            It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Test]
     public async Task WhenValidRequestWithdrawCompleted()
     {
         // Arrange
@@ -79,6 +121,10 @@ public class WhenHandleWithdrawCommand
         string message = "";
         _validator.Setup(x => x.IsValid(It.IsAny<WithdrawDomainRequest>(), out message, It.IsAny<object?[]>()))
             .Returns(true);
+
+        _apprenticeshipsOuterApiClient.Setup(x => x.HandleWithdrawalNotifications(It.IsAny<Guid>(),
+                It.IsAny<HandleWithdrawalNotificationsRequest>(), It.IsAny<string>()))
+            .Returns(() => Task.CompletedTask);
 
         var sut = new WithdrawApprenticeshipCommandHandler(
             _apprenticeshipRepository.Object,

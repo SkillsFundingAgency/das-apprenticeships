@@ -17,7 +17,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
 /// </summary>
 [Route("")]
 [ApiController]
-[AuthorizeUserType(UserType.Provider | UserType.Employer)]
+[ControllerAuthorizeUserType(UserType.Provider | UserType.Employer)]
 public class StartDateChangeController : ControllerBase
 {
     private readonly IQueryDispatcher _queryDispatcher;
