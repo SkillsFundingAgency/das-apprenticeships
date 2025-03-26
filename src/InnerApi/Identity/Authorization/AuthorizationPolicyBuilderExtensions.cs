@@ -21,8 +21,8 @@ public static class AuthorizationPolicyBuilderExtensions
 
         foreach (var userType in possibleCombinationsOfUserTypes)
         {
-            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.Add), policy => policy.Requirements.Add(new UserTypeRequirement(userType, UserTypeRequirement.AuthorizeMode.Add)));
-            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.Override), policy => policy.Requirements.Add(new UserTypeRequirement(userType, UserTypeRequirement.AuthorizeMode.Override)));
+            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.ControllerLevelRequirement), policy => policy.Requirements.Add(new UserTypeRequirement(userType, UserTypeRequirement.AuthorizeMode.ControllerLevelRequirement)));
+            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.ActionLevelOverrideRequirement), policy => policy.Requirements.Add(new UserTypeRequirement(userType, UserTypeRequirement.AuthorizeMode.ActionLevelOverrideRequirement)));
         }
 
         return options;
@@ -34,8 +34,8 @@ public static class AuthorizationPolicyBuilderExtensions
 
         foreach (var userType in possibleCombinationsOfUserTypes)
         {
-            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.Add), policy => policy.Requirements.Add(new NoneRequirement()));
-            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.Override), policy => policy.Requirements.Add(new NoneRequirement()));
+            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.ControllerLevelRequirement), policy => policy.Requirements.Add(new NoneRequirement()));
+            options.AddPolicy(AuthorizeUserTypeAttribute.GetPolicyName(userType, UserTypeRequirement.AuthorizeMode.ActionLevelOverrideRequirement), policy => policy.Requirements.Add(new NoneRequirement()));
         }
 
         return options;
