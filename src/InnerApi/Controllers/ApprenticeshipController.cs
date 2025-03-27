@@ -68,8 +68,7 @@ public class ApprenticeshipController : ControllerBase
     /// <returns>GetApprenticeshipsByDatesResponse</returns>
     [HttpGet("{ukprn:long}/apprenticeships/by-dates")]
     [ProducesResponseType(typeof(GetApprenticeshipsByDatesResponse), 200)]
-    //[ActionAuthorizeUserType(UserType.ServiceAccount)]
-    [AllowAnonymous]
+    [ActionAuthorizeUserType(UserType.ServiceAccount)]
     public async Task<IActionResult> GetByDates(long ukprn, [FromQuery] string startDate, [FromQuery] string endDate, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
     {
         var isValidStartDate = DateTime.TryParse(startDate, out var startDateValue);
