@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 
 namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
@@ -16,9 +17,9 @@ public class GetApprenticeshipsWithEpisodesRequestQueryHandler : IQueryHandler<G
 
     public async Task<GetApprenticeshipsWithEpisodesResponse?> Handle(GetApprenticeshipsWithEpisodesRequest query, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Handling GetApprenticeshipsWithEpisodesRequest for Ukprn: {ukprn}", query.Ukprn);
+        _logger.LogInformation("Handling GetApprenticeshipsWithEpisodesRequest for Ukprn: {ukprn} CollectionYear: {collectionYear} CollectionPeriod: {collectionPeriod}", query.Ukprn, query.CollectionYear, query.CollectionPeriod);
 
-        var apprenticeships = await _apprenticeshipQueryRepository.GetApprenticeshipsWithEpisodes(query.Ukprn);
+        var apprenticeships = await _apprenticeshipQueryRepository.GetApprenticeshipsWithEpisodes(query.Ukprn, query.CollectionYear.ToDateTime(query.CollectionPeriod));
 
         if (apprenticeships == null)
         {
