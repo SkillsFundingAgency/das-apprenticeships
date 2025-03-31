@@ -29,15 +29,18 @@ public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozen
         apprenticeship.SetPaymentsFrozen(command.NewPaymentsFrozenStatus, command.UserId, DateTime.Now, command.Reason);
         await _apprenticeshipRepository.Update(apprenticeship);
 
-        if (command.NewPaymentsFrozenStatus)
+        if (apprenticeship.LatestEpisode.FundingPlatform == Enums.FundingPlatform.DAS)
         {
-            _logger.LogInformation("Publishing PaymentsFrozenEvent for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
-            await _messageSession.Publish(new PaymentsFrozenEvent { ApprenticeshipKey = command.ApprenticeshipKey });
-        }
-        else
-        {
-            _logger.LogInformation("Publishing PaymentsUnfrozenEvent for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
-            await _messageSession.Publish(new PaymentsUnfrozenEvent { ApprenticeshipKey = command.ApprenticeshipKey });
+            if (command.NewPaymentsFrozenStatus)
+            {
+                _logger.LogInformation("Publishing PaymentsFrozenEvent for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
+                await _messageSession.Publish(new PaymentsFrozenEvent { ApprenticeshipKey = command.ApprenticeshipKey });
+            }
+            else
+            {
+                _logger.LogInformation("Publishing PaymentsUnfrozenEvent for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
+                await _messageSession.Publish(new PaymentsUnfrozenEvent { ApprenticeshipKey = command.ApprenticeshipKey });
+            }
         }
     }
 }
