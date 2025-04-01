@@ -28,11 +28,13 @@ public class WhenGetApprenticeshipsWithEpisodes
     {
         // Arrange
         var query = _fixture.Create<GetApprenticeshipsWithEpisodesRequest>();
+        query.CollectionYear = 2021;
+        query.CollectionPeriod = 1;
         var apprenticeships = _fixture.Create<List<ApprenticeshipWithEpisodes>>();
         var expectedResponse = new GetApprenticeshipsWithEpisodesResponse(query.Ukprn, apprenticeships);
 
         _apprenticeshipQueryRepository
-            .Setup(x => x.GetApprenticeshipsWithEpisodes(query.Ukprn))
+            .Setup(x => x.GetApprenticeshipsWithEpisodes(query.Ukprn, It.IsAny<DateTime>()))
             .ReturnsAsync(apprenticeships);
 
         // Act
@@ -47,9 +49,11 @@ public class WhenGetApprenticeshipsWithEpisodes
     {
         // Arrange
         var query = _fixture.Create<GetApprenticeshipsWithEpisodesRequest>();
+        query.CollectionYear = 2021;
+        query.CollectionPeriod = 1;
 
         _apprenticeshipQueryRepository
-            .Setup(x => x.GetApprenticeshipsWithEpisodes(query.Ukprn))
+            .Setup(x => x.GetApprenticeshipsWithEpisodes(query.Ukprn, It.IsAny<DateTime>()))
             .ReturnsAsync((List<ApprenticeshipWithEpisodes>?)null);
 
         // Act

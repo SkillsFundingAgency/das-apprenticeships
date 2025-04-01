@@ -4,6 +4,7 @@ using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Validators;
 using SFA.DAS.Apprenticeships.Enums;
 using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
@@ -280,9 +281,15 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         return paymentStatus;
     }
 
-    public async Task<List<ApprenticeshipWithEpisodes>?> GetApprenticeshipsWithEpisodes(long ukprn)
+    /// <summary>
+    /// Get apprenticeships with episodes for a provider
+    /// </summary>
+    /// <param name="ukprn">The unique provider reference number. Only apprenticeships where the episode with this provider reference will be returned.</param>
+    /// <param name="activeOnDate">If populated, will return only apprenticeships that are active on this date</param>
+    public async Task<List<ApprenticeshipWithEpisodes>?> GetApprenticeshipsWithEpisodes(long ukprn, DateTime? activeOnDate = null)
     {
         List<ApprenticeshipWithEpisodes>? apprenticeshipWithEpisodes = null;
+
         try
         {
             var withdrawFromStartReason = WithdrawReason.WithdrawFromStart.ToString();
@@ -294,6 +301,11 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
                 .Include(x => x.WithdrawalRequests)
                 .Where(x => x.WithdrawalRequests == null || !x.WithdrawalRequests.Any(y => y.Reason == withdrawFromStartReason || y.Reason == withdrawFromPrivateBeta))
                 .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
+                .Where(x => !activeOnDate.HasValue || 
+                    x.Episodes.Any(episode =>
+                        episode.Prices.Any(price => price.EndDate >= activeOnDate.Value.StartOfCurrentAcademicYear()) && // end date is at least after the start of this academic year
+                        episode.Prices.Any(price => price.StartDate < activeOnDate.Value.EndOfCurrentAcademicYear())     // start date is at least before the end of this academic year
+                ))
                 .ToListAsync();
 
             apprenticeshipWithEpisodes = apprenticeships.Select(apprenticeship =>
@@ -317,6 +329,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
 
         return apprenticeshipWithEpisodes;
     }
+
     public async Task<CurrentPartyIds?> GetCurrentPartyIds(Guid apprenticeshipKey)
     {
         CurrentPartyIds? currentPartyIds = null;
