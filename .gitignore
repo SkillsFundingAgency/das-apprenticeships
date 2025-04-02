@@ -355,3 +355,4 @@ MigrationBackup/
 
 #specflow generated feature.cs files
 *.feature.cs
+/src/.idea/**
