@@ -96,5 +96,18 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                 x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == Enums.FundingType.Transfer),
                     It.IsAny<CancellationToken>()));
         }
+
+        [Test]
+        public async Task WhenNoActualStartDateThenPlannedStartDateUsed()
+        {
+            var @event = _fixture.Build<ApprenticeshipCreatedEvent>().Without(x => x.ActualStartDate).Create();
+            var commandDispatcher = new Mock<ICommandDispatcher>();
+            var handler = new ApprenticeshipCreatedEventHandler(commandDispatcher.Object, new Mock<ILogger<ApprenticeshipCreatedEventHandler>>().Object);
+            await handler.Handle(@event, new TestableMessageHandlerContext());
+
+            commandDispatcher.Verify(x =>
+                x.Send(It.Is<AddApprenticeshipCommand>(c => c.ActualStartDate == @event.StartDate),
+                    It.IsAny<CancellationToken>()));
+        }
     }
 }

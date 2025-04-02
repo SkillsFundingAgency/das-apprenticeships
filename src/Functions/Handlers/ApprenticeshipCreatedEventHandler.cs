@@ -18,7 +18,7 @@ namespace SFA.DAS.Apprenticeships.Functions.Handlers
             await commandDispatcher.Send(new AddApprenticeshipCommand
             {
                 TrainingCode = @event.TrainingCode,
-                ActualStartDate = @event.ActualStartDate,
+                ActualStartDate = @event.ActualStartDate ?? @event.StartDate,
                 TotalPrice = @event.PriceEpisodes[0].Cost,
                 TrainingPrice = @event.PriceEpisodes[0].TrainingPrice,
                 EndPointAssessmentPrice = @event.PriceEpisodes[0].EndPointAssessmentPrice,
