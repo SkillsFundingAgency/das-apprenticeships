@@ -15,11 +15,6 @@ namespace SFA.DAS.Apprenticeships.Functions.Handlers
         {
             logger.LogInformation("Handling ApprenticeshipCreatedEvent");
 
-            if (!@event.IsOnFlexiPaymentPilot.GetValueOrDefault())
-            {
-                logger.LogInformation("Apprenticeship {hashedId} is not funded by DAS and therefore, no further action will be taken.", @event.ApprenticeshipHashedId);
-                return;
-            }
             await commandDispatcher.Send(new AddApprenticeshipCommand
             {
                 TrainingCode = @event.TrainingCode,
