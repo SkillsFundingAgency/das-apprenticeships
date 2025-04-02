@@ -5,8 +5,9 @@ namespace SFA.DAS.Apprenticeships.DataTransferObjects;
 [ExcludeFromCodeCoverage]
 public class EpisodePrice
 {
-    public EpisodePrice(DateTime startDate, DateTime endDate, decimal? trainingPrice, decimal? endPointAssessmentPrice, decimal totalPrice, int fundingBandMaximum)
+    public EpisodePrice(Guid key, DateTime startDate, DateTime endDate, decimal? trainingPrice, decimal? endPointAssessmentPrice, decimal totalPrice, int fundingBandMaximum)
     {
+        Key = key;
         StartDate = startDate;
         EndDate = endDate;
         TrainingPrice = trainingPrice;
@@ -15,6 +16,7 @@ public class EpisodePrice
         FundingBandMaximum = fundingBandMaximum;
     }
 
+    public Guid Key { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public decimal? TrainingPrice { get; set; }
