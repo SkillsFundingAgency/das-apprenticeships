@@ -86,11 +86,11 @@ public class ApprenticeshipController : ControllerBase
         var request = new GetApprenticeshipsByDatesRequest(ukprn, new DateRange(startDateValue, endDateValue), page, pageSize);
         var response = await _queryDispatcher.Send<GetApprenticeshipsByDatesRequest, GetApprenticeshipsByDatesResponse>(request);
 
-        Response.AddPageLinksToHeaders(response, Request, request);
+        Response.AddPageLinksToHeaders(Request, response, request);
 
         return Ok(response);
     }
-    
+
     /// <summary>
     /// Get Apprenticeship Price
     /// </summary>

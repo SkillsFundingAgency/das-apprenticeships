@@ -17,9 +17,9 @@ public static class PagedQueryResultExtensions
     /// <param name="httpResponse"></param>
     /// <param name="query"></param>
     /// <typeparam name="T"></typeparam>
-    public static void AddPageLinksToHeaders<T>(this HttpResponse httpResponse, PagedQueryResult<T> response, HttpRequest httpRequest, PagedQuery query)
+    public static void AddPageLinksToHeaders<T>(this HttpResponse httpResponse, HttpRequest httpRequest, PagedQueryResult<T> response, PagedQuery query)
     {
-        var baseUrl = GetBaseUrl<T>(httpRequest);
+        var baseUrl = GetBaseUrlFrom(httpRequest);
 
         var links = new List<string>();
 
@@ -58,7 +58,7 @@ public static class PagedQueryResultExtensions
         httpResponse.Headers.Add(new KeyValuePair<string, StringValues>("links", string.Join(",", links)));
     }
 
-    private static string GetBaseUrl<T>(HttpRequest httpRequest)
+    private static string GetBaseUrlFrom(HttpRequest httpRequest)
     {
         var baseUrl = $"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.Path}";
 
@@ -73,7 +73,7 @@ public static class PagedQueryResultExtensions
         return baseUrl;
     }
 
-    private static bool ShouldDisplayNextAndLastLink(int offset, int totalSize, int pageSize) => offset < totalSize - pageSize;
+    private static bool ShouldDisplayNextAndLastLink(int offset, int totalItems, int pageSize) => offset < totalItems - pageSize;
 
     private static bool ShouldDisplayPrevAndFirstLink(int offset) => offset > 0;
 }
