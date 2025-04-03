@@ -35,7 +35,7 @@ Most of the application configuration is taken from the [das-employer-config rep
 
 | Name | Value |
 | ---- | ----- |
-| NServiceBusConnectionString | Endpoint=<Your-Namespace> |
+| NServiceBusConnectionString | Endpoint=[Your-Namespace] |
 
 
 # local.settings.json (For azure function)
