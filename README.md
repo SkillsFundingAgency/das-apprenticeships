@@ -31,7 +31,11 @@ All data is stored in a sql database
 
 ### Config
 
-Most of the application configuration is taken from the [das-employer-config repository](https://github.com/SkillsFundingAgency/das-employer-config) and the default values can be used in most cases.  The config json will need to be added to the local Azure Storage instance with a a PartitionKey of LOCAL and a RowKey of SFA.DAS.Funding.ApprenticeshipEarnings_1.0.
+Most of the application configuration is taken from the [das-employer-config repository](https://github.com/SkillsFundingAgency/das-employer-config) and the default values can be used in most cases.  The config json will need to be added to the local Azure Storage instance with a a PartitionKey of LOCAL and a RowKey of SFA.DAS.Funding.ApprenticeshipEarnings_1.0. The following values must be overwritten:
+
+| Name | Value |
+| ---- | ----- |
+| NServiceBusConnectionString | Endpoint=<Your-Namespace> |
 
 
 # local.settings.json (For azure function)
