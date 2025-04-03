@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Apprenticeships.InnerApi.Extensions;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
@@ -68,7 +71,8 @@ public class ApprenticeshipController : ControllerBase
     /// <returns>GetApprenticeshipsByDatesResponse</returns>
     [HttpGet("{ukprn:long}/apprenticeships/by-dates")]
     [ProducesResponseType(typeof(GetApprenticeshipsByDatesResponse), 200)]
-    [ActionAuthorizeUserType(UserType.ServiceAccount)]
+    //[ActionAuthorizeUserType(UserType.ServiceAccount)]
+    [AllowAnonymous]
     public async Task<IActionResult> GetByDates(long ukprn, [FromQuery] string startDate, [FromQuery] string endDate, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
     {
         var isValidStartDate = DateTime.TryParse(startDate, out var startDateValue);
@@ -82,9 +86,11 @@ public class ApprenticeshipController : ControllerBase
         var request = new GetApprenticeshipsByDatesRequest(ukprn, new DateRange(startDateValue, endDateValue), page, pageSize);
         var response = await _queryDispatcher.Send<GetApprenticeshipsByDatesRequest, GetApprenticeshipsByDatesResponse>(request);
 
+        Response.AddPageLinksToHeaders(response, Request, request);
+
         return Ok(response);
     }
-
+    
     /// <summary>
     /// Get Apprenticeship Price
     /// </summary>
