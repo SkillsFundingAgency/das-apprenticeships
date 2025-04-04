@@ -110,6 +110,19 @@
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
+        },
+        "EnableRouteTableAssociation": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
+        },
+        "SharedRouteTableName": {
+            "type": "string",
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
         }
     },
     "variables": {
@@ -120,7 +133,11 @@
         "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
         "appServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
         "appServicePlanName": "[concat(variables('resourceNamePrefix'), '-asp')]",
-        "configNames": "SFA.DAS.Apprenticeships,SFA.DAS.Encoding"
+        "configNames": "SFA.DAS.Apprenticeships,SFA.DAS.Encoding",
+        "routeTableId": {
+            "id": "[resourceId(subscription().subscriptionId, parameters('sharedEnvResourceGroup'), 'Microsoft.Network/routeTables', parameters('SharedRouteTableName'))]"
+        },
+        "emptyObject": {}
     },
     "resources": [
         {
@@ -278,6 +295,9 @@
                     },
                     "delegations": {
                         "value": "[parameters('subnetDelegations')]"
+                    },
+                    "routeTable": {
+                        "value": "[if(parameters('enableRouteTableAssociation'), variables('routeTableId') , variables('emptyObject'))]"
                     }
                 }
             },
@@ -569,7 +589,7 @@
         "ResourceGroupName": {
             "type": "string",
             "value": "[variables('resourceGroupName')]"
-         },
+        },
         "DatabaseName": {
             "type": "string",
             "value": "[variables('databaseName')]"
