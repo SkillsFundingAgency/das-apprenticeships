@@ -16,6 +16,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval;
 
@@ -165,6 +166,7 @@ public class WhenAnAddApprenticeshipCommandIsSent
     {
         // Arrange
         var command = _fixture.Create<AddApprenticeshipCommand>();
+        command.FundingPlatform = FundingPlatform.DAS;
         var trainingCodeInt = _fixture.Create<int>();
         command.TrainingCode = trainingCodeInt.ToString();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -190,7 +192,36 @@ public class WhenAnAddApprenticeshipCommandIsSent
             DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship)
             && ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>(),
             It.IsAny<CancellationToken>()));
+    }
 
+    [Test]
+    public async Task AndNotFundedByDASThenEventIsNotPublished()
+    {
+        // Arrange
+        var command = _fixture.Create<AddApprenticeshipCommand>();
+        command.FundingPlatform = FundingPlatform.SLD;
+        var trainingCodeInt = _fixture.Create<int>();
+        command.TrainingCode = trainingCodeInt.ToString();
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+
+        _apprenticeshipFactory.Setup(x => x.CreateNew(
+                command.ApprovalsApprenticeshipId,
+                command.Uln,
+                command.DateOfBirth,
+                command.FirstName,
+                command.LastName,
+                command.ApprenticeshipHashedId))
+            .Returns(apprenticeship);
+
+        _fundingBandMaximumService
+            .Setup(x => x.GetFundingBandMaximum(trainingCodeInt, It.IsAny<DateTime?>()))
+            .ReturnsAsync((int)Math.Ceiling(command.TotalPrice));
+
+        // Act
+        await _commandHandler.Handle(command);
+
+        // Assert
+        _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipCreatedEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     private static bool DoApprenticeshipDetailsMatchDomainModel(ApprenticeshipCreatedEvent e, ApprenticeshipDomainModel apprenticeship)
