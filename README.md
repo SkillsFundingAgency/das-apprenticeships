@@ -27,7 +27,8 @@ All data is stored in a sql database
 * A code editor that supports .Net8
 * Azure Storage Emulator (Azureite)
 * Sql Server DB
-* a ServiceBus namespace in azure
+* a ServiceBus namespace in azure (Visual Studio must be signed in to your citizen account)
+* Azure Developer CLI
 
 ### Config
 
