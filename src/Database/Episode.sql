@@ -22,3 +22,5 @@ ADD CONSTRAINT FK_Episode_Apprenticeship FOREIGN KEY (ApprenticeshipKey) REFEREN
 GO
 CREATE INDEX IX_ApprenticeshipKey ON [dbo].[Episode] (ApprenticeshipKey);
 GO
+CREATE NONCLUSTERED INDEX [IX_LearningStatus] ON [dbo].[Episode] ([LearningStatus] ASC)
+GO
