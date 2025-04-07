@@ -15,7 +15,7 @@ public interface IPagedLinkHeaderService
     /// <param name="response">PagedQueryResult of T</param>
     /// <param name="request">PagedQuery</param>
     /// <typeparam name="T">Return type</typeparam>
-    void AddPageLinks<T>(PagedQuery request, PagedQueryResult<T> response);
+    KeyValuePair<string, StringValues> GetPageLinks<T>(PagedQuery request, PagedQueryResult<T> response);
 }
 
 /// <summary>
@@ -40,7 +40,7 @@ public class PagedLinkHeaderService : IPagedLinkHeaderService
     /// <param name="response">PagedQueryResult of T</param>
     /// <param name="request">PagedQuery</param>
     /// <typeparam name="T">Return type</typeparam>
-    public void AddPageLinks<T>(PagedQuery request, PagedQueryResult<T> response)
+    public KeyValuePair<string, StringValues> GetPageLinks<T>(PagedQuery request, PagedQueryResult<T> response)
     {
         var httpContext = _httpContextAccessor.HttpContext;
         var httpRequest = httpContext.Request;
@@ -66,7 +66,7 @@ public class PagedLinkHeaderService : IPagedLinkHeaderService
             links.Add($"{nextLink};rel=\"next\"");
         }
 
-        _httpContextAccessor.HttpContext.Response.Headers.Add(new KeyValuePair<string, StringValues>("links", string.Join(",", links)));
+        return new KeyValuePair<string, StringValues>("links", string.Join(",", links));
     }
 
     private static string GetBaseUrlFrom(HttpRequest httpRequest)

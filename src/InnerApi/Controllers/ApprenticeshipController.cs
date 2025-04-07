@@ -88,7 +88,9 @@ public class ApprenticeshipController : ControllerBase
         var request = new GetApprenticeshipsByDatesRequest(ukprn, new DateRange(startDateValue, endDateValue), page, pageSize);
         var response = await _queryDispatcher.Send<GetApprenticeshipsByDatesRequest, GetApprenticeshipsByDatesResponse>(request);
 
-        _pagedLinkHeaderService.AddPageLinks(request, response);
+        var pageLinks = _pagedLinkHeaderService.GetPageLinks(request, response);
+        
+        Response.Headers.Add(pageLinks);
 
         return Ok(response);
     }
