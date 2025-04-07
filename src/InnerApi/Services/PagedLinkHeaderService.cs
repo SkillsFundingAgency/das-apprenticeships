@@ -2,23 +2,45 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using SFA.DAS.Apprenticeships.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Helpers;
+namespace SFA.DAS.Apprenticeships.InnerApi.Services;
 
-public interface IPagedLinkHeaderProvider
+/// <summary>
+/// IPagedLinkHeaderService
+/// </summary>
+public interface IPagedLinkHeaderService
 {
-    void AddPageLinks<T>(PagedQueryResult<T> response, PagedQuery query);
+    /// <summary>
+    /// Adds 'Links' to response headers. 
+    /// </summary>
+    /// <param name="response">PagedQueryResult of T</param>
+    /// <param name="request">PagedQuery</param>
+    /// <typeparam name="T">Return type</typeparam>
+    void AddPageLinks<T>(PagedQuery request, PagedQueryResult<T> response);
 }
 
-public class PagedLinkHeaderProvider : IPagedLinkHeaderProvider
+/// <summary>
+/// Adds 'Links' to response headers. 
+/// </summary>
+public class PagedLinkHeaderService : IPagedLinkHeaderService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public PagedLinkHeaderProvider(IHttpContextAccessor httpContextAccessor)
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="httpContextAccessor">IHttpContextAccessor</param>
+    public PagedLinkHeaderService(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public void AddPageLinks<T>(PagedQueryResult<T> response, PagedQuery query)
+    /// <summary>
+    /// Adds 'Links' to response headers. 
+    /// </summary>
+    /// <param name="response">PagedQueryResult of T</param>
+    /// <param name="request">PagedQuery</param>
+    /// <typeparam name="T">Return type</typeparam>
+    public void AddPageLinks<T>(PagedQuery request, PagedQueryResult<T> response)
     {
         var httpContext = _httpContextAccessor.HttpContext;
         var httpRequest = httpContext.Request;
@@ -26,38 +48,21 @@ public class PagedLinkHeaderProvider : IPagedLinkHeaderProvider
         var baseUrl = GetBaseUrlFrom(httpRequest);
 
         var links = new List<string>();
-        
-        if (response.Page > 1)
+
+        if (NotFirstPage(response))
         {
-            var previousPage = query.Page - 1;
+            var previousPage = request.Page - 1;
             var prevLink = QueryHelpers.AddQueryString(baseUrl, "page", previousPage.ToString());
             prevLink = QueryHelpers.AddQueryString(prevLink, "pageSize", response.PageSize.ToString());
             links.Add($"{prevLink};rel=\"prev\"");
         }
 
-
-        // if (ShouldDisplayPrevAndFirstLink(query.Offset))
-        // {
-        //     var firstLink = QueryHelpers.AddQueryString(baseUrl, "page", 1.ToString());
-        //     firstLink = QueryHelpers.AddQueryString(firstLink, "pageSize", response.PageSize.ToString());
-        //
-        //    
-        //     links.Add($"{firstLink};rel=\"first\"");
-        // }
-        
-        // if (response.Page < response.TotalPages)
-        // {
-        //     var lastLink = QueryHelpers.AddQueryString(baseUrl, "page", response.TotalPages.ToString());
-        //     lastLink = QueryHelpers.AddQueryString(lastLink, "pageSize", response.PageSize.ToString());
-        //     links.Add($"{lastLink};rel=\"last\"");
-        // }
-
-        if (ShouldDisplayNext(query.Offset, response.TotalItems, response.PageSize))
+        if (NotLastPage(request, response))
         {
-            var nextPage = query.Page + 1;
+            var nextPage = request.Page + 1;
             var nextLink = QueryHelpers.AddQueryString(baseUrl, "page", nextPage.ToString());
             nextLink = QueryHelpers.AddQueryString(nextLink, "pageSize", response.PageSize.ToString());
-        
+
             links.Add($"{nextLink};rel=\"next\"");
         }
 
@@ -79,7 +84,14 @@ public class PagedLinkHeaderProvider : IPagedLinkHeaderProvider
         return baseUrl;
     }
 
-     private static bool ShouldDisplayNext(int offset, int totalItems, int pageSize) => offset < totalItems - pageSize;
-    //
-    // private static bool ShouldDisplayPrevAndFirstLink(int offset) => offset > 0;
+
+    private static bool NotLastPage<T>(PagedQuery request, PagedQueryResult<T> response)
+    {
+        return request.Offset < response.TotalItems - response.PageSize;
+    }
+
+    private static bool NotFirstPage<T>(PagedQueryResult<T> response)
+    {
+        return response.Page > 1;
+    }
 }
