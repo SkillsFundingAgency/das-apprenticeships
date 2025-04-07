@@ -5,7 +5,7 @@ using Microsoft.Extensions.Primitives;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.InnerApi.Extensions;
+using SFA.DAS.Apprenticeships.InnerApi.Helpers;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
@@ -31,16 +31,19 @@ public class ApprenticeshipController : ControllerBase
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly ILogger<ApprenticeshipController> _logger;
+    private readonly IPagedLinkHeaderProvider _pagedLinkHeaderProvider;
 
     /// <summary>Initializes a new instance of the <see cref="ApprenticeshipController"/> class.</summary>
     /// <param name="queryDispatcher">Gets data</param>
     /// <param name="commandDispatcher">updates data</param>
     /// <param name="logger">ILogger</param>
-    public ApprenticeshipController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<ApprenticeshipController> logger)
+    /// <param name="pagedLinkHeaderProvider">IPagedQueryResultHelper</param>
+    public ApprenticeshipController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<ApprenticeshipController> logger, IPagedLinkHeaderProvider pagedLinkHeaderProvider)
     {
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
         _logger = logger;
+        _pagedLinkHeaderProvider = pagedLinkHeaderProvider;
     }
 
     /// <summary>
@@ -86,7 +89,7 @@ public class ApprenticeshipController : ControllerBase
         var request = new GetApprenticeshipsByDatesRequest(ukprn, new DateRange(startDateValue, endDateValue), page, pageSize);
         var response = await _queryDispatcher.Send<GetApprenticeshipsByDatesRequest, GetApprenticeshipsByDatesResponse>(request);
 
-        Response.AddPageLinksToHeaders(Request, response, request);
+        _pagedLinkHeaderProvider.AddPageLinks(response, request);
 
         return Ok(response);
     }
