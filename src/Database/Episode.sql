@@ -24,3 +24,5 @@ CREATE INDEX IX_ApprenticeshipKey ON [dbo].[Episode] (ApprenticeshipKey);
 GO
 CREATE NONCLUSTERED INDEX [IX_LearningStatus] ON [dbo].[Episode] ([LearningStatus] ASC)
 GO
+CREATE NONCLUSTERED INDEX [IX_Ukprn] ON [dbo].[Episode] ([Ukprn] ASC)
+GO
