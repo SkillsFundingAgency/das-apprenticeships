@@ -6,6 +6,7 @@ using Moq;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
+using SFA.DAS.Apprenticeships.InnerApi.Services;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByDates;
 
@@ -26,7 +27,7 @@ public class WhenGettingByDates
         _queryDispatcher = new Mock<IQueryDispatcher>();
         _commandDispatcher = new Mock<ICommandDispatcher>();
         _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object);
+        _sut = new ApprenticeshipController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object, Mock.Of<IPagedLinkHeaderService>());
     }
 
     [Test]
