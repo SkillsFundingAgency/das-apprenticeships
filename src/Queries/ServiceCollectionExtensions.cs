@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
             })
             .AddScoped<IApprenticeshipQueryRepository, ApprenticeshipQueryRepository>()
             .AddScoped<IQueryDispatcher, QueryDispatcher>();
-
+        
         return serviceCollection;
     }
 }

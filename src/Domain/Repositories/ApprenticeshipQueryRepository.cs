@@ -7,8 +7,7 @@ using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Validators;
 using SFA.DAS.Apprenticeships.Enums;
-using Episode = SFA.DAS.Apprenticeships.DataTransferObjects.Episode;
-using EpisodePrice = SFA.DAS.Apprenticeships.DataTransferObjects.EpisodePrice;
+using SFA.DAS.Apprenticeships.InnerApi.Responses;
 
 namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 
@@ -34,6 +33,40 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         var result = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
         return result;
     }
+    
+    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken)
+    {
+        var query = DbContext.ApprenticeshipsDbSet
+            .Include(x => x.Episodes)
+            .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
+            .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
+            .Where(x => x.Episodes.Any(e => e.Prices.Any(p => p.StartDate >= dates.Start && p.StartDate <= dates.End)))
+            .Where(x => x.Episodes.Any(e => e.LearningStatus == LearnerStatus.Active.ToString()))
+            .OrderBy(x => x.ApprovalsApprenticeshipId)
+            .AsNoTracking();
+
+        var totalItems = await query.CountAsync(cancellationToken);
+        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize.GetValueOrDefault());
+
+        var result = await query
+            .Skip(offset)
+            .Take(limit)
+            .Select(x => new DataTransferObjects.Apprenticeship
+            {
+                Uln = x.Uln,
+            })
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<DataTransferObjects.Apprenticeship>
+        {
+            Data = result,
+            TotalItems = totalItems,
+            TotalPages = totalPages,
+            PageSize = pageSize ?? int.MaxValue,
+            Page = page,
+        };
+    }
+
     public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
     {
         var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
@@ -81,6 +114,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             UKPRN = latestEpisode.Ukprn
         };
     }
+
     public async Task<ApprenticeshipStartDate?> GetStartDate(Guid apprenticeshipKey)
     {
         var apprenticeship = await DbContext.Apprenticeships
@@ -109,18 +143,20 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             return null;
         }
 
-        return apprenticeship == null ? null : new ApprenticeshipStartDate
-        {
-            ApprenticeshipKey = apprenticeship.Key,
-            ActualStartDate = firstPrice.StartDate,
-            PlannedEndDate = latestPrice.EndDate,
-            AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
-            UKPRN = latestEpisode.Ukprn,
-            ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
-            CourseCode = latestEpisode.TrainingCode,
-	         CourseVersion = latestEpisode.TrainingCourseVersion,
-             SimplifiedPaymentsMinimumStartDate = Constants.SimplifiedPaymentsMinimumStartDate
-        };
+        return apprenticeship == null
+            ? null
+            : new ApprenticeshipStartDate
+            {
+                ApprenticeshipKey = apprenticeship.Key,
+                ActualStartDate = firstPrice.StartDate,
+                PlannedEndDate = latestPrice.EndDate,
+                AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
+                UKPRN = latestEpisode.Ukprn,
+                ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
+                CourseCode = latestEpisode.TrainingCode,
+                CourseVersion = latestEpisode.TrainingCourseVersion,
+                SimplifiedPaymentsMinimumStartDate = Constants.SimplifiedPaymentsMinimumStartDate
+            };
     }
 
     public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
@@ -316,7 +352,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
                     apprenticeship.GetPlannedEndDate(),
                     apprenticeship.Episodes.Select(ep =>
                             new Episode(ep.Key, ep.TrainingCode, ep.Prices.Select(p =>
-                                new EpisodePrice(p.StartDate, p.EndDate, p.TrainingPrice, p.EndPointAssessmentPrice, p.TotalPrice, p.FundingBandMaximum)).ToList()))
+                                new EpisodePrice(p.Key, p.StartDate, p.EndDate, p.TrainingPrice, p.EndPointAssessmentPrice, p.TotalPrice, p.FundingBandMaximum)).ToList()))
                         .ToList(),
                     apprenticeship.GetAgeAtStartOfApprenticeship(),
                     apprenticeship.GetWithdrawnDate())
@@ -372,7 +408,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
                 _logger.LogInformation("Apprenticeship not found for apprenticeship key {key} when attempting to get learner status", apprenticeshipKey);
                 return null;
             }
-                
+
 
             var episode = apprenticeship.GetEpisode();
 

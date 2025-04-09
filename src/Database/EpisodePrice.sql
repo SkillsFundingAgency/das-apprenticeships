@@ -14,5 +14,5 @@ GO
 ALTER TABLE dbo.EpisodePrice
 ADD CONSTRAINT FK_EpisodePrice_Episode FOREIGN KEY (EpisodeKey) REFERENCES dbo.Episode ([Key])
 GO
-CREATE INDEX IX_EpisodeKey ON [dbo].[EpisodePrice] (EpisodeKey);
+CREATE NONCLUSTERED INDEX [IX_StartDateEndDate] ON [dbo].[EpisodePrice] ([EpisodeKey] ASC, [StartDate] ASC,[EndDate] ASC)
 GO
