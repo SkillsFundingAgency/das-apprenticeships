@@ -1,12 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apprenticeships.Command;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.InnerApi.Responses;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByDates;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
@@ -56,6 +58,34 @@ public class ApprenticeshipController : ControllerBase
     }
 
     /// <summary>
+    /// Get paginated apprenticeships for a provider between specified dates.
+    /// </summary>
+    /// <param name="ukprn">UkPrn filter value</param>
+    /// <param name="startDate">Start date filter value</param>
+    /// <param name="endDate">End date filter value</param>
+    /// <param name="page">Page number</param>
+    /// <param name="pageSize">Number of items per page</param>
+    /// <returns>GetApprenticeshipsByDatesResponse</returns>
+    [HttpGet("{ukprn:long}/apprenticeships/by-dates")]
+    [ProducesResponseType(typeof(GetApprenticeshipsByDatesResponse), 200)]
+    [ActionAuthorizeUserType(UserType.ServiceAccount)]
+    public async Task<IActionResult> GetByDates(long ukprn, [FromQuery] string startDate, [FromQuery] string endDate, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
+    {
+        var isValidStartDate = DateTime.TryParse(startDate, out var startDateValue);
+        var isValidEndDate = DateTime.TryParse(endDate, out var endDateValue);
+
+        if (!isValidStartDate | !isValidEndDate)
+        {
+            return new BadRequestResult();
+        }
+
+        var request = new GetApprenticeshipsByDatesRequest(ukprn, new DateRange(startDateValue, endDateValue), page, pageSize);
+        var response = await _queryDispatcher.Send<GetApprenticeshipsByDatesRequest, GetApprenticeshipsByDatesResponse>(request);
+
+        return Ok(response);
+    }
+
+    /// <summary>
     /// Get Apprenticeship Price
     /// </summary>
     /// <param name="apprenticeshipKey"></param>
@@ -64,7 +94,7 @@ public class ApprenticeshipController : ControllerBase
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetApprenticeshipPrice(Guid apprenticeshipKey)
     {
-        var request = new GetApprenticeshipPriceRequest{ ApprenticeshipKey = apprenticeshipKey };
+        var request = new GetApprenticeshipPriceRequest { ApprenticeshipKey = apprenticeshipKey };
         var response = await _queryDispatcher.Send<GetApprenticeshipPriceRequest, GetApprenticeshipPriceResponse?>(request);
         if (response == null) return NotFound();
         return Ok(response);
@@ -116,6 +146,7 @@ public class ApprenticeshipController : ControllerBase
             _logger.LogInformation("{p1} could not be found.", nameof(response.ApprenticeshipKey));
             return NotFound();
         }
+
         return Ok(response.ApprenticeshipKey);
     }
 
@@ -166,5 +197,4 @@ public class ApprenticeshipController : ControllerBase
         if (response == null) return NotFound();
         return Ok(response);
     }
-
 }

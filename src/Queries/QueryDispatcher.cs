@@ -15,7 +15,7 @@ namespace SFA.DAS.Apprenticeships.Queries
         public Task<TResult> Send<TQuery, TResult>(TQuery query) where TQuery : IQuery
         {
             var service = _serviceProvider.GetService<IQueryHandler<TQuery, TResult>>();
-
+            
             if (service == null)
             {
                 throw new QueryDispatcherException($"Unable to dispatch query '{query.GetType().Name}'. No matching handler found.");
