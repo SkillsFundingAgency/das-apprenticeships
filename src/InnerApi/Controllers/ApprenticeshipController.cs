@@ -169,13 +169,15 @@ public class ApprenticeshipController : ControllerBase
     /// Gets all apprenticeships for a given provider with episode & price data
     /// </summary>
     /// <param name="ukprn">Ukprn</param>
+    /// <param name="collectionYear">Collection Year</param>
+    /// <param name="collectionPeriod">Collection Period</param>
     /// <returns>GetApprenticeshipResponse containing apprenticeship, episode, & price data</returns>
-    [HttpGet("{ukprn}")]
+    [HttpGet("{ukprn}/{collectionYear}/{collectionPeriod}")]
     [ProducesResponseType(200)]
     [ActionAuthorizeUserType(UserType.ServiceAccount)]
-    public async Task<IActionResult> GetApprenticeships(long ukprn)
+    public async Task<IActionResult> GetApprenticeshipsForFm36(long ukprn, short collectionYear, byte collectionPeriod)
     {
-        var request = new GetApprenticeshipsWithEpisodesRequest { Ukprn = ukprn };
+        var request = new GetApprenticeshipsWithEpisodesRequest { Ukprn = ukprn, CollectionYear = collectionYear, CollectionPeriod = collectionPeriod };
         var response = await _queryDispatcher.Send<GetApprenticeshipsWithEpisodesRequest, GetApprenticeshipsWithEpisodesResponse?>(request);
         if (response == null) return NotFound();
         return Ok(response);
