@@ -14,6 +14,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApproveStartDateChange;
 
@@ -84,6 +85,24 @@ public class WhenAStartDateChangeIsApproved
                     .Count(z => z.RequestStatus == ChangeRequestStatus.Approved
                                 && z.ProviderApprovedBy == command.UserId) == 1
                 && y.StartDate == startDate)));
+    }
+
+    [Test]
+    public async Task WhenFundingPlatformIsNotDASThenEventNotPublished()
+    {
+        //Arrange
+        var command = _fixture.Create<ApproveStartDateChangeCommand>();
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, fundingPlatform: FundingPlatform.SLD);
+        var startDate = _fixture.Create<DateTime>();
+        ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Employer, startDate);
+        _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+
+        //Act
+        await _commandHandler.Handle(command);
+
+        //Assert
+        _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipStartDateChangedEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     private void AssertMessageSent(DateTime actualStartDate, ApprenticeshipDomainModel apprenticeship, string approvingUserId)
