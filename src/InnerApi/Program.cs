@@ -1,16 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
-using SFA.DAS.Apprenticeships.Infrastructure;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain;
+using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
+using SFA.DAS.Apprenticeships.InnerApi.HealthCheck;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
+using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Configuration.AzureTableStorage;
 
 namespace SFA.DAS.Apprenticeships.InnerApi;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
@@ -56,13 +59,26 @@ public static class Program
         builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
         builder.Services.ConfigureNServiceBusForSend(applicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace());
         builder.Services.AddCommandServices(builder.Configuration).AddEventServices().AddValidators();
-        builder.Services.AddHealthChecks();
+
+        builder.Services.AddSingleton(new DatabaseHealthCheck(applicationSettings.DbConnectionString));
+        builder.Services.AddHealthChecks()
+         .AddCheck("self", () => HealthCheckResult.Healthy("Apprenticeships API is running"))
+         .AddCheck<DatabaseHealthCheck>("database");
+
         builder.Services.AddApiAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
         builder.Services.AddApiAuthorization(builder.Environment.IsDevelopment());
 
         var app = builder.Build();
 
-        app.MapHealthChecks("/ping");
+        app.MapHealthChecks("/ping", new HealthCheckOptions
+        {
+            ResponseWriter = HealthCheckResponseWriter.WriteJsonResponse
+        }).AllowAnonymous();
+
+        app.MapHealthChecks("/health", new HealthCheckOptions
+        {
+            ResponseWriter = HealthCheckResponseWriter.WriteJsonResponse
+        }).AllowAnonymous();
 
         if (app.Environment.IsDevelopment())
         {
