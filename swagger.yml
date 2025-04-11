@@ -9,20 +9,16 @@ paths:
       description: information regarding this API. The version will be returned
       responses:
         '200':
-          $ref: '#/components/responses/infoResponse'
-  /liveness:
-    get:
-      description: The system is responsive and accepting incoming requests; however, this endpoint does not perform a dependency check, so the system may not be fully ready to process requests correctly.
-      responses:
-        '200':
-          $ref: '#/components/responses/okResponse'
-  /readiness:
+          $ref: '#/components/responses/infoResponse'  
+  /health:
     get:
       description: The system is fully ready to accept requests and all the dependencies are healthy
       responses:
         '200':
+          description: All health checks have passed
           $ref: '#/components/responses/healthCheckResponse'
         '503':
+          description: A health check has failed
           $ref: '#/components/responses/healthCheckResponse'
   /providers/{ukprn}/academicyears/{academicyear}/apprenticeships:
     get:
