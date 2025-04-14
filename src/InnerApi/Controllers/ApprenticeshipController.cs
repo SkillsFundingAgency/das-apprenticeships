@@ -67,8 +67,7 @@ public class ApprenticeshipController : ControllerBase
     /// <returns>GetApprenticeshipsByDatesResponse</returns>
     [HttpGet("{ukprn:long}/academicyears/{academicYear:int}/apprenticeships")]
     [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
-    //[ActionAuthorizeUserType(UserType.ServiceAccount)]
-    [AllowAnonymous]
+    [ActionAuthorizeUserType(UserType.ServiceAccount)]
     public async Task<IActionResult> GetByAcademicYear(long ukprn, int academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
     {
         var request = new GetApprenticeshipsByAcademicYearRequest(ukprn, academicYear, page, pageSize);
