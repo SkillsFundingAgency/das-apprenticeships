@@ -1,0 +1,25 @@
+-- ======================================================================================================
+-- Import Data into Apprenticeships
+-- Import Flatfile to ApprenticeshipsDb and name the generated table ApprenticeshipsToMigrate
+-- Use the details below to ensure the columns are correctly imported
+-- ======================================================================================================
+
+--    ApprovalsApprenticeshipId BIGINT
+--    Uln NVARCHAR(10)
+--    FirstName NVARCHAR(100)
+--    LastName NVARCHAR(100)
+--    DateOfBirth DATETIME
+--    Ukprn BIGINT
+--    EmployerAccountId BIGINT
+--    FundingType NVARCHAR(50)
+--    FundingEmployerAccountId VARCHAR(20)	ALLOW NULL
+--    LegalEntityName NVARCHAR(255)
+--    AccountLegalEntityId BIGINT
+--    TrainingCode NCHAR(10)
+--    TrainingCourseVersion NVARCHAR(10)	ALLOW NULL
+--    StartDate DATETIME
+--    EndDate DATETIME
+--    TrainingPrice VARCHAR(20)				ALLOW NULL
+--    EndPointAssessmentPrice VARCHAR(20)	ALLOW NULL
+--    TotalPrice MONEY
+--    FundingBandMaximum INT
