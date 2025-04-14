@@ -64,7 +64,7 @@ public class ApprenticeshipController : ControllerBase
     /// <param name="academicYear">Academic year in yyyy format (e.g. 2425)</param>
     /// <param name="page">Page number</param>
     /// <param name="pageSize">Number of items per page</param>
-    /// <returns>GetApprenticeshipsByDatesResponse</returns>
+    /// <returns>GetApprenticeshipsByAcademicYearResponse</returns>
     [HttpGet("{ukprn:long}/academicyears/{academicYear:int}/apprenticeships")]
     [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
     [ActionAuthorizeUserType(UserType.ServiceAccount)]
