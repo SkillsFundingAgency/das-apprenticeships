@@ -340,7 +340,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
                     apprenticeship.GetPlannedEndDate(),
                     apprenticeship.Episodes.Select(ep =>
                             new Episode(ep.Key, ep.TrainingCode, ep.Prices.Select(p =>
-                                new EpisodePrice(p.StartDate, p.EndDate, p.TrainingPrice, p.EndPointAssessmentPrice, p.TotalPrice, p.FundingBandMaximum)).ToList()))
+                                new EpisodePrice(p.Key, p.StartDate, p.EndDate, p.TrainingPrice, p.EndPointAssessmentPrice, p.TotalPrice, p.FundingBandMaximum)).ToList()))
                         .ToList(),
                     apprenticeship.GetAgeAtStartOfApprenticeship(),
                     apprenticeship.GetWithdrawnDate())
