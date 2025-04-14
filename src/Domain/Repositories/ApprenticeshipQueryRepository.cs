@@ -340,7 +340,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
                 .Where(x => !activeOnDate.HasValue || 
                     x.Episodes.Any(episode =>
                         episode.Prices.Any(price => price.EndDate >= activeOnDate.Value.StartOfCurrentAcademicYear()) && // end date is at least after the start of this academic year
-                        episode.Prices.Any(price => price.StartDate < activeOnDate.Value.EndOfCurrentAcademicYear())     // start date is at least before the end of this academic year
+                         episode.Prices.Any(price => price.StartDate <= activeOnDate.Value)     // start date is at least before the requested period
                 ))
                 .ToListAsync();
 

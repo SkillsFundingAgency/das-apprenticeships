@@ -19,7 +19,7 @@ public class GetApprenticeshipsWithEpisodesRequestQueryHandler : IQueryHandler<G
     {
         _logger.LogInformation("Handling GetApprenticeshipsWithEpisodesRequest for Ukprn: {ukprn} CollectionYear: {collectionYear} CollectionPeriod: {collectionPeriod}", query.Ukprn, query.CollectionYear, query.CollectionPeriod);
 
-        var apprenticeships = await _apprenticeshipQueryRepository.GetApprenticeshipsWithEpisodes(query.Ukprn, query.CollectionYear.ToDateTime(query.CollectionPeriod));
+        var apprenticeships = await _apprenticeshipQueryRepository.GetApprenticeshipsWithEpisodes(query.Ukprn, query.CollectionYear.GetLastDay(query.CollectionPeriod));
 
         if (apprenticeships == null)
         {
