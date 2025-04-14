@@ -62,10 +62,11 @@ public static class DateTimeExtensions
             return short.Parse($"20{academicYear.ToString().Substring(0, 2)}");
     }
 
-    public static DateTime ToDateTime(this short academicYear, byte deliveryPeriod)
+    public static DateTime GetLastDay(this short academicYear, byte deliveryPeriod)
     {
         var calendarYear = academicYear.ToCalendarYear(deliveryPeriod);
         var calendarMonth = deliveryPeriod.ToCalendarMonth();
-        return new DateTime(calendarYear, calendarMonth, 1);
+        var lastDay = DateTime.DaysInMonth(calendarYear, calendarMonth);
+        return new DateTime(calendarYear, calendarMonth, lastDay);
     }
 }
