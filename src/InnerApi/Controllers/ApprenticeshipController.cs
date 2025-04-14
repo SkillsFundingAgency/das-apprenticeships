@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+using SFA.DAS.Apprenticeships.InnerApi.Services;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
@@ -28,16 +31,19 @@ public class ApprenticeshipController : ControllerBase
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly ILogger<ApprenticeshipController> _logger;
+    private readonly IPagedLinkHeaderService _pagedLinkHeaderService;
 
     /// <summary>Initializes a new instance of the <see cref="ApprenticeshipController"/> class.</summary>
     /// <param name="queryDispatcher">Gets data</param>
     /// <param name="commandDispatcher">updates data</param>
     /// <param name="logger">ILogger</param>
-    public ApprenticeshipController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<ApprenticeshipController> logger)
+    /// <param name="pagedLinkHeaderService">IPagedQueryResultHelper</param>
+    public ApprenticeshipController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<ApprenticeshipController> logger, IPagedLinkHeaderService pagedLinkHeaderService)
     {
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
         _logger = logger;
+        _pagedLinkHeaderService = pagedLinkHeaderService;
     }
 
     /// <summary>
@@ -72,6 +78,10 @@ public class ApprenticeshipController : ControllerBase
     {
         var request = new GetApprenticeshipsByAcademicYearRequest(ukprn, academicYear, page, pageSize);
         var response = await _queryDispatcher.Send<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>(request);
+
+        var pageLinks = _pagedLinkHeaderService.GetPageLinks(request, response);
+        
+        Response?.Headers.Add(pageLinks);
 
         return Ok(response);
     }

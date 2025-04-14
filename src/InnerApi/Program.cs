@@ -11,6 +11,7 @@ using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
+using SFA.DAS.Apprenticeships.InnerApi.Services;
 
 namespace SFA.DAS.Apprenticeships.InnerApi;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
@@ -24,11 +25,11 @@ public static class Program
 
         builder.Configuration.AddAzureTableStorage(options =>
         {
-            options.ConfigurationKeys = new[] { "SFA.DAS.Apprenticeships", "SFA.DAS.Encoding" };
+            options.ConfigurationKeys = ["SFA.DAS.Apprenticeships", "SFA.DAS.Encoding"];
             options.StorageConnectionString = builder.Configuration["ConfigurationStorageConnectionString"];
             options.EnvironmentName = builder.Configuration["EnvironmentName"];
             options.PreFixConfigurationKeys = false;
-            options.ConfigurationKeysRawJsonResult = new[] { "SFA.DAS.Encoding" };
+            options.ConfigurationKeysRawJsonResult = ["SFA.DAS.Encoding"];
         });
 
         builder.Services.AddApplicationInsightsTelemetry();
@@ -53,6 +54,7 @@ public static class Program
         builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocal(builder.Configuration));
         builder.Services.AddSingleton(x => applicationSettings);
         builder.Services.AddQueryServices();
+        builder.Services.AddScoped<IPagedLinkHeaderService, PagedLinkHeaderService>();
         builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
         builder.Services.ConfigureNServiceBusForSend(applicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace());
         builder.Services.AddCommandServices(builder.Configuration).AddEventServices().AddValidators();
