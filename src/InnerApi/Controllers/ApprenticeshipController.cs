@@ -8,7 +8,7 @@ using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByDates;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
@@ -61,26 +61,18 @@ public class ApprenticeshipController : ControllerBase
     /// Get paginated apprenticeships for a provider between specified dates.
     /// </summary>
     /// <param name="ukprn">UkPrn filter value</param>
-    /// <param name="startDate">Start date filter value</param>
-    /// <param name="endDate">End date filter value</param>
+    /// <param name="academicYear">Academic year in yyyy format (e.g. 2425)</param>
     /// <param name="page">Page number</param>
     /// <param name="pageSize">Number of items per page</param>
     /// <returns>GetApprenticeshipsByDatesResponse</returns>
-    [HttpGet("{ukprn:long}/apprenticeships/by-dates")]
-    [ProducesResponseType(typeof(GetApprenticeshipsByDatesResponse), 200)]
-    [ActionAuthorizeUserType(UserType.ServiceAccount)]
-    public async Task<IActionResult> GetByDates(long ukprn, [FromQuery] string startDate, [FromQuery] string endDate, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
+    [HttpGet("{ukprn:long}/academicyears/{academicYear:int}/apprenticeships")]
+    [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
+    //[ActionAuthorizeUserType(UserType.ServiceAccount)]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetByAcademicYear(long ukprn, int academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
     {
-        var isValidStartDate = DateTime.TryParse(startDate, out var startDateValue);
-        var isValidEndDate = DateTime.TryParse(endDate, out var endDateValue);
-
-        if (!isValidStartDate | !isValidEndDate)
-        {
-            return new BadRequestResult();
-        }
-
-        var request = new GetApprenticeshipsByDatesRequest(ukprn, new DateRange(startDateValue, endDateValue), page, pageSize);
-        var response = await _queryDispatcher.Send<GetApprenticeshipsByDatesRequest, GetApprenticeshipsByDatesResponse>(request);
+        var request = new GetApprenticeshipsByAcademicYearRequest(ukprn, academicYear, page, pageSize);
+        var response = await _queryDispatcher.Send<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>(request);
 
         return Ok(response);
     }

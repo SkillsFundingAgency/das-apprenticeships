@@ -6,11 +6,11 @@ using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Apprenticeships.InnerApi.Responses;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByDates;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
 
-public class WhenIGetApprenticeshipsByDates
+public class WhenIGetApprenticeshipsByAcademicYear
 {
     private Fixture _fixture;
     private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
@@ -31,7 +31,7 @@ public class WhenIGetApprenticeshipsByDates
     {
         //Arrange
         var queryResult = _fixture.Create<PagedResult<Apprenticeship>>();
-        var expectedResult = new GetApprenticeshipsByDatesResponse
+        var expectedResult = new GetApprenticeshipsByAcademicYearResponse
         {
             Items = queryResult.Data.Select(x => new GetApprenticeshipsByDatesResponseItem
             {
@@ -42,15 +42,14 @@ public class WhenIGetApprenticeshipsByDates
             TotalItems = queryResult.TotalItems
         };
 
-        var dates = new DateRange(
-            new DateTime(2025, 9, 1),
-            new DateTime(2026, 8, 31
-            ));
 
+        const int academicYear = 2526;
         const int pageSize = 20;
         const int pageNumber = 1;
 
-        var query = new GetApprenticeshipsByDatesRequest(1000, dates, pageNumber, pageSize);
+        var query = new GetApprenticeshipsByAcademicYearRequest(1000, academicYear, pageNumber, pageSize);
+
+        var dates = AcademicYearParser.ParseFrom(academicYear);
 
         _apprenticeshipQueryRepository
             .Setup(x => x.GetByDates(query.UkPrn, dates, pageNumber, pageSize, pageSize, 0, It.IsAny<CancellationToken>()))
