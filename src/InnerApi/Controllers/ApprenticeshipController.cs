@@ -90,7 +90,7 @@ public class ApprenticeshipController : ControllerBase
 
         var pageLinks = _pagedLinkHeaderService.GetPageLinks(request, response);
         
-        Response.Headers.Add(pageLinks);
+        Response?.Headers.Add(pageLinks);
 
         return Ok(response);
     }
