@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class HttpResponseExtensions
 {
     public static Task WriteJsonAsync(this HttpResponse httpResponse, object body)

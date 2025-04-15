@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
@@ -8,6 +8,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
 /// <summary>
 /// HealthCheckStartupExtensions
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class HealthCheckStartupExtensions
 {
     /// <summary>
