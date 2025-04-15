@@ -74,8 +74,10 @@ public class ApprenticeshipController : ControllerBase
     [HttpGet("{ukprn:long}/academicyears/{academicYear:int}/apprenticeships")]
     [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
     [ActionAuthorizeUserType(UserType.ServiceAccount)]
-    public async Task<IActionResult> GetByAcademicYear(long ukprn, int academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
+    public async Task<IActionResult> GetByAcademicYear(long ukprn, int academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = 20)
     {
+        pageSize = pageSize.HasValue ? Math.Clamp(pageSize.Value, 1, 100) : pageSize;
+        
         var request = new GetApprenticeshipsByAcademicYearRequest(ukprn, academicYear, page, pageSize);
         var response = await _queryDispatcher.Send<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>(request);
 
