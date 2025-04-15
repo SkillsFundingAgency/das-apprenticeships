@@ -11,6 +11,7 @@ using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
+using SFA.DAS.Apprenticeships.InnerApi.Extensions;
 using SFA.DAS.Apprenticeships.InnerApi.Services;
 
 namespace SFA.DAS.Apprenticeships.InnerApi;
@@ -58,26 +59,25 @@ public static class Program
         builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
         builder.Services.ConfigureNServiceBusForSend(applicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace());
         builder.Services.AddCommandServices(builder.Configuration).AddEventServices().AddValidators();
-        builder.Services.AddHealthChecks();
+        builder.Services.AddDasHealthChecks();
         builder.Services.AddApiAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
         builder.Services.AddApiAuthorization(builder.Environment.IsDevelopment());
 
         var app = builder.Build();
-
-        app.MapHealthChecks("/ping");
-
+        
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
 
+        app.UseDasHealthChecks();
         app.UseMiddleware<BearerTokenMiddleware>();
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-
+        
         app.Run();
 
         static bool NotLocal(IConfiguration configuration)
