@@ -51,44 +51,46 @@ FETCH NEXT FROM DataCursor INTO
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	BEGIN IF @DoNotImport = 0
+		BEGIN IF (SELECT COUNT(*) FROM [dbo].[Apprenticeship] WHERE ApprovalsApprenticeshipId = @ApprovalsApprenticeshipId) < 1
 
-		BEGIN TRY
+			BEGIN TRY
 
-			SET @FundingEmployerAccountId = TRY_CAST(@FundingEmployerAccountIdString AS BIGINT)
-			SET @TrainingPrice = TRY_CAST(@TrainingPriceString AS MONEY)
-			SET @EndPointAssessmentPrice = TRY_CAST(@EndPointAssessmentPriceString AS MONEY)
+				SET @FundingEmployerAccountId = TRY_CAST(@FundingEmployerAccountIdString AS BIGINT)
+				SET @TrainingPrice = TRY_CAST(@TrainingPriceString AS MONEY)
+				SET @EndPointAssessmentPrice = TRY_CAST(@EndPointAssessmentPriceString AS MONEY)
 
-			BEGIN TRANSACTION;
-				SET @ApprenticeshipKey = NEWID()
-				SET @EpisodeKey = NEWID()
-				SET @EpisodePriceKey = NEWID()
+				BEGIN TRANSACTION;
+					SET @ApprenticeshipKey = NEWID()
+					SET @EpisodeKey = NEWID()
+					SET @EpisodePriceKey = NEWID()
 
-				INSERT INTO [dbo].[Apprenticeship]
-					([Key], [ApprovalsApprenticeshipId], [Uln], [FirstName], [LastName], [DateOfBirth])
-				VALUES
-					(@ApprenticeshipKey, @ApprovalsApprenticeshipId, @Uln, @FirstName, @LastName, @DateOfBirth)
+					INSERT INTO [dbo].[Apprenticeship]
+						([Key], [ApprovalsApprenticeshipId], [Uln], [FirstName], [LastName], [DateOfBirth])
+					VALUES
+						(@ApprenticeshipKey, @ApprovalsApprenticeshipId, @Uln, @FirstName, @LastName, @DateOfBirth)
 
-				INSERT INTO [dbo].[Episode]
-					([Key], ApprenticeshipKey, Ukprn, EmployerAccountId, FundingType, FundingPlatform, FundingEmployerAccountId, LegalEntityName, AccountLegalEntityId, TrainingCode, TrainingCourseVersion, PaymentsFrozen, LearningStatus)
-				VALUES
-					(@EpisodeKey, @ApprenticeshipKey, @Ukprn, @EmployerAccountId, @FundingType, 2, @FundingEmployerAccountId, @LegalEntityName, @AccountLegalEntityId, @TrainingCode, @TrainingCourseVersion, 0, 'Active')
+					INSERT INTO [dbo].[Episode]
+						([Key], ApprenticeshipKey, Ukprn, EmployerAccountId, FundingType, FundingPlatform, FundingEmployerAccountId, LegalEntityName, AccountLegalEntityId, TrainingCode, TrainingCourseVersion, PaymentsFrozen, LearningStatus)
+					VALUES
+						(@EpisodeKey, @ApprenticeshipKey, @Ukprn, @EmployerAccountId, @FundingType, 2, @FundingEmployerAccountId, @LegalEntityName, @AccountLegalEntityId, @TrainingCode, @TrainingCourseVersion, 0, 'Active')
 
-				INSERT INTO [dbo].[EpisodePrice]
-					([Key], [EpisodeKey], [StartDate], [EndDate], [TrainingPrice], [EndPointAssessmentPrice], [TotalPrice], [FundingBandMaximum])
-				VALUES
-					(@EpisodePriceKey, @EpisodeKey, @StartDate, @EndDate, @TrainingPrice, @EndPointAssessmentPrice, @TotalPrice, @FundingBandMaximum)
+					INSERT INTO [dbo].[EpisodePrice]
+						([Key], [EpisodeKey], [StartDate], [EndDate], [TrainingPrice], [EndPointAssessmentPrice], [TotalPrice], [FundingBandMaximum])
+					VALUES
+						(@EpisodePriceKey, @EpisodeKey, @StartDate, @EndDate, @TrainingPrice, @EndPointAssessmentPrice, @TotalPrice, @FundingBandMaximum)
 
-			COMMIT TRANSACTION;
+				COMMIT TRANSACTION;
 
-			INSERT INTO @SuccessIds (ApprovalsApprenticeshipId) VALUES (@ApprovalsApprenticeshipId);
+				INSERT INTO @SuccessIds (ApprovalsApprenticeshipId) VALUES (@ApprovalsApprenticeshipId);
 
-		END TRY
-		BEGIN CATCH
-			ROLLBACK TRANSACTION;
-			SET @FailedId = @ApprovalsApprenticeshipId;
-			BREAK;
-		END CATCH;
+			END TRY
+			BEGIN CATCH
+				ROLLBACK TRANSACTION;
+				SET @FailedId = @ApprovalsApprenticeshipId;
+				BREAK;
+			END CATCH;
 
+		END
 	END
 	FETCH NEXT FROM DataCursor INTO
 		@ApprovalsApprenticeshipId, @Uln, @FirstName, @LastName, @DateOfBirth, 

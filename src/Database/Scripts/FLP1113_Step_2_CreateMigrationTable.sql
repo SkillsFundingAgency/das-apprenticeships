@@ -12,14 +12,14 @@
 --    Ukprn BIGINT
 --    EmployerAccountId BIGINT
 --    FundingType NVARCHAR(50)
---    FundingEmployerAccountId VARCHAR(20)	ALLOW NULL
+--    FundingEmployerAccountId VARCHAR(20)
 --    LegalEntityName NVARCHAR(255)
 --    AccountLegalEntityId BIGINT
 --    TrainingCode NCHAR(10)
---    TrainingCourseVersion NVARCHAR(10)	ALLOW NULL
+--    TrainingCourseVersion NVARCHAR(10)
 --    StartDate DATETIME
 --    EndDate DATETIME
---    TrainingPrice VARCHAR(20)				ALLOW NULL
---    EndPointAssessmentPrice VARCHAR(20)	ALLOW NULL
+--    TrainingPrice VARCHAR(20)
+--    EndPointAssessmentPrice VARCHAR(20)
 --    TotalPrice MONEY
 --    FundingBandMaximum INT
