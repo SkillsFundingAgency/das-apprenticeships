@@ -39,7 +39,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             .Include(x => x.Episodes)
             .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
             .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
-            .Where(x => x.Episodes.Any(e => e.Prices.Any(p => p.StartDate >= dates.Start && p.EndDate <= dates.End)))
+            .Where(x => x.Episodes.Any(e => e.Prices.Any(p => p.StartDate >= dates.Start && p.StartDate <= dates.End)))
             .Where(x => x.Episodes.Any(e => e.LearningStatus == LearnerStatus.Active.ToString()))
             .OrderBy(x => x.ApprovalsApprenticeshipId)
             .AsNoTracking();
