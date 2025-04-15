@@ -25,18 +25,18 @@ public class WhenGettingByDates
 
     [TearDown]
     public void CleanUp() => _dbContext.Dispose();
-    
+
     [Test]
     public async Task ThenEmptyResponseIsReturnedWhenNoData()
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
         var nonUkPrnApprenticeship = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, 10000, startDate: academicYear.Start.AddDays(4), learnerStatus: LearnerStatus.Active);
 
-        var result = await _sut.GetByDates(ukprn, academicYear, 1, 100, 100, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, 100, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(0);
@@ -48,16 +48,16 @@ public class WhenGettingByDates
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
-        var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(1), learnerStatus: LearnerStatus.Active);
-        var apprenticeship2 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(2), learnerStatus: LearnerStatus.Active);
-        var apprenticeship3 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(3), learnerStatus: LearnerStatus.Active);
-        var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(4), learnerStatus: LearnerStatus.Active);
-        var nonUkPrnApprenticeship = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, 10000, startDate: academicYear.Start.AddDays(4), learnerStatus: LearnerStatus.Active);
+        var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(1), endDate: academicYear.End.AddDays(-1), learnerStatus: LearnerStatus.Active);
+        var apprenticeship2 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(2), endDate: academicYear.End.AddDays(-1), learnerStatus: LearnerStatus.Active);
+        var apprenticeship3 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(3), endDate: academicYear.End.AddDays(-1), learnerStatus: LearnerStatus.Active);
+        var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(4), endDate: academicYear.End.AddDays(-1), learnerStatus: LearnerStatus.Active);
+        var nonUkPrnApprenticeship = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, 10000, startDate: academicYear.Start.AddDays(4), endDate: academicYear.End.AddDays(-1), learnerStatus: LearnerStatus.Active);
 
-        var result = await _sut.GetByDates(ukprn, academicYear, 1, 100, 100, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, 100, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(4);
@@ -73,23 +73,28 @@ public class WhenGettingByDates
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
         const int totalItems = 20;
         for (var index = 0; index < totalItems; index++)
         {
-            await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(1), learnerStatus: LearnerStatus.Active);
+            await _dbContext.AddApprenticeship(
+                _fixture.Create<Guid>(),
+                false,
+                ukprn,
+                startDate: academicYear.Start.AddDays(1),
+                endDate: academicYear.End.AddDays(-1),
+                learnerStatus: LearnerStatus.Active
+            );
         }
 
         const int pageSize = 10;
         const int pageNumber = 2;
-        var result = await _sut.GetByDates(ukprn, academicYear, pageNumber, pageSize, pageSize, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, pageSize, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(pageSize);
-        result.Page.Should().Be(pageNumber);
-        result.PageSize.Should().Be(pageSize);
         result.TotalItems.Should().Be(totalItems);
         result.TotalPages.Should().Be((int)Math.Ceiling((double)totalItems / pageSize));
     }
@@ -99,7 +104,7 @@ public class WhenGettingByDates
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
         var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(1), learnerStatus: LearnerStatus.Withdrawn);
@@ -107,7 +112,7 @@ public class WhenGettingByDates
         var apprenticeship3 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(3), learnerStatus: LearnerStatus.Withdrawn);
         var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(4), learnerStatus: LearnerStatus.Withdrawn);
 
-        var result = await _sut.GetByDates(ukprn, academicYear, 1, 100, 100, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, 100, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(0);
@@ -122,7 +127,7 @@ public class WhenGettingByDates
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
         var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(-1), learnerStatus: LearnerStatus.Active);
@@ -130,7 +135,7 @@ public class WhenGettingByDates
         var apprenticeship3 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(-3), learnerStatus: LearnerStatus.Active);
         var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(-4), learnerStatus: LearnerStatus.Active);
 
-        var result = await _sut.GetByDates(ukprn, academicYear, 1, 100, 100, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, 100, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(0);

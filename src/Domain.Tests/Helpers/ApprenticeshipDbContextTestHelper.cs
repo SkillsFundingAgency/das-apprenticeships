@@ -34,12 +34,14 @@ public static class ApprenticeshipDbContextTestHelper
         FundingPlatform? fundingPlatform = null,
         DateTime? startDate = null,
         LearnerStatus? learnerStatus = null,
-        bool addWithdrawalRequest = false)
+        bool addWithdrawalRequest = false,
+        DateTime? endDate = null)
     {
         var episodeKey = _fixture.Create<Guid>();
         var episodePrice = _fixture.Build<EpisodePrice>()
             .With(x => x.EpisodeKey, episodeKey)
             .With(x => x.StartDate, startDate ?? _fixture.Create<DateTime>())
+            .With(x => x.EndDate, endDate ?? _fixture.Create<DateTime>())
             .With(x => x.IsDeleted, false)
             .Create();
 

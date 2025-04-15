@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+using SFA.DAS.Apprenticeships.InnerApi.Services;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByDates;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
@@ -28,16 +31,19 @@ public class ApprenticeshipController : ControllerBase
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly ILogger<ApprenticeshipController> _logger;
+    private readonly IPagedLinkHeaderService _pagedLinkHeaderService;
 
     /// <summary>Initializes a new instance of the <see cref="ApprenticeshipController"/> class.</summary>
     /// <param name="queryDispatcher">Gets data</param>
     /// <param name="commandDispatcher">updates data</param>
     /// <param name="logger">ILogger</param>
-    public ApprenticeshipController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<ApprenticeshipController> logger)
+    /// <param name="pagedLinkHeaderService">IPagedQueryResultHelper</param>
+    public ApprenticeshipController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, ILogger<ApprenticeshipController> logger, IPagedLinkHeaderService pagedLinkHeaderService)
     {
         _queryDispatcher = queryDispatcher;
         _commandDispatcher = commandDispatcher;
         _logger = logger;
+        _pagedLinkHeaderService = pagedLinkHeaderService;
     }
 
     /// <summary>
@@ -61,26 +67,23 @@ public class ApprenticeshipController : ControllerBase
     /// Get paginated apprenticeships for a provider between specified dates.
     /// </summary>
     /// <param name="ukprn">UkPrn filter value</param>
-    /// <param name="startDate">Start date filter value</param>
-    /// <param name="endDate">End date filter value</param>
+    /// <param name="academicYear">Academic year in yyyy format (e.g. 2425)</param>
     /// <param name="page">Page number</param>
     /// <param name="pageSize">Number of items per page</param>
-    /// <returns>GetApprenticeshipsByDatesResponse</returns>
-    [HttpGet("{ukprn:long}/apprenticeships/by-dates")]
-    [ProducesResponseType(typeof(GetApprenticeshipsByDatesResponse), 200)]
+    /// <returns>GetApprenticeshipsByAcademicYearResponse</returns>
+    [HttpGet("{ukprn:long}/academicyears/{academicYear:int}/apprenticeships")]
+    [ProducesResponseType(typeof(GetApprenticeshipsByAcademicYearResponse), 200)]
     [ActionAuthorizeUserType(UserType.ServiceAccount)]
-    public async Task<IActionResult> GetByDates(long ukprn, [FromQuery] string startDate, [FromQuery] string endDate, [FromQuery] int page = 1, [FromQuery] int? pageSize = null)
+    public async Task<IActionResult> GetByAcademicYear(long ukprn, int academicYear, [FromQuery] int page = 1, [FromQuery] int? pageSize = 20)
     {
-        var isValidStartDate = DateTime.TryParse(startDate, out var startDateValue);
-        var isValidEndDate = DateTime.TryParse(endDate, out var endDateValue);
+        pageSize = pageSize.HasValue ? Math.Clamp(pageSize.Value, 1, 100) : pageSize;
+        
+        var request = new GetApprenticeshipsByAcademicYearRequest(ukprn, academicYear, page, pageSize);
+        var response = await _queryDispatcher.Send<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>(request);
 
-        if (!isValidStartDate | !isValidEndDate)
-        {
-            return new BadRequestResult();
-        }
-
-        var request = new GetApprenticeshipsByDatesRequest(ukprn, new DateRange(startDateValue, endDateValue), page, pageSize);
-        var response = await _queryDispatcher.Send<GetApprenticeshipsByDatesRequest, GetApprenticeshipsByDatesResponse>(request);
+        var pageLinks = _pagedLinkHeaderService.GetPageLinks(request, response);
+        
+        Response?.Headers.Add(pageLinks);
 
         return Ok(response);
     }
