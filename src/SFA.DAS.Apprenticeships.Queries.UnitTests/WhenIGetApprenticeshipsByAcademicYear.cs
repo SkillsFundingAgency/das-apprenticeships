@@ -5,7 +5,6 @@ using SFA.DAS.Apprenticeships.DataTransferObjects;
 using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.InnerApi.Responses;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
@@ -30,6 +29,10 @@ public class WhenIGetApprenticeshipsByAcademicYear
     public async Task ThenApprenticeshipsAreReturned()
     {
         //Arrange
+        const int academicYear = 2526;
+        const int pageSize = 20;
+        const int pageNumber = 1;
+
         var queryResult = _fixture.Create<PagedResult<Apprenticeship>>();
         var expectedResult = new GetApprenticeshipsByAcademicYearResponse
         {
@@ -37,30 +40,25 @@ public class WhenIGetApprenticeshipsByAcademicYear
             {
                 Uln = x.Uln
             }),
-            Page = queryResult.Page,
-            PageSize = queryResult.PageSize,
+            Page = pageNumber,
+            PageSize = pageSize,
             TotalItems = queryResult.TotalItems
         };
-
-
-        const int academicYear = 2526;
-        const int pageSize = 20;
-        const int pageNumber = 1;
 
         var query = new GetApprenticeshipsByAcademicYearRequest(1000, academicYear, pageNumber, pageSize);
 
         var dates = AcademicYearParser.ParseFrom(academicYear);
 
         _apprenticeshipQueryRepository
-            .Setup(x => x.GetByDates(query.UkPrn, dates, pageNumber, pageSize, pageSize, 0, It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetByDates(query.UkPrn, dates, pageSize, 0, It.IsAny<CancellationToken>()))
             .ReturnsAsync(queryResult)
             .Verifiable();
-        
+
         //Act
         var actualResult = await _sut.Handle(query);
 
         //Assert
-        actualResult.Should().BeEquivalentTo(expectedResult);
+        actualResult.Should().BeEquivalentTo(expectedResult, x => x.ExcludingMissingMembers());
 
         _apprenticeshipQueryRepository.Verify();
         _apiClient.Verify();

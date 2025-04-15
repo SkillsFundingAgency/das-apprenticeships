@@ -14,8 +14,6 @@ public class GetApprenticeshipsByAcademicYearQueryHandler(
         var response  = await queryRepository.GetByDates(
             query.UkPrn,
             academicYearDates, 
-            query.Page, 
-            query.PageSize,
             query.Limit,
             query.Offset,
             cancellationToken);
@@ -26,8 +24,8 @@ public class GetApprenticeshipsByAcademicYearQueryHandler(
             {
                 Uln = apprenticeship.Uln
             }),
-            PageSize = response.PageSize,
-            Page = response.Page,
+            PageSize = query.Limit,
+            Page = query.Page,
             TotalItems = response.TotalItems,
         };
     }

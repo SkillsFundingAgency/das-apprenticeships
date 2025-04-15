@@ -36,7 +36,7 @@ public class WhenGettingByDates
 
         var nonUkPrnApprenticeship = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, 10000, startDate: academicYear.Start.AddDays(4), learnerStatus: LearnerStatus.Active);
 
-        var result = await _sut.GetByDates(ukprn, academicYear, 1, 100, 100, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, 100, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(0);
@@ -57,7 +57,7 @@ public class WhenGettingByDates
         var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(4), endDate: academicYear.End.AddDays(-1), learnerStatus: LearnerStatus.Active);
         var nonUkPrnApprenticeship = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, 10000, startDate: academicYear.Start.AddDays(4), endDate: academicYear.End.AddDays(-1), learnerStatus: LearnerStatus.Active);
 
-        var result = await _sut.GetByDates(ukprn, academicYear, 1, 100, 100, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, 100, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(4);
@@ -91,11 +91,10 @@ public class WhenGettingByDates
 
         const int pageSize = 10;
         const int pageNumber = 2;
-        var result = await _sut.GetByDates(ukprn, academicYear, pageNumber, pageSize, pageSize, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, pageSize, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(pageSize);
-        result.Page.Should().Be(pageNumber);
         result.PageSize.Should().Be(pageSize);
         result.TotalItems.Should().Be(totalItems);
         result.TotalPages.Should().Be((int)Math.Ceiling((double)totalItems / pageSize));
@@ -114,7 +113,7 @@ public class WhenGettingByDates
         var apprenticeship3 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(3), learnerStatus: LearnerStatus.Withdrawn);
         var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(4), learnerStatus: LearnerStatus.Withdrawn);
 
-        var result = await _sut.GetByDates(ukprn, academicYear, 1, 100, 100, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, 100, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(0);
@@ -137,7 +136,7 @@ public class WhenGettingByDates
         var apprenticeship3 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(-3), learnerStatus: LearnerStatus.Active);
         var apprenticeship4 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(-4), learnerStatus: LearnerStatus.Active);
 
-        var result = await _sut.GetByDates(ukprn, academicYear, 1, 100, 100, 0, CancellationToken.None);
+        var result = await _sut.GetByDates(ukprn, academicYear, 100, 0, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(0);
