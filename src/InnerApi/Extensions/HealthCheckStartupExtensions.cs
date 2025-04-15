@@ -30,7 +30,7 @@ public static class HealthCheckStartupExtensions
     /// <returns></returns>
     public static IApplicationBuilder UseDasHealthChecks(this IApplicationBuilder app)
     {
-        app.UseHealthChecks("/ping", new HealthCheckOptions
+        app.UseHealthChecks("/info", new HealthCheckOptions
         {
             Predicate = _ => false,
             ResponseWriter = (context, _) =>
