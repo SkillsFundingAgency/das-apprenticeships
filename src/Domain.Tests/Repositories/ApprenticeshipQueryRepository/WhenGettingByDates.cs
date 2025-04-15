@@ -31,7 +31,7 @@ public class WhenGettingByDates
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
         var nonUkPrnApprenticeship = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, 10000, startDate: academicYear.Start.AddDays(4), learnerStatus: LearnerStatus.Active);
@@ -48,7 +48,7 @@ public class WhenGettingByDates
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
         var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(1), learnerStatus: LearnerStatus.Active);
@@ -73,7 +73,7 @@ public class WhenGettingByDates
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
         const int totalItems = 20;
@@ -99,7 +99,7 @@ public class WhenGettingByDates
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
         var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(1), learnerStatus: LearnerStatus.Withdrawn);
@@ -122,7 +122,7 @@ public class WhenGettingByDates
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
-        var academicYear = new DateRange(new DateTime(2025, 9, 1), new DateTime(2026, 8, 31));
+        var academicYear = new DateRange(new DateTime(2025, 8, 1), new DateTime(2026, 7, 31));
         SetUpApprenticeshipQueryRepository();
 
         var apprenticeship1 = await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, ukprn, startDate: academicYear.Start.AddDays(-1), learnerStatus: LearnerStatus.Active);
