@@ -59,7 +59,7 @@ public static class Program
         builder.Services.AddApprenticeshipsOuterApiClient(applicationSettings.ApprenticeshipsOuterApiConfiguration.BaseUrl, applicationSettings.ApprenticeshipsOuterApiConfiguration.Key);
         builder.Services.ConfigureNServiceBusForSend(applicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace());
         builder.Services.AddCommandServices(builder.Configuration).AddEventServices().AddValidators();
-        builder.Services.AddDasHealthChecks();
+        builder.Services.AddDasHealthChecks(applicationSettings);
         builder.Services.AddApiAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
         builder.Services.AddApiAuthorization(builder.Environment.IsDevelopment());
 

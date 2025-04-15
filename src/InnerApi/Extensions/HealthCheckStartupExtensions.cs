@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using SFA.DAS.Apprenticeships.DataAccess;
+using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
 
@@ -14,11 +15,11 @@ public static class HealthCheckStartupExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection AddDasHealthChecks(this IServiceCollection services)
+    public static IServiceCollection AddDasHealthChecks(this IServiceCollection services, ApplicationSettings appSettings)
     {
         services
             .AddHealthChecks()
-            .AddDbContextCheck<ApprenticeshipsDataContext>("Sql Health Check");
+            .AddSqlServer(appSettings.DbConnectionString);
 
         return services;
     }
@@ -45,6 +46,22 @@ public static class HealthCheckStartupExtensions
             }
         });
 
-        return app;
+        return app.UseHealthChecks("/health", new HealthCheckOptions
+        {
+            ResponseWriter = (httpContext, report) => httpContext.Response.WriteJsonAsync(new
+            {
+                report.Status,
+                report.TotalDuration,
+                Results = report.Entries.ToDictionary(
+                    e => e.Key,
+                    e => new
+                    {
+                        e.Value.Status,
+                        e.Value.Duration,
+                        e.Value.Description,
+                        e.Value.Data
+                    })
+            })
+        });
     }
 }
