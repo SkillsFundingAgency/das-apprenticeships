@@ -95,7 +95,6 @@ public class WhenGettingByDates
 
         result.Should().NotBeNull();
         result.Data.Count().Should().Be(pageSize);
-        result.PageSize.Should().Be(pageSize);
         result.TotalItems.Should().Be(totalItems);
         result.TotalPages.Should().Be((int)Math.Ceiling((double)totalItems / pageSize));
     }

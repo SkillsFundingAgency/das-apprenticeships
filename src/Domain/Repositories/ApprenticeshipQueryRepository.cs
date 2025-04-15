@@ -53,7 +53,6 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
             Data = result,
             TotalItems = totalItems,
             TotalPages = totalPages,
-            PageSize = limit,
         };
     }
 
