@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
+using SFA.DAS.Apprenticeships.InnerApi.Services;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
 
@@ -22,7 +23,7 @@ public class WhenGetCurrentPartyIds
         _fixture = new Fixture();
         _queryDispatcher = new Mock<IQueryDispatcher>();
         _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object, null!, _mockLogger.Object);
+        _sut = new ApprenticeshipController(_queryDispatcher.Object, null!, _mockLogger.Object, Mock.Of<IPagedLinkHeaderService>());
     }
 
     [Test]
