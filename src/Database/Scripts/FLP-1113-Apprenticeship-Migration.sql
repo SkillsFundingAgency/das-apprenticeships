@@ -7,6 +7,7 @@ SET NOCOUNT ON
 -- Output can be wrapped in BEGIN/COMMIT TRANSACTION statements to improve performance (recommended to do this per-chunk if splitting).
 
 --Variables that can be modified
+DECLARE @MaxApprovalDate DATETIME = '2024-04-17'; -- Date/Time max value for filtering. Used to ignore apprenticeships created after this date, due to having been captured by FLP-1110.
 DECLARE @ChunkSize INT = 50000; -- This adds comment lines into the output, useful for chunking the output up into smaller bits
 -- No other variables should be modified, but a TOP x can be added into the select statement for testing purposes
 
@@ -72,6 +73,7 @@ WHERE
     Apps.StartDate < @EndOfAcademicYear AND
     Apps.IsOnFlexiPaymentPilot = 0 AND -- This won't actually do anything now
     (Apps.StopDate IS NULL OR Apps.StopDate > @StartOfAcademicYear) AND
+	Com.EmployerAndProviderApprovedOn < @MaxApprovalDate AND
 	Apps.Id NOT IN -- Ignore approvals from the pilot
 	(
 		'2672229',
