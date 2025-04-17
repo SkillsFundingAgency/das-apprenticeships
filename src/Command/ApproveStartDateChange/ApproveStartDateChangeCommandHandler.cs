@@ -5,6 +5,7 @@ using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Types;
+using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
 
 namespace SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
 
@@ -34,7 +35,10 @@ public class ApproveStartDateChangeCommandHandler : ICommandHandler<ApproveStart
         var startDateChange = apprenticeship.ApproveStartDateChange(command.UserId);
         await _apprenticeshipRepository.Update(apprenticeship);
 
-        await SendEvent(apprenticeship, startDateChange);
+        if (apprenticeship.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
+        {
+            await SendEvent(apprenticeship, startDateChange);
+        }
 
         _logger.LogInformation("Start date change approved for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
     }

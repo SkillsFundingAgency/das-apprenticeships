@@ -46,7 +46,7 @@ public static class ApprenticeshipDomainModelTestHelper
         return apprenticeship;
     }
 
-    public static void AddEpisode(ApprenticeshipDomainModel apprenticeship, DateTime? startDate = null, DateTime? endDate = null, long? ukprn = null)
+    public static void AddEpisode(ApprenticeshipDomainModel apprenticeship, DateTime? startDate = null, DateTime? endDate = null, long? ukprn = null, FundingPlatform? fundingPlatform = FundingPlatform.DAS)
     {
         var start = startDate ?? _fixture.Create<DateTime>();
         var end = endDate ?? (start.AddDays(_fixture.Create<int>()));
@@ -61,7 +61,7 @@ public static class ApprenticeshipDomainModelTestHelper
             _fixture.Create<decimal>(),
             _fixture.Create<decimal>(),
             _fixture.Create<FundingType>(),
-            _fixture.Create<FundingPlatform?>(),
+            fundingPlatform,
             _fixture.Create<int>(),
             _fixture.Create<long?>(),
             _fixture.Create<string>(),
