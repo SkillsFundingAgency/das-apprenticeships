@@ -32,6 +32,8 @@ public class WhenGetApprenticeships
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
+        var collectionYear = _fixture.Create<short>();
+        var collectionPeriod = _fixture.Create<byte>();
         var expectedResponse = _fixture.Create<GetApprenticeshipsWithEpisodesResponse>();
 
         _queryDispatcher
@@ -39,7 +41,7 @@ public class WhenGetApprenticeships
             .ReturnsAsync(expectedResponse);
 
         // Act
-        var result = await _sut.GetApprenticeships(ukprn);
+        var result = await _sut.GetApprenticeshipsForFm36(ukprn, collectionYear, collectionPeriod);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -52,13 +54,15 @@ public class WhenGetApprenticeships
     {
         // Arrange
         var ukprn = _fixture.Create<long>();
+        var collectionYear = _fixture.Create<short>();
+        var collectionPeriod = _fixture.Create<byte>();
 
         _queryDispatcher
             .Setup(x => x.Send<GetApprenticeshipsWithEpisodesRequest, GetApprenticeshipsWithEpisodesResponse?>(It.Is<GetApprenticeshipsWithEpisodesRequest>(r => r.Ukprn == ukprn)))
             .ReturnsAsync((GetApprenticeshipsWithEpisodesResponse?)null);
 
         // Act
-        var result = await _sut.GetApprenticeships(ukprn);
+        var result = await _sut.GetApprenticeshipsForFm36(ukprn, collectionYear, collectionPeriod);
 
         // Assert
         result.Should().BeOfType<NotFoundResult>();
