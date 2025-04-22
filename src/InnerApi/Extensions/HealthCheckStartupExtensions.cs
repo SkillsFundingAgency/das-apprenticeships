@@ -2,6 +2,7 @@
 using Azure.Core;
 using Azure.Identity;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Data.SqlClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
@@ -33,7 +34,13 @@ public static class HealthCheckStartupExtensions
             .AddSqlServer(appSettings.DbConnectionString, beforeOpenConnectionConfigurer: connection =>
             {
                 {
-                    connection.AccessToken = AzureServiceTokenProvider.GetToken(new TokenRequestContext(scopes: [AzureResource])).Token;
+                    var connectionStringBuilder = new SqlConnectionStringBuilder(appSettings.DbConnectionString);
+                    var useManagedIdentity = !connectionStringBuilder.IntegratedSecurity && string.IsNullOrEmpty(connectionStringBuilder.UserID);
+
+                    if (useManagedIdentity)
+                    {
+                        connection.AccessToken = AzureServiceTokenProvider.GetToken(new TokenRequestContext(scopes: [AzureResource])).Token;
+                    }
                 }
             });
 
