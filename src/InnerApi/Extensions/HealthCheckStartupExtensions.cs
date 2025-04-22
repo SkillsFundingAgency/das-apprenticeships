@@ -33,7 +33,7 @@ public static class HealthCheckStartupExtensions
             .AddSqlServer(appSettings.DbConnectionString, beforeOpenConnectionConfigurer: connection =>
             {
                 {
-                    connection.AccessToken = AzureServiceTokenProvider.GetToken(new TokenRequestContext(scopes: [AzureResource])).Token;;
+                    connection.AccessToken = AzureServiceTokenProvider.GetToken(new TokenRequestContext(scopes: [AzureResource])).Token;
                 }
             });
 
