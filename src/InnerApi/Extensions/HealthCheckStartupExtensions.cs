@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Data.SqlClient;
-using SFA.DAS.Apprenticeships.DataAccess.Extensions;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
@@ -11,6 +11,15 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
 /// </summary>
 public static class HealthCheckStartupExtensions
 {
+    private const string AzureResource = "https://database.windows.net/";
+    
+    // Take advantage of ChainedTokenCredential's built-in caching
+    private static readonly ChainedTokenCredential AzureServiceTokenProvider = new(
+        new ManagedIdentityCredential(),
+        new AzureCliCredential(),
+        new VisualStudioCodeCredential(),
+        new VisualStudioCredential());
+    
     /// <summary>
     /// Add health-checks
     /// </summary>
@@ -24,8 +33,7 @@ public static class HealthCheckStartupExtensions
             .AddSqlServer(appSettings.DbConnectionString, beforeOpenConnectionConfigurer: connection =>
             {
                 {
-                    var conn = DatabaseExtensions.GetSqlConnection(appSettings.DbConnectionString);
-                    connection.AccessToken = ((SqlConnection)conn).AccessToken;
+                    connection.AccessToken = AzureServiceTokenProvider.GetToken(new TokenRequestContext(scopes: [AzureResource])).Token;;
                 }
             });
 
