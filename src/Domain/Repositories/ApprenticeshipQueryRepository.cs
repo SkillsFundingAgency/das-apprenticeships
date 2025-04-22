@@ -31,7 +31,7 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
             .Include(x => x.Episodes)
             .ThenInclude(x => x.Prices.Where(y => !y.IsDeleted))
             .Where(x => x.Episodes.Any(e => e.Ukprn == ukprn))
-            .Where(x => x.Episodes.Any(e => e.Prices.Any(p => (p.StartDate >= dates.Start && p.StartDate <= dates.End) | (p.EndDate >= dates.Start && p.EndDate <= dates.End))))
+            .Where(x => x.Episodes.Any(e => e.Prices.Any(p => dates.Start >= p.StartDate & dates.End <= p.EndDate)))
             .Where(x => x.Episodes.Any(e => e.LearningStatus == nameof(LearnerStatus.Active)))
             .OrderBy(x => x.ApprovalsApprenticeshipId)
             .AsNoTracking();
