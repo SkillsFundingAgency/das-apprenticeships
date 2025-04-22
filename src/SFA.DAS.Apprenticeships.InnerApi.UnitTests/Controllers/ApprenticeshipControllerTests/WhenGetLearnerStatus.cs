@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
 using FluentAssertions;
+using SFA.DAS.Apprenticeships.InnerApi.Services;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
 
@@ -31,7 +32,7 @@ public class WhenGetLearnerStatus
         _queryDispatcher = new Mock<IQueryDispatcher>();
         _commandDispatcher = new Mock<ICommandDispatcher>();
         _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object);
+        _sut = new ApprenticeshipController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object, Mock.Of<IPagedLinkHeaderService>());
     }
 
     [Test]

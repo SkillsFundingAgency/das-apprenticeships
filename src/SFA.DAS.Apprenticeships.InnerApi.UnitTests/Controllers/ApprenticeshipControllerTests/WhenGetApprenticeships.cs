@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Command;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
+using SFA.DAS.Apprenticeships.InnerApi.Services;
 using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
 
@@ -23,7 +24,7 @@ public class WhenGetApprenticeships
         _fixture = new Fixture();
         _queryDispatcher = new Mock<IQueryDispatcher>();
         _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object, Mock.Of<ICommandDispatcher>(), Mock.Of<ILogger<ApprenticeshipController>>());
+        _sut = new ApprenticeshipController(_queryDispatcher.Object, Mock.Of<ICommandDispatcher>(), Mock.Of<ILogger<ApprenticeshipController>>(), Mock.Of<IPagedLinkHeaderService>());
     }
 
     [Test]

@@ -7,21 +7,13 @@ using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using SFA.DAS.Apprenticeships.Domain.Extensions;
 using SFA.DAS.Apprenticeships.Domain.Validators;
 using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.InnerApi.Responses;
 
 namespace SFA.DAS.Apprenticeships.Domain.Repositories;
 
-public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
+public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext, ILogger<ApprenticeshipQueryRepository> logger)
+    : IApprenticeshipQueryRepository
 {
-    private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
-    private readonly ILogger<ApprenticeshipQueryRepository> _logger;
-    private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
-
-    public ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext, ILogger<ApprenticeshipQueryRepository> logger)
-    {
-        _lazyContext = dbContext;
-        _logger = logger;
-    }
+    private ApprenticeshipsDataContext DbContext => dbContext.Value;
 
     public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
     {
@@ -33,8 +25,8 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         var result = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
         return result;
     }
-    
-    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int page, int? pageSize, int limit, int offset, CancellationToken cancellationToken)
+
+    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int limit, int offset, CancellationToken cancellationToken)
     {
         var query = DbContext.ApprenticeshipsDbSet
             .Include(x => x.Episodes)
@@ -46,7 +38,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             .AsNoTracking();
 
         var totalItems = await query.CountAsync(cancellationToken);
-        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize.GetValueOrDefault());
+        var totalPages = (int)Math.Ceiling((double)totalItems / limit);
 
         var result = await query
             .Skip(offset)
@@ -62,8 +54,6 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
             Data = result,
             TotalItems = totalItems,
             TotalPages = totalPages,
-            PageSize = pageSize ?? int.MaxValue,
-            Page = page,
         };
     }
 
@@ -161,7 +151,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
 
     public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
     {
-        _logger.LogInformation("Getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+        logger.LogInformation("Getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
 
         PendingPriceChange? pendingPriceChange = null;
 
@@ -211,7 +201,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+            logger.LogError(e, "Error getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
         }
 
         return pendingPriceChange;
@@ -226,7 +216,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
 
     public async Task<PendingStartDateChange?> GetPendingStartDateChange(Guid apprenticeshipKey)
     {
-        _logger.LogInformation("Getting pending start date change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+        logger.LogInformation("Getting pending start date change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
 
         PendingStartDateChange? pendingStartDateChange = null;
 
@@ -276,7 +266,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error getting pending start date change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+            logger.LogError(e, "Error getting pending start date change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
         }
 
         return pendingStartDateChange;
@@ -311,7 +301,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error getting payment status for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+            logger.LogError(e, "Error getting payment status for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
         }
 
         return paymentStatus;
@@ -360,7 +350,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error getting apprenticeships with episodes for provider UKPRN {Ukprn}", ukprn);
+            logger.LogError(e, "Error getting apprenticeships with episodes for provider UKPRN {Ukprn}", ukprn);
         }
 
         return apprenticeshipWithEpisodes;
@@ -385,7 +375,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error getting current party ids for apprenticeship key {key}", apprenticeshipKey);
+            logger.LogError(e, "Error getting current party ids for apprenticeship key {key}", apprenticeshipKey);
         }
 
         return currentPartyIds;
@@ -405,7 +395,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
 
             if (apprenticeship == null)
             {
-                _logger.LogInformation("Apprenticeship not found for apprenticeship key {key} when attempting to get learner status", apprenticeshipKey);
+                logger.LogInformation("Apprenticeship not found for apprenticeship key {key} when attempting to get learner status", apprenticeshipKey);
                 return null;
             }
 
@@ -426,7 +416,7 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error getting learner status for apprenticeship key {key}", apprenticeshipKey);
+            logger.LogError(e, "Error getting learner status for apprenticeship key {key}", apprenticeshipKey);
         }
 
         return learnerStatus;

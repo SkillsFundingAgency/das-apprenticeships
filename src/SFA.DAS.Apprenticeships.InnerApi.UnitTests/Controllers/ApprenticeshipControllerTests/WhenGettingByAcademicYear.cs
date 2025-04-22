@@ -1,17 +1,18 @@
-﻿using AutoFixture;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.Command;
+using SFA.DAS.Apprenticeships.Domain;
 using SFA.DAS.Apprenticeships.InnerApi.Controllers;
 using SFA.DAS.Apprenticeships.InnerApi.Services;
 using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
+using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
 
-public class WhenGetApprenticeshipKey
+public class WhenGettingByAcademicYear
 {
     private Fixture _fixture;
     private Mock<IQueryDispatcher> _queryDispatcher;
@@ -32,14 +33,16 @@ public class WhenGetApprenticeshipKey
     [Test]
     public async Task ThenApprenticeshipPriceIsReturned()
     {
-        var apprenticeshipHashedId = _fixture.Create<string>();
-        var expectedResult = _fixture.Create<Guid>();
+        var ukprn = _fixture.Create<long>();
+        const int academicYear = 2526;
+        var expectedResult = _fixture.Create<GetApprenticeshipsByAcademicYearResponse>();
 
         _queryDispatcher
-            .Setup(x => x.Send<GetApprenticeshipKeyRequest, GetApprenticeshipKeyResponse>(It.Is<GetApprenticeshipKeyRequest>(r => r.ApprenticeshipHashedId == apprenticeshipHashedId)))
-            .ReturnsAsync(new GetApprenticeshipKeyResponse{ ApprenticeshipKey = expectedResult });
+            .Setup(x => x.Send<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>(
+                It.Is<GetApprenticeshipsByAcademicYearRequest>(r => r.UkPrn == ukprn && r.AcademicYear == academicYear && r.Page == 1))
+            ).ReturnsAsync(expectedResult);
 
-        var result = await _sut.GetApprenticeshipKey(apprenticeshipHashedId);
+        var result = await _sut.GetByAcademicYear(ukprn, academicYear, 1);
 
         result.Should().BeOfType<OkObjectResult>();
         var okResult = (OkObjectResult)result;
