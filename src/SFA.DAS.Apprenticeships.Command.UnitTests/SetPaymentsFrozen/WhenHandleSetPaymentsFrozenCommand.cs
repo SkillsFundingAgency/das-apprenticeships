@@ -12,6 +12,7 @@ using SFA.DAS.Apprenticeships.Types;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.SetPaymentsFrozen;
 
@@ -77,5 +78,28 @@ public class WhenHandleSetPaymentsFrozenCommand
                     Times.Once);
                 break;
         }
+    }
+
+    [TestCase(SetPayments.Freeze)]
+    [TestCase(SetPayments.Unfreeze)]
+    public async Task WhenFundingPlatformIsNotDASThenEventNotPublished(SetPayments setPayments)
+    {
+        // Arrange
+        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, fundingPlatform: FundingPlatform.SLD);
+        _mockApprenticeshipRepository.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(apprenticeship);
+
+        if (setPayments == SetPayments.Unfreeze)
+            apprenticeship.SetPaymentsFrozen(true, _fixture.Create<string>(), DateTime.Now, _fixture.Create<string>());
+
+        var command = new SetPaymentsFrozenCommand(
+            _fixture.Create<Guid>(), _fixture.Create<string>(), setPayments, _fixture.Create<string>());
+
+        // Act
+        await _handler.Handle(command);
+
+        // Assert
+        _messageSession.Verify(x => x.Publish(It.IsAny<PaymentsFrozenEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        _messageSession.Verify(x => x.Publish(It.IsAny<PaymentsUnfrozenEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }
