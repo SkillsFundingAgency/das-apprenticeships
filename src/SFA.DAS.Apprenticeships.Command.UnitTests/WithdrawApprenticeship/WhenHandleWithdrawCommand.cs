@@ -18,6 +18,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
 using LearnerStatus = SFA.DAS.Apprenticeships.Domain.Apprenticeship.LearnerStatus;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.WithdrawApprenticeship;
@@ -117,11 +118,41 @@ public class WhenHandleWithdrawCommand
             It.Is<HandleWithdrawalNotificationsRequest>(x => x.LastDayOfLearning == command.LastDayOfLearning && x.Reason == command.Reason), command.ServiceBearerToken));
     }
 
-    private void ResetMockRepository()
+    [Test]
+    public async Task WhenFundingPlatformIsNotDASThenEventNotPublished()
+    {
+        // Arrange
+        ResetMockRepository(FundingPlatform.SLD);
+        string message = "";
+        _validator.Setup(x => x.IsValid(It.IsAny<WithdrawDomainRequest>(), out message, It.IsAny<object?[]>()))
+            .Returns(true);
+
+        _apprenticeshipsOuterApiClient.Setup(x => x.HandleWithdrawalNotifications(It.IsAny<Guid>(),
+                It.IsAny<HandleWithdrawalNotificationsRequest>(), It.IsAny<string>()))
+            .Returns(() => Task.CompletedTask);
+
+        var sut = new WithdrawApprenticeshipCommandHandler(
+            _apprenticeshipRepository.Object,
+            _apprenticeshipsOuterApiClient.Object,
+            _systemClockService.Object,
+            _validator.Object,
+            _messageSession.Object,
+            _logger.Object);
+
+        var command = _fixture.Create<WithdrawApprenticeshipCommand>();
+
+        // Act
+        await sut.Handle(command);
+
+        // Assert
+        _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipWithdrawnEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    private void ResetMockRepository(Enums.FundingPlatform fundingPlatform = Enums.FundingPlatform.DAS)
     {
         _apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
 
-        ApprenticeshipDomainModelTestHelper.AddEpisode(_apprenticeship, ukprn: ValidUkprn);
+        ApprenticeshipDomainModelTestHelper.AddEpisode(_apprenticeship, ukprn: ValidUkprn, fundingPlatform: fundingPlatform);
 
         _apprenticeshipRepository.Setup(x => x.GetByUln(It.IsAny<string>())).ReturnsAsync(_apprenticeship);
     }
