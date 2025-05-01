@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.Types;
+using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
 
 namespace SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
 
@@ -40,7 +41,10 @@ public class ApprovePriceChangeCommandHandler : ICommandHandler<ApprovePriceChan
 
         var approver = priceChange.ChangeApprovedBy();
 
-        await SendEvent(apprenticeship, priceChange, approver);
+        if (apprenticeship.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
+        {
+            await SendEvent(apprenticeship, priceChange, approver);
+        }
 
         _logger.LogInformation("Price change approved by {approver} for apprenticeship {apprenticeshipKey}", approver.ToString(), command.ApprenticeshipKey);
         return approver;
