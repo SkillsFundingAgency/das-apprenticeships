@@ -7,6 +7,7 @@ using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.Repositories;
 using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.Types;
+using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
 
 namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship;
 
@@ -83,7 +84,10 @@ public class AddApprenticeshipCommandHandler : ICommandHandler<AddApprenticeship
 
         await _apprenticeshipRepository.Add(apprenticeship);
 
-        await SendEvent(apprenticeship);
+        if (apprenticeship.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
+        {
+            await SendEvent(apprenticeship);
+        }
     }
 
     private async Task SendEvent(ApprenticeshipDomainModel apprenticeship)

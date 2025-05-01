@@ -57,7 +57,10 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
         apprenticeship.WithdrawApprenticeship(command.ProviderApprovedBy, command.LastDayOfLearning, reason, _systemClockService.UtcNow.DateTime);
         await _apprenticeshipRepository.Update(apprenticeship);
 
-        await SendEvent(apprenticeship, reason, command.LastDayOfLearning);
+        if (apprenticeship.LatestEpisode.FundingPlatform == Enums.FundingPlatform.DAS)
+        {
+            await SendEvent(apprenticeship, reason, command.LastDayOfLearning);
+        }
 
         _logger.LogInformation($"Sending Notification(s) for withdrawal of apprenticeship for ULN {command.ULN}");
         await _apprenticeshipsOuterApiClient.HandleWithdrawalNotifications(apprenticeship.Key, new HandleWithdrawalNotificationsRequest { LastDayOfLearning = command.LastDayOfLearning, Reason = command.Reason }, command.ServiceBearerToken);

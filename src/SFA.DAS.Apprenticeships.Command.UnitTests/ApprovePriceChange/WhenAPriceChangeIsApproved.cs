@@ -15,6 +15,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
 {
@@ -102,6 +103,29 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.ApprovePriceChange
                                 && z.AssessmentPrice == command.AssessmentPrice) == 1)));
 
             AssertEventPublished(apprenticeship, effectiveFromDate, ApprovedBy.Provider);
+        }
+
+        [Test]
+        public async Task WhenFundingPlatformIsNotDASThenEventNotPublished()
+        {
+            //Arrange
+            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var command = _fixture.Create<ApprovePriceChangeCommand>();
+            var totalPrice = command.TrainingPrice!.Value + command.AssessmentPrice!.Value;
+            ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, fundingPlatform: FundingPlatform.SLD);
+            var effectiveFromDate = apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>());
+
+            ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeEmployerInitiated(
+                apprenticeship,
+                totalPrice,
+                effectiveFromDate: effectiveFromDate);
+            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+
+            //Act
+            await _commandHandler.Handle(command);
+
+            //Assert
+            _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipPriceChangedEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         private void AssertEventPublished(ApprenticeshipDomainModel apprenticeship, DateTime effectiveFromDate, ApprovedBy approvedBy)
