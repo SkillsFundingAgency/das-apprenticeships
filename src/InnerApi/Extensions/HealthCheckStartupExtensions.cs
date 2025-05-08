@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using SFA.DAS.Apprenticeships.DataAccess;
+using Microsoft.Data.SqlClient;
 using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
@@ -10,16 +12,37 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
 /// </summary>
 public static class HealthCheckStartupExtensions
 {
+    private const string AzureResource = "https://database.windows.net/";
+    
+    // Take advantage of ChainedTokenCredential's built-in caching
+    private static readonly ChainedTokenCredential AzureServiceTokenProvider = new(
+        new ManagedIdentityCredential(),
+        new AzureCliCredential(),
+        new VisualStudioCodeCredential(),
+        new VisualStudioCredential());
+    
     /// <summary>
     /// Add health-checks
     /// </summary>
-    /// <param name="services"></param>
+    /// <param name="services">IServiceCollection</param>
+    /// <param name="appSettings">Application Settings instance.</param>
     /// <returns></returns>
     public static IServiceCollection AddDasHealthChecks(this IServiceCollection services, ApplicationSettings appSettings)
     {
         services
             .AddHealthChecks()
-            .AddSqlServer(appSettings.DbConnectionString);
+            .AddSqlServer(appSettings.DbConnectionString, beforeOpenConnectionConfigurer: connection =>
+            {
+                {
+                    var connectionStringBuilder = new SqlConnectionStringBuilder(appSettings.DbConnectionString);
+                    var useManagedIdentity = !connectionStringBuilder.IntegratedSecurity && string.IsNullOrEmpty(connectionStringBuilder.UserID);
+
+                    if (useManagedIdentity)
+                    {
+                        connection.AccessToken = AzureServiceTokenProvider.GetToken(new TokenRequestContext(scopes: [AzureResource])).Token;
+                    }
+                }
+            });
 
         return services;
     }
