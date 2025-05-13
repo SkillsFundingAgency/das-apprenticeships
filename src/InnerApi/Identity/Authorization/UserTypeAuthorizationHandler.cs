@@ -14,11 +14,19 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 /// </example>
 public class UserTypeAuthorizationHandler : AuthorizationHandler<UserTypeRequirement>
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public UserTypeAuthorizationHandler(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, UserTypeRequirement requirement)
     {
         if(context.User.Identity?.IsAuthenticated == false)
         {
             context.Fail(); // Deny access
+            _httpContextAccessor.HttpContext?.Response.Headers.Append("X-Authorization-Failure", "User not authenticated");
             return Task.CompletedTask;
         }
 
@@ -36,6 +44,7 @@ public class UserTypeAuthorizationHandler : AuthorizationHandler<UserTypeRequire
         else
         {
             context.Fail();  // Deny access
+            _httpContextAccessor.HttpContext?.Response.Headers.Append("X-Authorization-Failure", $"{userType.ToString()} cannot access requested endpoint");
         }
 
         return Task.CompletedTask;
@@ -57,6 +66,7 @@ public class UserTypeAuthorizationHandler : AuthorizationHandler<UserTypeRequire
 
         return true; // This policy is not an override policy and should be overriden by an override policy
     }
+
 }
 
 [ExcludeFromCodeCoverage]
