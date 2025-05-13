@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net;
 using System.Security.Claims;
 
@@ -77,6 +78,11 @@ public class BearerTokenMiddleware
         var response = context.Response;
         response.ContentType = "application/json";
         response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        if(response.Headers != null)
+        {
+            response.Headers.Append("WWW-Authenticate", errorMessage);
+        }
+        
         await response.WriteAsync(errorMessage);
     }
 
