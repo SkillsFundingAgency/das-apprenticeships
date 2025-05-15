@@ -77,7 +77,10 @@ public static class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        
+
+        app.MapHealthChecks("/ping");   // Both /ping 
+        app.MapHealthChecks("/");       // and / are used for health checks
+
         app.Run();
 
         static bool NotLocal(IConfiguration configuration)
