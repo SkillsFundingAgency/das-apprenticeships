@@ -27,10 +27,8 @@ public class BearerTokenMiddleware
     /// </summary>
     public async Task Invoke(HttpContext context)
     {
-        var endpoint = context.GetEndpoint();
-        if (endpoint != null && endpoint.Metadata.GetMetadata<AllowAnonymousAttribute>() != null)
+        if (DoNotCheckAuthorizationForThisEndpoint(context))
         {
-            // If the endpoint has the [AllowAnonymous] attribute, skip the authorization logic
             await _next(context);
             return;
         }
@@ -142,5 +140,21 @@ public class BearerTokenMiddleware
         context.Items["ServiceAccount"] = serviceAccount.Value;
         context.Items["sub"] = claims.Single(x => x.Type == "sub").Value;
         return true;
+    }
+
+    private bool DoNotCheckAuthorizationForThisEndpoint(HttpContext context)
+    {
+        var endpoint = context.GetEndpoint();
+
+        if(endpoint == null)
+            return false;
+
+        if (endpoint.Metadata.GetMetadata<AllowAnonymousAttribute>() != null)
+            return true;
+
+        if(endpoint.DisplayName == "Health checks")
+            return true;
+
+        return false;
     }
 }
