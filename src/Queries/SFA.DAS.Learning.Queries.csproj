@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\SFA.DAS.Apprenticeships.Domain.csproj" />
-    <ProjectReference Include="..\Infrastructure\SFA.DAS.Apprenticeships.Infrastructure.csproj" />
+    <ProjectReference Include="..\Domain\SFA.DAS.Learning.Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure\SFA.DAS.Learning.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
