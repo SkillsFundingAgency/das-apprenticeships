@@ -15,11 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataAccess\SFA.DAS.Apprenticeships.DataAccess.csproj" />
-    <ProjectReference Include="..\Infrastructure\SFA.DAS.Apprenticeships.Infrastructure.csproj" />
-    <ProjectReference Include="..\SFA.DAS.Apprenticeships.DataTransferObjects\SFA.DAS.Apprenticeships.DataTransferObjects.csproj" />
-    <ProjectReference Include="..\SFA.DAS.Apprenticeships.Enums\SFA.DAS.Apprenticeships.Enums.csproj" />
-    <ProjectReference Include="..\Types\SFA.DAS.Apprenticeships.Types.csproj" />
+    <ProjectReference Include="..\DataAccess\SFA.DAS.Learning.DataAccess.csproj" />
+    <ProjectReference Include="..\Infrastructure\SFA.DAS.Learning.Infrastructure.csproj" />
+    <ProjectReference Include="..\SFA.DAS.Learning.DataTransferObjects\SFA.DAS.Learning.DataTransferObjects.csproj" />
+    <ProjectReference Include="..\SFA.DAS.Learning.Enums\SFA.DAS.Learning.Enums.csproj" />
+    <ProjectReference Include="..\Types\SFA.DAS.Learning.Types.csproj" />
   </ItemGroup>
 
   <ItemGroup>

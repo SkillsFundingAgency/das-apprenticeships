@@ -26,8 +26,8 @@
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="17.1.113" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Command\SFA.DAS.Apprenticeships.Command.csproj" />
-    <ProjectReference Include="..\Infrastructure\SFA.DAS.Apprenticeships.Infrastructure.csproj" />
+    <ProjectReference Include="..\Command\SFA.DAS.Learning.Command.csproj" />
+    <ProjectReference Include="..\Infrastructure\SFA.DAS.Learning.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="local.settings.json">

@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\SFA.DAS.Apprenticeships.Domain.csproj" />
+    <ProjectReference Include="..\Domain\SFA.DAS.Learning.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -25,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Functions\SFA.DAS.Apprenticeships.Functions.csproj" />
-    <ProjectReference Include="..\Infrastructure\SFA.DAS.Apprenticeships.Infrastructure.csproj" />
-    <ProjectReference Include="..\TestHelpers\SFA.DAS.Apprenticeships.TestHelpers.csproj" />
+    <ProjectReference Include="..\Functions\SFA.DAS.Learning.Functions.csproj" />
+    <ProjectReference Include="..\Infrastructure\SFA.DAS.Learning.Infrastructure.csproj" />
+    <ProjectReference Include="..\TestHelpers\SFA.DAS.Learning.TestHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

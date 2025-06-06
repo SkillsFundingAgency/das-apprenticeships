@@ -21,9 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Command\SFA.DAS.Apprenticeships.Command.csproj" />
-    <ProjectReference Include="..\DataAccess\SFA.DAS.Apprenticeships.DataAccess.csproj" />
-    <ProjectReference Include="..\Queries\SFA.DAS.Apprenticeships.Queries.csproj" />
+    <ProjectReference Include="..\Command\SFA.DAS.Learning.Command.csproj" />
+    <ProjectReference Include="..\DataAccess\SFA.DAS.Learning.DataAccess.csproj" />
+    <ProjectReference Include="..\Queries\SFA.DAS.Learning.Queries.csproj" />
   </ItemGroup>
 
 </Project>
