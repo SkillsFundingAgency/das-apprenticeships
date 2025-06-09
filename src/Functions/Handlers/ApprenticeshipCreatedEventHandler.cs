@@ -4,7 +4,7 @@ using NServiceBus;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.CommitmentsV2.Types;
 using SFA.DAS.Learning.Command;
-using SFA.DAS.Learning.Command.AddApprenticeship;
+using SFA.DAS.Learning.Command.AddLearning;
 using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Learning.Functions.Handlers
@@ -15,7 +15,7 @@ namespace SFA.DAS.Learning.Functions.Handlers
         {
             logger.LogInformation("Handling ApprenticeshipCreatedEvent");
 
-            await commandDispatcher.Send(new AddApprenticeshipCommand
+            await commandDispatcher.Send(new AddLearningCommand
             {
                 TrainingCode = @event.TrainingCode,
                 ActualStartDate = @event.ActualStartDate ?? @event.StartDate,

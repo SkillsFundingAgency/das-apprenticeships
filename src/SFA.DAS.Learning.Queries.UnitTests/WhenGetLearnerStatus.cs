@@ -15,7 +15,7 @@ namespace SFA.DAS.Learning.Queries.UnitTests;
 [TestFixture]
 public class WhenGetLearnerStatus
 {
-    private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepositoryMock;
+    private Mock<ILearningQueryRepository> _apprenticeshipQueryRepositoryMock;
     private Mock<ISystemClockService> _systemClockServiceMock;
     private Mock<ILogger<GetLearnerStatusQueryHandler>> _loggerMock;
     private GetLearnerStatusQueryHandler _handler;
@@ -24,7 +24,7 @@ public class WhenGetLearnerStatus
     [SetUp]
     public void SetUp()
     {
-        _apprenticeshipQueryRepositoryMock = new Mock<IApprenticeshipQueryRepository>();
+        _apprenticeshipQueryRepositoryMock = new Mock<ILearningQueryRepository>();
         _systemClockServiceMock = new Mock<ISystemClockService>();
         _loggerMock = new Mock<ILogger<GetLearnerStatusQueryHandler>>();
         _handler = new GetLearnerStatusQueryHandler(

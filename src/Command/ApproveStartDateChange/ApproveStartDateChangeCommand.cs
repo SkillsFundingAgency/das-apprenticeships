@@ -2,12 +2,12 @@
 
 public class ApproveStartDateChangeCommand : ICommand
 {
-    public ApproveStartDateChangeCommand(Guid apprenticeshipKey, string userId)
+    public ApproveStartDateChangeCommand(Guid learningKey, string userId)
     {
-        ApprenticeshipKey = apprenticeshipKey;
+        LearningKey = learningKey;
         UserId = userId;
     }
 
-    public Guid ApprenticeshipKey { get; set; }
+    public Guid LearningKey { get; set; }
     public string UserId { get; set; }
 }

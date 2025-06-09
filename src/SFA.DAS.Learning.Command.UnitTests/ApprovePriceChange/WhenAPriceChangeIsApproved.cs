@@ -23,7 +23,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
     public class WhenAPriceChangeIsApproved
     {
         private ApprovePriceChangeCommandHandler _commandHandler = null!;
-        private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
+        private Mock<ILearningRepository> _apprenticeshipRepository = null!;
         private Mock<IMessageSession> _messageSession = null!;
         private Mock<ISystemClockService> _systemClockService = null!;
         private Mock<ILogger<ApprovePriceChangeCommandHandler>> _logger = null!;
@@ -33,7 +33,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
         [SetUp]
         public void SetUp()
         {
-            _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+            _apprenticeshipRepository = new Mock<ILearningRepository>();
             _messageSession = new Mock<IMessageSession>();
             _systemClockService = new Mock<ISystemClockService>();
             _systemClockService.Setup(x => x.UtcNow).Returns(_approvedDate);
@@ -56,7 +56,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
             ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
             var effectiveFromDate = apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>());
             ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeProviderInitiated(apprenticeship, effectiveFromDate: effectiveFromDate);
-            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+            _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
             //Act
             await _commandHandler.Handle(command);
@@ -87,7 +87,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
                 apprenticeship, 
                 totalPrice, 
                 effectiveFromDate: effectiveFromDate);
-            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+            _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
             //Act
             await _commandHandler.Handle(command);
@@ -119,7 +119,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
                 apprenticeship,
                 totalPrice,
                 effectiveFromDate: effectiveFromDate);
-            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+            _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
             //Act
             await _commandHandler.Handle(command);

@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
                     .AsImplementedInterfaces()
                     .WithTransientLifetime();
             })
-            .AddScoped<IApprenticeshipQueryRepository, ApprenticeshipQueryRepository>()
+            .AddScoped<ILearningQueryRepository, LearningQueryRepository>()
             .AddScoped<IQueryDispatcher, QueryDispatcher>();
         
         return serviceCollection;

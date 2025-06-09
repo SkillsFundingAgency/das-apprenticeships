@@ -4,18 +4,18 @@ namespace SFA.DAS.Learning.Command.RejectStartDateChange;
 
 public class RejectStartDateChangeCommandHandler : ICommandHandler<RejectStartDateChangeCommand>
 {
-    private readonly IApprenticeshipRepository _apprenticeshipRepository;
+    private readonly ILearningRepository _learningRepository;
 
-    public RejectStartDateChangeCommandHandler(IApprenticeshipRepository apprenticeshipRepository)
+    public RejectStartDateChangeCommandHandler(ILearningRepository learningRepository)
     {
-        _apprenticeshipRepository = apprenticeshipRepository;
+        _learningRepository = learningRepository;
     }
 
     public async Task Handle(RejectStartDateChangeCommand command,
         CancellationToken cancellationToken = default)
     {
-        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+        var apprenticeship = await _learningRepository.Get(command.ApprenticeshipKey);
         apprenticeship.RejectStartDateChange(command.Reason);
-        await _apprenticeshipRepository.Update(apprenticeship);
+        await _learningRepository.Update(apprenticeship);
     }
 }

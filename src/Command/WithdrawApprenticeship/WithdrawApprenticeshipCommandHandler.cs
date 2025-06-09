@@ -12,7 +12,7 @@ namespace SFA.DAS.Learning.Command.WithdrawApprenticeship;
 
 public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawApprenticeshipCommand, Outcome>
 {
-    private readonly IApprenticeshipRepository _apprenticeshipRepository;
+    private readonly ILearningRepository _learningRepository;
     private readonly IApprenticeshipsOuterApiClient _apprenticeshipsOuterApiClient;
     private readonly ISystemClockService _systemClockService;
     private readonly IValidator<WithdrawDomainRequest> _validator;
@@ -20,14 +20,14 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
     private ILogger<WithdrawApprenticeshipCommandHandler> _logger;
 
     public WithdrawApprenticeshipCommandHandler(
-        IApprenticeshipRepository apprenticeshipRepository, 
+        ILearningRepository learningRepository, 
         IApprenticeshipsOuterApiClient apprenticeshipsOuterApiClient,
         ISystemClockService systemClockService,
         IValidator<WithdrawDomainRequest> validator,
         IMessageSession messageSession,
         ILogger<WithdrawApprenticeshipCommandHandler> logger)
     {
-        _apprenticeshipRepository = apprenticeshipRepository;
+        _learningRepository = learningRepository;
         _apprenticeshipsOuterApiClient = apprenticeshipsOuterApiClient;
         _systemClockService = systemClockService;
         _validator = validator;
@@ -38,7 +38,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
     public async Task<Outcome> Handle(WithdrawApprenticeshipCommand command, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation($"Handling WithdrawApprenticeshipCommand for ULN {command.ULN}");
-        var apprenticeship = await _apprenticeshipRepository.GetByUln(command.ULN);
+        var apprenticeship = await _learningRepository.GetByUln(command.ULN);
 
         if (apprenticeship == null)
         {
@@ -56,7 +56,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
 
         var reason = GetReason(command);
         apprenticeship.WithdrawApprenticeship(command.ProviderApprovedBy, command.LastDayOfLearning, reason, _systemClockService.UtcNow.DateTime);
-        await _apprenticeshipRepository.Update(apprenticeship);
+        await _learningRepository.Update(apprenticeship);
 
         if (apprenticeship.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
         {

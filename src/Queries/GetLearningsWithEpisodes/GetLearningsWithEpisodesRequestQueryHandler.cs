@@ -6,12 +6,12 @@ namespace SFA.DAS.Learning.Queries.GetLearningsWithEpisodes;
 
 public class GetLearningsWithEpisodesRequestQueryHandler : IQueryHandler<GetLearningsWithEpisodesRequest, GetLearningsWithEpisodesResponse?>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
     private readonly ILogger<GetLearningsWithEpisodesRequestQueryHandler> _logger;
 
-    public GetLearningsWithEpisodesRequestQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository, ILogger<GetLearningsWithEpisodesRequestQueryHandler> logger)
+    public GetLearningsWithEpisodesRequestQueryHandler(ILearningQueryRepository learningQueryRepository, ILogger<GetLearningsWithEpisodesRequestQueryHandler> logger)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
         _logger = logger;
     }
 
@@ -19,15 +19,15 @@ public class GetLearningsWithEpisodesRequestQueryHandler : IQueryHandler<GetLear
     {
         _logger.LogInformation("Handling GetLearningsWithEpisodesRequest for Ukprn: {ukprn} CollectionYear: {collectionYear} CollectionPeriod: {collectionPeriod}", query.Ukprn, query.CollectionYear, query.CollectionPeriod);
 
-        var apprenticeships = await _apprenticeshipQueryRepository.GetApprenticeshipsWithEpisodes(query.Ukprn, query.CollectionYear.GetLastDay(query.CollectionPeriod));
+        var learnings = await _learningQueryRepository.GetLearningsWithEpisodes(query.Ukprn, query.CollectionYear.GetLastDay(query.CollectionPeriod));
 
-        if (apprenticeships == null)
+        if (learnings == null)
         {
-            _logger.LogInformation("No apprenticeships found for {ukprn}", query.Ukprn);
+            _logger.LogInformation("No learnings found for {ukprn}", query.Ukprn);
             return null;
         }
 
-        _logger.LogInformation("{numberFound} apprenticeships found for {ukprn}", apprenticeships.Count, query.Ukprn);
-        return new GetLearningsWithEpisodesResponse(query.Ukprn, apprenticeships);
+        _logger.LogInformation("{numberFound} apprenticeships found for {ukprn}", learnings.Count, query.Ukprn);
+        return new GetLearningsWithEpisodesResponse(query.Ukprn, learnings);
     }
 }

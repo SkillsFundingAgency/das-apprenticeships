@@ -22,7 +22,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApproveStartDateChange;
 public class WhenAStartDateChangeIsApproved
 {
     private ApproveStartDateChangeCommandHandler _commandHandler = null!;
-    private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
+    private Mock<ILearningRepository> _apprenticeshipRepository = null!;
     private Mock<IMessageSession> _messageSession = null!;
     private Mock<ILogger<ApproveStartDateChangeCommandHandler>> _logger = null!;
     private Fixture _fixture = null!;
@@ -30,7 +30,7 @@ public class WhenAStartDateChangeIsApproved
     [SetUp]
     public void SetUp()
     {
-        _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+        _apprenticeshipRepository = new Mock<ILearningRepository>();
         _messageSession = new Mock<IMessageSession>();
         _logger = new Mock<ILogger<ApproveStartDateChangeCommandHandler>>();
         _commandHandler = new ApproveStartDateChangeCommandHandler(_apprenticeshipRepository.Object, _messageSession.Object, _logger.Object);
@@ -48,7 +48,7 @@ public class WhenAStartDateChangeIsApproved
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var startDate = _fixture.Create<DateTime>();
         ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Provider, startDate);
-        _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+        _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
         //Act
         await _commandHandler.Handle(command);
@@ -73,7 +73,7 @@ public class WhenAStartDateChangeIsApproved
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var startDate = _fixture.Create<DateTime>();
         ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Employer, startDate);
-        _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+        _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
         //Act
         await _commandHandler.Handle(command);
@@ -96,7 +96,7 @@ public class WhenAStartDateChangeIsApproved
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, fundingPlatform: FundingPlatform.SLD);
         var startDate = _fixture.Create<DateTime>();
         ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Employer, startDate);
-        _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+        _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
         //Act
         await _commandHandler.Handle(command);

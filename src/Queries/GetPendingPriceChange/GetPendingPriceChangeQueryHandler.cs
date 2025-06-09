@@ -4,16 +4,16 @@ namespace SFA.DAS.Learning.Queries.GetPendingPriceChange;
 
 public class GetPendingPriceChangeQueryHandler : IQueryHandler<GetPendingPriceChangeRequest, GetPendingPriceChangeResponse?>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
 
-    public GetPendingPriceChangeQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository)
+    public GetPendingPriceChangeQueryHandler(ILearningQueryRepository learningQueryRepository)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
     }
 
     public async Task<GetPendingPriceChangeResponse> Handle(GetPendingPriceChangeRequest query, CancellationToken cancellationToken = default)
     {
-        var pendingPriceChange = await _apprenticeshipQueryRepository.GetPendingPriceChange(query.ApprenticeshipKey);
+        var pendingPriceChange = await _learningQueryRepository.GetPendingPriceChange(query.ApprenticeshipKey);
 
         if (pendingPriceChange == null) return new GetPendingPriceChangeResponse { HasPendingPriceChange = false };
 

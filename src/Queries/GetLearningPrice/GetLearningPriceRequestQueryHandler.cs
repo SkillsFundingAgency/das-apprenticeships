@@ -4,16 +4,16 @@ namespace SFA.DAS.Learning.Queries.GetLearningPrice;
 
 public class GetLearningPriceRequestQueryHandler : IQueryHandler<GetLearningPriceRequest, GetLearningPriceResponse?>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
 
-    public GetLearningPriceRequestQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository)
+    public GetLearningPriceRequestQueryHandler(ILearningQueryRepository learningQueryRepository)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
     }
 
     public async Task<GetLearningPriceResponse?> Handle(GetLearningPriceRequest query, CancellationToken cancellationToken = default)
     {
-        var price = await _apprenticeshipQueryRepository.GetPrice(query.ApprenticeshipKey);
+        var price = await _learningQueryRepository.GetPrice(query.ApprenticeshipKey);
 
         if (price == null) return null;
 

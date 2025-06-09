@@ -15,7 +15,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepo
 {
     public class WhenGettingPriceHistory
     {
-        private Learning.Domain.Repositories.ApprenticeshipQueryRepository _sut;
+        private Learning.Domain.Repositories.LearningQueryRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
 
@@ -125,8 +125,8 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepo
         private void SetUpApprenticeshipQueryRepository()
         {
             _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-            var logger = Mock.Of<ILogger<Learning.Domain.Repositories.ApprenticeshipQueryRepository>>();
-            _sut = new Learning.Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
+            var logger = Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>();
+            _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
     }
 }

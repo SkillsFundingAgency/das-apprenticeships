@@ -4,18 +4,18 @@ namespace SFA.DAS.Learning.Command.CancelPendingPriceChange
 {
     public class CancelPendingPriceChangeCommandHandler : ICommandHandler<CancelPendingPriceChangeRequest>
     {
-        private readonly IApprenticeshipRepository _apprenticeshipRepository;
+        private readonly ILearningRepository _learningRepository;
 
-        public CancelPendingPriceChangeCommandHandler(IApprenticeshipRepository apprenticeshipRepository)
+        public CancelPendingPriceChangeCommandHandler(ILearningRepository learningRepository)
         {
-            _apprenticeshipRepository = apprenticeshipRepository;
+            _learningRepository = learningRepository;
         }
 
         public async Task Handle(CancelPendingPriceChangeRequest command, CancellationToken cancellationToken = default)
         {
-            var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+            var apprenticeship = await _learningRepository.Get(command.ApprenticeshipKey);
             apprenticeship.CancelPendingPriceChange();
-            await _apprenticeshipRepository.Update(apprenticeship);
+            await _learningRepository.Update(apprenticeship);
         }
     }
 }

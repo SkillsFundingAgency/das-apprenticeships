@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
         serviceCollection
             .AddCommandHandlers(AddCommandHandlerDecorators)
             .AddScoped<ICommandDispatcher, CommandDispatcher>()
-            .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
+            .AddScoped<ILearningFactory, LearningFactory>()
             .AddScoped<IFundingBandMaximumService, FundingBandMaximumService>()
             .AddSingleton<ISystemClockService, SystemClockService>()
             .AddEncodingServices(configuration)
@@ -57,7 +57,7 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddPersistenceServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        serviceCollection.AddScoped<IApprenticeshipRepository, ApprenticeshipRepository>();
+        serviceCollection.AddScoped<ILearningRepository, LearningRepository>();
         serviceCollection.AddScoped<IAccountIdClaimsHandler, AccountIdClaimsHandler>();
         serviceCollection.AddScoped<IAccountIdAuthorizer, AccountIdAuthorizer>();
         return serviceCollection;

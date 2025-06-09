@@ -22,7 +22,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.CreatePriceChange;
 public class WhenAPriceChangeIsCreated
 {
     private CreatePriceChangeCommandHandler _commandHandler = null!;
-    private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
+    private Mock<ILearningRepository> _apprenticeshipRepository = null!;
     private Mock<IMessageSession> _messageSession = null!;
     private Mock<ISystemClockService> _systemClockService = null!;
     private DateTime _createdDate = DateTime.UtcNow;
@@ -32,7 +32,7 @@ public class WhenAPriceChangeIsCreated
     [SetUp]
     public void SetUp()
     {
-        _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+        _apprenticeshipRepository = new Mock<ILearningRepository>();
         _messageSession = new Mock<IMessageSession>();
         _systemClockService = new Mock<ISystemClockService>();
         _systemClockService.Setup(x => x.UtcNow).Returns(_createdDate);

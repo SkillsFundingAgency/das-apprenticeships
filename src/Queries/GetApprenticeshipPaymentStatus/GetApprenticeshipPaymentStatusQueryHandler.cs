@@ -4,16 +4,16 @@ namespace SFA.DAS.Learning.Queries.GetApprenticeshipPaymentStatus;
 
 public class GetApprenticeshipPaymentStatusQueryHandler : IQueryHandler<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse?>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
 
-    public GetApprenticeshipPaymentStatusQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository)
+    public GetApprenticeshipPaymentStatusQueryHandler(ILearningQueryRepository learningQueryRepository)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
     }
 
     public async Task<GetApprenticeshipPaymentStatusResponse?> Handle(GetApprenticeshipPaymentStatusRequest query, CancellationToken cancellationToken = default)
     {
-        var paymentsFrozen = await _apprenticeshipQueryRepository.GetPaymentStatus(query.ApprenticeshipKey);
+        var paymentsFrozen = await _learningQueryRepository.GetPaymentStatus(query.ApprenticeshipKey);
 
         if(paymentsFrozen == null)
             return null;

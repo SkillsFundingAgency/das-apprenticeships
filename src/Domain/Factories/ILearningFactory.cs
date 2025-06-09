@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Learning.Domain.Factories
 {
-    public interface IApprenticeshipFactory
+    public interface ILearningFactory
     {
         ApprenticeshipDomainModel CreateNew(
             long approvalsApprenticeshipId,
@@ -12,6 +12,6 @@ namespace SFA.DAS.Learning.Domain.Factories
             string lastName, 
             string apprenticeshipHashedId);
         
-        ApprenticeshipDomainModel GetExisting(Learning.DataAccess.Entities.Apprenticeship.Apprenticeship model);
+        ApprenticeshipDomainModel GetExisting(DataAccess.Entities.Apprenticeship.Apprenticeship model);
     }
 }

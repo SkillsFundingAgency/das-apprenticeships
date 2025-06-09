@@ -9,7 +9,7 @@ namespace SFA.DAS.Learning.Queries.UnitTests;
 public class WhenGetApprenticeshipKey
 {
     private Fixture _fixture;
-    private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
+    private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
     private GetLearningKeyRequestQueryHandler _sut;
 
     [SetUp]
@@ -17,7 +17,7 @@ public class WhenGetApprenticeshipKey
     {
 
         _fixture = new Fixture();
-        _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
+        _apprenticeshipQueryRepository = new Mock<ILearningQueryRepository>();
         _sut = new GetLearningKeyRequestQueryHandler(_apprenticeshipQueryRepository.Object);
     }
 

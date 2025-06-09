@@ -14,7 +14,7 @@ public class WhenSettingPaymentStatus
 {
     private Fixture _fixture;
     private const string _userId = "AnyUserId";
-    private ApprenticeshipFactory _apprenticeshipFactory;
+    private LearningFactory _learningFactory;
 
     [SetUp]
     public void SetUp()

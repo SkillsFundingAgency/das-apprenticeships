@@ -11,14 +11,14 @@ namespace SFA.DAS.Learning.Queries.UnitTests;
 public class WhenGetApprenticeshipsWithEpisodes
 {
     private Fixture _fixture;
-    private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
+    private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
     private GetLearningsWithEpisodesRequestQueryHandler _sut;
 
     [SetUp]
     public void Setup()
     {
         _fixture = new Fixture();
-        _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
+        _apprenticeshipQueryRepository = new Mock<ILearningQueryRepository>();
         _sut = new GetLearningsWithEpisodesRequestQueryHandler(_apprenticeshipQueryRepository.Object, Mock.Of<ILogger<GetLearningsWithEpisodesRequestQueryHandler>>());
     }
 
@@ -33,7 +33,7 @@ public class WhenGetApprenticeshipsWithEpisodes
         var expectedResponse = new GetLearningsWithEpisodesResponse(query.Ukprn, apprenticeships);
 
         _apprenticeshipQueryRepository
-            .Setup(x => x.GetApprenticeshipsWithEpisodes(query.Ukprn, It.IsAny<DateTime>()))
+            .Setup(x => x.GetLearningsWithEpisodes(query.Ukprn, It.IsAny<DateTime>()))
             .ReturnsAsync(apprenticeships);
 
         // Act
@@ -52,7 +52,7 @@ public class WhenGetApprenticeshipsWithEpisodes
         query.CollectionPeriod = 1;
 
         _apprenticeshipQueryRepository
-            .Setup(x => x.GetApprenticeshipsWithEpisodes(query.Ukprn, It.IsAny<DateTime>()))
+            .Setup(x => x.GetLearningsWithEpisodes(query.Ukprn, It.IsAny<DateTime>()))
             .ReturnsAsync((List<ApprenticeshipWithEpisodes>?)null);
 
         // Act

@@ -4,16 +4,16 @@ namespace SFA.DAS.Learning.Queries.GetApprenticeshipStartDate;
 
 public class GetLearningStartDateQueryHandler : IQueryHandler<GetLearningStartDateRequest, GetLearningStartDateResponse?>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
 
-    public GetLearningStartDateQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository)
+    public GetLearningStartDateQueryHandler(ILearningQueryRepository learningQueryRepository)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
     }
 
     public async Task<GetLearningStartDateResponse?> Handle(GetLearningStartDateRequest query, CancellationToken cancellationToken = default)
     {
-        var startDate = await _apprenticeshipQueryRepository.GetStartDate(query.ApprenticeshipKey);
+        var startDate = await _learningQueryRepository.GetStartDate(query.ApprenticeshipKey);
 
         return new GetLearningStartDateResponse
         {

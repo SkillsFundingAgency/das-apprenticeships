@@ -10,14 +10,14 @@ namespace SFA.DAS.Learning.Queries.UnitTests;
 public class WhenGetApprenticeshipPaymentStatus
 {
 	private Fixture _fixture;
-	private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
+	private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
 	private GetApprenticeshipPaymentStatusQueryHandler _sut;
 
 	[SetUp]
 	public void Setup()
 	{
 		_fixture = new Fixture();
-		_apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
+		_apprenticeshipQueryRepository = new Mock<ILearningQueryRepository>();
 		_sut = new GetApprenticeshipPaymentStatusQueryHandler(_apprenticeshipQueryRepository.Object);
 	}
 

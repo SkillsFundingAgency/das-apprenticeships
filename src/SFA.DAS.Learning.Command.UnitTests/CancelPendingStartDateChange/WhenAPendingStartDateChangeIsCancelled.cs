@@ -16,13 +16,13 @@ namespace SFA.DAS.Learning.Command.UnitTests.CancelPendingStartDateChange;
 public class WhenAPendingStartDateChangeIsCancelled
 {
     private CancelPendingStartDateChangeCommandHandler _commandHandler = null!;
-    private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
+    private Mock<ILearningRepository> _apprenticeshipRepository = null!;
     private Fixture _fixture = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+        _apprenticeshipRepository = new Mock<ILearningRepository>();
         _commandHandler = new CancelPendingStartDateChangeCommandHandler(_apprenticeshipRepository.Object);
 
         _fixture = new Fixture();

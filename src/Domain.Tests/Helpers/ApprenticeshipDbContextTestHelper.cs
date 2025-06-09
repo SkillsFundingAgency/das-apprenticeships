@@ -17,11 +17,11 @@ public static class ApprenticeshipDbContextTestHelper
 {
     private static readonly Fixture _fixture = new();
 
-    public static ApprenticeshipQueryRepository SetUpApprenticeshipQueryRepository(this ApprenticeshipsDataContext dbContext)
+    public static LearningQueryRepository SetUpApprenticeshipQueryRepository(this ApprenticeshipsDataContext dbContext)
     {
         dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-        var logger = Mock.Of<ILogger<ApprenticeshipQueryRepository>>();
-        return new ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(dbContext), logger);
+        var logger = Mock.Of<ILogger<LearningQueryRepository>>();
+        return new LearningQueryRepository(new Lazy<ApprenticeshipsDataContext>(dbContext), logger);
     }
 
     public static async Task<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship> AddApprenticeship(

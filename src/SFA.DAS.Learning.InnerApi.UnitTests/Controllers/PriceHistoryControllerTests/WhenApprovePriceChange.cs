@@ -38,7 +38,7 @@ namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryController
             var result = await _sut.ApprovePriceChange(apprenticeshipKey, request);
 
             _commandDispatcher.Verify(x => x.Send<ApprovePriceChangeCommand, ApprovedBy> (
-                        It.Is<ApprovePriceChangeCommand>(r => r.ApprenticeshipKey == apprenticeshipKey && r.UserId == request.UserId), 
+                        It.Is<ApprovePriceChangeCommand>(r => r.LearningKey == apprenticeshipKey && r.UserId == request.UserId), 
                         It.IsAny<CancellationToken>()), Times.Once);
             result.Should().BeOfType<OkObjectResult>();
         }

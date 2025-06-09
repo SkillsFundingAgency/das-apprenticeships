@@ -4,16 +4,16 @@ namespace SFA.DAS.Learning.Queries.GetLearnings
 {
     public class GetLearningsQueryHandler : IQueryHandler<GetLearningsRequest, GetLearningsResponse>
     {
-        private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+        private readonly ILearningQueryRepository _learningQueryRepository;
 
-        public GetLearningsQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository)
+        public GetLearningsQueryHandler(ILearningQueryRepository learningQueryRepository)
         {
-            _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+            _learningQueryRepository = learningQueryRepository;
         }
 
         public async Task<GetLearningsResponse> Handle(GetLearningsRequest query, CancellationToken cancellationToken = default)
         {
-            var apprenticeships = await _apprenticeshipQueryRepository.GetAll(query.Ukprn, query.FundingPlatform);
+            var apprenticeships = await _learningQueryRepository.GetAll(query.Ukprn, query.FundingPlatform);
 
             var response = new GetLearningsResponse(apprenticeships);
 

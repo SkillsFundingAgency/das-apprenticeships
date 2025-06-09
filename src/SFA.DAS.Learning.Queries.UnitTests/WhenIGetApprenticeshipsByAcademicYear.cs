@@ -12,7 +12,7 @@ namespace SFA.DAS.Learning.Queries.UnitTests;
 public class WhenIGetApprenticeshipsByAcademicYear
 {
     private Fixture _fixture;
-    private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
+    private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
     private Mock<IApprenticeshipsOuterApiClient> _apiClient;
     private GetLearningsByAcademicYearQueryHandler _sut;
 
@@ -20,7 +20,7 @@ public class WhenIGetApprenticeshipsByAcademicYear
     public void Setup()
     {
         _fixture = new Fixture();
-        _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
+        _apprenticeshipQueryRepository = new Mock<ILearningQueryRepository>();
         _apiClient = new Mock<IApprenticeshipsOuterApiClient>();
         _sut = new GetLearningsByAcademicYearQueryHandler(_apprenticeshipQueryRepository.Object);
     }

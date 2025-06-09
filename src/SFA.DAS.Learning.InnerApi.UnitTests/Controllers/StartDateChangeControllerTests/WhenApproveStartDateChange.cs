@@ -37,7 +37,7 @@ public class WhenApproveStartDateChange
         var result = await _sut.ApproveStartDateChange(apprenticeshipKey, request);
 
         _commandDispatcher.Verify(x => x.Send(
-            It.Is<ApproveStartDateChangeCommand>(r => r.ApprenticeshipKey == apprenticeshipKey && r.UserId == request.UserId), 
+            It.Is<ApproveStartDateChangeCommand>(r => r.LearningKey == apprenticeshipKey && r.UserId == request.UserId), 
             It.IsAny<CancellationToken>()), Times.Once);
         result.Should().BeOfType<OkResult>();
     }

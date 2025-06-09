@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Learning.Domain.Factories
 {
-    public class ApprenticeshipFactory : IApprenticeshipFactory
+    public class LearningFactory : ILearningFactory
     {
         public ApprenticeshipDomainModel CreateNew(
             long approvalsApprenticeshipId,

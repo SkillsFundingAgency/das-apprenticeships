@@ -15,13 +15,13 @@ namespace SFA.DAS.Learning.Command.UnitTests.CreateStartDateChange
     public class WhenAStartDateChangeIsCreated
     {
         private CreateStartDateChangeCommandHandler _commandHandler;
-        private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
+        private Mock<ILearningRepository> _apprenticeshipRepository;
         private Fixture _fixture;
 
         [SetUp]
         public void SetUp()
         {
-            _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+            _apprenticeshipRepository = new Mock<ILearningRepository>();
             _commandHandler = new CreateStartDateChangeCommandHandler(_apprenticeshipRepository.Object);
             _fixture = new Fixture();
             _fixture.Customize(new ApprenticeshipCustomization());

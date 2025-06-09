@@ -16,7 +16,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepo
 
 public class WhenGettingByDates
 {
-    private Learning.Domain.Repositories.ApprenticeshipQueryRepository _sut;
+    private Learning.Domain.Repositories.LearningQueryRepository _sut;
     private Fixture _fixture;
     private ApprenticeshipsDataContext _dbContext;
 
@@ -124,9 +124,9 @@ public class WhenGettingByDates
     private void SetUpApprenticeshipQueryRepository()
     {
         _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-        _sut = new Learning.Domain.Repositories.ApprenticeshipQueryRepository(
+        _sut = new Learning.Domain.Repositories.LearningQueryRepository(
             new Lazy<ApprenticeshipsDataContext>(_dbContext),
-            Mock.Of<ILogger<Learning.Domain.Repositories.ApprenticeshipQueryRepository>>()
+            Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>()
         );
     }
 }

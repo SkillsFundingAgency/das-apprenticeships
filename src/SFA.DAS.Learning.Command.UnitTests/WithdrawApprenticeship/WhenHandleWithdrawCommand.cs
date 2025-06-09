@@ -25,7 +25,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.WithdrawApprenticeship;
 public class WhenHandleWithdrawCommand
 {
     private Fixture _fixture;
-    private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
+    private Mock<ILearningRepository> _apprenticeshipRepository;
     private Mock<IApprenticeshipsOuterApiClient> _apprenticeshipsOuterApiClient;
     private Mock<ISystemClockService> _systemClockService;
     private Mock<IValidator<WithdrawDomainRequest>> _validator;
@@ -38,7 +38,7 @@ public class WhenHandleWithdrawCommand
     public WhenHandleWithdrawCommand()
     {
         _fixture = new Fixture();
-        _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+        _apprenticeshipRepository = new Mock<ILearningRepository>();
         _apprenticeshipsOuterApiClient = MockOuterApiAcademicYearEnd(2025, 7, 22);
         _validator = new Mock<IValidator<WithdrawDomainRequest>>();
         _systemClockService = MockSystemClock(2024, 12, 17);

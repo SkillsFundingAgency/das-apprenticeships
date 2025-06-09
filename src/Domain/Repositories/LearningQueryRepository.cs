@@ -10,8 +10,8 @@ using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Learning.Domain.Repositories;
 
-public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext, ILogger<ApprenticeshipQueryRepository> logger)
-    : IApprenticeshipQueryRepository
+public class LearningQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext, ILogger<LearningQueryRepository> logger)
+    : ILearningQueryRepository
 {
     private ApprenticeshipsDataContext DbContext => dbContext.Value;
 
@@ -62,19 +62,19 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
         };
     }
 
-    public async Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId)
+    public async Task<Guid?> GetKeyByLearningId(long learningId)
     {
         var apprenticeshipWithMatchingId = await DbContext.Apprenticeships
-            .SingleOrDefaultAsync(x => x.ApprovalsApprenticeshipId == apprenticeshipId);
+            .SingleOrDefaultAsync(x => x.ApprovalsApprenticeshipId == learningId);
         return apprenticeshipWithMatchingId?.Key;
     }
 
-    public async Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey)
+    public async Task<ApprenticeshipPrice?> GetPrice(Guid learningKey)
     {
         var apprenticeship = await DbContext.Apprenticeships
             .Include(x => x.Episodes)
             .ThenInclude(x => x.Prices)
-            .FirstOrDefaultAsync(x => x.Key == apprenticeshipKey);
+            .FirstOrDefaultAsync(x => x.Key == learningKey);
 
         var episodes = apprenticeship?.Episodes.ToList();
         var prices = episodes?.SelectMany(x => x.Prices).Where(x => !x.IsDeleted).ToList();
@@ -110,12 +110,12 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
         };
     }
 
-    public async Task<ApprenticeshipStartDate?> GetStartDate(Guid apprenticeshipKey)
+    public async Task<ApprenticeshipStartDate?> GetStartDate(Guid learningKey)
     {
         var apprenticeship = await DbContext.Apprenticeships
             .Include(x => x.Episodes)
             .ThenInclude(x => x.Prices)
-            .FirstOrDefaultAsync(x => x.Key == apprenticeshipKey);
+            .FirstOrDefaultAsync(x => x.Key == learningKey);
 
         var episodes = apprenticeship?.Episodes.ToList();
         var prices = episodes?.SelectMany(x => x.Prices).Where(x => !x.IsDeleted).ToList();
@@ -154,9 +154,9 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
             };
     }
 
-    public async Task<PendingPriceChange?> GetPendingPriceChange(Guid apprenticeshipKey)
+    public async Task<PendingPriceChange?> GetPendingPriceChange(Guid learningKey)
     {
-        logger.LogInformation("Getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+        logger.LogInformation("Getting pending price change for apprenticeship {learningKey}", learningKey);
 
         PendingPriceChange? pendingPriceChange = null;
 
@@ -165,7 +165,7 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
             var apprenticeship = await DbContext.Apprenticeships
                 .Include(x => x.PriceHistories)
                 .Include(x => x.Episodes).ThenInclude(x => x.Prices)
-                .Where(x => x.Key == apprenticeshipKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created))
+                .Where(x => x.Key == learningKey && x.PriceHistories.Any(y => y.PriceChangeRequestStatus == ChangeRequestStatus.Created))
                 .SingleOrDefaultAsync();
 
             var episodes = apprenticeship?.Episodes.ToList();
@@ -206,7 +206,7 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error getting pending price change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+            logger.LogError(e, "Error getting pending price change for apprenticeship {learningKey}", learningKey);
         }
 
         return pendingPriceChange;
@@ -219,9 +219,9 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
         return apprenticeship?.Key;
     }
 
-    public async Task<PendingStartDateChange?> GetPendingStartDateChange(Guid apprenticeshipKey)
+    public async Task<PendingStartDateChange?> GetPendingStartDateChange(Guid learningKey)
     {
-        logger.LogInformation("Getting pending start date change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+        logger.LogInformation("Getting pending start date change for apprenticeship {learningKey}", learningKey);
 
         PendingStartDateChange? pendingStartDateChange = null;
 
@@ -230,7 +230,7 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
             var apprenticeship = await DbContext.Apprenticeships
                 .Include(x => x.StartDateChanges)
                 .Include(x => x.Episodes).ThenInclude(x => x.Prices)
-                .Where(x => x.Key == apprenticeshipKey && x.StartDateChanges.Any(y => y.RequestStatus == ChangeRequestStatus.Created))
+                .Where(x => x.Key == learningKey && x.StartDateChanges.Any(y => y.RequestStatus == ChangeRequestStatus.Created))
                 .SingleOrDefaultAsync();
             var episodes = apprenticeship?.Episodes.ToList();
             var prices = episodes?.SelectMany(x => x.Prices).Where(x => !x.IsDeleted).ToList();
@@ -271,13 +271,13 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error getting pending start date change for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+            logger.LogError(e, "Error getting pending start date change for apprenticeship {learningKey}", learningKey);
         }
 
         return pendingStartDateChange;
     }
 
-    public async Task<PaymentStatus?> GetPaymentStatus(Guid apprenticeshipKey)
+    public async Task<PaymentStatus?> GetPaymentStatus(Guid learningKey)
     {
         PaymentStatus? paymentStatus = null;
 
@@ -286,7 +286,7 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
             var apprenticeship = await DbContext.Apprenticeships
                 .Include(x => x.Episodes)
                 .Include(x => x.FreezeRequests)
-                .FirstOrDefaultAsync(x => x.Key == apprenticeshipKey);
+                .FirstOrDefaultAsync(x => x.Key == learningKey);
 
             var episodes = apprenticeship?.Episodes.ToList();
             var latestEpisode = episodes?.MaxBy(x => x.Prices.Where(x => !x.IsDeleted).Select(x => x.StartDate));
@@ -299,14 +299,14 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
 
             if (paymentStatus.IsFrozen)
             {
-                var activeFreezeRequest = apprenticeship!.FreezeRequests.Single(x => x.ApprenticeshipKey == apprenticeshipKey && !x.Unfrozen);
+                var activeFreezeRequest = apprenticeship!.FreezeRequests.Single(x => x.ApprenticeshipKey == learningKey && !x.Unfrozen);
                 paymentStatus.Reason = activeFreezeRequest.Reason;
                 paymentStatus.FrozenOn = activeFreezeRequest.FrozenDateTime;
             }
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error getting payment status for apprenticeship {apprenticeshipKey}", apprenticeshipKey);
+            logger.LogError(e, "Error getting payment status for apprenticeship {learningKey}", learningKey);
         }
 
         return paymentStatus;
@@ -317,7 +317,7 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
     /// </summary>
     /// <param name="ukprn">The unique provider reference number. Only apprenticeships where the episode with this provider reference will be returned.</param>
     /// <param name="activeOnDate">If populated, will return only apprenticeships that are active on this date</param>
-    public async Task<List<ApprenticeshipWithEpisodes>?> GetApprenticeshipsWithEpisodes(long ukprn, DateTime? activeOnDate = null)
+    public async Task<List<ApprenticeshipWithEpisodes>?> GetLearningsWithEpisodes(long ukprn, DateTime? activeOnDate = null)
     {
         List<ApprenticeshipWithEpisodes>? apprenticeshipWithEpisodes = null;
 

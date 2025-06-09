@@ -18,7 +18,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepo
 
 public class WhenGettingApprenticeshipsWithEpisodes
 {
-    private Learning.Domain.Repositories.ApprenticeshipQueryRepository _sut = null!;
+    private Learning.Domain.Repositories.LearningQueryRepository _sut = null!;
     private Fixture _fixture = null!;
     private ApprenticeshipsDataContext _dbContext = null!;
 
@@ -41,7 +41,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         SetUpApprenticeshipQueryRepository();
 
         //Act
-        var result = await _sut.GetApprenticeshipsWithEpisodes(_fixture.Create<long>());
+        var result = await _sut.GetLearningsWithEpisodes(_fixture.Create<long>());
 
         //Assert
         result.Should().BeEmpty();
@@ -83,7 +83,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         await _dbContext.SaveChangesAsync();
 
         // Act
-        var result = await _sut.GetApprenticeshipsWithEpisodes(ukprn);
+        var result = await _sut.GetLearningsWithEpisodes(ukprn);
 
         // Assert
         result.Should().NotBeNull();
@@ -135,7 +135,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         await _dbContext.SaveChangesAsync();
 
         // Act
-        var result = await _sut.GetApprenticeshipsWithEpisodes(ukprn);
+        var result = await _sut.GetLearningsWithEpisodes(ukprn);
 
         // Assert
         result.Should().NotBeNull();
@@ -179,8 +179,8 @@ public class WhenGettingApprenticeshipsWithEpisodes
     private void SetUpApprenticeshipQueryRepository()
     {
         _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-        var logger = Mock.Of<ILogger<Learning.Domain.Repositories.ApprenticeshipQueryRepository>>();
-        _sut = new Learning.Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
+        var logger = Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>();
+        _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
     }
 
     private EpisodePrice CreateEpisodePrice(Guid episodeKey, DateTime start, DateTime end)

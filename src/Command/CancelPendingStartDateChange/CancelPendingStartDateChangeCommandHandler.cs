@@ -4,17 +4,17 @@ namespace SFA.DAS.Learning.Command.CancelPendingStartDateChange;
 
 public class CancelPendingStartDateChangeCommandHandler : ICommandHandler<CancelPendingStartDateChangeRequest>
 {
-	private readonly IApprenticeshipRepository _apprenticeshipRepository;
+	private readonly ILearningRepository _learningRepository;
 
-	public CancelPendingStartDateChangeCommandHandler(IApprenticeshipRepository apprenticeshipRepository)
+	public CancelPendingStartDateChangeCommandHandler(ILearningRepository learningRepository)
 	{
-		_apprenticeshipRepository = apprenticeshipRepository;
+		_learningRepository = learningRepository;
 	}
 
 	public async Task Handle(CancelPendingStartDateChangeRequest command, CancellationToken cancellationToken = default)
 	{
-		var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+		var apprenticeship = await _learningRepository.Get(command.ApprenticeshipKey);
 		apprenticeship.CancelPendingStartDateChange();
-		await _apprenticeshipRepository.Update(apprenticeship);
+		await _learningRepository.Update(apprenticeship);
 	}
 }

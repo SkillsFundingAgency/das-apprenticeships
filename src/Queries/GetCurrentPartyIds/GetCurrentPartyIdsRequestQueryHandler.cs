@@ -5,12 +5,12 @@ namespace SFA.DAS.Learning.Queries.GetCurrentPartyIds;
 
 public class GetCurrentPartyIdsRequestQueryHandler : IQueryHandler<GetCurrentPartyIdsRequest, GetCurrentPartyIdsResponse?>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
     private readonly ILogger<GetCurrentPartyIdsRequestQueryHandler> _logger;
 
-    public GetCurrentPartyIdsRequestQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository, ILogger<GetCurrentPartyIdsRequestQueryHandler> logger)
+    public GetCurrentPartyIdsRequestQueryHandler(ILearningQueryRepository learningQueryRepository, ILogger<GetCurrentPartyIdsRequestQueryHandler> logger)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
         _logger = logger;
     }
 
@@ -18,7 +18,7 @@ public class GetCurrentPartyIdsRequestQueryHandler : IQueryHandler<GetCurrentPar
     {
         _logger.LogInformation("Handling GetCurrentPartyIdsRequest for ApprenticeshipKey: {key}", query.ApprenticeshipKey);
 
-        var currentPartyIds = await _apprenticeshipQueryRepository.GetCurrentPartyIds(query.ApprenticeshipKey);
+        var currentPartyIds = await _learningQueryRepository.GetCurrentPartyIds(query.ApprenticeshipKey);
 
         if (currentPartyIds == null)
         {

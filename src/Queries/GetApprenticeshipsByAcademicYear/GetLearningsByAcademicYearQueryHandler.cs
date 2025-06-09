@@ -4,7 +4,7 @@ using SFA.DAS.Learning.Domain.Repositories;
 namespace SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 
 public class GetLearningsByAcademicYearQueryHandler(
-    IApprenticeshipQueryRepository queryRepository)
+    ILearningQueryRepository queryRepository)
     : IQueryHandler<GetLearningsByAcademicYearRequest, GetLearningsByAcademicYearResponse>
 {
     public async Task<GetLearningsByAcademicYearResponse> Handle(GetLearningsByAcademicYearRequest query, CancellationToken cancellationToken = default)

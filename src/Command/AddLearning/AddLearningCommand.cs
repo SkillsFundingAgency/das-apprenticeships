@@ -1,8 +1,8 @@
 ﻿using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Learning.Command.AddApprenticeship
+namespace SFA.DAS.Learning.Command.AddLearning
 {
-    public class AddApprenticeshipCommand : ICommand
+    public class AddLearningCommand : ICommand
     {
         public string Uln { get; set; }
         public string TrainingCode { get; set; }

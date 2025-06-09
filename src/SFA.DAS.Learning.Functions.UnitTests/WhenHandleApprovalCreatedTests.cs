@@ -8,7 +8,7 @@ using NUnit.Framework;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.CommitmentsV2.Types;
 using SFA.DAS.Learning.Command;
-using SFA.DAS.Learning.Command.AddApprenticeship;
+using SFA.DAS.Learning.Command.AddLearning;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Functions.Handlers;
 
@@ -33,7 +33,7 @@ namespace SFA.DAS.Learning.Functions.UnitTests
             await handler.Handle(@event, new TestableMessageHandlerContext());
 
             commandDispatcher.Verify(x =>
-                x.Send(It.Is<AddApprenticeshipCommand>(c =>
+                x.Send(It.Is<AddLearningCommand>(c =>
                         c.TrainingCode == @event.TrainingCode &&
                         c.ActualStartDate == @event.ActualStartDate &&
                         c.TotalPrice == @event.PriceEpisodes[0].Cost &&
@@ -67,7 +67,7 @@ namespace SFA.DAS.Learning.Functions.UnitTests
             await handler.Handle(@event, new TestableMessageHandlerContext());
 
             commandDispatcher.Verify(x =>
-                x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == FundingType.Levy),
+                x.Send(It.Is<AddLearningCommand>(c => c.FundingType == FundingType.Levy),
                     It.IsAny<CancellationToken>()));
         }
 
@@ -80,7 +80,7 @@ namespace SFA.DAS.Learning.Functions.UnitTests
             await handler.Handle(@event, new TestableMessageHandlerContext());
 
             commandDispatcher.Verify(x =>
-                x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == FundingType.NonLevy),
+                x.Send(It.Is<AddLearningCommand>(c => c.FundingType == FundingType.NonLevy),
                     It.IsAny<CancellationToken>()));
         }
 
@@ -93,7 +93,7 @@ namespace SFA.DAS.Learning.Functions.UnitTests
             await handler.Handle(@event, new TestableMessageHandlerContext());
 
             commandDispatcher.Verify(x =>
-                x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == FundingType.Transfer),
+                x.Send(It.Is<AddLearningCommand>(c => c.FundingType == FundingType.Transfer),
                     It.IsAny<CancellationToken>()));
         }
 
@@ -106,7 +106,7 @@ namespace SFA.DAS.Learning.Functions.UnitTests
             await handler.Handle(@event, new TestableMessageHandlerContext());
 
             commandDispatcher.Verify(x =>
-                x.Send(It.Is<AddApprenticeshipCommand>(c => c.ActualStartDate == @event.StartDate),
+                x.Send(It.Is<AddLearningCommand>(c => c.ActualStartDate == @event.StartDate),
                     It.IsAny<CancellationToken>()));
         }
     }

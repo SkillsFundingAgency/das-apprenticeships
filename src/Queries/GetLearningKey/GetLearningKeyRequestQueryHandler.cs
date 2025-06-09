@@ -4,16 +4,16 @@ namespace SFA.DAS.Learning.Queries.GetLearningKey;
 
 public class GetLearningKeyRequestQueryHandler : IQueryHandler<GetLearningKeyRequest, GetLearningKeyResponse>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
 
-    public GetLearningKeyRequestQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository)
+    public GetLearningKeyRequestQueryHandler(ILearningQueryRepository learningQueryRepository)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
     }
 
     public async Task<GetLearningKeyResponse> Handle(GetLearningKeyRequest query, CancellationToken cancellationToken = default)
     {
-        var key = await _apprenticeshipQueryRepository.GetKey(query.ApprenticeshipHashedId);
+        var key = await _learningQueryRepository.GetKey(query.ApprenticeshipHashedId);
         return new GetLearningKeyResponse { ApprenticeshipKey = key };
     }
 }

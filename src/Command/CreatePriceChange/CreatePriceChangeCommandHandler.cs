@@ -10,18 +10,18 @@ namespace SFA.DAS.Learning.Command.CreatePriceChange
 {
     public class CreatePriceChangeCommandHandler : ICommandHandler<CreatePriceChangeCommand, ChangeRequestStatus>
     {
-        private readonly IApprenticeshipRepository _apprenticeshipRepository;
+        private readonly ILearningRepository _learningRepository;
         private readonly IMessageSession _messageSession;
         private readonly ISystemClockService _systemClockService;
         private readonly ILogger<CreatePriceChangeCommandHandler> _logger;
 
         public CreatePriceChangeCommandHandler(
-            IApprenticeshipRepository apprenticeshipRepository,
+            ILearningRepository learningRepository,
             IMessageSession messageSession,
             ISystemClockService systemClockService,
             ILogger<CreatePriceChangeCommandHandler> logger)
         {
-            _apprenticeshipRepository = apprenticeshipRepository;
+            _learningRepository = learningRepository;
             _messageSession = messageSession;
             _systemClockService = systemClockService;
             _logger = logger;
@@ -31,7 +31,7 @@ namespace SFA.DAS.Learning.Command.CreatePriceChange
             CancellationToken cancellationToken = default)
         {
             var returnStatus = ChangeRequestStatus.Created;
-            var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+            var apprenticeship = await _learningRepository.Get(command.ApprenticeshipKey);
             var now = _systemClockService.UtcNow.DateTime;
 
             if (!Enum.TryParse(command.Initiator, out ChangeInitiator initiator))
@@ -47,13 +47,13 @@ namespace SFA.DAS.Learning.Command.CreatePriceChange
                 apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, now, ChangeRequestStatus.Created, null, command.Reason, command.UserId, null, now, initiator);
             }
 
-            await _apprenticeshipRepository.Update(apprenticeship);
+            await _learningRepository.Update(apprenticeship);
 
             if (initiator == ChangeInitiator.Provider && IsNewTotalPriceLessThanExisting(apprenticeship, command))
             {
 	            var priceChange = apprenticeship.ProviderAutoApprovePriceChange();
 	            returnStatus = ChangeRequestStatus.Approved;
-	            await _apprenticeshipRepository.Update(apprenticeship);
+	            await _learningRepository.Update(apprenticeship);
                 await SendEvent(apprenticeship, priceChange);
             }
 

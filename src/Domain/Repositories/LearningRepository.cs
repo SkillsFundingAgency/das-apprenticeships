@@ -5,19 +5,19 @@ using SFA.DAS.Learning.Domain.Factories;
 
 namespace SFA.DAS.Learning.Domain.Repositories;
 
-public class ApprenticeshipRepository : IApprenticeshipRepository
+public class LearningRepository : ILearningRepository
 {
     private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
     private IDomainEventDispatcher _domainEventDispatcher;
-    private readonly IApprenticeshipFactory _apprenticeshipFactory;
+    private readonly ILearningFactory _learningFactory;
     private readonly IAccountIdAuthorizer _accountIdAuthorizer;
     private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
 
-    public ApprenticeshipRepository(Lazy<ApprenticeshipsDataContext> dbContext, IDomainEventDispatcher domainEventDispatcher, IApprenticeshipFactory apprenticeshipFactory, IAccountIdAuthorizer accountIdAuthorizer)
+    public LearningRepository(Lazy<ApprenticeshipsDataContext> dbContext, IDomainEventDispatcher domainEventDispatcher, ILearningFactory learningFactory, IAccountIdAuthorizer accountIdAuthorizer)
     {
         _lazyContext = dbContext;
         _domainEventDispatcher = domainEventDispatcher;
-        _apprenticeshipFactory = apprenticeshipFactory;
+        _learningFactory = learningFactory;
         _accountIdAuthorizer = accountIdAuthorizer;
     }
 
@@ -44,7 +44,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
             .ThenInclude(y => y.Prices)
             .SingleAsync(x => x.Key == key);
 
-        return _apprenticeshipFactory.GetExisting(apprenticeship);
+        return _learningFactory.GetExisting(apprenticeship);
     }
 
     public async Task<ApprenticeshipDomainModel?> Get(string uln, long approvalsApprenticeshipId)
@@ -56,7 +56,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
             .Include(x => x.Episodes)
             .ThenInclude(y => y.Prices)
             .SingleOrDefaultAsync(x => x.Uln == uln && x.ApprovalsApprenticeshipId == approvalsApprenticeshipId);
-        return apprenticeship == null ? null : _apprenticeshipFactory.GetExisting(apprenticeship);
+        return apprenticeship == null ? null : _learningFactory.GetExisting(apprenticeship);
     }
     
     public async Task<ApprenticeshipDomainModel?> GetByUln(string uln)
@@ -74,7 +74,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
             return null;
         }
 
-        return _apprenticeshipFactory.GetExisting(apprenticeship);
+        return _learningFactory.GetExisting(apprenticeship);
     }
 
     public async Task Update(ApprenticeshipDomainModel apprenticeship)
