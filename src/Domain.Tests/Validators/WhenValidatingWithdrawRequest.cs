@@ -1,15 +1,15 @@
-﻿using AutoFixture;
+﻿using System;
+using AutoFixture;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.TestHelpers;
-using System;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Validators;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure.Services;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Validators;
+namespace SFA.DAS.Learning.Domain.UnitTests.Validators;
 
 public class WhenValidatingWithdrawRequest
 {

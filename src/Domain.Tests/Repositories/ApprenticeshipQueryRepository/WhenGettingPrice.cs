@@ -10,7 +10,7 @@ using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Learning.DataAccess;
 using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
+namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
 {
     public class WhenGettingPrice
     {

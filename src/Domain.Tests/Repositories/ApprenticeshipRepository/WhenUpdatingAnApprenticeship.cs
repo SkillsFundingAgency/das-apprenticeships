@@ -6,15 +6,14 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Learning.DataAccess;
-using SFA.DAS.Learning.Domain;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Factories;
+using SFA.DAS.Learning.Domain.UnitTests.Helpers;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRepository
+namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepository
 {
     public class WhenUpdatingAnApprenticeship
     {

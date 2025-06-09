@@ -12,7 +12,7 @@ using SFA.DAS.Learning.Command.AddApprenticeship;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Functions.Handlers;
 
-namespace SFA.DAS.Apprenticeships.Functions.UnitTests
+namespace SFA.DAS.Learning.Functions.UnitTests
 {
     public class WhenHandleApprovalCreatedTests
     {

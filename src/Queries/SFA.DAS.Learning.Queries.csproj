@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="GetApprenticeshipKey\**" />
+    <Compile Remove="GetApprenticeships\**" />
+    <EmbeddedResource Remove="GetApprenticeshipKey\**" />
+    <EmbeddedResource Remove="GetApprenticeships\**" />
+    <None Remove="GetApprenticeshipKey\**" />
+    <None Remove="GetApprenticeships\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Domain\SFA.DAS.Learning.Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\SFA.DAS.Learning.Infrastructure.csproj" />
   </ItemGroup>
@@ -17,8 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="GetApprenticeshipKey\" />
-    <Folder Include="GetApprenticeships\" />
     <Folder Include="GetLearningsByAcademicYear\" />
   </ItemGroup>
 

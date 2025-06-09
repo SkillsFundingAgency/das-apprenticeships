@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Learning.DataAccess;
 using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure;
 
-namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests;
+namespace SFA.DAS.Learning.DataAccess.UnitTests;
 
 public static class AccountIdAuthorizerTestHelper
 {

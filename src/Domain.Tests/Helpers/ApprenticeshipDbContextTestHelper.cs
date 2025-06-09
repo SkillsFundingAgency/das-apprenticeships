@@ -1,17 +1,17 @@
-﻿using AutoFixture;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Apprenticeships.TestHelpers;
-using System.Threading.Tasks;
 using SFA.DAS.Learning.DataAccess;
 using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
+namespace SFA.DAS.Learning.Domain.UnitTests.Helpers;
 
 public static class ApprenticeshipDbContextTestHelper
 {

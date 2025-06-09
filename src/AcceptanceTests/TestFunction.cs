@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 using Moq;
 using NServiceBus.Testing;
-using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
+using SFA.DAS.Learning.AcceptanceTests.Helpers;
 using SFA.DAS.Learning.Functions;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 
-namespace SFA.DAS.Apprenticeships.AcceptanceTests;
+namespace SFA.DAS.Learning.AcceptanceTests;
 
 public class TestFunction : IDisposable
 {

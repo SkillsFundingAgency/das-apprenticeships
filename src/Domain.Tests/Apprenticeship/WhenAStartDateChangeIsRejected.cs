@@ -1,11 +1,11 @@
-﻿using AutoFixture;
+﻿using System.Linq;
+using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.TestHelpers;
-using System.Linq;
 using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
+namespace SFA.DAS.Learning.Domain.UnitTests.Apprenticeship;
 
 [TestFixture]
 public class WhenAStartDateChangeIsRejected

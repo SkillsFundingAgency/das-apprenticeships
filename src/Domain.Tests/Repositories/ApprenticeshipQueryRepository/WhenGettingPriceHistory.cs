@@ -11,7 +11,7 @@ using SFA.DAS.Learning.DataAccess;
 using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
+namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
 {
     public class WhenGettingPriceHistory
     {

@@ -3,12 +3,12 @@ using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
-using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
 using SFA.DAS.Encoding;
+using SFA.DAS.Learning.AcceptanceTests.Helpers;
 using SFA.DAS.Learning.Functions;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 
-namespace SFA.DAS.Apprenticeships.AcceptanceTests;
+namespace SFA.DAS.Learning.AcceptanceTests;
 
 internal class TestFunctionStartup
 {

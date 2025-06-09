@@ -1,17 +1,16 @@
-﻿using FluentAssertions;
+﻿using System.IO;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using System.IO;
-using System.Threading.Tasks;
 using SFA.DAS.Learning.Command;
 using SFA.DAS.Learning.Command.WithdrawApprenticeship;
 using SFA.DAS.Learning.Domain;
-using SFA.DAS.Learning.Functions;
 
-namespace SFA.DAS.Apprenticeships.Functions.UnitTests;
+namespace SFA.DAS.Learning.Functions.UnitTests;
 
 [TestFixture]
 public class WithdrawApprenticeshipFunctionTests

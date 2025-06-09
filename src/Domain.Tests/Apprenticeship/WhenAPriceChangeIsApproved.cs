@@ -1,14 +1,14 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Linq;
+using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
-using System;
-using System.Linq;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
+namespace SFA.DAS.Learning.Domain.UnitTests.Apprenticeship;
 
 [TestFixture]
 public class WhenAPriceChangeIsApproved

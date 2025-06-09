@@ -3,7 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Learning.Domain.Factories;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Factories
+namespace SFA.DAS.Learning.Domain.UnitTests.Factories
 {
     [TestFixture]
     public class WhenAnExistingApprenticeshipIsCreated

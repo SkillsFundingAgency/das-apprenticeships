@@ -10,7 +10,7 @@ using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.RejectPendingPriceChange
+namespace SFA.DAS.Learning.Command.UnitTests.RejectPendingPriceChange
 {
     [TestFixture]
     public class WhenAPendingPriceChangeIsRejected

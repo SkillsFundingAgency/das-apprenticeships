@@ -2,13 +2,13 @@ using AutoFixture;
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 using Moq;
-using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
+using SFA.DAS.Learning.AcceptanceTests.Helpers;
 using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
+namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
 {
     [Binding]
     public class ApprovalCreatedStepDefinitions

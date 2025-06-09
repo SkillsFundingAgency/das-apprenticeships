@@ -14,7 +14,7 @@ using SFA.DAS.Learning.DataTransferObjects;
 using Episode = SFA.DAS.Learning.DataAccess.Entities.Apprenticeship.Episode;
 using EpisodePrice = SFA.DAS.Learning.DataAccess.Entities.Apprenticeship.EpisodePrice;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository;
+namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository;
 
 public class WhenGettingApprenticeshipsWithEpisodes
 {

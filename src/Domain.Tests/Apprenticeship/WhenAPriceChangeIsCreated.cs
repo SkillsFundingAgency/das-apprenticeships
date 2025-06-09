@@ -6,7 +6,7 @@ using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
+namespace SFA.DAS.Learning.Domain.UnitTests.Apprenticeship;
 
 [TestFixture]
 public class WhenAPriceChangeIsCreated

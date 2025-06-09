@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.AcceptanceTests;
+﻿namespace SFA.DAS.Learning.AcceptanceTests;
 
 public class TestMessageSession : IMessageSession
 {

@@ -1,15 +1,14 @@
-﻿using AutoFixture;
-using NUnit.Framework;
-using System;
-using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
-using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+﻿using System;
 using System.Linq;
+using AutoFixture;
 using FluentAssertions;
+using NUnit.Framework;
 using SFA.DAS.Apprenticeships.TestHelpers;
+using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Factories;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
+namespace SFA.DAS.Learning.Domain.UnitTests.Apprenticeship;
 
 public class WhenSettingPaymentStatus
 {

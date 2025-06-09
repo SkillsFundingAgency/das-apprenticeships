@@ -1,4 +1,4 @@
-namespace SFA.DAS.Apprenticeships.AcceptanceTests.Bindings;
+namespace SFA.DAS.Learning.AcceptanceTests.Bindings;
 
 [Binding]
 public class TestFunctionPerScenarioHook

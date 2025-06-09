@@ -1,14 +1,14 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using SFA.DAS.Learning.Command.CreatePriceChange;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Repositories;
@@ -16,7 +16,7 @@ using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure.Services;
 using SFA.DAS.Learning.Types;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreatePriceChange;
+namespace SFA.DAS.Learning.Command.UnitTests.CreatePriceChange;
 
 [TestFixture]
 public class WhenAPriceChangeIsCreated

@@ -1,3 +1,7 @@
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -6,10 +10,6 @@ using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using SFA.DAS.Learning.Command.AddApprenticeship;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Factories;
@@ -18,7 +18,7 @@ using SFA.DAS.Learning.Infrastructure.Services;
 using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval;
+namespace SFA.DAS.Learning.Command.UnitTests.AddApproval;
 
 [TestFixture]
 public class WhenAnAddApprenticeshipCommandIsSent

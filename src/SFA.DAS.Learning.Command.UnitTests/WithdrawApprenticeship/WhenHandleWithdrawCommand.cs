@@ -1,15 +1,14 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.TestHelpers;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using SFA.DAS.Learning.Command.WithdrawApprenticeship;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Repositories;
@@ -21,7 +20,7 @@ using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 using LearnerStatus = SFA.DAS.Learning.Domain.Apprenticeship.LearnerStatus;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.WithdrawApprenticeship;
+namespace SFA.DAS.Learning.Command.UnitTests.WithdrawApprenticeship;
 
 public class WhenHandleWithdrawCommand
 {
