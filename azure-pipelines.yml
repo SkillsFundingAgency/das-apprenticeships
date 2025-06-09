@@ -12,9 +12,9 @@ trigger:
 
 variables:
 - name: SolutionBaseName
-  value: SFA.DAS.Apprenticeships
+  value: SFA.DAS.Learning
 - name: DACPACSolutionBaseName
-  value: SFA.DAS.Apprenticeships.Database
+  value: SFA.DAS.Learning.Database
 - name: BuildConfiguration
   value: release
 - name: BuildPlatform
@@ -60,7 +60,7 @@ stages:
       BuildConfiguration: $(BuildConfiguration)
 
 - template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks
-   
+
 - stage: Deploy_AT
   dependsOn: Build
   displayName: Deploy to AT
