@@ -5,7 +5,7 @@ using SFA.DAS.Learning.DataTransferObjects;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Queries.GetPendingStartDateChange;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests
+namespace SFA.DAS.Learning.Queries.UnitTests
 {
     public class WhenGetPendingStartDateChange
     {

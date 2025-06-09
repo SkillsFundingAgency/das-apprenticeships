@@ -1,11 +1,11 @@
 namespace SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 
-public class GetApprenticeshipsByAcademicYearRequest : PagedQuery, IQuery
+public class GetLearningsByAcademicYearRequest : PagedQuery, IQuery
 {
     public long UkPrn { get; }
     public int AcademicYear { get; }
     
-    public GetApprenticeshipsByAcademicYearRequest(long ukPrn, int academicYear, int page, int? pageSize)
+    public GetLearningsByAcademicYearRequest(long ukPrn, int academicYear, int page, int? pageSize)
     {
         UkPrn = ukPrn;
         AcademicYear = academicYear;

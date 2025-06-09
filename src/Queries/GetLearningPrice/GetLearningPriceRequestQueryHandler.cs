@@ -1,23 +1,23 @@
 ﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Learning.Queries.GetApprenticeshipPrice;
+namespace SFA.DAS.Learning.Queries.GetLearningPrice;
 
-public class GetApprenticeshipPriceRequestQueryHandler : IQueryHandler<GetApprenticeshipPriceRequest, GetApprenticeshipPriceResponse?>
+public class GetLearningPriceRequestQueryHandler : IQueryHandler<GetLearningPriceRequest, GetLearningPriceResponse?>
 {
     private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
 
-    public GetApprenticeshipPriceRequestQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository)
+    public GetLearningPriceRequestQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository)
     {
         _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
     }
 
-    public async Task<GetApprenticeshipPriceResponse?> Handle(GetApprenticeshipPriceRequest query, CancellationToken cancellationToken = default)
+    public async Task<GetLearningPriceResponse?> Handle(GetLearningPriceRequest query, CancellationToken cancellationToken = default)
     {
         var price = await _apprenticeshipQueryRepository.GetPrice(query.ApprenticeshipKey);
 
         if (price == null) return null;
 
-        return new GetApprenticeshipPriceResponse
+        return new GetLearningPriceResponse
         {
             ApprenticeshipKey = query.ApprenticeshipKey,
             TrainingPrice = price.TrainingPrice,

@@ -11,7 +11,7 @@ using SFA.DAS.Learning.InnerApi.Identity.Authorization;
 using SFA.DAS.Learning.InnerApi.Requests;
 using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
 {
     public class WhenRejectPending
     {

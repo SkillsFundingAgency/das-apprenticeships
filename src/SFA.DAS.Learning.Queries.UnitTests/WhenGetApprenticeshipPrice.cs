@@ -3,15 +3,15 @@ using FluentAssertions;
 using Moq;
 using SFA.DAS.Learning.DataTransferObjects;
 using SFA.DAS.Learning.Domain.Repositories;
-using SFA.DAS.Learning.Queries.GetApprenticeshipPrice;
+using SFA.DAS.Learning.Queries.GetLearningPrice;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
+namespace SFA.DAS.Learning.Queries.UnitTests;
 
 public class WhenGetApprenticeshipPrice
 {
     private Fixture _fixture;
     private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
-    private GetApprenticeshipPriceRequestQueryHandler _sut;
+    private GetLearningPriceRequestQueryHandler _sut;
 
     [SetUp]
     public void Setup()
@@ -19,14 +19,14 @@ public class WhenGetApprenticeshipPrice
 
         _fixture = new Fixture();
         _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
-        _sut = new GetApprenticeshipPriceRequestQueryHandler(_apprenticeshipQueryRepository.Object);
+        _sut = new GetLearningPriceRequestQueryHandler(_apprenticeshipQueryRepository.Object);
     }
 
     [Test]
     public async Task ThenApprenticeshipPriceIsReturned()
     {
         //Arrange
-        var query = _fixture.Create<GetApprenticeshipPriceRequest>();
+        var query = _fixture.Create<GetLearningPriceRequest>();
         var expectedResult = _fixture.Create<ApprenticeshipPrice>();
 
         _apprenticeshipQueryRepository
@@ -44,7 +44,7 @@ public class WhenGetApprenticeshipPrice
     public async Task ThenNullIsReturnedWhenNoRecordExists()
     {
         //Arrange
-        var query = _fixture.Create<GetApprenticeshipPriceRequest>();
+        var query = _fixture.Create<GetLearningPriceRequest>();
 
         _apprenticeshipQueryRepository
             .Setup(x => x.GetPrice(query.ApprenticeshipKey))

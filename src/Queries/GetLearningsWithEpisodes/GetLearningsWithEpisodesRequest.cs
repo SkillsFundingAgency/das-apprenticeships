@@ -1,6 +1,6 @@
-﻿namespace SFA.DAS.Learning.Queries.GetApprenticeshipsWithEpisodes;
+﻿namespace SFA.DAS.Learning.Queries.GetLearningsWithEpisodes;
 
-public class GetApprenticeshipsWithEpisodesRequest : IQuery
+public class GetLearningsWithEpisodesRequest : IQuery
 {
     public long Ukprn { get; set; }
     public short CollectionYear { get; set; }

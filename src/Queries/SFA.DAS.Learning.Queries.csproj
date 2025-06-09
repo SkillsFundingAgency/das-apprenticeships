@@ -16,4 +16,10 @@
     <PackageReference Include="Microsoft.Identity.Client" Version="4.62.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="GetApprenticeshipKey\" />
+    <Folder Include="GetApprenticeships\" />
+    <Folder Include="GetLearningsByAcademicYear\" />
+  </ItemGroup>
+
 </Project>

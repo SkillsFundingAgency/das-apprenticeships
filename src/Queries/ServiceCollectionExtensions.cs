@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Learning.Domain.Repositories;
-using SFA.DAS.Learning.Queries.GetApprenticeships;
+using SFA.DAS.Learning.Queries.GetLearnings;
 
 namespace SFA.DAS.Learning.Queries;
 
@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
                     .AsImplementedInterfaces()
                     .WithTransientLifetime();
 
-                scan.FromAssembliesOf(typeof(GetApprenticeshipsQueryHandler))
+                scan.FromAssembliesOf(typeof(GetLearningsQueryHandler))
                     .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime();

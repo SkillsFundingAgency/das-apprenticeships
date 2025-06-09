@@ -1,16 +1,15 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AutoFixture;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.Encoding;
-using AutoFixture;
 using SFA.DAS.Learning.Enums;
-using SFA.DAS.Learning.Infrastructure;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
+namespace SFA.DAS.Learning.Infrastructure.UnitTests
 {
     internal class WhenGettingAccountIdClaims
     {

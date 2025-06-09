@@ -6,7 +6,7 @@ using SFA.DAS.Learning.DataTransferObjects;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Queries.GetCurrentPartyIds;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
+namespace SFA.DAS.Learning.Queries.UnitTests;
 
 public class WhenGetCurrentPartyIds
 {

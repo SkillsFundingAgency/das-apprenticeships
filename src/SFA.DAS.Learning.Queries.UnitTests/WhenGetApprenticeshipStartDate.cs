@@ -5,13 +5,13 @@ using SFA.DAS.Learning.DataTransferObjects;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Queries.GetApprenticeshipStartDate;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
+namespace SFA.DAS.Learning.Queries.UnitTests;
 
 public class WhenGetApprenticeshipStartDate
 {
     private Fixture _fixture;
     private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
-    private GetApprenticeshipStartDateQueryHandler _sut;
+    private GetLearningStartDateQueryHandler _sut;
 
     [SetUp]
     public void Setup()
@@ -19,15 +19,15 @@ public class WhenGetApprenticeshipStartDate
 
         _fixture = new Fixture();
         _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
-        _sut = new GetApprenticeshipStartDateQueryHandler(_apprenticeshipQueryRepository.Object);
+        _sut = new GetLearningStartDateQueryHandler(_apprenticeshipQueryRepository.Object);
     }
 
     [Test]
     public async Task ThenApprenticeshipStartDateIsReturned()
     {
         //Arrange
-        var query = _fixture.Create<GetApprenticeshipStartDateRequest>();
-        var expectedResult = _fixture.Create<GetApprenticeshipStartDateResponse>();
+        var query = _fixture.Create<GetLearningStartDateRequest>();
+        var expectedResult = _fixture.Create<GetLearningStartDateResponse>();
 
         _apprenticeshipQueryRepository
             .Setup(x => x.GetStartDate(query.ApprenticeshipKey))
@@ -44,7 +44,7 @@ public class WhenGetApprenticeshipStartDate
     public async Task ThenNullIsReturnedWhenNoRecordExists()
     {
         //Arrange
-        var query = _fixture.Create<GetApprenticeshipStartDateRequest>();
+        var query = _fixture.Create<GetLearningStartDateRequest>();
 
         _apprenticeshipQueryRepository
             .Setup(x => x.GetStartDate(query.ApprenticeshipKey))

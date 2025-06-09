@@ -9,7 +9,7 @@ using SFA.DAS.Learning.Command.SetPaymentsFrozen;
 using SFA.DAS.Learning.InnerApi.Controllers;
 using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PaymentStatusControllerTests;
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PaymentStatusControllerTests;
 
 public class WhenUnfreezePaymentStatus
 {

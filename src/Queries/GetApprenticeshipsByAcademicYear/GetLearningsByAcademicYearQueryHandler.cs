@@ -3,11 +3,11 @@ using SFA.DAS.Learning.Domain.Repositories;
 
 namespace SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 
-public class GetApprenticeshipsByAcademicYearQueryHandler(
+public class GetLearningsByAcademicYearQueryHandler(
     IApprenticeshipQueryRepository queryRepository)
-    : IQueryHandler<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>
+    : IQueryHandler<GetLearningsByAcademicYearRequest, GetLearningsByAcademicYearResponse>
 {
-    public async Task<GetApprenticeshipsByAcademicYearResponse> Handle(GetApprenticeshipsByAcademicYearRequest query, CancellationToken cancellationToken = default)
+    public async Task<GetLearningsByAcademicYearResponse> Handle(GetLearningsByAcademicYearRequest query, CancellationToken cancellationToken = default)
     {
         var academicYearDates = AcademicYearParser.ParseFrom(query.AcademicYear);
         
@@ -18,9 +18,9 @@ public class GetApprenticeshipsByAcademicYearQueryHandler(
             query.Offset,
             cancellationToken);
 
-        return new GetApprenticeshipsByAcademicYearResponse
+        return new GetLearningsByAcademicYearResponse
         {
-            Items = response.Data.Select(apprenticeship => new GetApprenticeshipsByDatesResponseItem
+            Items = response.Data.Select(apprenticeship => new GetLearningsByDatesResponseItem
             {
                 Uln = apprenticeship.Uln
             }),

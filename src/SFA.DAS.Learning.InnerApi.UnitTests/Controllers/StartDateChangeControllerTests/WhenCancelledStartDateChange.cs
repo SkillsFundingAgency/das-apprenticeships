@@ -8,7 +8,7 @@ using SFA.DAS.Learning.Command.CancelPendingStartDateChange;
 using SFA.DAS.Learning.InnerApi.Controllers;
 using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.StartDateChangeControllerTests;
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.StartDateChangeControllerTests;
 
 public class WhenCancelledStartDateChange
 {

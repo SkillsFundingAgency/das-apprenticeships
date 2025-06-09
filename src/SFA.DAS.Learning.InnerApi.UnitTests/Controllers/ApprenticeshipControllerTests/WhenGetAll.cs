@@ -8,17 +8,17 @@ using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.InnerApi.Controllers;
 using SFA.DAS.Learning.InnerApi.Services;
 using SFA.DAS.Learning.Queries;
-using SFA.DAS.Learning.Queries.GetApprenticeships;
+using SFA.DAS.Learning.Queries.GetLearnings;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests
 {
     public class WhenGetAll
     {
         private Fixture _fixture;
         private Mock<IQueryDispatcher> _queryDispatcher;
         private Mock<ICommandDispatcher> _commandDispatcher;
-        private Mock<ILogger<ApprenticeshipController>> _mockLogger;
-        private ApprenticeshipController _sut;
+        private Mock<ILogger<LearningController>> _mockLogger;
+        private LearningController _sut;
 
         [SetUp]
         public void Setup()
@@ -26,8 +26,8 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipC
             _fixture = new Fixture();
             _queryDispatcher = new Mock<IQueryDispatcher>();
             _commandDispatcher = new Mock<ICommandDispatcher>();
-            _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-            _sut = new ApprenticeshipController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object, Mock.Of<IPagedLinkHeaderService>());
+            _mockLogger = new Mock<ILogger<LearningController>>();
+            _sut = new LearningController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object, Mock.Of<IPagedLinkHeaderService>());
         }
 
         [TestCase(null)]
@@ -36,10 +36,10 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipC
         public async Task ThenApprenticeshipsAreReturned(FundingPlatform? fundingPlatform)
         {
             var ukprn = _fixture.Create<long>();
-            var expectedResult = _fixture.Create<GetApprenticeshipsResponse>();
+            var expectedResult = _fixture.Create<GetLearningsResponse>();
 
             _queryDispatcher
-                .Setup(x => x.Send<GetApprenticeshipsRequest, GetApprenticeshipsResponse>(It.Is<GetApprenticeshipsRequest>(r => r.Ukprn == ukprn && r.FundingPlatform == fundingPlatform)))
+                .Setup(x => x.Send<GetLearningsRequest, GetLearningsResponse>(It.Is<GetLearningsRequest>(r => r.Ukprn == ukprn && r.FundingPlatform == fundingPlatform)))
                 .ReturnsAsync(expectedResult);
 
             var result = await _sut.GetAll(ukprn, fundingPlatform);

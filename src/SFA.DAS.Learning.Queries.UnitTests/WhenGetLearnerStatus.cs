@@ -9,7 +9,7 @@ using SFA.DAS.Learning.Infrastructure.Services;
 using SFA.DAS.Learning.Queries.GetLearnerStatus;
 using SFA.DAS.Learning.Types;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
+namespace SFA.DAS.Learning.Queries.UnitTests;
 
 
 [TestFixture]

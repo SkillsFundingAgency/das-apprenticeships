@@ -1,6 +1,6 @@
-﻿namespace SFA.DAS.Learning.Queries.GetApprenticeshipPrice;
+﻿namespace SFA.DAS.Learning.Queries.GetLearningPrice;
 
-public class GetApprenticeshipPriceResponse
+public class GetLearningPriceResponse
 {
     public Guid ApprenticeshipKey { get; set; }
     public decimal? TrainingPrice { get; set; }

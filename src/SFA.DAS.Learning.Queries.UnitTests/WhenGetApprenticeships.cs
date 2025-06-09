@@ -3,15 +3,15 @@ using FluentAssertions;
 using Moq;
 using SFA.DAS.Learning.DataTransferObjects;
 using SFA.DAS.Learning.Domain.Repositories;
-using SFA.DAS.Learning.Queries.GetApprenticeships;
+using SFA.DAS.Learning.Queries.GetLearnings;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests
+namespace SFA.DAS.Learning.Queries.UnitTests
 {
     public class WhenGetApprenticeships
     {
         private Fixture _fixture;
         private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
-        private GetApprenticeshipsQueryHandler _sut;
+        private GetLearningsQueryHandler _sut;
 
         [SetUp]
         public void Setup()
@@ -19,14 +19,14 @@ namespace SFA.DAS.Apprenticeships.Queries.UnitTests
 
             _fixture = new Fixture();
             _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
-            _sut = new GetApprenticeshipsQueryHandler(_apprenticeshipQueryRepository.Object);
+            _sut = new GetLearningsQueryHandler(_apprenticeshipQueryRepository.Object);
         }
 
         [Test]
         public async Task ThenApprenticeshipsAreReturned()
         {
             //Arrange
-            var query = _fixture.Create<GetApprenticeshipsRequest>();
+            var query = _fixture.Create<GetLearningsRequest>();
             var expectedResult = _fixture.Create<IEnumerable<Apprenticeship>>();
 
             _apprenticeshipQueryRepository

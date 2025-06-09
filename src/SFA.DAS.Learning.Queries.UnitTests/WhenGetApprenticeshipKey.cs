@@ -2,15 +2,15 @@
 using FluentAssertions;
 using Moq;
 using SFA.DAS.Learning.Domain.Repositories;
-using SFA.DAS.Learning.Queries.GetApprenticeshipKey;
+using SFA.DAS.Learning.Queries.GetLearningKey;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
+namespace SFA.DAS.Learning.Queries.UnitTests;
 
 public class WhenGetApprenticeshipKey
 {
     private Fixture _fixture;
     private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
-    private GetApprenticeshipKeyRequestQueryHandler _sut;
+    private GetLearningKeyRequestQueryHandler _sut;
 
     [SetUp]
     public void Setup()
@@ -18,15 +18,15 @@ public class WhenGetApprenticeshipKey
 
         _fixture = new Fixture();
         _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
-        _sut = new GetApprenticeshipKeyRequestQueryHandler(_apprenticeshipQueryRepository.Object);
+        _sut = new GetLearningKeyRequestQueryHandler(_apprenticeshipQueryRepository.Object);
     }
 
     [Test]
     public async Task ThenApprenticeshipKeyIsReturned()
     {
         //Arrange
-        var query = _fixture.Create<GetApprenticeshipKeyRequest>();
-        var expectedResult = _fixture.Create<GetApprenticeshipKeyResponse>();
+        var query = _fixture.Create<GetLearningKeyRequest>();
+        var expectedResult = _fixture.Create<GetLearningKeyResponse>();
 
         _apprenticeshipQueryRepository
             .Setup(x => x.GetKey(query.ApprenticeshipHashedId))

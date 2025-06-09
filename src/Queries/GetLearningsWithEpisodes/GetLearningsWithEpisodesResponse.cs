@@ -1,10 +1,10 @@
 ﻿using SFA.DAS.Learning.DataTransferObjects;
 
-namespace SFA.DAS.Learning.Queries.GetApprenticeshipsWithEpisodes;
+namespace SFA.DAS.Learning.Queries.GetLearningsWithEpisodes;
 
-public class GetApprenticeshipsWithEpisodesResponse
+public class GetLearningsWithEpisodesResponse
 {
-    public GetApprenticeshipsWithEpisodesResponse(long ukprn, List<ApprenticeshipWithEpisodes> apprenticeships)
+    public GetLearningsWithEpisodesResponse(long ukprn, List<ApprenticeshipWithEpisodes> apprenticeships)
     {
         Ukprn = ukprn;
         Apprenticeships = apprenticeships;

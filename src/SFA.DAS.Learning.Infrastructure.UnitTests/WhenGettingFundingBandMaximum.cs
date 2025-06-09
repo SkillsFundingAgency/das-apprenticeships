@@ -10,7 +10,7 @@ using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 using SFA.DAS.Learning.Infrastructure.Services;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
+namespace SFA.DAS.Learning.Infrastructure.UnitTests
 {
     public class WhenGettingFundingBandMaximum
     {

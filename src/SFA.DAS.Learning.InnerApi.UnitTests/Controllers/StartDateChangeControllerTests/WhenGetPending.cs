@@ -8,7 +8,7 @@ using SFA.DAS.Learning.InnerApi.Controllers;
 using SFA.DAS.Learning.Queries;
 using SFA.DAS.Learning.Queries.GetPendingStartDateChange;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.StartDateChangeControllerTests;
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.StartDateChangeControllerTests;
 
 public class WhenGetPending
 {

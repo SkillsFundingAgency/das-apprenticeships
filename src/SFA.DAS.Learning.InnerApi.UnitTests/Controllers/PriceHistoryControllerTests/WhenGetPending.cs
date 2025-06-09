@@ -8,7 +8,7 @@ using SFA.DAS.Learning.InnerApi.Controllers;
 using SFA.DAS.Learning.Queries;
 using SFA.DAS.Learning.Queries.GetPendingPriceChange;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
 {
     public class WhenGetPending
     {

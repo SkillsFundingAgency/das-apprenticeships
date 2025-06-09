@@ -7,14 +7,14 @@ using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
+namespace SFA.DAS.Learning.Queries.UnitTests;
 
 public class WhenIGetApprenticeshipsByAcademicYear
 {
     private Fixture _fixture;
     private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
     private Mock<IApprenticeshipsOuterApiClient> _apiClient;
-    private GetApprenticeshipsByAcademicYearQueryHandler _sut;
+    private GetLearningsByAcademicYearQueryHandler _sut;
 
     [SetUp]
     public void Setup()
@@ -22,7 +22,7 @@ public class WhenIGetApprenticeshipsByAcademicYear
         _fixture = new Fixture();
         _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
         _apiClient = new Mock<IApprenticeshipsOuterApiClient>();
-        _sut = new GetApprenticeshipsByAcademicYearQueryHandler(_apprenticeshipQueryRepository.Object);
+        _sut = new GetLearningsByAcademicYearQueryHandler(_apprenticeshipQueryRepository.Object);
     }
 
     [Test]
@@ -34,9 +34,9 @@ public class WhenIGetApprenticeshipsByAcademicYear
         const int pageNumber = 1;
 
         var queryResult = _fixture.Create<PagedResult<Apprenticeship>>();
-        var expectedResult = new GetApprenticeshipsByAcademicYearResponse
+        var expectedResult = new GetLearningsByAcademicYearResponse
         {
-            Items = queryResult.Data.Select(x => new GetApprenticeshipsByDatesResponseItem
+            Items = queryResult.Data.Select(x => new GetLearningsByDatesResponseItem
             {
                 Uln = x.Uln
             }),
@@ -45,7 +45,7 @@ public class WhenIGetApprenticeshipsByAcademicYear
             TotalItems = queryResult.TotalItems
         };
 
-        var query = new GetApprenticeshipsByAcademicYearRequest(1000, academicYear, pageNumber, pageSize);
+        var query = new GetLearningsByAcademicYearRequest(1000, academicYear, pageNumber, pageSize);
 
         var dates = AcademicYearParser.ParseFrom(academicYear);
 
