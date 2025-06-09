@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Command.RejectStartDateChange;
+namespace SFA.DAS.Learning.Command.RejectStartDateChange;
 
 public class RejectStartDateChangeCommandHandler : ICommandHandler<RejectStartDateChangeCommand>
 {

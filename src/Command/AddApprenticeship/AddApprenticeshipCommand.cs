@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Command.AddApprenticeship
+namespace SFA.DAS.Learning.Command.AddApprenticeship
 {
     public class AddApprenticeshipCommand : ICommand
     {

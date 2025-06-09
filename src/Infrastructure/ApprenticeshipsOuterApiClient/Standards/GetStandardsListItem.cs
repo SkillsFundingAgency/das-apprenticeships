@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
+namespace SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 
 [ExcludeFromCodeCoverage]
 public class GetStandardsListItem : StandardApiResponseBase

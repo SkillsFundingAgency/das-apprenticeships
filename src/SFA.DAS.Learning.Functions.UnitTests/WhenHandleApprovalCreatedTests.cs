@@ -5,12 +5,12 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Functions.Handlers;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.CommitmentsV2.Types;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.AddApprenticeship;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.Functions.Handlers;
 
 namespace SFA.DAS.Apprenticeships.Functions.UnitTests
 {
@@ -42,7 +42,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
                         c.ApprovalsApprenticeshipId == @event.ApprenticeshipId &&
                         c.EmployerAccountId == @event.AccountId &&
                         c.FundingEmployerAccountId == @event.TransferSenderId &&
-                        c.FundingType == Enums.FundingType.Transfer &&
+                        c.FundingType == FundingType.Transfer &&
                         c.LegalEntityName == @event.LegalEntityName &&
                         c.PlannedEndDate == @event.EndDate &&
                         c.UKPRN == @event.ProviderId &&
@@ -67,7 +67,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
             await handler.Handle(@event, new TestableMessageHandlerContext());
 
             commandDispatcher.Verify(x =>
-                x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == Enums.FundingType.Levy),
+                x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == FundingType.Levy),
                     It.IsAny<CancellationToken>()));
         }
 
@@ -80,7 +80,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
             await handler.Handle(@event, new TestableMessageHandlerContext());
 
             commandDispatcher.Verify(x =>
-                x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == Enums.FundingType.NonLevy),
+                x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == FundingType.NonLevy),
                     It.IsAny<CancellationToken>()));
         }
 
@@ -93,7 +93,7 @@ namespace SFA.DAS.Apprenticeships.Functions.UnitTests
             await handler.Handle(@event, new TestableMessageHandlerContext());
 
             commandDispatcher.Verify(x =>
-                x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == Enums.FundingType.Transfer),
+                x.Send(It.Is<AddApprenticeshipCommand>(c => c.FundingType == FundingType.Transfer),
                     It.IsAny<CancellationToken>()));
         }
 

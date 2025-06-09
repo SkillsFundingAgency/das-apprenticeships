@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
+﻿namespace SFA.DAS.Learning.Queries.GetApprenticeshipStartDate;
 
 public class GetApprenticeshipStartDateRequest : IQuery
 {

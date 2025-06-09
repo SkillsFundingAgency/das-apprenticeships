@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.InnerApi.Requests;
+﻿namespace SFA.DAS.Learning.InnerApi.Requests;
 
 /// <summary>
 /// Request to approve a pending start date change request

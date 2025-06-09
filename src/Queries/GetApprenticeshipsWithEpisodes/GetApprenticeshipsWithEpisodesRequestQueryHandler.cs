@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Domain.Extensions;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Learning.Domain.Extensions;
+using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
+namespace SFA.DAS.Learning.Queries.GetApprenticeshipsWithEpisodes;
 
 public class GetApprenticeshipsWithEpisodesRequestQueryHandler : IQueryHandler<GetApprenticeshipsWithEpisodesRequest, GetApprenticeshipsWithEpisodesResponse?>
 {

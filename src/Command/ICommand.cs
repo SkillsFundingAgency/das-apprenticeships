@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command
+﻿namespace SFA.DAS.Learning.Command
 {
     public interface ICommand
     {

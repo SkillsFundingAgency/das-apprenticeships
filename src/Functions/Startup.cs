@@ -1,20 +1,20 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Functions.AppStart;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
-using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
 using SFA.DAS.Configuration.AzureTableStorage;
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Functions.AppStart;
+using SFA.DAS.Learning.Infrastructure.Configuration;
+using SFA.DAS.Learning.Infrastructure.Extensions;
 
-namespace SFA.DAS.Apprenticeships.Functions;
+namespace SFA.DAS.Learning.Functions;
 
 [ExcludeFromCodeCoverage]
 public class Startup

@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
+namespace SFA.DAS.Learning.Queries.GetApprenticeshipPaymentStatus;
 
 public class GetApprenticeshipPaymentStatusQueryHandler : IQueryHandler<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse?>
 {

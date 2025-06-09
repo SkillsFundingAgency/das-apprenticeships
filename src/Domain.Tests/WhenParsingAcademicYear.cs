@@ -1,6 +1,7 @@
 using System;
 using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.Learning.Domain;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests;
 

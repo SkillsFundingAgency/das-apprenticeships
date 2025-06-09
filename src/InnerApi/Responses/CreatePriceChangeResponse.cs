@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.InnerApi.Responses;
+﻿namespace SFA.DAS.Learning.InnerApi.Responses;
 
 /// <summary>
 /// Response returned from a Price Change request

@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
-using SFA.DAS.Apprenticeships.Command.CreatePriceChange;
-using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
-using SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.InnerApi.Responses;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.ApprovePriceChange;
+using SFA.DAS.Learning.Command.CancelPendingPriceChange;
+using SFA.DAS.Learning.Command.CreatePriceChange;
+using SFA.DAS.Learning.Command.RejectPendingPriceChange;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
+using SFA.DAS.Learning.InnerApi.Requests;
+using SFA.DAS.Learning.InnerApi.Responses;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetPendingPriceChange;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
+namespace SFA.DAS.Learning.InnerApi.Controllers
 {
     /// <summary>
     /// Controller for handling requests related to price history

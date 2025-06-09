@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
+namespace SFA.DAS.Learning.Queries.GetPendingPriceChange;
 
 public class GetPendingPriceChangeQueryHandler : IQueryHandler<GetPendingPriceChangeRequest, GetPendingPriceChangeResponse?>
 {

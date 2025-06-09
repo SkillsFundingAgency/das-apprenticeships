@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Domain.Extensions;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Domain.Extensions;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.Types;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
+namespace SFA.DAS.Learning.Queries.GetLearnerStatus;
 
 
 public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusRequest, GetLearnerStatusResponse?>
@@ -32,7 +32,7 @@ public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusReques
 
         var domainLearnerStatus = await _apprenticeshipQueryRepository.GetLearnerStatus(query.ApprenticeshipKey);
 
-        if (domainLearnerStatus?.LearnerStatus == Domain.Apprenticeship.LearnerStatus.Withdrawn)
+        if (domainLearnerStatus?.LearnerStatus == Learning.Domain.Apprenticeship.LearnerStatus.Withdrawn)
         {
             return new GetLearnerStatusResponse
             {

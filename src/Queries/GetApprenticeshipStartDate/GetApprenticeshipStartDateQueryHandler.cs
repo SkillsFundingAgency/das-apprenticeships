@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
+namespace SFA.DAS.Learning.Queries.GetApprenticeshipStartDate;
 
 public class GetApprenticeshipStartDateQueryHandler : IQueryHandler<GetApprenticeshipStartDateRequest, GetApprenticeshipStartDateResponse?>
 {

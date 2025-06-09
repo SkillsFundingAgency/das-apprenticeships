@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
+﻿namespace SFA.DAS.Learning.Queries.GetApprenticeshipPrice;
 
 public class GetApprenticeshipPriceResponse
 {

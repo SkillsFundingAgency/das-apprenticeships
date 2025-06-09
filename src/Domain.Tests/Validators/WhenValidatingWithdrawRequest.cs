@@ -2,11 +2,12 @@
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Validators;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using System;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Validators;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.Infrastructure.Services;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Validators;
 
@@ -104,7 +105,7 @@ public class WhenValidatingWithdrawRequest
         var validator = new WithdrawValidator(_systemClockService.Object);
         var apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, ukprn: ValidUkprn);
-        ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, Enums.ChangeInitiator.Employer, DateTime.UtcNow);
+        ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Employer, DateTime.UtcNow);
         ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeProviderInitiated(apprenticeship, DateTime.UtcNow);
 
         // Act

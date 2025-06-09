@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Encoding;
 using AutoFixture;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.Infrastructure;
 
 namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
 {

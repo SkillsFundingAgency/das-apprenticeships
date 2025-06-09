@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using NServiceBus;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
+namespace SFA.DAS.Learning.Command.SetPaymentsFrozen;
 
 public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozenCommand>
 {
@@ -29,7 +29,7 @@ public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozen
         apprenticeship.SetPaymentsFrozen(command.NewPaymentsFrozenStatus, command.UserId, DateTime.Now, command.Reason);
         await _apprenticeshipRepository.Update(apprenticeship);
 
-        if (apprenticeship.LatestEpisode.FundingPlatform == Enums.FundingPlatform.DAS)
+        if (apprenticeship.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
         {
             if (command.NewPaymentsFrozenStatus)
             {

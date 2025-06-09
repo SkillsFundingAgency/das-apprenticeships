@@ -1,13 +1,13 @@
 ﻿using AutoFixture;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
 using System;
 using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeships.Domain.Factories;
 using System.Linq;
 using FluentAssertions;
 using SFA.DAS.Apprenticeships.TestHelpers;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Factories;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
 

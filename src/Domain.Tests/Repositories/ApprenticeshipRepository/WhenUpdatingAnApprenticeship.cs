@@ -6,18 +6,19 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Factories;
 using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Factories;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRepository
 {
     public class WhenUpdatingAnApprenticeship
     {
-        private Domain.Repositories.ApprenticeshipRepository _sut;
+        private Learning.Domain.Repositories.ApprenticeshipRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
         private Mock<IDomainEventDispatcher> _domainEventDispatcher;
@@ -54,7 +55,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
 
             // Assert
             _accountIdAuthorizer.Verify(x => x
-                .AuthorizeAccountId(It.Is<DataAccess.Entities.Apprenticeship.Apprenticeship>(y => y.Key == apprenticeshipKey)), Times.Once());
+                .AuthorizeAccountId(It.Is<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>(y => y.Key == apprenticeshipKey)), Times.Once());
         }
 
         [Test]
@@ -128,7 +129,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipRe
             _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
             _accountIdAuthorizer = new Mock<IAccountIdAuthorizer>();
             _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-            _sut = new Domain.Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext),
+            _sut = new Learning.Domain.Repositories.ApprenticeshipRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext),
                 _domainEventDispatcher.Object, _apprenticeshipFactory.Object, _accountIdAuthorizer.Object);
         }
     }

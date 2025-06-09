@@ -1,8 +1,10 @@
-﻿namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship
+﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+
+namespace SFA.DAS.Learning.Domain.Apprenticeship
 {
     public class EpisodePriceDomainModel
     {
-        private readonly DataAccess.Entities.Apprenticeship.EpisodePrice _entity;
+        private readonly EpisodePrice _entity;
         public Guid Key => _entity.Key;
         public bool IsDeleted => _entity.IsDeleted; 
         public DateTime StartDate => _entity.StartDate; 
@@ -20,7 +22,7 @@
             decimal? endpointAssessmentPrice,
             int fundingBandMaximum)
         {
-            return new EpisodePriceDomainModel(new DataAccess.Entities.Apprenticeship.EpisodePrice
+            return new EpisodePriceDomainModel(new EpisodePrice
             {
                 IsDeleted = false,
                 StartDate = startDate,
@@ -32,12 +34,12 @@
             });
         }
 
-        public DataAccess.Entities.Apprenticeship.EpisodePrice GetEntity()
+        public EpisodePrice GetEntity()
         {
             return _entity;
         }
 
-        public static EpisodePriceDomainModel Get(DataAccess.Entities.Apprenticeship.EpisodePrice entity)
+        public static EpisodePriceDomainModel Get(EpisodePrice entity)
         {
             return new EpisodePriceDomainModel(entity);
         }
@@ -73,7 +75,7 @@
             _entity.StartDate = startDate;
         }
 
-        private EpisodePriceDomainModel(DataAccess.Entities.Apprenticeship.EpisodePrice entity)
+        private EpisodePriceDomainModel(EpisodePrice entity)
         {
             _entity = entity;
         }

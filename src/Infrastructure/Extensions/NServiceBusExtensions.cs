@@ -1,8 +1,7 @@
 ﻿using Azure.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.RegularExpressions;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.Extensions;
+namespace SFA.DAS.Learning.Infrastructure.Extensions;
 
 public static class NServiceBusExtensions
 {

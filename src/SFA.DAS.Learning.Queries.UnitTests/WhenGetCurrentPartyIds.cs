@@ -2,9 +2,9 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
+using SFA.DAS.Learning.DataTransferObjects;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Queries.GetCurrentPartyIds;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
 

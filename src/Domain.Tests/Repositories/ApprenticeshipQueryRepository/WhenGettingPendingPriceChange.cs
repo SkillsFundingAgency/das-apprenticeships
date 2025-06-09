@@ -6,15 +6,15 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.DataAccess;
 using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
 using SFA.DAS.Apprenticeships.TestHelpers;
+using SFA.DAS.Learning.DataAccess;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
 {
     public class WhenGettingPendingPriceChange
     {
-        private Domain.Repositories.ApprenticeshipQueryRepository _sut;
+        private Learning.Domain.Repositories.ApprenticeshipQueryRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
 
@@ -95,8 +95,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         private void SetUpApprenticeshipQueryRepository()
         {
             _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
+            var logger = Mock.Of<ILogger<Learning.Domain.Repositories.ApprenticeshipQueryRepository>>();
+            _sut = new Learning.Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
     }
 }

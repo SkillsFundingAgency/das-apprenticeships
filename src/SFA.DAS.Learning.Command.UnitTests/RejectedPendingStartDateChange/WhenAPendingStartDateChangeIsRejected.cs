@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.RejectStartDateChange;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using SFA.DAS.Learning.Command.RejectStartDateChange;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.RejectedPendingStartDateChange
 {

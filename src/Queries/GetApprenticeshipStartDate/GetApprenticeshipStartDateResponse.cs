@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.DataTransferObjects;
+﻿using SFA.DAS.Learning.DataTransferObjects;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
+namespace SFA.DAS.Learning.Queries.GetApprenticeshipStartDate;
 
 public class GetApprenticeshipStartDateResponse
 {

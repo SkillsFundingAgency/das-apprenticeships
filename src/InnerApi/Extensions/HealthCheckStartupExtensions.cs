@@ -3,9 +3,9 @@ using Azure.Core;
 using Azure.Identity;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Data.SqlClient;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+using SFA.DAS.Learning.Infrastructure.Configuration;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
+namespace SFA.DAS.Learning.InnerApi.Extensions;
 
 /// <summary>
 /// HealthCheckStartupExtensions

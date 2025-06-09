@@ -2,18 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
-using SFA.DAS.Apprenticeships.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
 using FluentAssertions;
-using SFA.DAS.Apprenticeships.InnerApi.Services;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.InnerApi.Services;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetLearnerStatus;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
 

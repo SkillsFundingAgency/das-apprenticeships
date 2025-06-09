@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Domain.Factories;
+using SFA.DAS.Learning.Domain.Factories;
 
 namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Factories
 {
@@ -21,7 +21,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Factories
         [Test]
         public void ThenAnApprenticeshipCreatedEventIsAdded()
         {
-            var expectedModel = _fixture.Create<DataAccess.Entities.Apprenticeship.Apprenticeship>();
+            var expectedModel = _fixture.Create<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>();
             var apprenticeship = _apprenticeshipFactory.GetExisting(expectedModel);
             apprenticeship.GetEntity().Should().BeSameAs(expectedModel);
         }

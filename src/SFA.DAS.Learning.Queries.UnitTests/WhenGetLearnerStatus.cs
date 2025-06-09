@@ -2,12 +2,12 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.DataTransferObjects;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.Queries.GetLearnerStatus;
+using SFA.DAS.Learning.Types;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
 
@@ -94,7 +94,7 @@ public class WhenGetLearnerStatus
         var withdrawalReason = _fixture.Create<string>();
         MockStartDateInRepository(pastDate);
         _apprenticeshipQueryRepositoryMock.Setup(repo => repo.GetLearnerStatus(It.IsAny<Guid>()))
-            .ReturnsAsync(new LearnerStatusDetails { LearnerStatus = Domain.Apprenticeship.LearnerStatus.Withdrawn, WithdrawalChangedDate = withdrawalChangedDate, WithdrawalReason = withdrawalReason, LastDayOfLearning = lastDayOfLearning});
+            .ReturnsAsync(new LearnerStatusDetails { LearnerStatus = Learning.Domain.Apprenticeship.LearnerStatus.Withdrawn, WithdrawalChangedDate = withdrawalChangedDate, WithdrawalReason = withdrawalReason, LastDayOfLearning = lastDayOfLearning});
         _systemClockServiceMock.Setup(clock => clock.UtcNow).Returns(DateTime.UtcNow);
 
         // Act

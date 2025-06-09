@@ -1,7 +1,7 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
+﻿using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Infrastructure.Services;
 
-namespace SFA.DAS.Apprenticeships.Domain.Validators;
+namespace SFA.DAS.Learning.Domain.Validators;
 
 #pragma warning disable 8618
 public class WithdrawDomainRequest

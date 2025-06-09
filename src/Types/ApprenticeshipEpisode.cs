@@ -1,12 +1,12 @@
-﻿namespace SFA.DAS.Apprenticeships.Types;
+﻿namespace SFA.DAS.Learning.Types;
 
 public class ApprenticeshipEpisode
 {
     public Guid Key { get; set; }
     public long Ukprn { get; set; }
     public long EmployerAccountId { get; set; }
-	public Enums.FundingType FundingType { get; set; }
-	public Enums.FundingPlatform? FundingPlatform { get; set; }
+	public Learning.Enums.FundingType FundingType { get; set; }
+	public Learning.Enums.FundingPlatform? FundingPlatform { get; set; }
 	public long? FundingEmployerAccountId { get; set; }
 	public string LegalEntityName { get; set; }
     public long? AccountLegalEntityId { get; set; }

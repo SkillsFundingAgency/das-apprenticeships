@@ -1,8 +1,8 @@
-﻿using Microsoft.Azure.Services.AppAuthentication;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.DataAccess;
+namespace SFA.DAS.Learning.DataAccess;
 
 [ExcludeFromCodeCoverage]
 public class SqlAzureIdentityTokenProvider : ISqlAzureIdentityTokenProvider

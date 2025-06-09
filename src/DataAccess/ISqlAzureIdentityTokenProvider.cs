@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.DataAccess;
+﻿namespace SFA.DAS.Learning.DataAccess;
 
 public interface ISqlAzureIdentityTokenProvider
 {

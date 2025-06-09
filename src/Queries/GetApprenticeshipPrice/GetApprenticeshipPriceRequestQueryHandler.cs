@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
+namespace SFA.DAS.Learning.Queries.GetApprenticeshipPrice;
 
 public class GetApprenticeshipPriceRequestQueryHandler : IQueryHandler<GetApprenticeshipPriceRequest, GetApprenticeshipPriceResponse?>
 {

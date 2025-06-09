@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.InnerApi.Responses;
+﻿namespace SFA.DAS.Learning.InnerApi.Responses;
 
 /// <summary>
 /// Response returned from a request to get the current provider and employer ids that the apprenticeship is associated with

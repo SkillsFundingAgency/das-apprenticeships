@@ -3,9 +3,10 @@ using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
 {
@@ -91,7 +92,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             episode.EmployerAccountId.Should().Be(ApprovalCreatedEvent.AccountId);
             episode.FundingEmployerAccountId.Should().Be(ApprovalCreatedEvent.TransferSenderId);
             episode.LegalEntityName.Should().Be(ApprovalCreatedEvent.LegalEntityName);
-            episode.FundingPlatform.Should().Be(ApprovalCreatedEvent.IsOnFlexiPaymentPilot.HasValue ? (ApprovalCreatedEvent.IsOnFlexiPaymentPilot.Value ? Enums.FundingPlatform.DAS : Enums.FundingPlatform.SLD) : null);
+            episode.FundingPlatform.Should().Be(ApprovalCreatedEvent.IsOnFlexiPaymentPilot.HasValue ? (ApprovalCreatedEvent.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null);
             int.Parse(episode.TrainingCode).Should().Be(int.Parse(ApprovalCreatedEvent.TrainingCode));
 
             var episodePrice = (await dbConnection.GetAllAsync<EpisodePrice>()).Last(x => x.EpisodeKey == episode.Key);

@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeships
+namespace SFA.DAS.Learning.Queries.GetApprenticeships
 {
     public class GetApprenticeshipsQueryHandler : IQueryHandler<GetApprenticeshipsRequest, GetApprenticeshipsResponse>
     {

@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetPendingStartDateChange;
+namespace SFA.DAS.Learning.Queries.GetPendingStartDateChange;
 
 public class GetPendingStartDateChangeQueryHandler : IQueryHandler<GetPendingStartDateChangeRequest, GetPendingStartDateChangeResponse>
 {

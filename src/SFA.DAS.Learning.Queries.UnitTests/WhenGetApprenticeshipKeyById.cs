@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Moq;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Queries.GetApprenticeshipKeyByApprenticeshipId;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
 

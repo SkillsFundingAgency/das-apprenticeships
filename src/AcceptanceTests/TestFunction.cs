@@ -4,9 +4,9 @@ using Microsoft.Extensions.Hosting;
 using Moq;
 using NServiceBus.Testing;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
-using SFA.DAS.Apprenticeships.Functions;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
+using SFA.DAS.Learning.Functions;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 
 namespace SFA.DAS.Apprenticeships.AcceptanceTests;
 

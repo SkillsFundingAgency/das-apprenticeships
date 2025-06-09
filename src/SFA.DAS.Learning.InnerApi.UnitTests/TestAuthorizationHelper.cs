@@ -1,7 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests;
 

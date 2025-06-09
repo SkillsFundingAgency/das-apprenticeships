@@ -1,11 +1,11 @@
 using AutoFixture;
 using FluentAssertions;
 using Moq;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
+using SFA.DAS.Learning.DataTransferObjects;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 
 namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
 

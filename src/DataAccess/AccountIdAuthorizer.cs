@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.DataAccess.Extensions;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Infrastructure;
+using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Extensions;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.Infrastructure;
 
-namespace SFA.DAS.Apprenticeships.DataAccess;
+namespace SFA.DAS.Learning.DataAccess;
 
 public class AccountIdAuthorizer : IAccountIdAuthorizer
 {

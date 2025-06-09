@@ -4,10 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
-using SFA.DAS.Apprenticeships.Functions;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 using SFA.DAS.Encoding;
+using SFA.DAS.Learning.Functions;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 
 namespace SFA.DAS.Apprenticeships.AcceptanceTests;
 

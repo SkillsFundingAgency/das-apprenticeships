@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
+﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.SetPaymentsFrozen;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
+using SFA.DAS.Learning.InnerApi.Requests;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetApprenticeshipPaymentStatus;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
+namespace SFA.DAS.Learning.InnerApi.Controllers;
 
 /// <summary>
 /// Controller for handling requests related to Apprenticeship Payment Status

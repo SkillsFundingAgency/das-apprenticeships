@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
 using System;
 using FluentAssertions;
+using SFA.DAS.Learning.Command.SetPaymentsFrozen;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.SetPaymentsFrozen;
 

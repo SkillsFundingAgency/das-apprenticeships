@@ -1,4 +1,4 @@
-namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
+namespace SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 
 public class GetApprenticeshipsByAcademicYearResponse : PagedQueryResult<GetApprenticeshipsByDatesResponseItem>;
 

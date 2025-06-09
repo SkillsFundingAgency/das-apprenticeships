@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
+﻿namespace SFA.DAS.Learning.Command.ApprovePriceChange;
 
 public class ApprovePriceChangeCommand : ICommand
 {

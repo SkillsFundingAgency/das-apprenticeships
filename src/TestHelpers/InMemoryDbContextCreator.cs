@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 
 namespace SFA.DAS.Apprenticeships.TestHelpers;
 

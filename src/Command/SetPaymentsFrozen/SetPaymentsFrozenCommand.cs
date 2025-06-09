@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
+﻿namespace SFA.DAS.Learning.Command.SetPaymentsFrozen;
 
 public class SetPaymentsFrozenCommand : ICommand
 {

@@ -1,32 +1,32 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.DataAccess.Extensions;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Extensions;
-using SFA.DAS.Apprenticeships.Domain.Validators;
-using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.DataAccess.Extensions;
+using SFA.DAS.Learning.DataTransferObjects;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Extensions;
+using SFA.DAS.Learning.Domain.Validators;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.Repositories;
+namespace SFA.DAS.Learning.Domain.Repositories;
 
 public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext, ILogger<ApprenticeshipQueryRepository> logger)
     : IApprenticeshipQueryRepository
 {
     private ApprenticeshipsDataContext DbContext => dbContext.Value;
 
-    public async Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
+    public async Task<IEnumerable<Learning.DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
     {
         var apprenticeships = await DbContext.Apprenticeships
             .Include(x => x.Episodes)
             .Where(x => x.Episodes.Any(y => y.Ukprn == ukprn && (fundingPlatform == null || y.FundingPlatform == fundingPlatform)))
             .ToListAsync();
 
-        var result = apprenticeships.Select(x => new DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
+        var result = apprenticeships.Select(x => new Learning.DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
         return result;
     }
 
-    public async Task<PagedResult<DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int limit, int offset, CancellationToken cancellationToken)
+    public async Task<PagedResult<Learning.DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int limit, int offset, CancellationToken cancellationToken)
     {
         var query = DbContext.ApprenticeshipsDbSet
             .Include(x => x.Episodes)
@@ -48,13 +48,13 @@ public class ApprenticeshipQueryRepository(Lazy<ApprenticeshipsDataContext> dbCo
         var result = await query
             .Skip(offset)
             .Take(limit)
-            .Select(x => new DataTransferObjects.Apprenticeship
+            .Select(x => new Learning.DataTransferObjects.Apprenticeship
             {
                 Uln = x.Uln,
             })
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<DataTransferObjects.Apprenticeship>
+        return new PagedResult<Learning.DataTransferObjects.Apprenticeship>
         {
             Data = result,
             TotalItems = totalItems,

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
+﻿namespace SFA.DAS.Learning.Command.ApproveStartDateChange;
 
 public class ApproveStartDateChangeCommand : ICommand
 {

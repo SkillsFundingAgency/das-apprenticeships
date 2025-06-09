@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+namespace SFA.DAS.Learning.InnerApi.Identity.Authorization;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 [Flags]

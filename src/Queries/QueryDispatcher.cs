@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.Apprenticeships.Queries.Exceptions;
+using SFA.DAS.Learning.Queries.Exceptions;
 
-namespace SFA.DAS.Apprenticeships.Queries
+namespace SFA.DAS.Learning.Queries
 {
     public class QueryDispatcher : IQueryDispatcher
     {

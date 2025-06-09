@@ -1,7 +1,7 @@
-using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
+namespace SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 
 public class GetApprenticeshipsByAcademicYearQueryHandler(
     IApprenticeshipQueryRepository queryRepository)

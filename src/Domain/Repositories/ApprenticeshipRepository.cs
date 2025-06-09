@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Factories;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Factories;
 
-namespace SFA.DAS.Apprenticeships.Domain.Repositories;
+namespace SFA.DAS.Learning.Domain.Repositories;
 
 public class ApprenticeshipRepository : IApprenticeshipRepository
 {

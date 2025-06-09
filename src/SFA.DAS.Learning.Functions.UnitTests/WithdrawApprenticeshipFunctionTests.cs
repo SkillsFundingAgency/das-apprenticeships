@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
-using SFA.DAS.Apprenticeships.Domain;
 using System.IO;
 using System.Threading.Tasks;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.WithdrawApprenticeship;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Functions;
 
 namespace SFA.DAS.Apprenticeships.Functions.UnitTests;
 

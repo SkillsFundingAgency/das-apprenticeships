@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeships;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Queries.GetApprenticeships;
 
-namespace SFA.DAS.Apprenticeships.Queries;
+namespace SFA.DAS.Learning.Queries;
 
 [ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions

@@ -4,10 +4,10 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Infrastructure;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
+using SFA.DAS.Learning.Infrastructure;
+using SFA.DAS.Learning.Infrastructure.Configuration;
 
-namespace SFA.DAS.Apprenticeships.DataAccess;
+namespace SFA.DAS.Learning.DataAccess;
 
 [ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions

@@ -1,7 +1,7 @@
 ﻿#pragma warning disable 8618
-using SFA.DAS.Apprenticeships.Domain.Validators;
+using SFA.DAS.Learning.Domain.Validators;
 
-namespace SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
+namespace SFA.DAS.Learning.Command.WithdrawApprenticeship;
 
 public class WithdrawApprenticeshipCommand : ICommand
 {

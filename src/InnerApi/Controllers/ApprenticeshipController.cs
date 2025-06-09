@@ -1,24 +1,21 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.InnerApi.Services;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKey;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPrice;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipStartDate;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
-using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
-using SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
-using Apprenticeship = SFA.DAS.Apprenticeships.DataTransferObjects.Apprenticeship;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
+using SFA.DAS.Learning.InnerApi.Services;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetApprenticeshipKey;
+using SFA.DAS.Learning.Queries.GetApprenticeshipKeyByApprenticeshipId;
+using SFA.DAS.Learning.Queries.GetApprenticeshipPrice;
+using SFA.DAS.Learning.Queries.GetApprenticeships;
+using SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
+using SFA.DAS.Learning.Queries.GetApprenticeshipStartDate;
+using SFA.DAS.Learning.Queries.GetApprenticeshipsWithEpisodes;
+using SFA.DAS.Learning.Queries.GetCurrentPartyIds;
+using SFA.DAS.Learning.Queries.GetLearnerStatus;
+using Apprenticeship = SFA.DAS.Learning.DataTransferObjects.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
+namespace SFA.DAS.Learning.InnerApi.Controllers;
 
 /// <summary>
 /// Controller for handling requests related to Apprenticeships
@@ -57,8 +54,8 @@ public class ApprenticeshipController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Apprenticeship>), 200)]
     public async Task<IActionResult> GetAll(long ukprn, FundingPlatform? fundingPlatform)
     {
-        var request = new Queries.GetApprenticeships.GetApprenticeshipsRequest(ukprn, fundingPlatform);
-        var response = await _queryDispatcher.Send<Queries.GetApprenticeships.GetApprenticeshipsRequest, Queries.GetApprenticeships.GetApprenticeshipsResponse>(request);
+        var request = new GetApprenticeshipsRequest(ukprn, fundingPlatform);
+        var response = await _queryDispatcher.Send<GetApprenticeshipsRequest, GetApprenticeshipsResponse>(request);
 
         return Ok(response.Apprenticeships);
     }

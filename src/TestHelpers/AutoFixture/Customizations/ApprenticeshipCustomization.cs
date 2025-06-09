@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using SFA.DAS.Apprenticeships.Domain.Factories;
+using SFA.DAS.Learning.Domain.Factories;
 
 namespace SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations
 {

@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+﻿using SFA.DAS.Learning.Domain.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.Domain.Factories
+namespace SFA.DAS.Learning.Domain.Factories
 {
     public interface IApprenticeshipFactory
     {
@@ -12,6 +12,6 @@ namespace SFA.DAS.Apprenticeships.Domain.Factories
             string lastName, 
             string apprenticeshipHashedId);
         
-        ApprenticeshipDomainModel GetExisting(DataAccess.Entities.Apprenticeship.Apprenticeship model);
+        ApprenticeshipDomainModel GetExisting(Learning.DataAccess.Entities.Apprenticeship.Apprenticeship model);
     }
 }

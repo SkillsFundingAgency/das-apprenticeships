@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
+namespace SFA.DAS.Learning.Queries.GetCurrentPartyIds;
 
 public class GetCurrentPartyIdsRequestQueryHandler : IQueryHandler<GetCurrentPartyIdsRequest, GetCurrentPartyIdsResponse?>
 {

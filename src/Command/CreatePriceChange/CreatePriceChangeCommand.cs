@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange;
+﻿namespace SFA.DAS.Learning.Command.CreatePriceChange;
 
 public class CreatePriceChangeCommand : ICommand
 {

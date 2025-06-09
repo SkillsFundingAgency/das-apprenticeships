@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
+﻿namespace SFA.DAS.Learning.Command.RejectPendingPriceChange;
 
 public class RejectPendingPriceChangeRequest : ICommand
 {

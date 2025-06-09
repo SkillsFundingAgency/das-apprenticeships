@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Domain
+﻿namespace SFA.DAS.Learning.Domain
 {
     internal class Constants
     {

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries
+﻿namespace SFA.DAS.Learning.Queries
 {
     public interface IQueryHandler<in TQuery, TResult> where TQuery : IQuery
     {

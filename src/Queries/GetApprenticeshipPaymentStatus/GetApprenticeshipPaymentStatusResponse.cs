@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
+﻿namespace SFA.DAS.Learning.Queries.GetApprenticeshipPaymentStatus;
 
 public class GetApprenticeshipPaymentStatusResponse
 {

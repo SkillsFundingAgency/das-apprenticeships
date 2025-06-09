@@ -1,7 +1,6 @@
 ﻿using System.Runtime.Serialization;
-using System.Security.Permissions;
 
-namespace SFA.DAS.Apprenticeships.Queries.Exceptions
+namespace SFA.DAS.Learning.Queries.Exceptions
 {
     [Serializable]
     public sealed class QueryDispatcherException : Exception

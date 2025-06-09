@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.DataTransferObjects;
+﻿using SFA.DAS.Learning.DataTransferObjects;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetPendingStartDateChange;
+namespace SFA.DAS.Learning.Queries.GetPendingStartDateChange;
 
 public class GetPendingStartDateChangeResponse
 {

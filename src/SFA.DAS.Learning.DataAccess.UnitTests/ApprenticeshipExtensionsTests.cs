@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using AutoFixture;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.DataAccess.Extensions;
+using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Extensions;
 
 namespace SFA.DAS.Apprenticeships.DataAccess.UnitTests
 {

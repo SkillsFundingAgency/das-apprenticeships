@@ -1,18 +1,17 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
-using SFA.DAS.Apprenticeships.Functions.Extensions;
-using SFA.DAS.Apprenticeships.Domain;
-using Microsoft.Azure.Functions.Worker;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.WithdrawApprenticeship;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Functions.Extensions;
 
-namespace SFA.DAS.Apprenticeships.Functions;
+namespace SFA.DAS.Learning.Functions;
 
 public class WithdrawApprenticeshipFunction
 {

@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange
+namespace SFA.DAS.Learning.Command.CancelPendingPriceChange
 {
     public class CancelPendingPriceChangeCommandHandler : ICommandHandler<CancelPendingPriceChangeRequest>
     {

@@ -4,22 +4,22 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Domain.Validators;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Apprenticeships.TestHelpers;
-using SFA.DAS.Apprenticeships.Types;
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
-using LearnerStatus = SFA.DAS.Apprenticeships.Domain.Apprenticeship.LearnerStatus;
+using SFA.DAS.Learning.Command.WithdrawApprenticeship;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Domain.Validators;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
+using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
+using LearnerStatus = SFA.DAS.Learning.Domain.Apprenticeship.LearnerStatus;
 
 namespace SFA.DAS.Apprenticeships.Command.UnitTests.WithdrawApprenticeship;
 
@@ -148,7 +148,7 @@ public class WhenHandleWithdrawCommand
         _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipWithdrawnEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
-    private void ResetMockRepository(Enums.FundingPlatform fundingPlatform = Enums.FundingPlatform.DAS)
+    private void ResetMockRepository(FundingPlatform fundingPlatform = FundingPlatform.DAS)
     {
         _apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
 

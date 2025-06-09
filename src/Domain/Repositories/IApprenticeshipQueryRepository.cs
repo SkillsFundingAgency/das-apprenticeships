@@ -1,12 +1,12 @@
-﻿using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Learning.DataTransferObjects;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.Repositories;
+namespace SFA.DAS.Learning.Domain.Repositories;
 
 public interface IApprenticeshipQueryRepository
 {
-    Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform);
-    Task<PagedResult<DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int limit, int offset, CancellationToken cancellationToken);
+    Task<IEnumerable<Learning.DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform);
+    Task<PagedResult<Learning.DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int limit, int offset, CancellationToken cancellationToken);
     Task<Guid?> GetKeyByApprenticeshipId(long apprenticeshipId);
     Task<ApprenticeshipPrice?> GetPrice(Guid apprenticeshipKey);
     Task<ApprenticeshipStartDate?> GetStartDate(Guid apprenticeshipKey);

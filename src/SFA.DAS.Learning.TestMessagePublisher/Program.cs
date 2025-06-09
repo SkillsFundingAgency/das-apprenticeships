@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.CommitmentsV2.Messages.Events;
-using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
+using SFA.DAS.Learning.Infrastructure.Extensions;
 
 ForceAssemblyLoad();
 

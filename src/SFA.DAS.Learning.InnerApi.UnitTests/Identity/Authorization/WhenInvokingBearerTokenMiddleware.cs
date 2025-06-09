@@ -7,10 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
 {

@@ -3,9 +3,9 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Moq;
-using SFA.DAS.Apprenticeships.InnerApi.Services;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
+using SFA.DAS.Learning.InnerApi.Services;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Services.PagedLinkHeaderServiceTests;

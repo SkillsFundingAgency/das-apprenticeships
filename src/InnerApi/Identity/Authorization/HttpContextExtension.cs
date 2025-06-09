@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+﻿namespace SFA.DAS.Learning.InnerApi.Identity.Authorization;
 
 /// <summary>
 /// Authorization extension for HttpContext

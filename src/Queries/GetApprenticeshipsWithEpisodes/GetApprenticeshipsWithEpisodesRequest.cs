@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsWithEpisodes;
+﻿namespace SFA.DAS.Learning.Queries.GetApprenticeshipsWithEpisodes;
 
 public class GetApprenticeshipsWithEpisodesRequest : IQuery
 {

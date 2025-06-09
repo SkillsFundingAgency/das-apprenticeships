@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+﻿using SFA.DAS.Learning.Domain.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.Domain.Repositories;
+namespace SFA.DAS.Learning.Domain.Repositories;
 
 public interface IApprenticeshipRepository
 {

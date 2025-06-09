@@ -1,7 +1,7 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
+namespace SFA.DAS.Learning.Command.CreateStartDateChange;
 
 public class CreateStartDateChangeCommandHandler : ICommandHandler<CreateStartDateChangeCommand>
 {

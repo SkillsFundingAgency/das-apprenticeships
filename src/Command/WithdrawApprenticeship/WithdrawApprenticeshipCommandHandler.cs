@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Domain.Validators;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Domain.Validators;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
+namespace SFA.DAS.Learning.Command.WithdrawApprenticeship;
 
 public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawApprenticeshipCommand, Outcome>
 {
@@ -57,7 +58,7 @@ public class WithdrawApprenticeshipCommandHandler : ICommandHandler<WithdrawAppr
         apprenticeship.WithdrawApprenticeship(command.ProviderApprovedBy, command.LastDayOfLearning, reason, _systemClockService.UtcNow.DateTime);
         await _apprenticeshipRepository.Update(apprenticeship);
 
-        if (apprenticeship.LatestEpisode.FundingPlatform == Enums.FundingPlatform.DAS)
+        if (apprenticeship.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
         {
             await SendEvent(apprenticeship, reason, command.LastDayOfLearning);
         }

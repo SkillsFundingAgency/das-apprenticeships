@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.GetApprenticeshipKeyByApprenticeshipId;
+﻿namespace SFA.DAS.Learning.Queries.GetApprenticeshipKeyByApprenticeshipId;
 
 public class GetApprenticeshipKeyByApprenticeshipIdResponse
 {
