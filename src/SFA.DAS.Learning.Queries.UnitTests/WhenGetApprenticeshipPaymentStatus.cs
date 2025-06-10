@@ -11,25 +11,25 @@ public class WhenGetApprenticeshipPaymentStatus
 {
 	private Fixture _fixture;
 	private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
-	private GetApprenticeshipPaymentStatusQueryHandler _sut;
+	private GetLearningPaymentStatusQueryHandler _sut;
 
 	[SetUp]
 	public void Setup()
 	{
 		_fixture = new Fixture();
 		_apprenticeshipQueryRepository = new Mock<ILearningQueryRepository>();
-		_sut = new GetApprenticeshipPaymentStatusQueryHandler(_apprenticeshipQueryRepository.Object);
+		_sut = new GetLearningPaymentStatusQueryHandler(_apprenticeshipQueryRepository.Object);
 	}
 
 	[Test]
 	public async Task ThenApprenticeshipPaymentStatusIsReturned()
 	{
 		// Arrange
-		var query = _fixture.Create<GetApprenticeshipPaymentStatusRequest>();
+		var query = _fixture.Create<GetLearningPaymentStatusRequest>();
 		var queryResult = _fixture.Create<PaymentStatus>();
-		var expectedResult = new GetApprenticeshipPaymentStatusResponse
+		var expectedResult = new GetLearningPaymentStatusResponse
 		{
-            ApprenticeshipKey = query.ApprenticeshipKey,
+            ApprenticeshipKey = query.LearningKey,
             PaymentsFrozen = queryResult.IsFrozen,
             ReasonFrozen = queryResult.Reason,
             FrozenOn = queryResult.FrozenOn
@@ -37,7 +37,7 @@ public class WhenGetApprenticeshipPaymentStatus
 
 
         _apprenticeshipQueryRepository
-			.Setup(x => x.GetPaymentStatus(query.ApprenticeshipKey))
+			.Setup(x => x.GetPaymentStatus(query.LearningKey))
 			.ReturnsAsync(queryResult);
 
 		// Act

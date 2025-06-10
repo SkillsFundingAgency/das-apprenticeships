@@ -11,7 +11,7 @@ namespace SFA.DAS.Learning.InnerApi.Controllers;
 /// <summary>
 /// Controller for handling requests related to Learning Payment Status
 /// </summary>
-[Route("{apprenticeshipKey}")]
+[Route("{learningKey}")]
 [ApiController]
 [ControllerAuthorizeUserType(UserType.Provider | UserType.Employer)]
 public class PaymentStatusController : ControllerBase
@@ -34,14 +34,14 @@ public class PaymentStatusController : ControllerBase
     /// <summary>
     /// Get Learning Payment Status (Frozen/Unfrozen)
     /// </summary>
-    /// <param name="apprenticeshipKey"></param>
+    /// <param name="learningKey"></param>
     /// <returns>Learning Payment Status (Frozen/Unfrozen)</returns>
     [HttpGet("paymentStatus")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> GetApprenticeshipPaymentStatus(Guid apprenticeshipKey)
+    public async Task<IActionResult> GetLearningPaymentStatus(Guid learningKey)
     {
-        var request = new GetApprenticeshipPaymentStatusRequest { ApprenticeshipKey = apprenticeshipKey };
-        var response = await _queryDispatcher.Send<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse?>(request);
+        var request = new GetLearningPaymentStatusRequest { LearningKey = learningKey };
+        var response = await _queryDispatcher.Send<GetLearningPaymentStatusRequest, GetLearningPaymentStatusResponse?>(request);
         if (response == null) return NotFound();
         return Ok(response);
     }
@@ -49,21 +49,21 @@ public class PaymentStatusController : ControllerBase
     /// <summary>
     /// Changes Learning Payment Status to Frozen
     /// </summary>
-    /// <param name="apprenticeshipKey"></param>
+    /// <param name="learningKey"></param>
     /// <param name="freezeRequest"></param>
     [HttpPost("freeze")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> FreezePaymentStatus(Guid apprenticeshipKey, [FromBody] FreezeRequest freezeRequest)
+    public async Task<IActionResult> FreezePaymentStatus(Guid learningKey, [FromBody] FreezeRequest freezeRequest)
     {
         try
         {
-            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPayments.Freeze, freezeRequest.Reason));
+            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(learningKey, HttpContext.GetUserId(), SetPayments.Freeze, freezeRequest.Reason));
             return Ok();
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "{method} failed to update {apprenticeshipKey} : {message}",
-                nameof(FreezePaymentStatus), apprenticeshipKey, exception.Message);
+            _logger.LogError(exception, "{method} failed to update {learningKey} : {message}",
+                nameof(FreezePaymentStatus), learningKey, exception.Message);
             return BadRequest();
         }
     }
@@ -71,20 +71,20 @@ public class PaymentStatusController : ControllerBase
     /// <summary>
     /// Changes Learning Payment Status to Active
     /// </summary>
-    /// <param name="apprenticeshipKey"></param>
+    /// <param name="learningKey"></param>
     [HttpPost("unfreeze")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> UnfreezePaymentStatus(Guid apprenticeshipKey)
+    public async Task<IActionResult> UnfreezePaymentStatus(Guid learningKey)
     {
         try
         {
-            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(apprenticeshipKey, HttpContext.GetUserId(), SetPayments.Unfreeze));
+            await _commandDispatcher.Send(new SetPaymentsFrozenCommand(learningKey, HttpContext.GetUserId(), SetPayments.Unfreeze));
             return Ok();
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "{method} failed to update {apprenticeshipKey} : {message}",
-                nameof(UnfreezePaymentStatus), apprenticeshipKey, exception.Message);
+            _logger.LogError(exception, "{method} failed to update {learningKey} : {message}",
+                nameof(UnfreezePaymentStatus), learningKey, exception.Message);
             return BadRequest();
         }
     }

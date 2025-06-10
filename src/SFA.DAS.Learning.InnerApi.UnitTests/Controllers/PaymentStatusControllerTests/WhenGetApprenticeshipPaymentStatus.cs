@@ -32,13 +32,13 @@ public class WhenGetApprenticeshipPaymentStatus
     public async Task ThenApprenticeshipPaymentStatusIsReturned()
     {
         var apprenticeshipKey = _fixture.Create<Guid>();
-        var expectedResult = _fixture.Create<GetApprenticeshipPaymentStatusResponse>();
+        var expectedResult = _fixture.Create<GetLearningPaymentStatusResponse>();
 
         _queryDispatcher
-            .Setup(x => x.Send<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse>(It.Is<GetApprenticeshipPaymentStatusRequest>(r => r.ApprenticeshipKey == apprenticeshipKey)))
+            .Setup(x => x.Send<GetLearningPaymentStatusRequest, GetLearningPaymentStatusResponse>(It.Is<GetLearningPaymentStatusRequest>(r => r.LearningKey == apprenticeshipKey)))
             .ReturnsAsync(expectedResult);
 
-        var result = await _sut.GetApprenticeshipPaymentStatus(apprenticeshipKey);
+        var result = await _sut.GetLearningPaymentStatus(apprenticeshipKey);
 
         result.Should().BeOfType<OkObjectResult>();
         var okResult = (OkObjectResult)result;
@@ -51,10 +51,10 @@ public class WhenGetApprenticeshipPaymentStatus
         var apprenticeshipKey = _fixture.Create<Guid>();
 
         _queryDispatcher
-            .Setup(x => x.Send<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse>(It.Is<GetApprenticeshipPaymentStatusRequest>(r => r.ApprenticeshipKey == apprenticeshipKey)))
-            .ReturnsAsync((GetApprenticeshipPaymentStatusResponse)null!);
+            .Setup(x => x.Send<GetLearningPaymentStatusRequest, GetLearningPaymentStatusResponse>(It.Is<GetLearningPaymentStatusRequest>(r => r.LearningKey == apprenticeshipKey)))
+            .ReturnsAsync((GetLearningPaymentStatusResponse)null!);
 
-        var result = await _sut.GetApprenticeshipPaymentStatus(apprenticeshipKey);
+        var result = await _sut.GetLearningPaymentStatus(apprenticeshipKey);
 
         result.Should().BeOfType<NotFoundResult>();
     }
