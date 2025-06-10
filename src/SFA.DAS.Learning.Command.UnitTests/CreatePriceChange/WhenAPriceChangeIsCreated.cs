@@ -52,7 +52,7 @@ public class WhenAPriceChangeIsCreated
         var command = _fixture.Create<CreatePriceChangeCommand>();
         command.Initiator = ChangeInitiator.Provider.ToString();
         command.EffectiveFromDate = apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>());
-        _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+        _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
         
         await _commandHandler.Handle(command);
         
@@ -74,7 +74,7 @@ public class WhenAPriceChangeIsCreated
 
         apprenticeship.LatestPrice.GetEntity().TotalPrice = command.TotalPrice - 1;
 
-        _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+        _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
         await _commandHandler.Handle(command);
 
@@ -120,7 +120,7 @@ public class WhenAPriceChangeIsCreated
 
 			apprenticeship.LatestPrice.GetEntity().TotalPrice = oldTotal;
 
-			_apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+			_apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
 			await _commandHandler.Handle(command);
 
@@ -146,7 +146,7 @@ public class WhenAPriceChangeIsCreated
             
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
-        _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+        _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
         Assert.ThrowsAsync<ArgumentException>(() => _commandHandler.Handle(command));
     }

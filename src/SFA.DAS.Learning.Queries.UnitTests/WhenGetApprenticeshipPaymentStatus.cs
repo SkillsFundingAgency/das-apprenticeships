@@ -10,33 +10,32 @@ namespace SFA.DAS.Learning.Queries.UnitTests;
 public class WhenGetApprenticeshipPaymentStatus
 {
 	private Fixture _fixture;
-	private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
+	private Mock<ILearningQueryRepository> _learningQueryRepository;
 	private GetLearningPaymentStatusQueryHandler _sut;
 
 	[SetUp]
 	public void Setup()
 	{
 		_fixture = new Fixture();
-		_apprenticeshipQueryRepository = new Mock<ILearningQueryRepository>();
-		_sut = new GetLearningPaymentStatusQueryHandler(_apprenticeshipQueryRepository.Object);
+		_learningQueryRepository = new Mock<ILearningQueryRepository>();
+		_sut = new GetLearningPaymentStatusQueryHandler(_learningQueryRepository.Object);
 	}
 
 	[Test]
-	public async Task ThenApprenticeshipPaymentStatusIsReturned()
+	public async Task ThenLearningPaymentStatusIsReturned()
 	{
 		// Arrange
 		var query = _fixture.Create<GetLearningPaymentStatusRequest>();
 		var queryResult = _fixture.Create<PaymentStatus>();
 		var expectedResult = new GetLearningPaymentStatusResponse
 		{
-            ApprenticeshipKey = query.LearningKey,
+            LearningKey = query.LearningKey,
             PaymentsFrozen = queryResult.IsFrozen,
             ReasonFrozen = queryResult.Reason,
             FrozenOn = queryResult.FrozenOn
         };
 
-
-        _apprenticeshipQueryRepository
+        _learningQueryRepository
 			.Setup(x => x.GetPaymentStatus(query.LearningKey))
 			.ReturnsAsync(queryResult);
 

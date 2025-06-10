@@ -31,7 +31,7 @@ namespace SFA.DAS.Learning.Command.CreatePriceChange
             CancellationToken cancellationToken = default)
         {
             var returnStatus = ChangeRequestStatus.Created;
-            var apprenticeship = await _learningRepository.Get(command.ApprenticeshipKey);
+            var apprenticeship = await _learningRepository.Get(command.LearningKey);
             var now = _systemClockService.UtcNow.DateTime;
 
             if (!Enum.TryParse(command.Initiator, out ChangeInitiator initiator))

@@ -1,11 +1,6 @@
 ﻿namespace SFA.DAS.Learning.Command.CancelPendingPriceChange;
 
-public class CancelPendingPriceChangeRequest : ICommand
+public class CancelPendingPriceChangeRequest(Guid learningKey) : ICommand
 {
-    public CancelPendingPriceChangeRequest(Guid apprenticeshipKey)
-    {
-        ApprenticeshipKey = apprenticeshipKey;
-    }
-
-    public Guid ApprenticeshipKey { get; set; }
+    public Guid LearningKey { get; set; } = learningKey;
 }

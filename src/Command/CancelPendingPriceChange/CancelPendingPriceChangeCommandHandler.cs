@@ -13,7 +13,7 @@ namespace SFA.DAS.Learning.Command.CancelPendingPriceChange
 
         public async Task Handle(CancelPendingPriceChangeRequest command, CancellationToken cancellationToken = default)
         {
-            var apprenticeship = await _learningRepository.Get(command.ApprenticeshipKey);
+            var apprenticeship = await _learningRepository.Get(command.LearningKey);
             apprenticeship.CancelPendingPriceChange();
             await _learningRepository.Update(apprenticeship);
         }

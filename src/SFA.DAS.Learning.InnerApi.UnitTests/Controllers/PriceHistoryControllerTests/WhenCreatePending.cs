@@ -30,14 +30,14 @@ public class WhenCreatePending
     public async Task ThenOkResultIsReturned()
     {
         var apprenticeshipKey = _fixture.Create<Guid>();
-        var request = _fixture.Create<PostCreateApprenticeshipPriceChangeRequest>();
-        var result = await _sut.CreateApprenticeshipPriceChange(apprenticeshipKey, request);
+        var request = _fixture.Create<PostCreateLearningPriceChangeRequest>();
+        var result = await _sut.CreateLearningPriceChange(apprenticeshipKey, request);
 
         result.Should().BeOfType<OkObjectResult>();
 
         _commandDispatcher.Verify(x => x.Send<CreatePriceChangeCommand, ChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
             r.Initiator == request.Initiator &&
-            r.ApprenticeshipKey == apprenticeshipKey &&
+            r.LearningKey == apprenticeshipKey &&
             r.UserId == request.UserId &&
             r.TrainingPrice == request.TrainingPrice &&
             r.AssessmentPrice == request.AssessmentPrice &&
@@ -51,11 +51,11 @@ public class WhenCreatePending
     public async Task ThenBadRequestIsReturnedWhenInvalidRequest()
     {
         var apprenticeshipKey = _fixture.Create<Guid>();
-        var request = _fixture.Create<PostCreateApprenticeshipPriceChangeRequest>();
+        var request = _fixture.Create<PostCreateLearningPriceChangeRequest>();
 
         _commandDispatcher.Setup(x => x.Send<CreatePriceChangeCommand, ChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
             r.Initiator == request.Initiator &&
-            r.ApprenticeshipKey == apprenticeshipKey &&
+            r.LearningKey == apprenticeshipKey &&
             r.UserId == request.UserId &&
             r.TrainingPrice == request.TrainingPrice &&
             r.AssessmentPrice == request.AssessmentPrice &&
@@ -64,7 +64,7 @@ public class WhenCreatePending
             r.EffectiveFromDate == request.EffectiveFromDate
         ), It.IsAny<CancellationToken>())).Throws<ArgumentException>();
 
-        var result = await _sut.CreateApprenticeshipPriceChange(apprenticeshipKey, request);
+        var result = await _sut.CreateLearningPriceChange(apprenticeshipKey, request);
 
         result.Should().BeOfType<BadRequestResult>();
     }

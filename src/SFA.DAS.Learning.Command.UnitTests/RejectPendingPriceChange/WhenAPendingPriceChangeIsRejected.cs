@@ -36,7 +36,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.RejectPendingPriceChange
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<ChangeInitiator>());
 
-            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+            _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
             
             await _commandHandler.Handle(command);
             

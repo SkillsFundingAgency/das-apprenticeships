@@ -56,7 +56,7 @@ namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryController
             _commandDispatcher
                 .Verify(x =>
                     x.Send(
-                        It.Is<RejectPendingPriceChangeRequest>(r => r.ApprenticeshipKey == apprenticeshipKey && r.Reason == request.Reason), It.IsAny<CancellationToken>()), Times.Once);
+                        It.Is<RejectPendingPriceChangeRequest>(r => r.LearningKey == apprenticeshipKey && r.Reason == request.Reason), It.IsAny<CancellationToken>()), Times.Once);
 
             var rejectorResult = GetValueFromAnonymousType(result, "Rejector");
             rejectorResult.Should().Be(expectedRejector.ToString());

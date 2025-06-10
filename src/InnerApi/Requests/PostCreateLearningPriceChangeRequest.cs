@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Learning.InnerApi.Requests;
 
-public class PostCreateApprenticeshipPriceChangeRequest
+public class PostCreateLearningPriceChangeRequest
 {
     public string Initiator { get; set; }
     public string UserId { get; set; }

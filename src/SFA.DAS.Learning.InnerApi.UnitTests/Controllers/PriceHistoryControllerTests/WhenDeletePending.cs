@@ -35,7 +35,7 @@ namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryController
             _commandDispatcher
                 .Verify(x =>
                     x.Send(
-                        It.Is<CancelPendingPriceChangeRequest>(r => r.ApprenticeshipKey == apprenticeshipKey), It.IsAny<CancellationToken>()), Times.Once);
+                        It.Is<CancelPendingPriceChangeRequest>(r => r.LearningKey == apprenticeshipKey), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }
