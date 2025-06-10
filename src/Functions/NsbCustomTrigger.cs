@@ -1,10 +1,10 @@
-﻿using Azure.Messaging.ServiceBus;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.Functions.Worker;
 using NServiceBus;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace SFA.DAS.Apprenticeships.Functions
+namespace SFA.DAS.Learning.Functions
 {
     /// <summary>
     /// This replaces the NServiceBusTriggerFunction attribute, which is nerfed by any HttpTriggers in the same project

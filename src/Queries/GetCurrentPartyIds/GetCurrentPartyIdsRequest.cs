@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
+﻿namespace SFA.DAS.Learning.Queries.GetCurrentPartyIds;
 
 public class GetCurrentPartyIdsRequest : IQuery
 {

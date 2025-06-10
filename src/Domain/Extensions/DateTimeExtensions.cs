@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Domain.Extensions;
+﻿namespace SFA.DAS.Learning.Domain.Extensions;
 
 public static class DateTimeExtensions
 {

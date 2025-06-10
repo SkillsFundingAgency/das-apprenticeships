@@ -1,21 +1,20 @@
-﻿using AutoFixture;
-using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using System;
-using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
-using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeships.Domain.Factories;
+﻿using System;
 using System.Linq;
+using AutoFixture;
 using FluentAssertions;
-using SFA.DAS.Apprenticeships.TestHelpers;
+using NUnit.Framework;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Factories;
+using SFA.DAS.Learning.TestHelpers;
+using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Apprenticeship;
+namespace SFA.DAS.Learning.Domain.UnitTests.Apprenticeship;
 
 public class WhenSettingPaymentStatus
 {
     private Fixture _fixture;
     private const string _userId = "AnyUserId";
-    private ApprenticeshipFactory _apprenticeshipFactory;
+    private LearningFactory _learningFactory;
 
     [SetUp]
     public void SetUp()

@@ -1,9 +1,9 @@
-﻿﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.DataAccess
+namespace SFA.DAS.Learning.DataAccess
 {
     [ExcludeFromCodeCoverage]
     public class ApprenticeshipsDataContext : DbContext

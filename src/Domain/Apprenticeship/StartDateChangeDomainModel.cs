@@ -1,8 +1,7 @@
-﻿using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+namespace SFA.DAS.Learning.Domain.Apprenticeship;
 
 public class StartDateChangeDomainModel
 {

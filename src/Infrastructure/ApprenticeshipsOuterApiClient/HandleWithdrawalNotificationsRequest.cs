@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+namespace SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 
 [ExcludeFromCodeCoverage]
 public class HandleWithdrawalNotificationsRequest

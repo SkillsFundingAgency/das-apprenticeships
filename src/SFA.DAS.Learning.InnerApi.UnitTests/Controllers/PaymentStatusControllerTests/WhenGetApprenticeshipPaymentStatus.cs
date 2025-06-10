@@ -3,12 +3,12 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetApprenticeshipPaymentStatus;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PaymentStatusControllerTests;
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PaymentStatusControllerTests;
 
 public class WhenGetApprenticeshipPaymentStatus
 {
@@ -32,13 +32,13 @@ public class WhenGetApprenticeshipPaymentStatus
     public async Task ThenApprenticeshipPaymentStatusIsReturned()
     {
         var apprenticeshipKey = _fixture.Create<Guid>();
-        var expectedResult = _fixture.Create<GetApprenticeshipPaymentStatusResponse>();
+        var expectedResult = _fixture.Create<GetLearningPaymentStatusResponse>();
 
         _queryDispatcher
-            .Setup(x => x.Send<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse>(It.Is<GetApprenticeshipPaymentStatusRequest>(r => r.ApprenticeshipKey == apprenticeshipKey)))
+            .Setup(x => x.Send<GetLearningPaymentStatusRequest, GetLearningPaymentStatusResponse>(It.Is<GetLearningPaymentStatusRequest>(r => r.LearningKey == apprenticeshipKey)))
             .ReturnsAsync(expectedResult);
 
-        var result = await _sut.GetApprenticeshipPaymentStatus(apprenticeshipKey);
+        var result = await _sut.GetLearningPaymentStatus(apprenticeshipKey);
 
         result.Should().BeOfType<OkObjectResult>();
         var okResult = (OkObjectResult)result;
@@ -51,10 +51,10 @@ public class WhenGetApprenticeshipPaymentStatus
         var apprenticeshipKey = _fixture.Create<Guid>();
 
         _queryDispatcher
-            .Setup(x => x.Send<GetApprenticeshipPaymentStatusRequest, GetApprenticeshipPaymentStatusResponse>(It.Is<GetApprenticeshipPaymentStatusRequest>(r => r.ApprenticeshipKey == apprenticeshipKey)))
-            .ReturnsAsync((GetApprenticeshipPaymentStatusResponse)null!);
+            .Setup(x => x.Send<GetLearningPaymentStatusRequest, GetLearningPaymentStatusResponse>(It.Is<GetLearningPaymentStatusRequest>(r => r.LearningKey == apprenticeshipKey)))
+            .ReturnsAsync((GetLearningPaymentStatusResponse)null!);
 
-        var result = await _sut.GetApprenticeshipPaymentStatus(apprenticeshipKey);
+        var result = await _sut.GetLearningPaymentStatus(apprenticeshipKey);
 
         result.Should().BeOfType<NotFoundResult>();
     }

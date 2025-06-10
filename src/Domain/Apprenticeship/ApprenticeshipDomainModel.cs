@@ -1,12 +1,12 @@
 ﻿using System.Collections.ObjectModel;
-using SFA.DAS.Apprenticeships.Domain.Extensions;
-using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Learning.Domain.Extensions;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+namespace SFA.DAS.Learning.Domain.Apprenticeship;
 
 public class ApprenticeshipDomainModel : AggregateRoot
 {
-    private readonly DataAccess.Entities.Apprenticeship.Apprenticeship _entity;
+    private readonly Learning.DataAccess.Entities.Apprenticeship.Apprenticeship _entity;
     private readonly List<EpisodeDomainModel> _episodes;
     private readonly List<PriceHistoryDomainModel> _priceHistories;
     private readonly List<StartDateChangeDomainModel> _startDateChanges;
@@ -79,7 +79,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         string lastName,
         string apprenticeshipHashedId)
     {
-        return new ApprenticeshipDomainModel(new DataAccess.Entities.Apprenticeship.Apprenticeship
+        return new ApprenticeshipDomainModel(new Learning.DataAccess.Entities.Apprenticeship.Apprenticeship
         {
             Key = Guid.NewGuid(),
             ApprovalsApprenticeshipId = approvalsApprenticeshipId,
@@ -91,12 +91,12 @@ public class ApprenticeshipDomainModel : AggregateRoot
         });
     }
 
-    public static ApprenticeshipDomainModel Get(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+    public static ApprenticeshipDomainModel Get(Learning.DataAccess.Entities.Apprenticeship.Apprenticeship entity)
     {
         return new ApprenticeshipDomainModel(entity);
     }
 
-    private ApprenticeshipDomainModel(DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+    private ApprenticeshipDomainModel(Learning.DataAccess.Entities.Apprenticeship.Apprenticeship entity)
     {
         _entity = entity;
         _episodes = entity.Episodes.Select(EpisodeDomainModel.Get).ToList();
@@ -145,7 +145,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _entity.Episodes.Add(episode.GetEntity());
     }
 
-    public DataAccess.Entities.Apprenticeship.Apprenticeship GetEntity()
+    public Learning.DataAccess.Entities.Apprenticeship.Apprenticeship GetEntity()
     {
         return _entity;
     }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.Services;
+namespace SFA.DAS.Learning.Infrastructure.Services;
 
 public class FundingBandMaximumService : IFundingBandMaximumService
 {

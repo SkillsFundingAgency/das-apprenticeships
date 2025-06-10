@@ -1,26 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
-using NServiceBus;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Extensions;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Types;
-using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Extensions;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
+namespace SFA.DAS.Learning.Command.ApproveStartDateChange;
 
 public class ApproveStartDateChangeCommandHandler : ICommandHandler<ApproveStartDateChangeCommand>
 {
-    private readonly IApprenticeshipRepository _apprenticeshipRepository;
+    private readonly ILearningRepository _learningRepository;
     private readonly IMessageSession _messageSession;
     private readonly ILogger<ApproveStartDateChangeCommandHandler> _logger;
 
     public ApproveStartDateChangeCommandHandler(
-        IApprenticeshipRepository apprenticeshipRepository, 
+        ILearningRepository learningRepository, 
         IMessageSession messageSession,
         ILogger<ApproveStartDateChangeCommandHandler> logger)
     {
-        _apprenticeshipRepository = apprenticeshipRepository;
+        _learningRepository = learningRepository;
         _messageSession = messageSession;
         _logger = logger;
     }
@@ -28,19 +27,19 @@ public class ApproveStartDateChangeCommandHandler : ICommandHandler<ApproveStart
     public async Task Handle(ApproveStartDateChangeCommand command,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Approving start date change for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
+        _logger.LogInformation("Approving start date change for apprenticeship {apprenticeshipKey}", command.LearningKey);
 
-        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+        var apprenticeship = await _learningRepository.Get(command.LearningKey);
 
         var startDateChange = apprenticeship.ApproveStartDateChange(command.UserId);
-        await _apprenticeshipRepository.Update(apprenticeship);
+        await _learningRepository.Update(apprenticeship);
 
         if (apprenticeship.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
         {
             await SendEvent(apprenticeship, startDateChange);
         }
 
-        _logger.LogInformation("Start date change approved for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
+        _logger.LogInformation("Start date change approved for apprenticeship {apprenticeshipKey}", command.LearningKey);
     }
 
     private async Task SendEvent(ApprenticeshipDomainModel apprenticeship, StartDateChangeDomainModel startDateChange)

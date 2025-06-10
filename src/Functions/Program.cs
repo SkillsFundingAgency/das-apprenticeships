@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
-using SFA.DAS.Apprenticeships.Functions;
+using SFA.DAS.Learning.Functions;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication();

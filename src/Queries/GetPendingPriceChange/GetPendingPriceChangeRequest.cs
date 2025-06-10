@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange
+﻿namespace SFA.DAS.Learning.Queries.GetPendingPriceChange
 {
     public class GetPendingPriceChangeRequest : IQuery
     {

@@ -1,9 +1,9 @@
-﻿using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
-using System;
+﻿using System;
 using FluentAssertions;
+using NUnit.Framework;
+using SFA.DAS.Learning.Command.SetPaymentsFrozen;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.SetPaymentsFrozen;
+namespace SFA.DAS.Learning.Command.UnitTests.SetPaymentsFrozen;
 
 public class WhenSetPaymentsFrozenCommandConstructed
 {

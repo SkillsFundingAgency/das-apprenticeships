@@ -3,12 +3,12 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetPendingPriceChange;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
 {
     public class WhenGetPending
     {

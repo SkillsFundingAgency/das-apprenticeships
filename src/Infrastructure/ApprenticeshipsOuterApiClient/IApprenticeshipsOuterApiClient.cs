@@ -1,7 +1,7 @@
-﻿using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
+﻿using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+namespace SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 
 public interface IApprenticeshipsOuterApiClient
 {

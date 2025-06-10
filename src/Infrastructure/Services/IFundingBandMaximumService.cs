@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Infrastructure.Services;
+﻿namespace SFA.DAS.Learning.Infrastructure.Services;
 
 public interface IFundingBandMaximumService
 {

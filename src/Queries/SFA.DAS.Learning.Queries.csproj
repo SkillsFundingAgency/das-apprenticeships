@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="GetApprenticeshipKey\**" />
+    <Compile Remove="GetApprenticeships\**" />
+    <EmbeddedResource Remove="GetApprenticeshipKey\**" />
+    <EmbeddedResource Remove="GetApprenticeships\**" />
+    <None Remove="GetApprenticeshipKey\**" />
+    <None Remove="GetApprenticeships\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Domain\SFA.DAS.Learning.Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\SFA.DAS.Learning.Infrastructure.csproj" />
   </ItemGroup>
@@ -14,6 +23,10 @@
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.12.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.62.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="GetLearningsByAcademicYear\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Domain;
+﻿namespace SFA.DAS.Learning.Domain;
 
 /// <summary>
 /// Returns a paged response

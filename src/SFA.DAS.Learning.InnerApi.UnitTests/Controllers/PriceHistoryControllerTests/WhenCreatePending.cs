@@ -3,14 +3,14 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.CreatePriceChange;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
-using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.CreatePriceChange;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.InnerApi.Requests;
+using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests;
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests;
 
 public class WhenCreatePending
 {
@@ -30,14 +30,14 @@ public class WhenCreatePending
     public async Task ThenOkResultIsReturned()
     {
         var apprenticeshipKey = _fixture.Create<Guid>();
-        var request = _fixture.Create<PostCreateApprenticeshipPriceChangeRequest>();
-        var result = await _sut.CreateApprenticeshipPriceChange(apprenticeshipKey, request);
+        var request = _fixture.Create<PostCreateLearningPriceChangeRequest>();
+        var result = await _sut.CreateLearningPriceChange(apprenticeshipKey, request);
 
         result.Should().BeOfType<OkObjectResult>();
 
         _commandDispatcher.Verify(x => x.Send<CreatePriceChangeCommand, ChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
             r.Initiator == request.Initiator &&
-            r.ApprenticeshipKey == apprenticeshipKey &&
+            r.LearningKey == apprenticeshipKey &&
             r.UserId == request.UserId &&
             r.TrainingPrice == request.TrainingPrice &&
             r.AssessmentPrice == request.AssessmentPrice &&
@@ -51,11 +51,11 @@ public class WhenCreatePending
     public async Task ThenBadRequestIsReturnedWhenInvalidRequest()
     {
         var apprenticeshipKey = _fixture.Create<Guid>();
-        var request = _fixture.Create<PostCreateApprenticeshipPriceChangeRequest>();
+        var request = _fixture.Create<PostCreateLearningPriceChangeRequest>();
 
         _commandDispatcher.Setup(x => x.Send<CreatePriceChangeCommand, ChangeRequestStatus>(It.Is<CreatePriceChangeCommand>(r =>
             r.Initiator == request.Initiator &&
-            r.ApprenticeshipKey == apprenticeshipKey &&
+            r.LearningKey == apprenticeshipKey &&
             r.UserId == request.UserId &&
             r.TrainingPrice == request.TrainingPrice &&
             r.AssessmentPrice == request.AssessmentPrice &&
@@ -64,7 +64,7 @@ public class WhenCreatePending
             r.EffectiveFromDate == request.EffectiveFromDate
         ), It.IsAny<CancellationToken>())).Throws<ArgumentException>();
 
-        var result = await _sut.CreateApprenticeshipPriceChange(apprenticeshipKey, request);
+        var result = await _sut.CreateLearningPriceChange(apprenticeshipKey, request);
 
         result.Should().BeOfType<BadRequestResult>();
     }

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Infrastructure.Configuration
+﻿namespace SFA.DAS.Learning.Infrastructure.Configuration
 {
     public class AzureActiveDirectoryConfiguration
     {

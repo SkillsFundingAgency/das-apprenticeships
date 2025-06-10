@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
+﻿namespace SFA.DAS.Learning.Queries.GetLearnerStatus;
 
 public class GetLearnerStatusRequest : IQuery
 {

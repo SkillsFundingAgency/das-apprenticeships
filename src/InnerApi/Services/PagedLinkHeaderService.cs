@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
-using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Services;
+namespace SFA.DAS.Learning.InnerApi.Services;
 
 /// <summary>
 /// IPagedLinkHeaderService

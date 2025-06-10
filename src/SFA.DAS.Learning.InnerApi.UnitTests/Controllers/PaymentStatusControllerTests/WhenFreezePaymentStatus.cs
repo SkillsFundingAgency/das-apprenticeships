@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
-using SFA.DAS.Apprenticeships.Queries;
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PaymentStatusControllerTests;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.SetPaymentsFrozen;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.InnerApi.Requests;
+using SFA.DAS.Learning.Queries;
+
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PaymentStatusControllerTests;
 
 public class WhenFreezePaymentStatus
 {

@@ -2,7 +2,7 @@ using System;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests;
+namespace SFA.DAS.Learning.Domain.UnitTests;
 
 public class WhenParsingAcademicYear
 {

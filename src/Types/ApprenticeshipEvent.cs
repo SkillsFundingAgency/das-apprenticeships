@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Types;
+﻿namespace SFA.DAS.Learning.Types;
 
 public abstract class ApprenticeshipEvent
 {

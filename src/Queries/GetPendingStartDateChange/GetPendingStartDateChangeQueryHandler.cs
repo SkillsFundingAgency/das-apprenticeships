@@ -1,19 +1,19 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
+﻿using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetPendingStartDateChange;
+namespace SFA.DAS.Learning.Queries.GetPendingStartDateChange;
 
 public class GetPendingStartDateChangeQueryHandler : IQueryHandler<GetPendingStartDateChangeRequest, GetPendingStartDateChangeResponse>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
 
-    public GetPendingStartDateChangeQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository)
+    public GetPendingStartDateChangeQueryHandler(ILearningQueryRepository learningQueryRepository)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
     }
 
     public async Task<GetPendingStartDateChangeResponse> Handle(GetPendingStartDateChangeRequest query, CancellationToken cancellationToken = default)
     {
-        var pendingStartDateChange = await _apprenticeshipQueryRepository.GetPendingStartDateChange(query.ApprenticeshipKey);
+        var pendingStartDateChange = await _learningQueryRepository.GetPendingStartDateChange(query.ApprenticeshipKey);
 
         if (pendingStartDateChange == null) return new GetPendingStartDateChangeResponse { HasPendingStartDateChange = false };
 

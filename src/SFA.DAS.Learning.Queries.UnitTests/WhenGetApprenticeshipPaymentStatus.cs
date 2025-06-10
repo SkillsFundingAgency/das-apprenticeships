@@ -1,43 +1,42 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Moq;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipPaymentStatus;
+using SFA.DAS.Learning.DataTransferObjects;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Queries.GetApprenticeshipPaymentStatus;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
+namespace SFA.DAS.Learning.Queries.UnitTests;
 
 public class WhenGetApprenticeshipPaymentStatus
 {
 	private Fixture _fixture;
-	private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
-	private GetApprenticeshipPaymentStatusQueryHandler _sut;
+	private Mock<ILearningQueryRepository> _learningQueryRepository;
+	private GetLearningPaymentStatusQueryHandler _sut;
 
 	[SetUp]
 	public void Setup()
 	{
 		_fixture = new Fixture();
-		_apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
-		_sut = new GetApprenticeshipPaymentStatusQueryHandler(_apprenticeshipQueryRepository.Object);
+		_learningQueryRepository = new Mock<ILearningQueryRepository>();
+		_sut = new GetLearningPaymentStatusQueryHandler(_learningQueryRepository.Object);
 	}
 
 	[Test]
-	public async Task ThenApprenticeshipPaymentStatusIsReturned()
+	public async Task ThenLearningPaymentStatusIsReturned()
 	{
 		// Arrange
-		var query = _fixture.Create<GetApprenticeshipPaymentStatusRequest>();
+		var query = _fixture.Create<GetLearningPaymentStatusRequest>();
 		var queryResult = _fixture.Create<PaymentStatus>();
-		var expectedResult = new GetApprenticeshipPaymentStatusResponse
+		var expectedResult = new GetLearningPaymentStatusResponse
 		{
-            ApprenticeshipKey = query.ApprenticeshipKey,
+            LearningKey = query.LearningKey,
             PaymentsFrozen = queryResult.IsFrozen,
             ReasonFrozen = queryResult.Reason,
             FrozenOn = queryResult.FrozenOn
         };
 
-
-        _apprenticeshipQueryRepository
-			.Setup(x => x.GetPaymentStatus(query.ApprenticeshipKey))
+        _learningQueryRepository
+			.Setup(x => x.GetPaymentStatus(query.LearningKey))
 			.ReturnsAsync(queryResult);
 
 		// Act

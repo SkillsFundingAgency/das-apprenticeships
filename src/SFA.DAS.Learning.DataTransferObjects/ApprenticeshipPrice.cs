@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Apprenticeships.DataTransferObjects;
+namespace SFA.DAS.Learning.DataTransferObjects;
 
 [ExcludeFromCodeCoverage]
 public class ApprenticeshipPrice

@@ -1,15 +1,15 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
+namespace SFA.DAS.Learning.Command.CreateStartDateChange;
 
 public class CreateStartDateChangeCommandHandler : ICommandHandler<CreateStartDateChangeCommand>
 {
-    private readonly IApprenticeshipRepository _apprenticeshipRepository;
+    private readonly ILearningRepository _learningRepository;
 
-    public CreateStartDateChangeCommandHandler(IApprenticeshipRepository apprenticeshipRepository)
+    public CreateStartDateChangeCommandHandler(ILearningRepository learningRepository)
     {
-        _apprenticeshipRepository = apprenticeshipRepository;
+        _learningRepository = learningRepository;
     }
 
     public async Task Handle(CreateStartDateChangeCommand command, CancellationToken cancellationToken = default)
@@ -17,7 +17,7 @@ public class CreateStartDateChangeCommandHandler : ICommandHandler<CreateStartDa
         if (!Enum.TryParse(command.Initiator, out ChangeInitiator initiator))
             throw new ArgumentException("CreateApprenticeshipStartDateChangeRequest should have a valid initiator value set (Provider or Employer)", nameof(command));
 
-        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+        var apprenticeship = await _learningRepository.Get(command.ApprenticeshipKey);
 
         if (initiator == ChangeInitiator.Provider)
         {
@@ -28,6 +28,6 @@ public class CreateStartDateChangeCommandHandler : ICommandHandler<CreateStartDa
             apprenticeship.AddStartDateChange(command.ActualStartDate, command.PlannedEndDate, command.Reason, null, null, command.UserId, DateTime.Now, DateTime.Now, ChangeRequestStatus.Created, ChangeInitiator.Employer);
         }
 
-        await _apprenticeshipRepository.Update(apprenticeship);
+        await _learningRepository.Update(apprenticeship);
     }
 }

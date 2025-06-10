@@ -3,27 +3,27 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.InnerApi.Services;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.InnerApi.Services;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetCurrentPartyIds;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
 
 public class WhenGetCurrentPartyIds
 {
     private Fixture _fixture;
     private Mock<IQueryDispatcher> _queryDispatcher;
-    private Mock<ILogger<ApprenticeshipController>> _mockLogger;
-    private ApprenticeshipController _sut;
+    private Mock<ILogger<LearningController>> _mockLogger;
+    private LearningController _sut;
 
     [SetUp]
     public void Setup()
     {
         _fixture = new Fixture();
         _queryDispatcher = new Mock<IQueryDispatcher>();
-        _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object, null!, _mockLogger.Object, Mock.Of<IPagedLinkHeaderService>());
+        _mockLogger = new Mock<ILogger<LearningController>>();
+        _sut = new LearningController(_queryDispatcher.Object, null!, _mockLogger.Object, Mock.Of<IPagedLinkHeaderService>());
     }
 
     [Test]

@@ -3,22 +3,21 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.InnerApi.Services;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.InnerApi.Services;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.ApprenticeshipControllerTests;
 
 public class WhenGettingByAcademicYear
 {
     private Fixture _fixture;
     private Mock<IQueryDispatcher> _queryDispatcher;
     private Mock<ICommandDispatcher> _commandDispatcher;
-    private Mock<ILogger<ApprenticeshipController>> _mockLogger;
-    private ApprenticeshipController _sut;
+    private Mock<ILogger<LearningController>> _mockLogger;
+    private LearningController _sut;
 
     [SetUp]
     public void Setup()
@@ -26,8 +25,8 @@ public class WhenGettingByAcademicYear
         _fixture = new Fixture();
         _queryDispatcher = new Mock<IQueryDispatcher>();
         _commandDispatcher = new Mock<ICommandDispatcher>();
-        _mockLogger = new Mock<ILogger<ApprenticeshipController>>();
-        _sut = new ApprenticeshipController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object, Mock.Of<IPagedLinkHeaderService>());
+        _mockLogger = new Mock<ILogger<LearningController>>();
+        _sut = new LearningController(_queryDispatcher.Object, _commandDispatcher.Object, _mockLogger.Object, Mock.Of<IPagedLinkHeaderService>());
     }
 
     [Test]
@@ -35,11 +34,11 @@ public class WhenGettingByAcademicYear
     {
         var ukprn = _fixture.Create<long>();
         const int academicYear = 2526;
-        var expectedResult = _fixture.Create<GetApprenticeshipsByAcademicYearResponse>();
+        var expectedResult = _fixture.Create<GetLearningsByAcademicYearResponse>();
 
         _queryDispatcher
-            .Setup(x => x.Send<GetApprenticeshipsByAcademicYearRequest, GetApprenticeshipsByAcademicYearResponse>(
-                It.Is<GetApprenticeshipsByAcademicYearRequest>(r => r.UkPrn == ukprn && r.AcademicYear == academicYear && r.Page == 1))
+            .Setup(x => x.Send<GetLearningsByAcademicYearRequest, GetLearningsByAcademicYearResponse>(
+                It.Is<GetLearningsByAcademicYearRequest>(r => r.UkPrn == ukprn && r.AcademicYear == academicYear && r.Page == 1))
             ).ReturnsAsync(expectedResult);
 
         var result = await _sut.GetByAcademicYear(ukprn, academicYear, 1);

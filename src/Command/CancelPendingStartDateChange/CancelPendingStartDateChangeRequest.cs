@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.CancelPendingStartDateChange;
+﻿namespace SFA.DAS.Learning.Command.CancelPendingStartDateChange;
 
 public class CancelPendingStartDateChangeRequest : ICommand
 {

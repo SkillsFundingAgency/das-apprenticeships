@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.DataAccess.Extensions
+namespace SFA.DAS.Learning.DataAccess.Extensions
 {
     public static class ApprenticeshipExtensions
     {

@@ -3,14 +3,12 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.CancelPendingStartDateChange;
-using SFA.DAS.Apprenticeships.Command.RejectStartDateChange;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
-using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.CancelPendingStartDateChange;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.StartDateChangeControllerTests;
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.StartDateChangeControllerTests;
 
 public class WhenCancelledStartDateChange
 {

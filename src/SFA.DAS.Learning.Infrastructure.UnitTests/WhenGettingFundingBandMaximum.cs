@@ -6,11 +6,11 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
+using SFA.DAS.Learning.Infrastructure.Services;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.UnitTests
+namespace SFA.DAS.Learning.Infrastructure.UnitTests
 {
     public class WhenGettingFundingBandMaximum
     {

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
+﻿namespace SFA.DAS.Learning.Command.CreateStartDateChange;
 
 public class CreateStartDateChangeCommand : ICommand
 {

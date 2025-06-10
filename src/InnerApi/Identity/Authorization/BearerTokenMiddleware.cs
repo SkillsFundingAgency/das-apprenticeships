@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+namespace SFA.DAS.Learning.InnerApi.Identity.Authorization;
 
 /// <summary>
 /// Middleware that handles the claim values from bearer tokens in incoming API requests

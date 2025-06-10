@@ -1,30 +1,28 @@
 ﻿using Microsoft.Extensions.Logging;
-using NServiceBus;
-using SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Extensions;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
-using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Extensions;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
+namespace SFA.DAS.Learning.Command.ApprovePriceChange;
 
 public class ApprovePriceChangeCommandHandler : ICommandHandler<ApprovePriceChangeCommand, ApprovedBy>
 {
-    private readonly IApprenticeshipRepository _apprenticeshipRepository;
+    private readonly ILearningRepository _learningRepository;
     private readonly IMessageSession _messageSession;
     private readonly ISystemClockService _systemClockService;
     private readonly ILogger<ApprovePriceChangeCommandHandler> _logger;
 
     public ApprovePriceChangeCommandHandler(
-        IApprenticeshipRepository apprenticeshipRepository,
+        ILearningRepository learningRepository,
         IMessageSession messageSession,
         ISystemClockService systemClockService,
         ILogger<ApprovePriceChangeCommandHandler> logger)
     {
-        _apprenticeshipRepository = apprenticeshipRepository;
+        _learningRepository = learningRepository;
         _messageSession = messageSession;
         _systemClockService = systemClockService;
         _logger = logger;
@@ -33,35 +31,35 @@ public class ApprovePriceChangeCommandHandler : ICommandHandler<ApprovePriceChan
     public async Task<ApprovedBy> Handle(ApprovePriceChangeCommand command,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Approving price change for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
+        _logger.LogInformation("Approving price change for learning {learningKey}", command.LearningKey);
 
-        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
-        var priceChange = apprenticeship.ApprovePriceChange(command.UserId, command.TrainingPrice, command.AssessmentPrice, _systemClockService.UtcNow.DateTime);
-        await _apprenticeshipRepository.Update(apprenticeship);
+        var learning = await _learningRepository.Get(command.LearningKey);
+        var priceChange = learning.ApprovePriceChange(command.UserId, command.TrainingPrice, command.AssessmentPrice, _systemClockService.UtcNow.DateTime);
+        await _learningRepository.Update(learning);
 
         var approver = priceChange.ChangeApprovedBy();
 
-        if (apprenticeship.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
+        if (learning.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
         {
-            await SendEvent(apprenticeship, priceChange, approver);
+            await SendEvent(learning, priceChange, approver);
         }
 
-        _logger.LogInformation("Price change approved by {approver} for apprenticeship {apprenticeshipKey}", approver.ToString(), command.ApprenticeshipKey);
+        _logger.LogInformation("Price change approved by {approver} for learning {learningKey}", approver.ToString(), command.LearningKey);
         return approver;
     }
 
-    public async Task SendEvent(ApprenticeshipDomainModel apprenticeship, PriceHistoryDomainModel priceChange, ApprovedBy approvedBy)
+    public async Task SendEvent(ApprenticeshipDomainModel learning, PriceHistoryDomainModel priceChange, ApprovedBy approvedBy)
     {
-        _logger.LogInformation("Sending ApprenticeshipPriceChangedEvent for apprenticeship {apprenticeshipKey}", apprenticeship.Key);
+        _logger.LogInformation("Sending ApprenticeshipPriceChangedEvent for learning {learningKey}", learning.Key);
         
         var eventMessage = new ApprenticeshipPriceChangedEvent()
         {
-            ApprenticeshipKey = apprenticeship.Key,
-            ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
+            ApprenticeshipKey = learning.Key,
+            ApprenticeshipId = learning.ApprovalsApprenticeshipId,
             EffectiveFromDate = priceChange.EffectiveFromDate,
             ApprovedDate = priceChange.ApprovalDate(),
             ApprovedBy = approvedBy,
-            Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
+            Episode = learning.BuildEpisodeForIntegrationEvent()
         };
 
         await _messageSession.Publish(eventMessage);

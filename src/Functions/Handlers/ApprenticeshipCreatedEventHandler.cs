@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
-using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.CommitmentsV2.Types;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.AddLearning;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Functions.Handlers
+namespace SFA.DAS.Learning.Functions.Handlers
 {
     public class ApprenticeshipCreatedEventHandler(ICommandDispatcher commandDispatcher, ILogger<ApprenticeshipCreatedEventHandler> logger) : IHandleMessages<ApprenticeshipCreatedEvent>
     {
@@ -15,7 +15,7 @@ namespace SFA.DAS.Apprenticeships.Functions.Handlers
         {
             logger.LogInformation("Handling ApprenticeshipCreatedEvent");
 
-            await commandDispatcher.Send(new AddApprenticeshipCommand
+            await commandDispatcher.Send(new AddLearningCommand
             {
                 TrainingCode = @event.TrainingCode,
                 ActualStartDate = @event.ActualStartDate ?? @event.StartDate,

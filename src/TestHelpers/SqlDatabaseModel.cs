@@ -1,8 +1,8 @@
-﻿using Microsoft.SqlServer.Dac;
+﻿using System.Globalization;
+using Microsoft.SqlServer.Dac;
 using Polly;
-using System.Globalization;
 
-namespace SFA.DAS.Apprenticeships.TestHelpers;
+namespace SFA.DAS.Learning.TestHelpers;
 
 public static class SqlDatabaseModel
 {

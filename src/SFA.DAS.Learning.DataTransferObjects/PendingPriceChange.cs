@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Apprenticeships.Enums;
 
-namespace SFA.DAS.Apprenticeships.DataTransferObjects;
+namespace SFA.DAS.Learning.DataTransferObjects;
 
 [ExcludeFromCodeCoverage]
 public class PendingPriceChange

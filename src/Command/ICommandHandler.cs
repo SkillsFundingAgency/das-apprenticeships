@@ -1,6 +1,4 @@
-﻿using SFA.DAS.Apprenticeships.Domain;
-
-namespace SFA.DAS.Apprenticeships.Command
+﻿namespace SFA.DAS.Learning.Command
 {
     public interface ICommandHandler<in T, TResult> where T : ICommand
     {

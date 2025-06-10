@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics.CodeAnalysis;
-using static SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization.UserTypeRequirement;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Authorization;
+using static SFA.DAS.Learning.InnerApi.Identity.Authorization.UserTypeRequirement;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+namespace SFA.DAS.Learning.InnerApi.Identity.Authorization;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 /// <summary>

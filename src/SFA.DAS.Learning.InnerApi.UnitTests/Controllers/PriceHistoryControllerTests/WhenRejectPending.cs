@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
-using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.RejectPendingPriceChange;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
+using SFA.DAS.Learning.InnerApi.Requests;
+using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
 {
     public class WhenRejectPending
     {
@@ -56,7 +56,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryCon
             _commandDispatcher
                 .Verify(x =>
                     x.Send(
-                        It.Is<RejectPendingPriceChangeRequest>(r => r.ApprenticeshipKey == apprenticeshipKey && r.Reason == request.Reason), It.IsAny<CancellationToken>()), Times.Once);
+                        It.Is<RejectPendingPriceChangeRequest>(r => r.LearningKey == apprenticeshipKey && r.Reason == request.Reason), It.IsAny<CancellationToken>()), Times.Once);
 
             var rejectorResult = GetValueFromAnonymousType(result, "Rejector");
             rejectorResult.Should().Be(expectedRejector.ToString());

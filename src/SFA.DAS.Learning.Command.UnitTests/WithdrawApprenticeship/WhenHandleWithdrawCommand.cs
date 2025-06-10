@@ -1,37 +1,36 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.WithdrawApprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Domain.Validators;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.TestHelpers;
-using SFA.DAS.Apprenticeships.Types;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
-using LearnerStatus = SFA.DAS.Apprenticeships.Domain.Apprenticeship.LearnerStatus;
+using SFA.DAS.Learning.Command.WithdrawLearning;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Domain.Validators;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
+using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.TestHelpers;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
+using LearnerStatus = SFA.DAS.Learning.Domain.Apprenticeship.LearnerStatus;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.WithdrawApprenticeship;
+namespace SFA.DAS.Learning.Command.UnitTests.WithdrawApprenticeship;
 
 public class WhenHandleWithdrawCommand
 {
     private Fixture _fixture;
-    private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
+    private Mock<ILearningRepository> _apprenticeshipRepository;
     private Mock<IApprenticeshipsOuterApiClient> _apprenticeshipsOuterApiClient;
     private Mock<ISystemClockService> _systemClockService;
     private Mock<IValidator<WithdrawDomainRequest>> _validator;
     private Mock<IMessageSession> _messageSession;
-    private Mock<ILogger<WithdrawApprenticeshipCommandHandler>> _logger;
+    private Mock<ILogger<WithdrawLearningCommandHandler>> _logger;
     private ApprenticeshipDomainModel? _apprenticeship;
 
     private const long ValidUkprn = 1000000;
@@ -39,12 +38,12 @@ public class WhenHandleWithdrawCommand
     public WhenHandleWithdrawCommand()
     {
         _fixture = new Fixture();
-        _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+        _apprenticeshipRepository = new Mock<ILearningRepository>();
         _apprenticeshipsOuterApiClient = MockOuterApiAcademicYearEnd(2025, 7, 22);
         _validator = new Mock<IValidator<WithdrawDomainRequest>>();
         _systemClockService = MockSystemClock(2024, 12, 17);
         _messageSession = new Mock<IMessageSession>();
-        _logger = new Mock<ILogger<WithdrawApprenticeshipCommandHandler>>();
+        _logger = new Mock<ILogger<WithdrawLearningCommandHandler>>();
     }
 
     [Test]
@@ -55,7 +54,7 @@ public class WhenHandleWithdrawCommand
         string message = "TestMessage";
         _validator.Setup(x => x.IsValid(It.IsAny<WithdrawDomainRequest>(), out message, It.IsAny<object?[]>()))
             .Returns(false);
-        var sut = new WithdrawApprenticeshipCommandHandler(
+        var sut = new WithdrawLearningCommandHandler(
             _apprenticeshipRepository.Object,
             _apprenticeshipsOuterApiClient.Object,
             _systemClockService.Object,
@@ -63,7 +62,7 @@ public class WhenHandleWithdrawCommand
             _messageSession.Object,
             _logger.Object);
 
-        var command = _fixture.Create<WithdrawApprenticeshipCommand>();
+        var command = _fixture.Create<WithdrawLearningCommand>();
 
         // Act
         var result = await sut.Handle(command);
@@ -86,7 +85,7 @@ public class WhenHandleWithdrawCommand
                 It.IsAny<HandleWithdrawalNotificationsRequest>(), It.IsAny<string>()))
             .Returns(() => Task.CompletedTask);
 
-        var sut = new WithdrawApprenticeshipCommandHandler(
+        var sut = new WithdrawLearningCommandHandler(
             _apprenticeshipRepository.Object,
             _apprenticeshipsOuterApiClient.Object,
             _systemClockService.Object,
@@ -94,7 +93,7 @@ public class WhenHandleWithdrawCommand
             _messageSession.Object,
             _logger.Object);
 
-        var command = _fixture.Create<WithdrawApprenticeshipCommand>();
+        var command = _fixture.Create<WithdrawLearningCommand>();
 
         // Act
         await sut.Handle(command);
@@ -131,7 +130,7 @@ public class WhenHandleWithdrawCommand
                 It.IsAny<HandleWithdrawalNotificationsRequest>(), It.IsAny<string>()))
             .Returns(() => Task.CompletedTask);
 
-        var sut = new WithdrawApprenticeshipCommandHandler(
+        var sut = new WithdrawLearningCommandHandler(
             _apprenticeshipRepository.Object,
             _apprenticeshipsOuterApiClient.Object,
             _systemClockService.Object,
@@ -139,7 +138,7 @@ public class WhenHandleWithdrawCommand
             _messageSession.Object,
             _logger.Object);
 
-        var command = _fixture.Create<WithdrawApprenticeshipCommand>();
+        var command = _fixture.Create<WithdrawLearningCommand>();
 
         // Act
         await sut.Handle(command);
@@ -148,7 +147,7 @@ public class WhenHandleWithdrawCommand
         _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipWithdrawnEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
-    private void ResetMockRepository(Enums.FundingPlatform fundingPlatform = Enums.FundingPlatform.DAS)
+    private void ResetMockRepository(FundingPlatform fundingPlatform = FundingPlatform.DAS)
     {
         _apprenticeship = ApprenticeshipDomainModelTestHelper.CreateBasicTestModel();
 

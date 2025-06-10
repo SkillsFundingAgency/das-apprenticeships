@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.ApproveStartDateChange;
-using SFA.DAS.Apprenticeships.Command.CancelPendingStartDateChange;
-using SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
-using SFA.DAS.Apprenticeships.Command.RejectStartDateChange;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetPendingStartDateChange;
+﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.ApproveStartDateChange;
+using SFA.DAS.Learning.Command.CancelPendingStartDateChange;
+using SFA.DAS.Learning.Command.CreateStartDateChange;
+using SFA.DAS.Learning.Command.RejectStartDateChange;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
+using SFA.DAS.Learning.InnerApi.Requests;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetPendingStartDateChange;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Controllers;
+namespace SFA.DAS.Learning.InnerApi.Controllers;
 
 /// <summary>
 /// Controller for handling requests related to start date changes

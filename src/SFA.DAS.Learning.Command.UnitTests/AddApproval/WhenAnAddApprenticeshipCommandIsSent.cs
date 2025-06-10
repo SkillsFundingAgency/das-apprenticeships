@@ -1,45 +1,45 @@
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.AddApprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Factories;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.TestHelpers;
-using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeships.Types;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
+using SFA.DAS.Learning.Command.AddLearning;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Factories;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.TestHelpers;
+using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.AddApproval;
+namespace SFA.DAS.Learning.Command.UnitTests.AddApproval;
 
 [TestFixture]
 public class WhenAnAddApprenticeshipCommandIsSent
 {
-    private AddApprenticeshipCommandHandler _commandHandler = null!;
-    private Mock<IApprenticeshipFactory> _apprenticeshipFactory = null!;
-    private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
+    private AddLearningCommandHandler _commandHandler = null!;
+    private Mock<ILearningFactory> _apprenticeshipFactory = null!;
+    private Mock<ILearningRepository> _apprenticeshipRepository = null!;
     private Mock<IFundingBandMaximumService> _fundingBandMaximumService = null!;
     private Mock<IMessageSession> _messageSession = null!;
-    private Mock<ILogger<AddApprenticeshipCommandHandler>> _logger = null!;
+    private Mock<ILogger<AddLearningCommandHandler>> _logger = null!;
     private Fixture _fixture = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _apprenticeshipFactory = new Mock<IApprenticeshipFactory>();
-        _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+        _apprenticeshipFactory = new Mock<ILearningFactory>();
+        _apprenticeshipRepository = new Mock<ILearningRepository>();
         _fundingBandMaximumService = new Mock<IFundingBandMaximumService>();
         _messageSession = new Mock<IMessageSession>();
-        _logger = new Mock<ILogger<AddApprenticeshipCommandHandler>>();
-        _commandHandler = new AddApprenticeshipCommandHandler(
+        _logger = new Mock<ILogger<AddLearningCommandHandler>>();
+        _commandHandler = new AddLearningCommandHandler(
             _apprenticeshipFactory.Object, 
             _apprenticeshipRepository.Object, 
             _fundingBandMaximumService.Object,
@@ -53,7 +53,7 @@ public class WhenAnAddApprenticeshipCommandIsSent
     [Test]
 	public async Task WhenAnApprenticeshipAlreadyExistsThenItIsNotCreatedAgain()
     {
-        var command = _fixture.Create<AddApprenticeshipCommand>();
+        var command = _fixture.Create<AddLearningCommand>();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
 
 		_apprenticeshipRepository.Setup(x => x.Get(command.Uln, command.ApprovalsApprenticeshipId)).ReturnsAsync(apprenticeship);
@@ -66,7 +66,7 @@ public class WhenAnAddApprenticeshipCommandIsSent
     [Test]
     public async Task ThenAnEpisodeIsCreated()
     {
-        var command = _fixture.Create<AddApprenticeshipCommand>();
+        var command = _fixture.Create<AddLearningCommand>();
         var trainingCodeInt = _fixture.Create<int>();
         command.TrainingCode = trainingCodeInt.ToString();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -93,7 +93,7 @@ public class WhenAnAddApprenticeshipCommandIsSent
     [Test]
     public async Task ThenAnEpisodePriceIsCreatedWithTheCorrectFundingBandMaximum()
     {
-        var command = _fixture.Create<AddApprenticeshipCommand>();
+        var command = _fixture.Create<AddLearningCommand>();
         var trainingCodeInt = _fixture.Create<int>();
         command.TrainingCode = trainingCodeInt.ToString();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -122,7 +122,7 @@ public class WhenAnAddApprenticeshipCommandIsSent
     [Test]
     public async Task ThenExceptionIsThrownWhenNoFundingBandMaximumForTheGivenDateAndCourseCodeIsPresent()
     {
-        var command = _fixture.Create<AddApprenticeshipCommand>();
+        var command = _fixture.Create<AddLearningCommand>();
         var trainingCodeInt = _fixture.Create<int>();
         command.TrainingCode = trainingCodeInt.ToString();
 
@@ -132,13 +132,13 @@ public class WhenAnAddApprenticeshipCommandIsSent
         await _commandHandler.Invoking(x => x.Handle(command, It.IsAny<CancellationToken>())).Should()
             .ThrowAsync<Exception>()
             .WithMessage(
-                $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
+                $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Approvals Learning Id: {command.ApprovalsApprenticeshipId}");
     }
 
     [Test]
     public async Task ThenFundingBandMaximumIsFetchedUsingStartDate()
     {
-        var command = _fixture.Create<AddApprenticeshipCommand>();
+        var command = _fixture.Create<AddLearningCommand>();
         var trainingCodeInt = _fixture.Create<int>();
         command.TrainingCode = trainingCodeInt.ToString();
         var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
@@ -165,7 +165,7 @@ public class WhenAnAddApprenticeshipCommandIsSent
     public async Task ThenEventPublished()
     {
         // Arrange
-        var command = _fixture.Create<AddApprenticeshipCommand>();
+        var command = _fixture.Create<AddLearningCommand>();
         command.FundingPlatform = FundingPlatform.DAS;
         var trainingCodeInt = _fixture.Create<int>();
         command.TrainingCode = trainingCodeInt.ToString();
@@ -198,7 +198,7 @@ public class WhenAnAddApprenticeshipCommandIsSent
     public async Task AndNotFundedByDASThenEventIsNotPublished()
     {
         // Arrange
-        var command = _fixture.Create<AddApprenticeshipCommand>();
+        var command = _fixture.Create<AddLearningCommand>();
         command.FundingPlatform = FundingPlatform.SLD;
         var trainingCodeInt = _fixture.Create<int>();
         command.TrainingCode = trainingCodeInt.ToString();

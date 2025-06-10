@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Extensions;
+namespace SFA.DAS.Learning.InnerApi.Extensions;
 
 public static class HttpResponseExtensions
 {

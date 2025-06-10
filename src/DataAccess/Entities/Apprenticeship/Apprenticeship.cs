@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+﻿namespace SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 
 [Table("dbo.Apprenticeship")]
 [System.ComponentModel.DataAnnotations.Schema.Table("Apprenticeship")]

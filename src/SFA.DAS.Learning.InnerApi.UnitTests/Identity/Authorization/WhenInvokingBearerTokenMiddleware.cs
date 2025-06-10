@@ -1,4 +1,7 @@
-﻿using FluentAssertions;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,12 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Security.Claims;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Identity.Authorization
 {
     public class WhenInvokingBearerTokenMiddleware
     {

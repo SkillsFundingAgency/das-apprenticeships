@@ -1,24 +1,24 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.TestHelpers;
-using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeships.Types;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using FundingPlatform = SFA.DAS.Apprenticeships.Enums.FundingPlatform;
+using SFA.DAS.Learning.Command.SetPaymentsFrozen;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.TestHelpers;
+using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.SetPaymentsFrozen;
+namespace SFA.DAS.Learning.Command.UnitTests.SetPaymentsFrozen;
 
 public class WhenHandleSetPaymentsFrozenCommand
 {
-    private Mock<IApprenticeshipRepository> _mockApprenticeshipRepository;
+    private Mock<ILearningRepository> _mockApprenticeshipRepository;
     private Mock<IMessageSession> _messageSession;
     private Mock<ILogger<SetPaymentsFrozenCommandHandler>> _logger;
     private SetPaymentsFrozenCommandHandler _handler;
@@ -27,7 +27,7 @@ public class WhenHandleSetPaymentsFrozenCommand
     [SetUp]
     public void SetUp()
     {
-        _mockApprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+        _mockApprenticeshipRepository = new Mock<ILearningRepository>();
         _messageSession = new Mock<IMessageSession>();
         _logger = new Mock<ILogger<SetPaymentsFrozenCommandHandler>>();
         _handler = new SetPaymentsFrozenCommandHandler(

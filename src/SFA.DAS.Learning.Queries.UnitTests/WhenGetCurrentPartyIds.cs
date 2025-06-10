@@ -2,23 +2,23 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
+using SFA.DAS.Learning.DataTransferObjects;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Queries.GetCurrentPartyIds;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
+namespace SFA.DAS.Learning.Queries.UnitTests;
 
 public class WhenGetCurrentPartyIds
 {
     private Fixture _fixture;
-    private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
+    private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
     private GetCurrentPartyIdsRequestQueryHandler _sut;
 
     [SetUp]
     public void Setup()
     {
         _fixture = new Fixture();
-        _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
+        _apprenticeshipQueryRepository = new Mock<ILearningQueryRepository>();
         _sut = new GetCurrentPartyIdsRequestQueryHandler(_apprenticeshipQueryRepository.Object, Mock.Of<ILogger<GetCurrentPartyIdsRequestQueryHandler>>());
     }
 

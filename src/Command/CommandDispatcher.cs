@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace SFA.DAS.Apprenticeships.Command
+namespace SFA.DAS.Learning.Command
 {
     public class CommandDispatcher : ICommandDispatcher
     {

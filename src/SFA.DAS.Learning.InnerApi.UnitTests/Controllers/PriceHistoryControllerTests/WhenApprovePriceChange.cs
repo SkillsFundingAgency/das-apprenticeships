@@ -3,14 +3,14 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
-using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.ApprovePriceChange;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.InnerApi.Requests;
+using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
 {
     public class WhenApprovePriceChange
     {
@@ -38,7 +38,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryCon
             var result = await _sut.ApprovePriceChange(apprenticeshipKey, request);
 
             _commandDispatcher.Verify(x => x.Send<ApprovePriceChangeCommand, ApprovedBy> (
-                        It.Is<ApprovePriceChangeCommand>(r => r.ApprenticeshipKey == apprenticeshipKey && r.UserId == request.UserId), 
+                        It.Is<ApprovePriceChangeCommand>(r => r.LearningKey == apprenticeshipKey && r.UserId == request.UserId), 
                         It.IsAny<CancellationToken>()), Times.Once);
             result.Should().BeOfType<OkObjectResult>();
         }

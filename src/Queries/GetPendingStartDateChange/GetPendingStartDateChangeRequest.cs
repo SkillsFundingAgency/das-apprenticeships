@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.GetPendingStartDateChange;
+﻿namespace SFA.DAS.Learning.Queries.GetPendingStartDateChange;
 
 public class GetPendingStartDateChangeRequest : IQuery
 {

@@ -7,16 +7,16 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
-using SFA.DAS.Apprenticeships.TestHelpers;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.UnitTests.Helpers;
+using SFA.DAS.Learning.TestHelpers;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository;
+namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository;
 
 public class WhenGettingByDates
 {
-    private Domain.Repositories.ApprenticeshipQueryRepository _sut;
+    private Learning.Domain.Repositories.LearningQueryRepository _sut;
     private Fixture _fixture;
     private ApprenticeshipsDataContext _dbContext;
 
@@ -124,9 +124,9 @@ public class WhenGettingByDates
     private void SetUpApprenticeshipQueryRepository()
     {
         _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-        _sut = new Domain.Repositories.ApprenticeshipQueryRepository(
+        _sut = new Learning.Domain.Repositories.LearningQueryRepository(
             new Lazy<ApprenticeshipsDataContext>(_dbContext),
-            Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>()
+            Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>()
         );
     }
 }

@@ -3,25 +3,25 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.CreateStartDateChange;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using SFA.DAS.Learning.Command.CreateStartDateChange;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.CreateStartDateChange
+namespace SFA.DAS.Learning.Command.UnitTests.CreateStartDateChange
 {
     [TestFixture]
     public class WhenAStartDateChangeIsCreated
     {
         private CreateStartDateChangeCommandHandler _commandHandler;
-        private Mock<IApprenticeshipRepository> _apprenticeshipRepository;
+        private Mock<ILearningRepository> _apprenticeshipRepository;
         private Fixture _fixture;
 
         [SetUp]
         public void SetUp()
         {
-            _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+            _apprenticeshipRepository = new Mock<ILearningRepository>();
             _commandHandler = new CreateStartDateChangeCommandHandler(_apprenticeshipRepository.Object);
             _fixture = new Fixture();
             _fixture.Customize(new ApprenticeshipCustomization());

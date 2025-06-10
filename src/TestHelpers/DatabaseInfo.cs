@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.TestHelpers;
+﻿namespace SFA.DAS.Learning.TestHelpers;
 
 public class DatabaseInfo
 {

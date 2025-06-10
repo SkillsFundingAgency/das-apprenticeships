@@ -1,28 +1,28 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Domain.Extensions;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Domain.Extensions;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.Types;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetLearnerStatus;
+namespace SFA.DAS.Learning.Queries.GetLearnerStatus;
 
 
 public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusRequest, GetLearnerStatusResponse?>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
     private readonly ISystemClockService _systemClockService;
     private readonly ILogger<GetLearnerStatusQueryHandler> _logger;
 
-    public GetLearnerStatusQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository, ISystemClockService systemClockService, ILogger<GetLearnerStatusQueryHandler> logger)
+    public GetLearnerStatusQueryHandler(ILearningQueryRepository learningQueryRepository, ISystemClockService systemClockService, ILogger<GetLearnerStatusQueryHandler> logger)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
         _systemClockService = systemClockService;
         _logger = logger;
     }
 
     public async Task<GetLearnerStatusResponse?> Handle(GetLearnerStatusRequest query, CancellationToken cancellationToken = default)
     {
-        var startDate = await _apprenticeshipQueryRepository.GetStartDate(query.ApprenticeshipKey);
+        var startDate = await _learningQueryRepository.GetStartDate(query.ApprenticeshipKey);
 
         if(startDate == null)
         {
@@ -30,9 +30,9 @@ public class GetLearnerStatusQueryHandler : IQueryHandler<GetLearnerStatusReques
             return null;
         }
 
-        var domainLearnerStatus = await _apprenticeshipQueryRepository.GetLearnerStatus(query.ApprenticeshipKey);
+        var domainLearnerStatus = await _learningQueryRepository.GetLearnerStatus(query.ApprenticeshipKey);
 
-        if (domainLearnerStatus?.LearnerStatus == Domain.Apprenticeship.LearnerStatus.Withdrawn)
+        if (domainLearnerStatus?.LearnerStatus == Learning.Domain.Apprenticeship.LearnerStatus.Withdrawn)
         {
             return new GetLearnerStatusResponse
             {

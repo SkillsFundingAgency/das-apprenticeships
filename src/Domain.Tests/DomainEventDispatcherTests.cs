@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests
+namespace SFA.DAS.Learning.Domain.UnitTests
 {
     [TestFixture]
     public class DomainEventDispatcherTests

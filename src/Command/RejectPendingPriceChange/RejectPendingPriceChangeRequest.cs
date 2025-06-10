@@ -1,13 +1,7 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
+﻿namespace SFA.DAS.Learning.Command.RejectPendingPriceChange;
 
-public class RejectPendingPriceChangeRequest : ICommand
+public class RejectPendingPriceChangeRequest(Guid learningKey, string? reason) : ICommand
 {
-    public RejectPendingPriceChangeRequest(Guid apprenticeshipKey, string? reason)
-    {
-        ApprenticeshipKey = apprenticeshipKey;
-        Reason = reason;
-    }
-
-    public Guid ApprenticeshipKey { get; }
-    public string? Reason { get; }
+    public Guid LearningKey { get; } = learningKey;
+    public string? Reason { get; } = reason;
 }

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.InnerApi.Requests;
+﻿namespace SFA.DAS.Learning.InnerApi.Requests;
 
 #pragma warning disable CS8618
 

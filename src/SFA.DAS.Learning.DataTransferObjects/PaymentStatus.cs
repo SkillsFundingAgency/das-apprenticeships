@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.DataTransferObjects;
+﻿namespace SFA.DAS.Learning.DataTransferObjects;
 
 public class PaymentStatus
 {

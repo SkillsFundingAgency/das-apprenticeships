@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
+namespace SFA.DAS.Learning.InnerApi.Identity.Authentication;
 
 [ExcludeFromCodeCoverage]
 public class AzureAdScopeClaimTransformation : IClaimsTransformation

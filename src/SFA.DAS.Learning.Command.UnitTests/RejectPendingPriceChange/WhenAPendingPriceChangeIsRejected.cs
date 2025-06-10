@@ -4,25 +4,25 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
+using SFA.DAS.Learning.Command.RejectPendingPriceChange;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests.RejectPendingPriceChange
+namespace SFA.DAS.Learning.Command.UnitTests.RejectPendingPriceChange
 {
     [TestFixture]
     public class WhenAPendingPriceChangeIsRejected
     {
         private RejectPendingPriceChangeCommandHandler _commandHandler = null!;
-        private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
+        private Mock<ILearningRepository> _apprenticeshipRepository = null!;
         private Fixture _fixture = null!;
 
         [SetUp]
         public void SetUp()
         {
-            _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
+            _apprenticeshipRepository = new Mock<ILearningRepository>();
             _commandHandler = new RejectPendingPriceChangeCommandHandler(_apprenticeshipRepository.Object);
 
             _fixture = new Fixture();
@@ -36,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.Command.UnitTests.RejectPendingPriceChange
             var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
             apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<ChangeInitiator>());
 
-            _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
+            _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
             
             await _commandHandler.Handle(command);
             

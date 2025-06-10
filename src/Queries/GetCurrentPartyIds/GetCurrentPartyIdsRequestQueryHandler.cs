@@ -1,28 +1,28 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
+using SFA.DAS.Learning.Domain.Repositories;
 
-namespace SFA.DAS.Apprenticeships.Queries.GetCurrentPartyIds;
+namespace SFA.DAS.Learning.Queries.GetCurrentPartyIds;
 
 public class GetCurrentPartyIdsRequestQueryHandler : IQueryHandler<GetCurrentPartyIdsRequest, GetCurrentPartyIdsResponse?>
 {
-    private readonly IApprenticeshipQueryRepository _apprenticeshipQueryRepository;
+    private readonly ILearningQueryRepository _learningQueryRepository;
     private readonly ILogger<GetCurrentPartyIdsRequestQueryHandler> _logger;
 
-    public GetCurrentPartyIdsRequestQueryHandler(IApprenticeshipQueryRepository apprenticeshipQueryRepository, ILogger<GetCurrentPartyIdsRequestQueryHandler> logger)
+    public GetCurrentPartyIdsRequestQueryHandler(ILearningQueryRepository learningQueryRepository, ILogger<GetCurrentPartyIdsRequestQueryHandler> logger)
     {
-        _apprenticeshipQueryRepository = apprenticeshipQueryRepository;
+        _learningQueryRepository = learningQueryRepository;
         _logger = logger;
     }
 
     public async Task<GetCurrentPartyIdsResponse?> Handle(GetCurrentPartyIdsRequest query, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Handling GetCurrentPartyIdsRequest for ApprenticeshipKey: {key}", query.ApprenticeshipKey);
+        _logger.LogInformation("Handling GetCurrentPartyIdsRequest for LearningKey: {key}", query.ApprenticeshipKey);
 
-        var currentPartyIds = await _apprenticeshipQueryRepository.GetCurrentPartyIds(query.ApprenticeshipKey);
+        var currentPartyIds = await _learningQueryRepository.GetCurrentPartyIds(query.ApprenticeshipKey);
 
         if (currentPartyIds == null)
         {
-            _logger.LogInformation("Apprenticeship with current episode not found for ApprenticeshipKey: {key}", query.ApprenticeshipKey);
+            _logger.LogInformation("Learning with current episode not found for LearningKey: {key}", query.ApprenticeshipKey);
             return null;
         }
 

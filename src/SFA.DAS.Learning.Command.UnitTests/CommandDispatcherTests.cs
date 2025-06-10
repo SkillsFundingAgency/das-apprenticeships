@@ -3,7 +3,7 @@ using System.Threading;
 using Moq;
 using NUnit.Framework;
 
-namespace SFA.DAS.Apprenticeships.Command.UnitTests
+namespace SFA.DAS.Learning.Command.UnitTests
 {
     [TestFixture]
     public class CommandDispatcherTests

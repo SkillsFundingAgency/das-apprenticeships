@@ -3,12 +3,12 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
-using SFA.DAS.Apprenticeships.InnerApi.Controllers;
-using SFA.DAS.Apprenticeships.Queries;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.CancelPendingPriceChange;
+using SFA.DAS.Learning.InnerApi.Controllers;
+using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.PriceHistoryControllerTests
 {
     public class WhenDeletePending
     {
@@ -35,7 +35,7 @@ namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Controllers.PriceHistoryCon
             _commandDispatcher
                 .Verify(x =>
                     x.Send(
-                        It.Is<CancelPendingPriceChangeRequest>(r => r.ApprenticeshipKey == apprenticeshipKey), It.IsAny<CancellationToken>()), Times.Once);
+                        It.Is<CancelPendingPriceChangeRequest>(r => r.LearningKey == apprenticeshipKey), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

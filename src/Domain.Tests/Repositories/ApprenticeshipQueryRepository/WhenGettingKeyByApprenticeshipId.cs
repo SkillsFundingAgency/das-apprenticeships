@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
-using SFA.DAS.Apprenticeships.TestHelpers;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.Domain.UnitTests.Helpers;
+using SFA.DAS.Learning.TestHelpers;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
+namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository
 {
     public class WhenGettingKeyByApprenticeshipId
     {
-        private Domain.Repositories.ApprenticeshipQueryRepository _sut;
+        private Learning.Domain.Repositories.LearningQueryRepository _sut;
         private Fixture _fixture;
         private ApprenticeshipsDataContext _dbContext;
 
@@ -37,7 +36,7 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             SetUpApprenticeshipQueryRepository();
 
             //Act
-            var result = await _sut.GetKeyByApprenticeshipId(_fixture.Create<long>());
+            var result = await _sut.GetKeyByLearningId(_fixture.Create<long>());
 
             //Assert
             result.Should().BeNull();
@@ -56,16 +55,16 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
             await _dbContext.AddApprenticeship(_fixture.Create<Guid>(), false, approvalsApprenticeshipId: _fixture.Create<long>());
 
             // Act
-            var result = await _sut.GetKeyByApprenticeshipId(approvalsApprenticeshipId);
+            var result = await _sut.GetKeyByLearningId(approvalsApprenticeshipId);
 
             // Assert
             result.Should().NotBeNull();
             result.Should().Be(expectedApprenticeshipKey);
         }
 
-        private DataAccess.Entities.Apprenticeship.Apprenticeship CreateApprenticeshipWithApproval(Guid apprenticeshipKey, long apprenticeshipId)
+        private Learning.DataAccess.Entities.Apprenticeship.Apprenticeship CreateApprenticeshipWithApproval(Guid apprenticeshipKey, long apprenticeshipId)
         {
-            return _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
+            return _fixture.Build<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>()
                 .With(x => x.Key, apprenticeshipKey)
                 .Create();
         }
@@ -73,8 +72,8 @@ namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQu
         private void SetUpApprenticeshipQueryRepository()
         {
             _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-            var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
-            _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
+            var logger = Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>();
+            _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
         }
     }
 }

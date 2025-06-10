@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.UnitTests.Identity.Authorization;
+namespace SFA.DAS.Learning.InnerApi.UnitTests.Identity.Authorization;
 
 public class WhenGetUserIdFromHttpContext
 {

@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Types;
+namespace SFA.DAS.Learning.Types;
 
 public class ApprenticeshipPriceChangedEvent : ApprenticeshipEvent
 {

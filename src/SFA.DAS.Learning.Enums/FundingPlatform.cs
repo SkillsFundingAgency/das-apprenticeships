@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace SFA.DAS.Apprenticeships.Enums
+namespace SFA.DAS.Learning.Enums
 {
     public enum FundingPlatform
     {

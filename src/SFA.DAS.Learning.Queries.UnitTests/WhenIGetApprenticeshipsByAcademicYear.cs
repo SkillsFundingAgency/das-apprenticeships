@@ -1,28 +1,28 @@
 using AutoFixture;
 using FluentAssertions;
 using Moq;
-using SFA.DAS.Apprenticeships.DataTransferObjects;
-using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Queries.GetApprenticeshipsByAcademicYear;
+using SFA.DAS.Learning.DataTransferObjects;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Learning.Queries.GetApprenticeshipsByAcademicYear;
 
-namespace SFA.DAS.Apprenticeships.Queries.UnitTests;
+namespace SFA.DAS.Learning.Queries.UnitTests;
 
 public class WhenIGetApprenticeshipsByAcademicYear
 {
     private Fixture _fixture;
-    private Mock<IApprenticeshipQueryRepository> _apprenticeshipQueryRepository;
+    private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
     private Mock<IApprenticeshipsOuterApiClient> _apiClient;
-    private GetApprenticeshipsByAcademicYearQueryHandler _sut;
+    private GetLearningsByAcademicYearQueryHandler _sut;
 
     [SetUp]
     public void Setup()
     {
         _fixture = new Fixture();
-        _apprenticeshipQueryRepository = new Mock<IApprenticeshipQueryRepository>();
+        _apprenticeshipQueryRepository = new Mock<ILearningQueryRepository>();
         _apiClient = new Mock<IApprenticeshipsOuterApiClient>();
-        _sut = new GetApprenticeshipsByAcademicYearQueryHandler(_apprenticeshipQueryRepository.Object);
+        _sut = new GetLearningsByAcademicYearQueryHandler(_apprenticeshipQueryRepository.Object);
     }
 
     [Test]
@@ -33,10 +33,10 @@ public class WhenIGetApprenticeshipsByAcademicYear
         const int pageSize = 20;
         const int pageNumber = 1;
 
-        var queryResult = _fixture.Create<PagedResult<Apprenticeship>>();
-        var expectedResult = new GetApprenticeshipsByAcademicYearResponse
+        var queryResult = _fixture.Create<PagedResult<DataTransferObjects.Learning>>();
+        var expectedResult = new GetLearningsByAcademicYearResponse
         {
-            Items = queryResult.Data.Select(x => new GetApprenticeshipsByDatesResponseItem
+            Items = queryResult.Data.Select(x => new GetLearningsByDatesResponseItem
             {
                 Uln = x.Uln
             }),
@@ -45,7 +45,7 @@ public class WhenIGetApprenticeshipsByAcademicYear
             TotalItems = queryResult.TotalItems
         };
 
-        var query = new GetApprenticeshipsByAcademicYearRequest(1000, academicYear, pageNumber, pageSize);
+        var query = new GetLearningsByAcademicYearRequest(1000, academicYear, pageNumber, pageSize);
 
         var dates = AcademicYearParser.ParseFrom(academicYear);
 
