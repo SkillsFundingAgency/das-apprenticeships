@@ -112,8 +112,8 @@ public class LearningController : ControllerBase
     {
         var request = new GetLearningStartDateRequest { ApprenticeshipKey = learningKey };
         var response = await _queryDispatcher.Send<GetLearningStartDateRequest, GetLearningStartDateResponse?>(request);
-        if (response == null || response.ApprenticeshipStartDate == null) return NotFound();
-        return Ok(response.ApprenticeshipStartDate);
+        if (response == null || response.LearningStartDate == null) return NotFound();
+        return Ok(response.LearningStartDate);
     }
 
     /// <summary>
@@ -127,8 +127,8 @@ public class LearningController : ControllerBase
     {
         var request = new GetLearningKeyRequest { ApprenticeshipHashedId = apprenticeshipHashedId };
         var response = await _queryDispatcher.Send<GetLearningKeyRequest, GetLearningKeyResponse>(request);
-        if (response.ApprenticeshipKey == null) return NotFound();
-        return Ok(response.ApprenticeshipKey);
+        if (response.LearningKey == null) return NotFound();
+        return Ok(response.LearningKey);
     }
 
     /// <summary>
@@ -142,13 +142,13 @@ public class LearningController : ControllerBase
     {
         var request = new GetLearningKeyByLearningIdRequest { ApprenticeshipId = learningId };
         var response = await _queryDispatcher.Send<GetLearningKeyByLearningIdRequest, GetLearningKeyByLearningIdResponse>(request);
-        if (response.ApprenticeshipKey == null)
+        if (response.LearningKey == null)
         {
-            _logger.LogInformation("{p1} could not be found.", nameof(response.ApprenticeshipKey));
+            _logger.LogInformation("{p1} could not be found.", nameof(response.LearningKey));
             return NotFound();
         }
 
-        return Ok(response.ApprenticeshipKey);
+        return Ok(response.LearningKey);
     }
 
     /// <summary>

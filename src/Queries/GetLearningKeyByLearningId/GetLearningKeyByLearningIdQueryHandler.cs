@@ -14,6 +14,6 @@ public class GetLearningKeyByLearningIdQueryHandler : IQueryHandler<GetLearningK
     public async Task<GetLearningKeyByLearningIdResponse> Handle(GetLearningKeyByLearningIdRequest query, CancellationToken cancellationToken = default)
     {
         var key = await _learningQueryRepository.GetKeyByLearningId(query.ApprenticeshipId);
-        return new GetLearningKeyByLearningIdResponse { ApprenticeshipKey = key };
+        return new GetLearningKeyByLearningIdResponse { LearningKey = key };
     }
 }

@@ -43,7 +43,7 @@ public class WhenGetApprenticeshipStartDate
 
         result.Should().BeOfType<OkObjectResult>();
         var okResult = (OkObjectResult)result;
-        okResult.Value.Should().Be(expectedResult.ApprenticeshipStartDate);
+        okResult.Value.Should().Be(expectedResult.LearningStartDate);
     }
     
     [Test]

@@ -29,7 +29,7 @@ public class WhenGetApprenticeshipsWithEpisodes
         var query = _fixture.Create<GetLearningsWithEpisodesRequest>();
         query.CollectionYear = 2021;
         query.CollectionPeriod = 1;
-        var apprenticeships = _fixture.Create<List<ApprenticeshipWithEpisodes>>();
+        var apprenticeships = _fixture.Create<List<LearningWithEpisodes>>();
         var expectedResponse = new GetLearningsWithEpisodesResponse(query.Ukprn, apprenticeships);
 
         _apprenticeshipQueryRepository
@@ -53,7 +53,7 @@ public class WhenGetApprenticeshipsWithEpisodes
 
         _apprenticeshipQueryRepository
             .Setup(x => x.GetLearningsWithEpisodes(query.Ukprn, It.IsAny<DateTime>()))
-            .ReturnsAsync((List<ApprenticeshipWithEpisodes>?)null);
+            .ReturnsAsync((List<LearningWithEpisodes>?)null);
 
         // Act
         var actualResult = await _sut.Handle(query);

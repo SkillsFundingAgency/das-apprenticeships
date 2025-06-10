@@ -2,5 +2,5 @@
 
 public class GetLearningKeyResponse
 {
-    public Guid? ApprenticeshipKey { get; set; }
+    public Guid? LearningKey { get; set; }
 }

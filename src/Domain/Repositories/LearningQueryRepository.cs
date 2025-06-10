@@ -142,12 +142,12 @@ public class LearningQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext,
             ? null
             : new ApprenticeshipStartDate
             {
-                ApprenticeshipKey = apprenticeship.Key,
+                LearningKey = apprenticeship.Key,
                 ActualStartDate = firstPrice.StartDate,
                 PlannedEndDate = latestPrice.EndDate,
                 AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
                 UKPRN = latestEpisode.Ukprn,
-                ApprenticeDateOfBirth = apprenticeship.DateOfBirth,
+                DateOfBirth = apprenticeship.DateOfBirth,
                 CourseCode = latestEpisode.TrainingCode,
                 CourseVersion = latestEpisode.TrainingCourseVersion,
                 SimplifiedPaymentsMinimumStartDate = Constants.SimplifiedPaymentsMinimumStartDate
@@ -317,9 +317,9 @@ public class LearningQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext,
     /// </summary>
     /// <param name="ukprn">The unique provider reference number. Only apprenticeships where the episode with this provider reference will be returned.</param>
     /// <param name="activeOnDate">If populated, will return only apprenticeships that are active on this date</param>
-    public async Task<List<ApprenticeshipWithEpisodes>?> GetLearningsWithEpisodes(long ukprn, DateTime? activeOnDate = null)
+    public async Task<List<LearningWithEpisodes>?> GetLearningsWithEpisodes(long ukprn, DateTime? activeOnDate = null)
     {
-        List<ApprenticeshipWithEpisodes>? apprenticeshipWithEpisodes = null;
+        List<LearningWithEpisodes>? apprenticeshipWithEpisodes = null;
 
         try
         {
@@ -340,7 +340,7 @@ public class LearningQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext,
                 .ToListAsync();
 
             apprenticeshipWithEpisodes = apprenticeships.Select(apprenticeship =>
-                new ApprenticeshipWithEpisodes(
+                new LearningWithEpisodes(
                     apprenticeship.Key,
                     apprenticeship.Uln,
                     apprenticeship.GetStartDate(),

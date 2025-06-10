@@ -37,7 +37,7 @@ public class WhenGetApprenticeshipKey
 
         _queryDispatcher
             .Setup(x => x.Send<GetLearningKeyRequest, GetLearningKeyResponse>(It.Is<GetLearningKeyRequest>(r => r.ApprenticeshipHashedId == apprenticeshipHashedId)))
-            .ReturnsAsync(new GetLearningKeyResponse{ ApprenticeshipKey = expectedResult });
+            .ReturnsAsync(new GetLearningKeyResponse{ LearningKey = expectedResult });
 
         var result = await _sut.GetLearningKey(apprenticeshipHashedId);
 

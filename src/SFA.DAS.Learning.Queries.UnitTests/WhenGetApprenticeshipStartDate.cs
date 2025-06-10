@@ -31,7 +31,7 @@ public class WhenGetApprenticeshipStartDate
 
         _apprenticeshipQueryRepository
             .Setup(x => x.GetStartDate(query.ApprenticeshipKey))
-            .ReturnsAsync(expectedResult.ApprenticeshipStartDate);
+            .ReturnsAsync(expectedResult.LearningStartDate);
 
         //Act
         var actualResult = await _sut.Handle(query);
@@ -54,6 +54,6 @@ public class WhenGetApprenticeshipStartDate
         var actualResult = await _sut.Handle(query);
 
         //Assert
-        actualResult!.ApprenticeshipStartDate.Should().BeNull();
+        actualResult!.LearningStartDate.Should().BeNull();
     }
 }

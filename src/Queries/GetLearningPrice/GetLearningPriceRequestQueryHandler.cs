@@ -19,7 +19,7 @@ public class GetLearningPriceRequestQueryHandler : IQueryHandler<GetLearningPric
 
         return new GetLearningPriceResponse
         {
-            ApprenticeshipKey = query.ApprenticeshipKey,
+            LearningKey = query.ApprenticeshipKey,
             TrainingPrice = price.TrainingPrice,
             AssessmentPrice = price.AssessmentPrice,
             TotalPrice = price.TotalPrice,

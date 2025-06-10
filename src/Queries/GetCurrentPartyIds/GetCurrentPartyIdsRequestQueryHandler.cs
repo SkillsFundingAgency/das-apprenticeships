@@ -16,13 +16,13 @@ public class GetCurrentPartyIdsRequestQueryHandler : IQueryHandler<GetCurrentPar
 
     public async Task<GetCurrentPartyIdsResponse?> Handle(GetCurrentPartyIdsRequest query, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Handling GetCurrentPartyIdsRequest for ApprenticeshipKey: {key}", query.ApprenticeshipKey);
+        _logger.LogInformation("Handling GetCurrentPartyIdsRequest for LearningKey: {key}", query.ApprenticeshipKey);
 
         var currentPartyIds = await _learningQueryRepository.GetCurrentPartyIds(query.ApprenticeshipKey);
 
         if (currentPartyIds == null)
         {
-            _logger.LogInformation("Learning with current episode not found for ApprenticeshipKey: {key}", query.ApprenticeshipKey);
+            _logger.LogInformation("Learning with current episode not found for LearningKey: {key}", query.ApprenticeshipKey);
             return null;
         }
 

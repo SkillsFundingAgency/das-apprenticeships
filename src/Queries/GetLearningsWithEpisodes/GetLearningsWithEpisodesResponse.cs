@@ -2,15 +2,10 @@
 
 namespace SFA.DAS.Learning.Queries.GetLearningsWithEpisodes;
 
-public class GetLearningsWithEpisodesResponse
+public class GetLearningsWithEpisodesResponse(long ukprn, List<LearningWithEpisodes> learnings)
 {
-    public GetLearningsWithEpisodesResponse(long ukprn, List<ApprenticeshipWithEpisodes> apprenticeships)
-    {
-        Ukprn = ukprn;
-        Apprenticeships = apprenticeships;
-    }
-
-    public long Ukprn { get; set; }
-    public List<ApprenticeshipWithEpisodes> Apprenticeships { get; set; }
+    public long Ukprn { get; set; } = ukprn;
+    public List<LearningWithEpisodes> Apprenticeships => Learnings;
+    public List<LearningWithEpisodes> Learnings { get; set; } = learnings;
 }
 

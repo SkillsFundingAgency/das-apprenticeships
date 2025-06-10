@@ -30,7 +30,7 @@ public class WhenGetLearningKey
 
         _apprenticeshipQueryRepository
             .Setup(x => x.GetKey(query.ApprenticeshipHashedId))
-            .ReturnsAsync(expectedResult.ApprenticeshipKey);
+            .ReturnsAsync(expectedResult.LearningKey);
 
         //Act
         var actualResult = await _sut.Handle(query);

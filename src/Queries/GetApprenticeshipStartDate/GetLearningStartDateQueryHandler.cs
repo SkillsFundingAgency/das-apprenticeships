@@ -17,7 +17,7 @@ public class GetLearningStartDateQueryHandler : IQueryHandler<GetLearningStartDa
 
         return new GetLearningStartDateResponse
         {
-            ApprenticeshipStartDate = startDate
+            LearningStartDate = startDate
         };
     }
 }

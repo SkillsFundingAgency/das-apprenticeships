@@ -148,7 +148,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         DateTime startDate,
         DateTime endDate,
         int age,
-        ApprenticeshipWithEpisodes actual)
+        LearningWithEpisodes actual)
     {
         actual.Should().NotBeNull();
         actual.StartDate.Should().Be(startDate);
