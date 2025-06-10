@@ -70,7 +70,7 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
             });
         }
 
-        [Then(@"an Learning record is created")]
+        [Then(@"an Apprenticeship record is created")]
         public async Task ThenAnApprenticeshipRecordIsCreated()
         {
             await WaitHelper.WaitForIt(async () => await ApprenticeshipRecordMatchesExpectation(), "Failed to find the apprenticeship record");
@@ -106,14 +106,14 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
             _scenarioContext["EpisodePrice"] = episodePrice;
         }
 
-        [Then("an Learning record is created with the correct funding band maximum")]
+        [Then("an Apprenticeship record is created with the correct funding band maximum")]
         public async Task ThenAnApprenticeshipRecordIsCreatedWithTheCorrectFundingBandMaximum()
         {
             await ThenAnApprenticeshipRecordIsCreated();
             ((EpisodePrice)_scenarioContext["EpisodePrice"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
         }
 
-        [Then("an Learning record is not created")]
+        [Then("an Apprenticeship record is not created")]
         public async Task ThenAnApprenticeshipRecordIsNotCreated()
         {
             await WaitHelper.WaitForUnexpected(ApprenticeshipRecordMatchesExpectation, "Found unexpected apprenticeship record created.");
