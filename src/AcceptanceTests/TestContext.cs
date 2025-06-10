@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Apprenticeships.TestHelpers;
+﻿using SFA.DAS.Learning.TestHelpers;
 
 namespace SFA.DAS.Learning.AcceptanceTests
 {

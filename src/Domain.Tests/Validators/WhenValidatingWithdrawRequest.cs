@@ -3,11 +3,11 @@ using AutoFixture;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Validators;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.TestHelpers;
 
 namespace SFA.DAS.Learning.Domain.UnitTests.Validators;
 

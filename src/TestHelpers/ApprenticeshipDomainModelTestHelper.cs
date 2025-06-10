@@ -1,14 +1,14 @@
-﻿using AutoFixture;
-using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
-using System.Reflection;
+﻿using System.Reflection;
+using AutoFixture;
 using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 using FundingType = SFA.DAS.Learning.Enums.FundingType;
 
-namespace SFA.DAS.Apprenticeships.TestHelpers;
+namespace SFA.DAS.Learning.TestHelpers;
 
 public static class ApprenticeshipDomainModelTestHelper
 {

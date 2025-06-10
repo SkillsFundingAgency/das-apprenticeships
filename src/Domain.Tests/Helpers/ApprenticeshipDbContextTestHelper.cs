@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Learning.DataAccess;
 using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.TestHelpers;
 
 namespace SFA.DAS.Learning.Domain.UnitTests.Helpers;
 

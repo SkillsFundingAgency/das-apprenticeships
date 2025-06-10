@@ -3,8 +3,8 @@ using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.TestHelpers;
 using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.TestHelpers;
 
 namespace SFA.DAS.Learning.Domain.UnitTests.Apprenticeship;
 

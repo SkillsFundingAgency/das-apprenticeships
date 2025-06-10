@@ -3,7 +3,7 @@ using Moq;
 using SFA.DAS.Learning.DataAccess;
 using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.TestHelpers;
+namespace SFA.DAS.Learning.TestHelpers;
 
 public static class InMemoryDbContextCreator
 {

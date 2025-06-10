@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.TestHelpers;
-using SFA.DAS.Apprenticeships.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Learning.Command.SetPaymentsFrozen;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.TestHelpers;
+using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
 using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
