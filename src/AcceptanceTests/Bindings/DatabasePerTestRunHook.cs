@@ -8,7 +8,7 @@ namespace SFA.DAS.Learning.AcceptanceTests.Bindings
         [BeforeTestRun(Order = 1)]
         public static void RefreshDatabaseModel()
         {
-            SqlDatabaseModel.Update("SFA.DAS.Apprenticeships.Database");
+            SqlDatabaseModel.Update("SFA.DAS.Learning.Database");
         }
     }
 }
