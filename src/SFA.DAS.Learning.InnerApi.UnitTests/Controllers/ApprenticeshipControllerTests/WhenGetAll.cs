@@ -33,7 +33,7 @@ namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.ApprenticeshipControll
         [TestCase(null)]
         [TestCase(FundingPlatform.SLD)]
         [TestCase(FundingPlatform.DAS)]
-        public async Task ThenApprenticeshipsAreReturned(FundingPlatform? fundingPlatform)
+        public async Task ThenLearningsAreReturned(FundingPlatform? fundingPlatform)
         {
             var ukprn = _fixture.Create<long>();
             var expectedResult = _fixture.Create<GetLearningsResponse>();
@@ -46,7 +46,7 @@ namespace SFA.DAS.Learning.InnerApi.UnitTests.Controllers.ApprenticeshipControll
 
             result.Should().BeOfType<OkObjectResult>();
             var okResult = (OkObjectResult)result;
-            okResult.Value.Should().Be(expectedResult.Apprenticeships);
+            okResult.Value.Should().Be(expectedResult.Learnings);
         }
     }
 }

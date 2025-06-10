@@ -13,7 +13,6 @@ using SFA.DAS.Learning.Queries.GetLearningKey;
 using SFA.DAS.Learning.Queries.GetLearningKeyByLearningId;
 using SFA.DAS.Learning.Queries.GetLearningPrice;
 using SFA.DAS.Learning.Queries.GetLearningsWithEpisodes;
-using Apprenticeship = SFA.DAS.Learning.DataTransferObjects.Apprenticeship;
 
 namespace SFA.DAS.Learning.InnerApi.Controllers;
 
@@ -52,13 +51,13 @@ public class LearningController : ControllerBase
     /// <response code="200">Apprenticeships retrieved</response>
     [HttpGet("{ukprn}/apprenticeships")]
     [HttpGet("{ukprn}/learnings")]
-    [ProducesResponseType(typeof(IEnumerable<Apprenticeship>), 200)]
+    [ProducesResponseType(typeof(IEnumerable<DataTransferObjects.Learning>), 200)]
     public async Task<IActionResult> GetAll(long ukprn, FundingPlatform? fundingPlatform)
     {
         var request = new GetLearningsRequest(ukprn, fundingPlatform);
         var response = await _queryDispatcher.Send<GetLearningsRequest, GetLearningsResponse>(request);
 
-        return Ok(response.Apprenticeships);
+        return Ok(response.Learnings);
     }
 
     /// <summary>
@@ -136,7 +135,7 @@ public class LearningController : ControllerBase
     /// Get Learning Key
     /// </summary>
     /// <param name="learningId">This should be the id for the learning not the commitment</param>
-    /// <returns>Apprenticeship Key</returns>
+    /// <returns>Learning Key</returns>
     [HttpGet("{learningId}/key2")]
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetLearningKeyByLearningId(long learningId)

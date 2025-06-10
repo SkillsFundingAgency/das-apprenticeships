@@ -70,7 +70,7 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
             });
         }
 
-        [Then(@"an Apprenticeship record is created")]
+        [Then(@"an Learning record is created")]
         public async Task ThenAnApprenticeshipRecordIsCreated()
         {
             await WaitHelper.WaitForIt(async () => await ApprenticeshipRecordMatchesExpectation(), "Failed to find the apprenticeship record");
@@ -101,19 +101,19 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
             episodePrice.EndDate.Should().BeSameDateAs(ApprovalCreatedEvent.EndDate);
             episodePrice.TotalPrice.Should().Be(ApprovalCreatedEvent.PriceEpisodes[0].Cost);
 
-            _scenarioContext["Apprenticeship"] = apprenticeship;
+            _scenarioContext["Learning"] = apprenticeship;
             _scenarioContext["Episode"] = episode;
             _scenarioContext["EpisodePrice"] = episodePrice;
         }
 
-        [Then("an Apprenticeship record is created with the correct funding band maximum")]
+        [Then("an Learning record is created with the correct funding band maximum")]
         public async Task ThenAnApprenticeshipRecordIsCreatedWithTheCorrectFundingBandMaximum()
         {
             await ThenAnApprenticeshipRecordIsCreated();
             ((EpisodePrice)_scenarioContext["EpisodePrice"]).FundingBandMaximum.Should().Be((int)_scenarioContext["fundingBandMaximum"]);
         }
 
-        [Then("an Apprenticeship record is not created")]
+        [Then("an Learning record is not created")]
         public async Task ThenAnApprenticeshipRecordIsNotCreated()
         {
             await WaitHelper.WaitForUnexpected(ApprenticeshipRecordMatchesExpectation, "Found unexpected apprenticeship record created.");
@@ -178,7 +178,7 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
         }
 
         public CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent ApprovalCreatedEvent => (CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent)_scenarioContext["ApprovalCreatedEvent"];
-        public Apprenticeship Apprenticeship => (Apprenticeship)_scenarioContext["Apprenticeship"];
+        public Apprenticeship Apprenticeship => (Apprenticeship)_scenarioContext["Learning"];
         public Episode LatestEpisode => (Episode)_scenarioContext["Episode"];
         public EpisodePrice LatestEpisodePrice => (EpisodePrice)_scenarioContext["EpisodePrice"];
     }

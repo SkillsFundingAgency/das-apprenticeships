@@ -9,7 +9,7 @@ using SFA.DAS.Learning.Queries.GetApprenticeshipPaymentStatus;
 namespace SFA.DAS.Learning.InnerApi.Controllers;
 
 /// <summary>
-/// Controller for handling requests related to Apprenticeship Payment Status
+/// Controller for handling requests related to Learning Payment Status
 /// </summary>
 [Route("{apprenticeshipKey}")]
 [ApiController]
@@ -32,10 +32,10 @@ public class PaymentStatusController : ControllerBase
     }
 
     /// <summary>
-    /// Get Apprenticeship Payment Status (Frozen/Unfrozen)
+    /// Get Learning Payment Status (Frozen/Unfrozen)
     /// </summary>
     /// <param name="apprenticeshipKey"></param>
-    /// <returns>Apprenticeship Payment Status (Frozen/Unfrozen)</returns>
+    /// <returns>Learning Payment Status (Frozen/Unfrozen)</returns>
     [HttpGet("paymentStatus")]
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetApprenticeshipPaymentStatus(Guid apprenticeshipKey)
@@ -47,7 +47,7 @@ public class PaymentStatusController : ControllerBase
     }
 
     /// <summary>
-    /// Changes Apprenticeship Payment Status to Frozen
+    /// Changes Learning Payment Status to Frozen
     /// </summary>
     /// <param name="apprenticeshipKey"></param>
     /// <param name="freezeRequest"></param>
@@ -69,7 +69,7 @@ public class PaymentStatusController : ControllerBase
     }
 
     /// <summary>
-    /// Changes Apprenticeship Payment Status to Active
+    /// Changes Learning Payment Status to Active
     /// </summary>
     /// <param name="apprenticeshipKey"></param>
     [HttpPost("unfreeze")]

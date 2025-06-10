@@ -5,8 +5,8 @@ namespace SFA.DAS.Learning.Domain.Repositories;
 
 public interface ILearningQueryRepository
 {
-    Task<IEnumerable<DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform);
-    Task<PagedResult<DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int limit, int offset, CancellationToken cancellationToken);
+    Task<IEnumerable<DataTransferObjects.Learning>> GetAll(long ukprn, FundingPlatform? fundingPlatform);
+    Task<PagedResult<DataTransferObjects.Learning>> GetByDates(long ukprn, DateRange dates, int limit, int offset, CancellationToken cancellationToken);
     Task<Guid?> GetKeyByLearningId(long learningId);
     Task<ApprenticeshipPrice?> GetPrice(Guid learningKey);
     Task<ApprenticeshipStartDate?> GetStartDate(Guid learningKey);

@@ -3,7 +3,7 @@
 namespace SFA.DAS.Learning.DataTransferObjects
 {
     [ExcludeFromCodeCoverage]
-    public class Apprenticeship
+    public class Learning
     {
         public string Uln { get; set; }
         public string FirstName { get; set; }

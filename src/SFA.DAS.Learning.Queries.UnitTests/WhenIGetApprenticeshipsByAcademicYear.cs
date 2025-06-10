@@ -33,7 +33,7 @@ public class WhenIGetApprenticeshipsByAcademicYear
         const int pageSize = 20;
         const int pageNumber = 1;
 
-        var queryResult = _fixture.Create<PagedResult<Apprenticeship>>();
+        var queryResult = _fixture.Create<PagedResult<DataTransferObjects.Learning>>();
         var expectedResult = new GetLearningsByAcademicYearResponse
         {
             Items = queryResult.Data.Select(x => new GetLearningsByDatesResponseItem

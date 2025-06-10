@@ -1,14 +1,7 @@
-﻿using SFA.DAS.Learning.DataTransferObjects;
-
-namespace SFA.DAS.Learning.Queries.GetLearnings
+﻿namespace SFA.DAS.Learning.Queries.GetLearnings
 {
-    public class GetLearningsResponse
+    public class GetLearningsResponse(IEnumerable<DataTransferObjects.Learning> learnings)
     {
-        public IEnumerable<Apprenticeship> Apprenticeships { get; set; }
-
-        public GetLearningsResponse(IEnumerable<Apprenticeship> apprenticeships)
-        {
-            Apprenticeships = apprenticeships;
-        }
+        public IEnumerable<DataTransferObjects.Learning> Learnings { get; set; } = learnings;
     }
 }

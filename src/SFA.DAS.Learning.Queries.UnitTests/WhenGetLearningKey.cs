@@ -6,7 +6,7 @@ using SFA.DAS.Learning.Queries.GetLearningKey;
 
 namespace SFA.DAS.Learning.Queries.UnitTests;
 
-public class WhenGetApprenticeshipKey
+public class WhenGetLearningKey
 {
     private Fixture _fixture;
     private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;

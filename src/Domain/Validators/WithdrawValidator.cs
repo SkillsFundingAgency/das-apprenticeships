@@ -44,11 +44,11 @@ public class WithdrawValidator : IValidator<WithdrawDomainRequest>
             return FailwithMessage(out message, $"No apprenticeship found for ULN {request.ULN}");
 
         if (apprenticeship.LatestEpisode.Ukprn != request.UKPRN) // This check should really be part of authorization, but is currently passedd in as part of the request body
-            return FailwithMessage(out message, $"Apprenticeship not found for ULN {request.ULN} and UKPRN {request.UKPRN}");
+            return FailwithMessage(out message, $"Learning not found for ULN {request.ULN} and UKPRN {request.UKPRN}");
 
         // Validate if already withdrawn
         if (apprenticeship.LatestEpisode.LearningStatus == LearnerStatus.Withdrawn)
-            return FailwithMessage(out message, $"Apprenticeship already withdrawn for ULN {request.ULN}");
+            return FailwithMessage(out message, $"Learning already withdrawn for ULN {request.ULN}");
 
         // Validate Reason
         if (!ValidateReason(request, out message))

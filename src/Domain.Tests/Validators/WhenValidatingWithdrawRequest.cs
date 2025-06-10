@@ -71,7 +71,7 @@ public class WhenValidatingWithdrawRequest
 
         // Assert
         result.Should().BeFalse();
-        validationMessage.Should().Be($"Apprenticeship not found for ULN {command.ULN} and UKPRN {command.UKPRN}");
+        validationMessage.Should().Be($"Learning not found for ULN {command.ULN} and UKPRN {command.UKPRN}");
     }
 
     [Test]
@@ -95,7 +95,7 @@ public class WhenValidatingWithdrawRequest
 
         // Assert
         result.Should().BeFalse();
-        validationMessage.Should().Contain("Apprenticeship already withdrawn for ULN");
+        validationMessage.Should().Contain("Learning already withdrawn for ULN");
     }
 
     [Test]

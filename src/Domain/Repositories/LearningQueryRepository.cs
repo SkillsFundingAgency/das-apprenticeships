@@ -15,18 +15,18 @@ public class LearningQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext,
 {
     private ApprenticeshipsDataContext DbContext => dbContext.Value;
 
-    public async Task<IEnumerable<Learning.DataTransferObjects.Apprenticeship>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
+    public async Task<IEnumerable<Learning.DataTransferObjects.Learning>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
     {
         var apprenticeships = await DbContext.Apprenticeships
             .Include(x => x.Episodes)
             .Where(x => x.Episodes.Any(y => y.Ukprn == ukprn && (fundingPlatform == null || y.FundingPlatform == fundingPlatform)))
             .ToListAsync();
 
-        var result = apprenticeships.Select(x => new Learning.DataTransferObjects.Apprenticeship { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
+        var result = apprenticeships.Select(x => new Learning.DataTransferObjects.Learning { Uln = x.Uln, LastName = x.LastName, FirstName = x.FirstName });
         return result;
     }
 
-    public async Task<PagedResult<Learning.DataTransferObjects.Apprenticeship>> GetByDates(long ukprn, DateRange dates, int limit, int offset, CancellationToken cancellationToken)
+    public async Task<PagedResult<Learning.DataTransferObjects.Learning>> GetByDates(long ukprn, DateRange dates, int limit, int offset, CancellationToken cancellationToken)
     {
         var query = DbContext.ApprenticeshipsDbSet
             .Include(x => x.Episodes)
@@ -48,13 +48,13 @@ public class LearningQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext,
         var result = await query
             .Skip(offset)
             .Take(limit)
-            .Select(x => new Learning.DataTransferObjects.Apprenticeship
+            .Select(x => new Learning.DataTransferObjects.Learning
             {
                 Uln = x.Uln,
             })
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<Learning.DataTransferObjects.Apprenticeship>
+        return new PagedResult<Learning.DataTransferObjects.Learning>
         {
             Data = result,
             TotalItems = totalItems,
@@ -400,7 +400,7 @@ public class LearningQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext,
 
             if (apprenticeship == null)
             {
-                logger.LogInformation("Apprenticeship not found for apprenticeship key {key} when attempting to get learner status", apprenticeshipKey);
+                logger.LogInformation("Learning not found for apprenticeship key {key} when attempting to get learner status", apprenticeshipKey);
                 return null;
             }
 

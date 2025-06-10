@@ -6,7 +6,7 @@ using SFA.DAS.Learning.Queries.GetLearningKeyByLearningId;
 
 namespace SFA.DAS.Learning.Queries.UnitTests;
 
-public class WhenGetApprenticeshipKeyById
+public class WhenGetLearningKeyById
 {
     private Fixture _fixture;
     private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
@@ -22,7 +22,7 @@ public class WhenGetApprenticeshipKeyById
     }
 
     [Test]
-    public async Task ThenApprenticeshipKeyIsReturned()
+    public async Task ThenLearningKeyIsReturned()
     {
         //Arrange
         var query = _fixture.Create<GetLearningKeyByLearningIdRequest>();

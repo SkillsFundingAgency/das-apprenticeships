@@ -16,7 +16,7 @@ public class CurrentPartyIdsResponse
     public long EmployerAccountId { get; set; }
 
     /// <summary>
-    /// Apprenticeship Id in the commitments/approvals db
+    /// Learning Id in the commitments/approvals db
     /// </summary>
     public long ApprovalsApprenticeshipId { get; set; }
 }

@@ -7,7 +7,7 @@ using SFA.DAS.Learning.Queries.GetLearnings;
 
 namespace SFA.DAS.Learning.Queries.UnitTests
 {
-    public class WhenGetApprenticeships
+    public class WhenGetLearnings
     {
         private Fixture _fixture;
         private Mock<ILearningQueryRepository> _apprenticeshipQueryRepository;
@@ -27,7 +27,7 @@ namespace SFA.DAS.Learning.Queries.UnitTests
         {
             //Arrange
             var query = _fixture.Create<GetLearningsRequest>();
-            var expectedResult = _fixture.Create<IEnumerable<Apprenticeship>>();
+            var expectedResult = _fixture.Create<IEnumerable<DataTransferObjects.Learning>>();
 
             _apprenticeshipQueryRepository
                 .Setup(x => x.GetAll(query.Ukprn, query.FundingPlatform))
@@ -37,7 +37,7 @@ namespace SFA.DAS.Learning.Queries.UnitTests
             var actualResult = await _sut.Handle(query);
 
             //Assert
-            actualResult.Apprenticeships.Should().BeEquivalentTo(expectedResult);
+            actualResult.Learnings.Should().BeEquivalentTo(expectedResult);
         }
     }
 }

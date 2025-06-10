@@ -13,18 +13,18 @@ using SFA.DAS.Learning.Domain;
 namespace SFA.DAS.Learning.Functions.UnitTests;
 
 [TestFixture]
-public class WithdrawApprenticeshipFunctionTests
+public class WithdrawLearningFunctionTests
 {
     private Mock<ICommandDispatcher> _commandDispatcherMock;
-    private Mock<ILogger<WithdrawApprenticeshipFunction>> _loggerMock;
-    private WithdrawApprenticeshipFunction _function;
+    private Mock<ILogger<WithdrawLearningFunction>> _loggerMock;
+    private WithdrawLearningFunction _function;
 
     [SetUp]
     public void SetUp()
     {
         _commandDispatcherMock = new Mock<ICommandDispatcher>();
-        _loggerMock = new Mock<ILogger<WithdrawApprenticeshipFunction>>();
-        _function = new WithdrawApprenticeshipFunction(_commandDispatcherMock.Object, _loggerMock.Object);
+        _loggerMock = new Mock<ILogger<WithdrawLearningFunction>>();
+        _function = new WithdrawLearningFunction(_commandDispatcherMock.Object, _loggerMock.Object);
     }
 
     [Test]

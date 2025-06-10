@@ -40,12 +40,12 @@ public class AddLearningCommandHandler : ICommandHandler<AddLearningCommand>
             return;
         }
 
-        _logger.LogInformation("Handling AddLearningCommand for Approvals Apprenticeship Id: {approvalsApprenticeshipId}", command.ApprovalsApprenticeshipId);
+        _logger.LogInformation("Handling AddLearningCommand for Approvals Learning Id: {approvalsApprenticeshipId}", command.ApprovalsApprenticeshipId);
 
         if (command.ActualStartDate == null)
         {
             throw new Exception(
-                $"{nameof(command.ActualStartDate)} for Learning ({command.ApprenticeshipHashedId} (Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}) is null. " +
+                $"{nameof(command.ActualStartDate)} for Learning ({command.ApprenticeshipHashedId} (Approvals Learning Id: {command.ApprovalsApprenticeshipId}) is null. " +
                 $"Learnings funded by DAS should always have an actual start date. ");
         }
         var startDate = command.ActualStartDate.Value;
@@ -53,7 +53,7 @@ public class AddLearningCommandHandler : ICommandHandler<AddLearningCommand>
 
         if (fundingBandMaximum == null)
             throw new Exception(
-                $"No funding band maximum found for course {command.TrainingCode} for given date {startDate:u}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
+                $"No funding band maximum found for course {command.TrainingCode} for given date {startDate:u}. Approvals Learning Id: {command.ApprovalsApprenticeshipId}");
 
         var learning = _learningFactory.CreateNew(
             command.ApprovalsApprenticeshipId,
@@ -90,7 +90,7 @@ public class AddLearningCommandHandler : ICommandHandler<AddLearningCommand>
 
     private async Task SendEvent(ApprenticeshipDomainModel apprenticeship)
     {
-        _logger.LogInformation("Sending ApprenticeshipCreatedEvent for Approvals Apprenticeship Id: {approvalsApprenticeshipId}", apprenticeship.ApprovalsApprenticeshipId);
+        _logger.LogInformation("Sending ApprenticeshipCreatedEvent for Approvals Learning Id: {approvalsApprenticeshipId}", apprenticeship.ApprovalsApprenticeshipId);
         var apprenticeshipCreatedEvent = new ApprenticeshipCreatedEvent
         {
             ApprenticeshipKey = apprenticeship.Key,

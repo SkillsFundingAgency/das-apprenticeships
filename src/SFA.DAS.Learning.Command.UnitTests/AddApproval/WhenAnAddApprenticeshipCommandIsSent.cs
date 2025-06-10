@@ -132,7 +132,7 @@ public class WhenAnAddApprenticeshipCommandIsSent
         await _commandHandler.Invoking(x => x.Handle(command, It.IsAny<CancellationToken>())).Should()
             .ThrowAsync<Exception>()
             .WithMessage(
-                $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Approvals Apprenticeship Id: {command.ApprovalsApprenticeshipId}");
+                $"No funding band maximum found for course {command.TrainingCode} for given date {command.ActualStartDate?.ToString("u")}. Approvals Learning Id: {command.ApprovalsApprenticeshipId}");
     }
 
     [Test]

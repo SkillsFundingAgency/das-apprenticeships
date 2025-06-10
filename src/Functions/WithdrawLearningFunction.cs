@@ -13,26 +13,15 @@ using SFA.DAS.Learning.Functions.Extensions;
 
 namespace SFA.DAS.Learning.Functions;
 
-public class WithdrawApprenticeshipFunction
+public class WithdrawLearningFunction(ICommandDispatcher commandDispatcher, ILogger<WithdrawLearningFunction> logger)
 {
-    private readonly ICommandDispatcher _commandDispatcher;
-    private readonly ILogger<WithdrawApprenticeshipFunction> _logger;
-
     private const string ServiceBearerTokenKey = "ServiceBearerToken";
 
-    public WithdrawApprenticeshipFunction(
-        ICommandDispatcher commandDispatcher,
-        ILogger<WithdrawApprenticeshipFunction> logger)
-    {
-        _commandDispatcher = commandDispatcher;
-        _logger = logger;
-    }
-
-    [Function("WithdrawApprenticeship")]
+    [Function("WithdrawLearning")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
     {
-        _logger.LogInformation("WithdrawApprenticeship triggered");
+        logger.LogInformation("WithdrawApprenticeship triggered");
 
         req.HttpContext.MarkAsBackOfficeRequest();
 
@@ -43,11 +32,11 @@ public class WithdrawApprenticeshipFunction
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Failed to parse request body");
+            logger.LogError(ex, "Failed to parse request body");
             return new BadRequestObjectResult("Invalid request body");
         }
 
-        var withdrawResult = await _commandDispatcher.Send<WithdrawLearningCommand, Outcome>(command);
+        var withdrawResult = await commandDispatcher.Send<WithdrawLearningCommand, Outcome>(command);
 
         if(!withdrawResult.IsSuccess)
         {
@@ -59,12 +48,10 @@ public class WithdrawApprenticeshipFunction
 
     private async Task<WithdrawLearningCommand> GetCommandFromRequest(HttpRequest req)
     {
-        using (var reader = new StreamReader(req.Body))
-        {
-            var body = await reader.ReadToEndAsync();
-            var command = JsonConvert.DeserializeObject<WithdrawLearningCommand>(body);
-            command.ServiceBearerToken = req.Headers[ServiceBearerTokenKey];
-            return command;
-        }
+        using var reader = new StreamReader(req.Body);
+        var body = await reader.ReadToEndAsync();
+        var command = JsonConvert.DeserializeObject<WithdrawLearningCommand>(body);
+        command.ServiceBearerToken = req.Headers[ServiceBearerTokenKey];
+        return command;
     }
 }

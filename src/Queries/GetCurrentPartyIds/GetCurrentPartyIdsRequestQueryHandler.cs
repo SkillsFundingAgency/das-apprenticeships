@@ -22,7 +22,7 @@ public class GetCurrentPartyIdsRequestQueryHandler : IQueryHandler<GetCurrentPar
 
         if (currentPartyIds == null)
         {
-            _logger.LogInformation("Apprenticeship with current episode not found for ApprenticeshipKey: {key}", query.ApprenticeshipKey);
+            _logger.LogInformation("Learning with current episode not found for ApprenticeshipKey: {key}", query.ApprenticeshipKey);
             return null;
         }
 
