@@ -1,9 +1,9 @@
 ﻿#pragma warning disable 8618
 using SFA.DAS.Learning.Domain.Validators;
 
-namespace SFA.DAS.Learning.Command.WithdrawApprenticeship;
+namespace SFA.DAS.Learning.Command.WithdrawLearning;
 
-public class WithdrawApprenticeshipCommand : ICommand
+public class WithdrawLearningCommand : ICommand
 {
     public long UKPRN { get; set; }
     public string ULN { get; set; }
@@ -14,9 +14,9 @@ public class WithdrawApprenticeshipCommand : ICommand
     public string ServiceBearerToken { get; set; }
 }
 
-public static class WithdrawApprenticeshipCommandExtensions
+public static class WithdrawLearningCommandExtensions
 {
-    public static WithdrawDomainRequest ToDomainRequest(this WithdrawApprenticeshipCommand command)
+    public static WithdrawDomainRequest ToDomainRequest(this WithdrawLearningCommand command)
     {
         return new WithdrawDomainRequest
         {

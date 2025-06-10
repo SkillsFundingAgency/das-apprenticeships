@@ -9,7 +9,7 @@ using Moq;
 using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.TestHelpers;
-using SFA.DAS.Learning.Command.WithdrawApprenticeship;
+using SFA.DAS.Learning.Command.WithdrawLearning;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Domain.Validators;
@@ -30,7 +30,7 @@ public class WhenHandleWithdrawCommand
     private Mock<ISystemClockService> _systemClockService;
     private Mock<IValidator<WithdrawDomainRequest>> _validator;
     private Mock<IMessageSession> _messageSession;
-    private Mock<ILogger<WithdrawApprenticeshipCommandHandler>> _logger;
+    private Mock<ILogger<WithdrawLearningCommandHandler>> _logger;
     private ApprenticeshipDomainModel? _apprenticeship;
 
     private const long ValidUkprn = 1000000;
@@ -43,7 +43,7 @@ public class WhenHandleWithdrawCommand
         _validator = new Mock<IValidator<WithdrawDomainRequest>>();
         _systemClockService = MockSystemClock(2024, 12, 17);
         _messageSession = new Mock<IMessageSession>();
-        _logger = new Mock<ILogger<WithdrawApprenticeshipCommandHandler>>();
+        _logger = new Mock<ILogger<WithdrawLearningCommandHandler>>();
     }
 
     [Test]
@@ -54,7 +54,7 @@ public class WhenHandleWithdrawCommand
         string message = "TestMessage";
         _validator.Setup(x => x.IsValid(It.IsAny<WithdrawDomainRequest>(), out message, It.IsAny<object?[]>()))
             .Returns(false);
-        var sut = new WithdrawApprenticeshipCommandHandler(
+        var sut = new WithdrawLearningCommandHandler(
             _apprenticeshipRepository.Object,
             _apprenticeshipsOuterApiClient.Object,
             _systemClockService.Object,
@@ -62,7 +62,7 @@ public class WhenHandleWithdrawCommand
             _messageSession.Object,
             _logger.Object);
 
-        var command = _fixture.Create<WithdrawApprenticeshipCommand>();
+        var command = _fixture.Create<WithdrawLearningCommand>();
 
         // Act
         var result = await sut.Handle(command);
@@ -85,7 +85,7 @@ public class WhenHandleWithdrawCommand
                 It.IsAny<HandleWithdrawalNotificationsRequest>(), It.IsAny<string>()))
             .Returns(() => Task.CompletedTask);
 
-        var sut = new WithdrawApprenticeshipCommandHandler(
+        var sut = new WithdrawLearningCommandHandler(
             _apprenticeshipRepository.Object,
             _apprenticeshipsOuterApiClient.Object,
             _systemClockService.Object,
@@ -93,7 +93,7 @@ public class WhenHandleWithdrawCommand
             _messageSession.Object,
             _logger.Object);
 
-        var command = _fixture.Create<WithdrawApprenticeshipCommand>();
+        var command = _fixture.Create<WithdrawLearningCommand>();
 
         // Act
         await sut.Handle(command);
@@ -130,7 +130,7 @@ public class WhenHandleWithdrawCommand
                 It.IsAny<HandleWithdrawalNotificationsRequest>(), It.IsAny<string>()))
             .Returns(() => Task.CompletedTask);
 
-        var sut = new WithdrawApprenticeshipCommandHandler(
+        var sut = new WithdrawLearningCommandHandler(
             _apprenticeshipRepository.Object,
             _apprenticeshipsOuterApiClient.Object,
             _systemClockService.Object,
@@ -138,7 +138,7 @@ public class WhenHandleWithdrawCommand
             _messageSession.Object,
             _logger.Object);
 
-        var command = _fixture.Create<WithdrawApprenticeshipCommand>();
+        var command = _fixture.Create<WithdrawLearningCommand>();
 
         // Act
         await sut.Handle(command);

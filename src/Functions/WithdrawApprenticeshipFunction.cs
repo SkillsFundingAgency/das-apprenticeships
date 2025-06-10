@@ -7,7 +7,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.Learning.Command;
-using SFA.DAS.Learning.Command.WithdrawApprenticeship;
+using SFA.DAS.Learning.Command.WithdrawLearning;
 using SFA.DAS.Learning.Domain;
 using SFA.DAS.Learning.Functions.Extensions;
 
@@ -36,7 +36,7 @@ public class WithdrawApprenticeshipFunction
 
         req.HttpContext.MarkAsBackOfficeRequest();
 
-        WithdrawApprenticeshipCommand command;
+        WithdrawLearningCommand command;
         try
         {
             command = await GetCommandFromRequest(req);
@@ -47,7 +47,7 @@ public class WithdrawApprenticeshipFunction
             return new BadRequestObjectResult("Invalid request body");
         }
 
-        var withdrawResult = await _commandDispatcher.Send<WithdrawApprenticeshipCommand, Outcome>(command);
+        var withdrawResult = await _commandDispatcher.Send<WithdrawLearningCommand, Outcome>(command);
 
         if(!withdrawResult.IsSuccess)
         {
@@ -57,12 +57,12 @@ public class WithdrawApprenticeshipFunction
         return new OkObjectResult("Completed");
     }
 
-    private async Task<WithdrawApprenticeshipCommand> GetCommandFromRequest(HttpRequest req)
+    private async Task<WithdrawLearningCommand> GetCommandFromRequest(HttpRequest req)
     {
         using (var reader = new StreamReader(req.Body))
         {
             var body = await reader.ReadToEndAsync();
-            var command = JsonConvert.DeserializeObject<WithdrawApprenticeshipCommand>(body);
+            var command = JsonConvert.DeserializeObject<WithdrawLearningCommand>(body);
             command.ServiceBearerToken = req.Headers[ServiceBearerTokenKey];
             return command;
         }

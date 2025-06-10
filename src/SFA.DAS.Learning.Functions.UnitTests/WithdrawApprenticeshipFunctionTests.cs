@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Learning.Command;
-using SFA.DAS.Learning.Command.WithdrawApprenticeship;
+using SFA.DAS.Learning.Command.WithdrawLearning;
 using SFA.DAS.Learning.Domain;
 
 namespace SFA.DAS.Learning.Functions.UnitTests;
@@ -31,10 +31,10 @@ public class WithdrawApprenticeshipFunctionTests
     public async Task Run_ShouldReturnOkResult_WhenCommandIsSuccessful()
     {
         // Arrange
-        var command = new WithdrawApprenticeshipCommand();
+        var command = new WithdrawLearningCommand();
         var response = Outcome.Success();
         _commandDispatcherMock
-            .Setup(x => x.Send<WithdrawApprenticeshipCommand, Outcome>(It.IsAny<WithdrawApprenticeshipCommand>(), default))
+            .Setup(x => x.Send<WithdrawLearningCommand, Outcome>(It.IsAny<WithdrawLearningCommand>(), default))
             .ReturnsAsync(response);
 
         var request = CreateHttpRequest(command);
@@ -52,10 +52,10 @@ public class WithdrawApprenticeshipFunctionTests
     public async Task Run_ShouldReturnBadRequest_WhenCommandFails()
     {
         // Arrange
-        var command = new WithdrawApprenticeshipCommand();
+        var command = new WithdrawLearningCommand();
         var response = Outcome.Fail("Error");
         _commandDispatcherMock
-            .Setup(x => x.Send<WithdrawApprenticeshipCommand, Outcome>(It.IsAny<WithdrawApprenticeshipCommand>(), default))
+            .Setup(x => x.Send<WithdrawLearningCommand, Outcome>(It.IsAny<WithdrawLearningCommand>(), default))
             .ReturnsAsync(response);
 
         var request = CreateHttpRequest(command);
