@@ -20,7 +20,7 @@ variables:
 - name: BuildPlatform
   value: any cpu
 - group: RELEASE Management Resources
-- group: RELEASE das-apprenticeships
+- group: RELEASE das-learning
 - name: Deploy
   value: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'), eq(variables['Build.Reason'], 'PullRequest'))]
 
@@ -68,7 +68,7 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: AT DevTest Shared Resources
-  - group: AT das-apprenticeships
+  - group: AT das-learning
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
