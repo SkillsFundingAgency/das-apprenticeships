@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
-using SFA.DAS.Apprenticeships.Command.CreatePriceChange;
-using SFA.DAS.Apprenticeships.Command.CancelPendingPriceChange;
-using SFA.DAS.Apprenticeships.Command.RejectPendingPriceChange;
-using SFA.DAS.Apprenticeships.InnerApi.Requests;
-using SFA.DAS.Apprenticeships.Queries;
-using SFA.DAS.Apprenticeships.Queries.GetPendingPriceChange;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.InnerApi.Responses;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.Command.ApprovePriceChange;
+using SFA.DAS.Learning.Command.CancelPendingPriceChange;
+using SFA.DAS.Learning.Command.CreatePriceChange;
+using SFA.DAS.Learning.Command.RejectPendingPriceChange;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
+using SFA.DAS.Learning.InnerApi.Requests;
+using SFA.DAS.Learning.InnerApi.Responses;
+using SFA.DAS.Learning.Queries;
+using SFA.DAS.Learning.Queries.GetPendingPriceChange;
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
+namespace SFA.DAS.Learning.InnerApi.Controllers
 {
     /// <summary>
     /// Controller for handling requests related to price history
@@ -40,16 +39,16 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <summary>
         /// Create apprenticeship price change
         /// </summary>
-        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+        /// <param name="learningKey">The unique identifier of the learning</param>
         /// <param name="request">Details of the requested price change.</param>
         /// <returns>Ok on success, Bad Request if neither employer or provider are set for initiator</returns>
-        [HttpPost("{apprenticeshipKey}/priceHistory")]
+        [HttpPost("{learningKey}/priceHistory")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> CreateApprenticeshipPriceChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipPriceChangeRequest request)
+        public async Task<IActionResult> CreateLearningPriceChange(Guid learningKey, [FromBody] PostCreateLearningPriceChangeRequest request)
         {
             try
             {
-                var priceChangeStatus = await _commandDispatcher.Send<CreatePriceChangeCommand, ChangeRequestStatus>(new CreatePriceChangeCommand(request.Initiator, apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
+                var priceChangeStatus = await _commandDispatcher.Send<CreatePriceChangeCommand, ChangeRequestStatus>(new CreatePriceChangeCommand(request.Initiator, learningKey, request.UserId, request.TrainingPrice, request.AssessmentPrice, request.TotalPrice, request.Reason, request.EffectiveFromDate));
                 return Ok(new CreatePriceChangeResponse { PriceChangeStatus = priceChangeStatus.ToString()});
             }
             catch (ArgumentException exception)
@@ -62,13 +61,13 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <summary>
         /// Gets the details of a pending price change
         /// </summary>
-        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+        /// <param name="learningKey">The unique identifier of the learning</param>
         /// <returns>Details of the pending price change</returns>
-        [HttpGet("{apprenticeshipKey}/priceHistory/pending")]
+        [HttpGet("{learningKey}/priceHistory/pending")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetPendingPriceChange(Guid apprenticeshipKey)
+        public async Task<IActionResult> GetPendingPriceChange(Guid learningKey)
         {
-            var request = new GetPendingPriceChangeRequest(apprenticeshipKey);
+            var request = new GetPendingPriceChangeRequest(learningKey);
             var response = await _queryDispatcher.Send<GetPendingPriceChangeRequest, GetPendingPriceChangeResponse>(request);
 
             if(!response.HasPendingPriceChange)
@@ -82,26 +81,26 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <summary>
         /// Approves a pending price change
         /// </summary>
-        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+        /// <param name="learningKey">The unique identifier of the learning</param>
         /// <param name="request">Details of the approval</param>
-        [HttpPatch("{apprenticeshipKey}/priceHistory/pending")]
+        [HttpPatch("{learningKey}/priceHistory/pending")]
 		[ProducesResponseType(200)]
-		public async Task<IActionResult> ApprovePriceChange(Guid apprenticeshipKey, [FromBody] ApprovePriceChangeRequest request)
+		public async Task<IActionResult> ApprovePriceChange(Guid learningKey, [FromBody] ApprovePriceChangeRequest request)
 		{
-			var approver = await _commandDispatcher.Send<ApprovePriceChangeCommand, ApprovedBy>(new ApprovePriceChangeCommand(apprenticeshipKey, request.UserId, request.TrainingPrice, request.AssessmentPrice));
+			var approver = await _commandDispatcher.Send<ApprovePriceChangeCommand, ApprovedBy>(new ApprovePriceChangeCommand(learningKey, request.UserId, request.TrainingPrice, request.AssessmentPrice));
             return Ok(new { Approver = approver.ToString() });
         }
 
 		/// <summary>
 		/// Removes a pending price change
 		/// </summary>
-		/// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+		/// <param name="learningKey">The unique identifier of the learning</param>
 		/// <returns>Ok result</returns>
-		[HttpDelete("{apprenticeshipKey}/priceHistory/pending")]
+		[HttpDelete("{learningKey}/priceHistory/pending")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> CancelPendingPriceChange(Guid apprenticeshipKey)
+        public async Task<IActionResult> CancelPendingPriceChange(Guid learningKey)
         {
-            var request = new CancelPendingPriceChangeRequest(apprenticeshipKey);
+            var request = new CancelPendingPriceChangeRequest(learningKey);
             await _commandDispatcher.Send(request);
 
             return Ok();
@@ -110,14 +109,14 @@ namespace SFA.DAS.Apprenticeships.InnerApi.Controllers
         /// <summary>
         /// Rejects a pending price change
         /// </summary>
-        /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+        /// <param name="learningKey">The unique identifier of the learning</param>
         /// <param name="request">Details of the rejection</param>
         /// <returns>ok result</returns>
-        [HttpPatch("{apprenticeshipKey}/priceHistory/pending/reject")]
+        [HttpPatch("{learningKey}/priceHistory/pending/reject")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> RejectPendingPriceChange(Guid apprenticeshipKey, [FromBody]PatchRejectPriceChangeRequest request)
+        public async Task<IActionResult> RejectPendingPriceChange(Guid learningKey, [FromBody]PatchRejectPriceChangeRequest request)
         {
-            await _commandDispatcher.Send(new RejectPendingPriceChangeRequest(apprenticeshipKey, request.Reason));
+            await _commandDispatcher.Send(new RejectPendingPriceChangeRequest(learningKey, request.Reason));
 
             return Ok(new { Rejector = HttpContext.GetUserType().ToString()});
         }

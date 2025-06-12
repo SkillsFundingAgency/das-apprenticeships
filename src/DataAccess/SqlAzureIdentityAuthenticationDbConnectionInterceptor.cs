@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 
-namespace SFA.DAS.Apprenticeships.DataAccess;
+namespace SFA.DAS.Learning.DataAccess;
 
 [ExcludeFromCodeCoverage]
 public class SqlAzureIdentityAuthenticationDbConnectionInterceptor : DbConnectionInterceptor

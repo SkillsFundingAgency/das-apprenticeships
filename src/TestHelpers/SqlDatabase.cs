@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace SFA.DAS.Apprenticeships.TestHelpers;
+namespace SFA.DAS.Learning.TestHelpers;
 
 public class SqlDatabase : IDisposable
 {

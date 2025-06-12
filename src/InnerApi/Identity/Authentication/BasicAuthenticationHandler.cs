@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Options;
-using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
+namespace SFA.DAS.Learning.InnerApi.Identity.Authentication;
 
 [ExcludeFromCodeCoverage]
 public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>

@@ -1,29 +1,27 @@
 ﻿using Microsoft.Extensions.Logging;
-using NServiceBus;
-using SFA.DAS.Apprenticeships.Command.ApprovePriceChange;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Extensions;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Enums;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Extensions;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.Infrastructure.Services;
+using SFA.DAS.Learning.Types;
 
-namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
+namespace SFA.DAS.Learning.Command.CreatePriceChange
 {
     public class CreatePriceChangeCommandHandler : ICommandHandler<CreatePriceChangeCommand, ChangeRequestStatus>
     {
-        private readonly IApprenticeshipRepository _apprenticeshipRepository;
+        private readonly ILearningRepository _learningRepository;
         private readonly IMessageSession _messageSession;
         private readonly ISystemClockService _systemClockService;
         private readonly ILogger<CreatePriceChangeCommandHandler> _logger;
 
         public CreatePriceChangeCommandHandler(
-            IApprenticeshipRepository apprenticeshipRepository,
+            ILearningRepository learningRepository,
             IMessageSession messageSession,
             ISystemClockService systemClockService,
             ILogger<CreatePriceChangeCommandHandler> logger)
         {
-            _apprenticeshipRepository = apprenticeshipRepository;
+            _learningRepository = learningRepository;
             _messageSession = messageSession;
             _systemClockService = systemClockService;
             _logger = logger;
@@ -33,7 +31,7 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
             CancellationToken cancellationToken = default)
         {
             var returnStatus = ChangeRequestStatus.Created;
-            var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+            var apprenticeship = await _learningRepository.Get(command.LearningKey);
             var now = _systemClockService.UtcNow.DateTime;
 
             if (!Enum.TryParse(command.Initiator, out ChangeInitiator initiator))
@@ -49,13 +47,13 @@ namespace SFA.DAS.Apprenticeships.Command.CreatePriceChange
                 apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, now, ChangeRequestStatus.Created, null, command.Reason, command.UserId, null, now, initiator);
             }
 
-            await _apprenticeshipRepository.Update(apprenticeship);
+            await _learningRepository.Update(apprenticeship);
 
             if (initiator == ChangeInitiator.Provider && IsNewTotalPriceLessThanExisting(apprenticeship, command))
             {
 	            var priceChange = apprenticeship.ProviderAutoApprovePriceChange();
 	            returnStatus = ChangeRequestStatus.Approved;
-	            await _apprenticeshipRepository.Update(apprenticeship);
+	            await _learningRepository.Update(apprenticeship);
                 await SendEvent(apprenticeship, priceChange);
             }
 

@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.DataAccess
+namespace SFA.DAS.Learning.DataAccess
 {
     public interface IAccountIdAuthorizer
     {

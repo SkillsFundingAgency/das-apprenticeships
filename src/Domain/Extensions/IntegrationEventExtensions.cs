@@ -1,7 +1,7 @@
-﻿using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Types;
+﻿using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Types;
 
-namespace SFA.DAS.Apprenticeships.Domain.Extensions;
+namespace SFA.DAS.Learning.Domain.Extensions;
 
 public static class IntegrationEventExtensions
 {

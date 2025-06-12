@@ -1,30 +1,30 @@
-﻿using AutoFixture;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.TestHelpers;
-using System.Threading.Tasks;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Enums;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Enums;
+using SFA.DAS.Learning.TestHelpers;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Helpers;
+namespace SFA.DAS.Learning.Domain.UnitTests.Helpers;
 
 public static class ApprenticeshipDbContextTestHelper
 {
     private static readonly Fixture _fixture = new();
 
-    public static ApprenticeshipQueryRepository SetUpApprenticeshipQueryRepository(this ApprenticeshipsDataContext dbContext)
+    public static LearningQueryRepository SetUpApprenticeshipQueryRepository(this ApprenticeshipsDataContext dbContext)
     {
         dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-        var logger = Mock.Of<ILogger<ApprenticeshipQueryRepository>>();
-        return new ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(dbContext), logger);
+        var logger = Mock.Of<ILogger<LearningQueryRepository>>();
+        return new LearningQueryRepository(new Lazy<ApprenticeshipsDataContext>(dbContext), logger);
     }
 
-    public static async Task<DataAccess.Entities.Apprenticeship.Apprenticeship> AddApprenticeship(
+    public static async Task<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship> AddApprenticeship(
         this ApprenticeshipsDataContext dbContext, 
         Guid apprenticeshipKey, 
         bool addPendingPriceHistoryRequest,
@@ -54,7 +54,7 @@ public static class ApprenticeshipDbContextTestHelper
             .With(x => x.LearningStatus, learnerStatus != null ? learnerStatus.ToString() : _fixture.Create<LearnerStatus>().ToString())
             .Create();
 
-        var apprenticeship = _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
+        var apprenticeship = _fixture.Build<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>()
             .With(x => x.Key, apprenticeshipKey)
             .With(x => x.ApprovalsApprenticeshipId, approvalsApprenticeshipId ?? _fixture.Create<long>())
             .With(x => x.Episodes, new List<Episode>() { episode })

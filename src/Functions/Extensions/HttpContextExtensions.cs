@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace SFA.DAS.Apprenticeships.Functions.Extensions;
+namespace SFA.DAS.Learning.Functions.Extensions;
 
 internal static class HttpContextExtensions
 {

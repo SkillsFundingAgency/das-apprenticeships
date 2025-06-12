@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Queries.Exceptions
+﻿namespace SFA.DAS.Learning.Queries.Exceptions
 {
     [Serializable]
     public sealed class QueryException : Exception

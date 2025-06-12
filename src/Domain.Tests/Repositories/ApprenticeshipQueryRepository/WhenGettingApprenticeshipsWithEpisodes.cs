@@ -7,16 +7,18 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.DataAccess.Extensions;
-using SFA.DAS.Apprenticeships.TestHelpers;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataTransferObjects;
+using SFA.DAS.Learning.TestHelpers;
+using Episode = SFA.DAS.Learning.DataAccess.Entities.Apprenticeship.Episode;
+using EpisodePrice = SFA.DAS.Learning.DataAccess.Entities.Apprenticeship.EpisodePrice;
 
-namespace SFA.DAS.Apprenticeships.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository;
+namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository;
 
 public class WhenGettingApprenticeshipsWithEpisodes
 {
-    private Domain.Repositories.ApprenticeshipQueryRepository _sut = null!;
+    private Learning.Domain.Repositories.LearningQueryRepository _sut = null!;
     private Fixture _fixture = null!;
     private ApprenticeshipsDataContext _dbContext = null!;
 
@@ -39,7 +41,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         SetUpApprenticeshipQueryRepository();
 
         //Act
-        var result = await _sut.GetApprenticeshipsWithEpisodes(_fixture.Create<long>());
+        var result = await _sut.GetLearningsWithEpisodes(_fixture.Create<long>());
 
         //Assert
         result.Should().BeEmpty();
@@ -69,7 +71,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         var episodePrice4 = CreateEpisodePrice(episode2Key, startDate.AddYears(1), endDate);
         var episode2 = CreateEpisode(episode2Key, ukprn, trainingCode, episodePrice3, episodePrice4);
 
-        var apprenticeshipRecord = _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
+        var apprenticeshipRecord = _fixture.Build<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>()
                 .With(x => x.Key, apprenticeshipKey)
                 .With(x => x.Episodes, new List<Episode>() { episode1, episode2 })
                 .With(x => x.DateOfBirth, startDate.AddYears(-20).AddMonths(-6))
@@ -81,7 +83,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         await _dbContext.SaveChangesAsync();
 
         // Act
-        var result = await _sut.GetApprenticeshipsWithEpisodes(ukprn);
+        var result = await _sut.GetLearningsWithEpisodes(ukprn);
 
         // Assert
         result.Should().NotBeNull();
@@ -121,7 +123,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
             .With(x => x.LastDayOfLearning, startDate.AddYears(1))
             .Create();
 
-        var apprenticeshipRecord = _fixture.Build<DataAccess.Entities.Apprenticeship.Apprenticeship>()
+        var apprenticeshipRecord = _fixture.Build<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>()
                 .With(x => x.Key, apprenticeshipKey)
                 .With(x => x.Episodes, new List<Episode>() { episode })
                 .With(x => x.DateOfBirth, startDate.AddYears(-20).AddMonths(-6))
@@ -133,7 +135,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         await _dbContext.SaveChangesAsync();
 
         // Act
-        var result = await _sut.GetApprenticeshipsWithEpisodes(ukprn);
+        var result = await _sut.GetLearningsWithEpisodes(ukprn);
 
         // Assert
         result.Should().NotBeNull();
@@ -142,11 +144,11 @@ public class WhenGettingApprenticeshipsWithEpisodes
     }
 
     private void AssertApprenticeship(
-        DataAccess.Entities.Apprenticeship.Apprenticeship expected,
+        Learning.DataAccess.Entities.Apprenticeship.Apprenticeship expected,
         DateTime startDate,
         DateTime endDate,
         int age,
-        DataTransferObjects.ApprenticeshipWithEpisodes actual)
+        LearningWithEpisodes actual)
     {
         actual.Should().NotBeNull();
         actual.StartDate.Should().Be(startDate);
@@ -157,14 +159,14 @@ public class WhenGettingApprenticeshipsWithEpisodes
         actual.Episodes.Count.Should().Be(expected.Episodes.Count);
     }
 
-    private void AssertEpisode(Episode expected, DataTransferObjects.Episode actual)
+    private void AssertEpisode(Episode expected, Learning.DataTransferObjects.Episode actual)
     {
         actual.Should().NotBeNull();
         actual.TrainingCode.Should().Be(expected.TrainingCode);
         actual.Prices.Count.Should().Be(expected.Prices.Count);
     }
 
-    private bool AssertPrice(EpisodePrice expected, DataTransferObjects.EpisodePrice actual)
+    private bool AssertPrice(EpisodePrice expected, Learning.DataTransferObjects.EpisodePrice actual)
     {
         return actual.EndDate == expected.EndDate
             && actual.EndPointAssessmentPrice == expected.EndPointAssessmentPrice
@@ -177,8 +179,8 @@ public class WhenGettingApprenticeshipsWithEpisodes
     private void SetUpApprenticeshipQueryRepository()
     {
         _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
-        var logger = Mock.Of<ILogger<Domain.Repositories.ApprenticeshipQueryRepository>>();
-        _sut = new Domain.Repositories.ApprenticeshipQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
+        var logger = Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>();
+        _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
     }
 
     private EpisodePrice CreateEpisodePrice(Guid episodeKey, DateTime start, DateTime end)

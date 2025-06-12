@@ -12,15 +12,15 @@ trigger:
 
 variables:
 - name: SolutionBaseName
-  value: SFA.DAS.Apprenticeships
+  value: SFA.DAS.Learning
 - name: DACPACSolutionBaseName
-  value: SFA.DAS.Apprenticeships.Database
+  value: SFA.DAS.Learning.Database
 - name: BuildConfiguration
   value: release
 - name: BuildPlatform
   value: any cpu
 - group: RELEASE Management Resources
-- group: RELEASE das-apprenticeships
+- group: RELEASE das-learning
 - name: Deploy
   value: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'), eq(variables['Build.Reason'], 'PullRequest'))]
 
@@ -60,7 +60,7 @@ stages:
       BuildConfiguration: $(BuildConfiguration)
 
 - template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks
-   
+
 - stage: Deploy_AT
   dependsOn: Build
   displayName: Deploy to AT
@@ -68,7 +68,7 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: AT DevTest Shared Resources
-  - group: AT das-apprenticeships
+  - group: AT das-learning
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:

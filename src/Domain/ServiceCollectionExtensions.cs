@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.Apprenticeships.Domain.Validators;
+using SFA.DAS.Learning.Domain.Validators;
 
-namespace SFA.DAS.Apprenticeships.Domain
+namespace SFA.DAS.Learning.Domain
 {
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions

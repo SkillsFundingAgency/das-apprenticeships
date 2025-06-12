@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.TestHelpers;
+﻿using SFA.DAS.Learning.TestHelpers;
 
-namespace SFA.DAS.Apprenticeships.AcceptanceTests.Bindings
+namespace SFA.DAS.Learning.AcceptanceTests.Bindings
 {
     [Binding]
     public static class DatabasePerTestRunHook
@@ -8,7 +8,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.Bindings
         [BeforeTestRun(Order = 1)]
         public static void RefreshDatabaseModel()
         {
-            SqlDatabaseModel.Update("SFA.DAS.Apprenticeships.Database");
+            SqlDatabaseModel.Update("SFA.DAS.Learning.Database");
         }
     }
 }

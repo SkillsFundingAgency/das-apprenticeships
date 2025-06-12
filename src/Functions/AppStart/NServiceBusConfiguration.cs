@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Hosting;
-using System;
-using NServiceBus;
+﻿using System;
 using System.Net;
-using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
 using System.Security.Cryptography;
+using Microsoft.Extensions.Hosting;
+using NServiceBus;
+using SFA.DAS.Learning.Infrastructure.Extensions;
 
-namespace SFA.DAS.Apprenticeships.Functions.AppStart;
+namespace SFA.DAS.Learning.Functions.AppStart;
 
 internal static class NServiceBusConfiguration
 {

@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.DataAccess;
+﻿using SFA.DAS.Learning.DataAccess;
 
-namespace SFA.DAS.Apprenticeships.Command.Decorators
+namespace SFA.DAS.Learning.Command.Decorators
 {
     public class CommandHandlerWithUnitOfWork<T> : ICommandHandler<T> where T : ICommand
     {

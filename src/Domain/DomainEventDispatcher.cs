@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace SFA.DAS.Apprenticeships.Domain
+namespace SFA.DAS.Learning.Domain
 {
     public class DomainEventDispatcher : IDomainEventDispatcher
     {

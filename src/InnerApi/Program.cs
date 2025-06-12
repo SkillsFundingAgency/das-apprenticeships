@@ -1,20 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
-using SFA.DAS.Apprenticeships.Command;
-using SFA.DAS.Apprenticeships.Infrastructure.Configuration;
-using SFA.DAS.Apprenticeships.Infrastructure;
-using SFA.DAS.Apprenticeships.Queries;
 using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.Domain;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
-using SFA.DAS.Apprenticeships.InnerApi.Identity.Authorization;
-using SFA.DAS.Apprenticeships.Infrastructure.Extensions;
-using SFA.DAS.Apprenticeships.InnerApi.Extensions;
-using SFA.DAS.Apprenticeships.InnerApi.Services;
+using SFA.DAS.Learning.Command;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.Domain;
+using SFA.DAS.Learning.Infrastructure.Configuration;
+using SFA.DAS.Learning.Infrastructure.Extensions;
+using SFA.DAS.Learning.InnerApi.Extensions;
+using SFA.DAS.Learning.InnerApi.Identity.Authentication;
+using SFA.DAS.Learning.InnerApi.Identity.Authorization;
+using SFA.DAS.Learning.InnerApi.Services;
+using SFA.DAS.Learning.Queries;
 
-namespace SFA.DAS.Apprenticeships.InnerApi;
+namespace SFA.DAS.Learning.InnerApi;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 [ExcludeFromCodeCoverage]

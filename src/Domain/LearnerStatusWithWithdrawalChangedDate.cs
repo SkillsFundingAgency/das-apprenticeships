@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+using SFA.DAS.Learning.Domain.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.Domain;
+namespace SFA.DAS.Learning.Domain;
 
 [ExcludeFromCodeCoverage]
 public class LearnerStatusDetails

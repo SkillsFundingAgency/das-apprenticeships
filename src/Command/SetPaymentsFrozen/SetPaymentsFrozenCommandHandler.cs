@@ -1,22 +1,22 @@
 ﻿using Microsoft.Extensions.Logging;
-using NServiceBus;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.Command.SetPaymentsFrozen;
+namespace SFA.DAS.Learning.Command.SetPaymentsFrozen;
 
 public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozenCommand>
 {
-    private readonly IApprenticeshipRepository _apprenticeshipRepository;
+    private readonly ILearningRepository _learningRepository;
     private readonly IMessageSession _messageSession;
     private readonly ILogger<SetPaymentsFrozenCommandHandler> _logger;
 
     public SetPaymentsFrozenCommandHandler(
-        IApprenticeshipRepository apprenticeshipRepository,
+        ILearningRepository learningRepository,
         IMessageSession messageSession,
         ILogger<SetPaymentsFrozenCommandHandler> logger)
     {
-        _apprenticeshipRepository = apprenticeshipRepository;
+        _learningRepository = learningRepository;
         _messageSession = messageSession;
         _logger = logger;
     }
@@ -25,11 +25,11 @@ public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozen
     {
         _logger.LogInformation("Handling SetPaymentsFrozenCommand for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
         
-        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+        var apprenticeship = await _learningRepository.Get(command.ApprenticeshipKey);
         apprenticeship.SetPaymentsFrozen(command.NewPaymentsFrozenStatus, command.UserId, DateTime.Now, command.Reason);
-        await _apprenticeshipRepository.Update(apprenticeship);
+        await _learningRepository.Update(apprenticeship);
 
-        if (apprenticeship.LatestEpisode.FundingPlatform == Enums.FundingPlatform.DAS)
+        if (apprenticeship.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
         {
             if (command.NewPaymentsFrozenStatus)
             {

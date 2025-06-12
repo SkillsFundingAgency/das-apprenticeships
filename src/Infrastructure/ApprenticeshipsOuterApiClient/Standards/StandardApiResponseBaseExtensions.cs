@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
+﻿namespace SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 
 public static class StandardApiResponseBaseExtensions
 {

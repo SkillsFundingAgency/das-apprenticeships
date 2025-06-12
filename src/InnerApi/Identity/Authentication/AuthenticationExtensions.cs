@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-namespace SFA.DAS.Apprenticeships.InnerApi.Identity.Authentication;
+namespace SFA.DAS.Learning.InnerApi.Identity.Authentication;
 
 [ExcludeFromCodeCoverage]
 public static class AuthenticationExtensions

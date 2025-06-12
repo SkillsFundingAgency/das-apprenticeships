@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Newtonsoft.Json;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
+namespace SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 
 [ExcludeFromCodeCoverage]
 public class ApprenticeshipsOuterApiClient : IApprenticeshipsOuterApiClient

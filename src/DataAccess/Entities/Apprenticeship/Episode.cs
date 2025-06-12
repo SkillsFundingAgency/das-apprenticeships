@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+namespace SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 
 [Table("dbo.Episode")]
 [System.ComponentModel.DataAnnotations.Schema.Table("Episode")]

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Enums;
 using SFA.DAS.Encoding;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Infrastructure;
+namespace SFA.DAS.Learning.Infrastructure;
 
 public class AccountIdClaimsHandler : IAccountIdClaimsHandler
 {

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Functions
+﻿namespace SFA.DAS.Learning.Functions
 {
     public static class Constants
     {

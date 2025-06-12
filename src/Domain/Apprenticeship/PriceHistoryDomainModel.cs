@@ -1,10 +1,11 @@
-﻿using SFA.DAS.Apprenticeships.Enums;
+﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+namespace SFA.DAS.Learning.Domain.Apprenticeship;
 
 public class PriceHistoryDomainModel
 {
-    private readonly DataAccess.Entities.Apprenticeship.PriceHistory _entity;
+    private readonly PriceHistory _entity;
 
     public Guid Key => _entity.Key;
     public Guid ApprenticeshipKey => _entity.ApprenticeshipKey;
@@ -35,7 +36,7 @@ public class PriceHistoryDomainModel
         DateTime? employerApprovedDate,
         ChangeInitiator? initiator)
     {
-        return new PriceHistoryDomainModel(new DataAccess.Entities.Apprenticeship.PriceHistory
+        return new PriceHistoryDomainModel(new PriceHistory
         {
             ApprenticeshipKey = apprenticeshipKey,
             TrainingPrice = trainingPrice,
@@ -53,17 +54,17 @@ public class PriceHistoryDomainModel
         });
     }
 
-    private PriceHistoryDomainModel(DataAccess.Entities.Apprenticeship.PriceHistory entity)
+    private PriceHistoryDomainModel(PriceHistory entity)
     {
         _entity = entity;
     }
 
-    public DataAccess.Entities.Apprenticeship.PriceHistory GetEntity()
+    public PriceHistory GetEntity()
     {
         return _entity;
     }
 
-    public static PriceHistoryDomainModel Get(DataAccess.Entities.Apprenticeship.PriceHistory entity)
+    public static PriceHistoryDomainModel Get(PriceHistory entity)
     {
         return new PriceHistoryDomainModel(entity);
     }

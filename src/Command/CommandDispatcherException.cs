@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
-namespace SFA.DAS.Apprenticeships.Command
+namespace SFA.DAS.Learning.Command
 {
     [Serializable]
     [ExcludeFromCodeCoverage]

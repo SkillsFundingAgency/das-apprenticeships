@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
+﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
 
-namespace SFA.DAS.Apprenticeships.Domain.Apprenticeship;
+namespace SFA.DAS.Learning.Domain.Apprenticeship;
 
 public class WithdrawalRequestDomainModel
 {

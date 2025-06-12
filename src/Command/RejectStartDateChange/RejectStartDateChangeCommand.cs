@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeships.Command.RejectStartDateChange;
+﻿namespace SFA.DAS.Learning.Command.RejectStartDateChange;
 
 public class RejectStartDateChangeCommand : ICommand
 {

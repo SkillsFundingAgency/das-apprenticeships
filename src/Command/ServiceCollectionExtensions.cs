@@ -1,19 +1,18 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using SFA.DAS.Apprenticeships.Command.Decorators;
-using SFA.DAS.Apprenticeships.DataAccess;
-using SFA.DAS.Apprenticeships.Domain.Factories;
-using SFA.DAS.Apprenticeships.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Infrastructure;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient;
-using SFA.DAS.Apprenticeships.Infrastructure.Services;
 using SFA.DAS.Encoding;
+using SFA.DAS.Learning.Command.Decorators;
+using SFA.DAS.Learning.DataAccess;
+using SFA.DAS.Learning.Domain.Factories;
+using SFA.DAS.Learning.Domain.Repositories;
+using SFA.DAS.Learning.Infrastructure;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
+using SFA.DAS.Learning.Infrastructure.Services;
 
-namespace SFA.DAS.Apprenticeships.Command;
+namespace SFA.DAS.Learning.Command;
 
 [ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions
@@ -23,7 +22,7 @@ public static class ServiceCollectionExtensions
         serviceCollection
             .AddCommandHandlers(AddCommandHandlerDecorators)
             .AddScoped<ICommandDispatcher, CommandDispatcher>()
-            .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
+            .AddScoped<ILearningFactory, LearningFactory>()
             .AddScoped<IFundingBandMaximumService, FundingBandMaximumService>()
             .AddSingleton<ISystemClockService, SystemClockService>()
             .AddEncodingServices(configuration)
@@ -58,7 +57,7 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddPersistenceServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        serviceCollection.AddScoped<IApprenticeshipRepository, ApprenticeshipRepository>();
+        serviceCollection.AddScoped<ILearningRepository, LearningRepository>();
         serviceCollection.AddScoped<IAccountIdClaimsHandler, AccountIdClaimsHandler>();
         serviceCollection.AddScoped<IAccountIdAuthorizer, AccountIdAuthorizer>();
         return serviceCollection;

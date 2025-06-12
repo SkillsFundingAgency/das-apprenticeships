@@ -2,12 +2,13 @@ using AutoFixture;
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 using Moq;
-using SFA.DAS.Apprenticeships.AcceptanceTests.Helpers;
-using SFA.DAS.Apprenticeships.DataAccess.Entities.Apprenticeship;
-using SFA.DAS.Apprenticeships.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.AcceptanceTests.Helpers;
+using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
+using SFA.DAS.Learning.Types;
+using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
-namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
+namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
 {
     [Binding]
     public class ApprovalCreatedStepDefinitions
@@ -91,7 +92,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             episode.EmployerAccountId.Should().Be(ApprovalCreatedEvent.AccountId);
             episode.FundingEmployerAccountId.Should().Be(ApprovalCreatedEvent.TransferSenderId);
             episode.LegalEntityName.Should().Be(ApprovalCreatedEvent.LegalEntityName);
-            episode.FundingPlatform.Should().Be(ApprovalCreatedEvent.IsOnFlexiPaymentPilot.HasValue ? (ApprovalCreatedEvent.IsOnFlexiPaymentPilot.Value ? Enums.FundingPlatform.DAS : Enums.FundingPlatform.SLD) : null);
+            episode.FundingPlatform.Should().Be(ApprovalCreatedEvent.IsOnFlexiPaymentPilot.HasValue ? (ApprovalCreatedEvent.IsOnFlexiPaymentPilot.Value ? FundingPlatform.DAS : FundingPlatform.SLD) : null);
             int.Parse(episode.TrainingCode).Should().Be(int.Parse(ApprovalCreatedEvent.TrainingCode));
 
             var episodePrice = (await dbConnection.GetAllAsync<EpisodePrice>()).Last(x => x.EpisodeKey == episode.Key);
@@ -100,7 +101,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
             episodePrice.EndDate.Should().BeSameDateAs(ApprovalCreatedEvent.EndDate);
             episodePrice.TotalPrice.Should().Be(ApprovalCreatedEvent.PriceEpisodes[0].Cost);
 
-            _scenarioContext["Apprenticeship"] = apprenticeship;
+            _scenarioContext["Learning"] = apprenticeship;
             _scenarioContext["Episode"] = episode;
             _scenarioContext["EpisodePrice"] = episodePrice;
         }
@@ -177,7 +178,7 @@ namespace SFA.DAS.Apprenticeships.AcceptanceTests.StepDefinitions
         }
 
         public CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent ApprovalCreatedEvent => (CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent)_scenarioContext["ApprovalCreatedEvent"];
-        public Apprenticeship Apprenticeship => (Apprenticeship)_scenarioContext["Apprenticeship"];
+        public Apprenticeship Apprenticeship => (Apprenticeship)_scenarioContext["Learning"];
         public Episode LatestEpisode => (Episode)_scenarioContext["Episode"];
         public EpisodePrice LatestEpisodePrice => (EpisodePrice)_scenarioContext["EpisodePrice"];
     }
