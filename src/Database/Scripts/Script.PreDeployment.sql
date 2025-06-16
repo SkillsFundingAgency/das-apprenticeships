@@ -2,7 +2,7 @@
 Pre-deployment script
 */
 
-IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Learning' AND schema_id = SCHEMA_ID('dbo'))
+IF EXISTS (SELECT 1 from [dbo].[Learning])
 BEGIN
     PRINT 'Learning table already exists. Migration skipped.';
     RETURN;
@@ -10,21 +10,6 @@ END
 GO
 
 /* Learning (copy of Apprenticeship) */
-
-CREATE TABLE [dbo].[Learning]
-(
-	[Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
-    [ApprovalsApprenticeshipId] BIGINT NOT NULL,
-    [Uln] NVARCHAR(10) NOT NULL, 
-    [FirstName] NVARCHAR(100) NOT NULL,
-    [LastName] NVARCHAR(100) NOT NULL,
-    [DateOfBirth] DATETIME NOT NULL,
-    [ApprenticeshipHashedId] NVARCHAR(100) NULL
-)
-GO
-CREATE INDEX IX_Learning_Uln ON Learning (Uln)
-GO
-
 
 INSERT INTO [dbo].[Learning] ([Key], [ApprovalsApprenticeshipId], [Uln], [FirstName], [LastName], [DateOfBirth], [ApprenticeshipHashedId])
 SELECT 
