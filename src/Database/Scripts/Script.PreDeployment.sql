@@ -9,6 +9,7 @@ BEGIN
 END
 GO
 
+/* Learning (copy of Apprenticeship) */
 
 CREATE TABLE [dbo].[Learning]
 (
@@ -39,7 +40,9 @@ GO
 
 /* Episode */
 
-/* Remove old foreign key reference */
+DROP INDEX IX_ApprenticeshipKey ON dbo.Episode;
+GO
+
 ALTER TABLE dbo.Episode
 DROP CONSTRAINT FK_Episode_Apprenticeship;
 GO
@@ -54,22 +57,16 @@ GO
 ALTER TABLE dbo.Episode DROP COLUMN ApprenticeshipKey;
 GO
 
-/* Recreate foreign key pointing to Learning */
 ALTER TABLE dbo.Episode
 ADD CONSTRAINT FK_Episode_Learning FOREIGN KEY (LearningKey) REFERENCES dbo.Learning ([Key]);
-GO
-
-/* FreezeRequest */
-
-/* Update index name for clarity */
-DROP INDEX IX_ApprenticeshipKey ON dbo.Episode;
 GO
 
 CREATE INDEX IX_LearningKey ON dbo.Episode (LearningKey);
 GO
 
 
-/* Remove old foreign key reference */
+/* FreezeRequest */
+
 ALTER TABLE dbo.FreezeRequest
 DROP CONSTRAINT FK_FreezeRequest_Apprenticeship;
 GO
@@ -84,12 +81,10 @@ GO
 ALTER TABLE dbo.FreezeRequest DROP COLUMN ApprenticeshipKey;
 GO
 
-/* Recreate foreign key pointing to Learning */
 ALTER TABLE dbo.FreezeRequest
 ADD CONSTRAINT FK_FreezeRequest_Learning FOREIGN KEY (LearningKey) REFERENCES dbo.Learning ([Key]);
 GO
 
-/* Update index name for clarity */
 DROP INDEX IX_ApprenticeshipKey ON dbo.FreezeRequest;
 GO
 
