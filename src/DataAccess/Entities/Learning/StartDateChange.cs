@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+namespace SFA.DAS.Learning.DataAccess.Entities.Learning;
 
 [Table("dbo.StartDateChange")]
 [System.ComponentModel.DataAnnotations.Schema.Table("StartDateChange")]
@@ -8,7 +8,7 @@ public class StartDateChange
 {
     [Key]
     public Guid Key { get; set; }
-    public Guid ApprenticeshipKey { get; set; }
+    public Guid LearningKey { get; set; }
     public DateTime ActualStartDate { get; set; }
     public DateTime PlannedEndDate { get; set; }
     public string Reason { get; set; } = null!;

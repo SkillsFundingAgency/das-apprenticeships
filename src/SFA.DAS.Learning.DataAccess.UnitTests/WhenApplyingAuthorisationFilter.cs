@@ -3,7 +3,7 @@ using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Learning.DataAccess.UnitTests;
@@ -24,7 +24,7 @@ public class WhenApplyingAuthorisationFilter
         // Arrange
         var apprenticeship = AccountIdAuthorizerTestHelper.BuildApprenticeshipWithAccountId(54321);
         var filteredApprenticeship = AccountIdAuthorizerTestHelper.BuildApprenticeshipWithAccountId();
-        var apprenticeships = new List<Apprenticeship>()
+        var apprenticeships = new List<Entities.Learning.Learning>()
         {
             apprenticeship,
             filteredApprenticeship
@@ -46,7 +46,7 @@ public class WhenApplyingAuthorisationFilter
         // Arrange
         var apprenticeship = AccountIdAuthorizerTestHelper.BuildApprenticeshipWithAccountId(null, 101);
         var filteredApprenticeship = AccountIdAuthorizerTestHelper.BuildApprenticeshipWithAccountId();
-        var apprenticeships = new List<Apprenticeship>()
+        var apprenticeships = new List<Entities.Learning.Learning>()
         {
             apprenticeship,
             filteredApprenticeship

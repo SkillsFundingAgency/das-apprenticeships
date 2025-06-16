@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Learning.DataAccess.UnitTests
@@ -53,7 +53,7 @@ namespace SFA.DAS.Learning.DataAccess.UnitTests
         public void NoClaimsValidationRequired_DoesNotThrowException()
         {
             // Arrange
-            var apprenticeship = new Apprenticeship();
+            var apprenticeship = new Entities.Learning.Learning();
             var authorizer = AccountIdAuthorizerTestHelper.SetUpAuthorizer(false);
 
             // Act 

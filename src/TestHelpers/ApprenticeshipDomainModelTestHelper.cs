@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using AutoFixture;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
@@ -22,7 +22,7 @@ public static class ApprenticeshipDomainModelTestHelper
             typeof(ApprenticeshipDomainModel),
             BindingFlags.NonPublic | BindingFlags.Instance,
             null,
-            new object[] { new Apprenticeship() },
+            new object[] { new DataAccess.Entities.Learning.Learning() },
             null
         );
 

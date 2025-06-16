@@ -1,23 +1,23 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Learning.DataAccess
 {
     [ExcludeFromCodeCoverage]
-    public class ApprenticeshipsDataContext : DbContext
+    public class LearningDataContext : DbContext
     {
         private readonly IAccountIdAuthorizer _accountIdAuthorizer;
 
-        public ApprenticeshipsDataContext(DbContextOptions<ApprenticeshipsDataContext> options,
+        public LearningDataContext(DbContextOptions<LearningDataContext> options,
             IAccountIdAuthorizer accountIdAuthorizer) : base(options)
         {
             _accountIdAuthorizer = accountIdAuthorizer;
         }
 
-        public IQueryable<Apprenticeship> Apprenticeships => _accountIdAuthorizer.ApplyAuthorizationFilterOnQueries(ApprenticeshipsDbSet);
-        public virtual DbSet<Apprenticeship> ApprenticeshipsDbSet { get; set; }
+        public IQueryable<Entities.Learning.Learning> Apprenticeships => _accountIdAuthorizer.ApplyAuthorizationFilterOnQueries(ApprenticeshipsDbSet);
+        public virtual DbSet<Entities.Learning.Learning> ApprenticeshipsDbSet { get; set; }
         public virtual DbSet<Episode> Episodes { get; set; }
         public virtual DbSet<EpisodePrice> EpisodePrices { get; set; }
         public virtual DbSet<PriceHistory> PriceHistories { get; set; }
@@ -27,12 +27,12 @@ namespace SFA.DAS.Learning.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Apprenticeship
-            modelBuilder.Entity<Apprenticeship>()
+            // Learning
+            modelBuilder.Entity<Entities.Learning.Learning>()
                 .HasMany(x => x.Episodes)
                 .WithOne()
-                .HasForeignKey(fk => fk.ApprenticeshipKey);
-            modelBuilder.Entity<Apprenticeship>()
+                .HasForeignKey(fk => fk.LearningKey);
+            modelBuilder.Entity<Entities.Learning.Learning>()
                 .HasKey(a => new { a.Key });
 
             // Episode

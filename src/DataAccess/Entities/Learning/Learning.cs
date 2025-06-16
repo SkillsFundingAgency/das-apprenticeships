@@ -1,10 +1,10 @@
-﻿namespace SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+﻿namespace SFA.DAS.Learning.DataAccess.Entities.Learning;
 
-[Table("dbo.Apprenticeship")]
-[System.ComponentModel.DataAnnotations.Schema.Table("Apprenticeship")]
-public class Apprenticeship
+[Table("dbo.Learning")]
+[System.ComponentModel.DataAnnotations.Schema.Table("Learning")]
+public class Learning
 {
-	public Apprenticeship()
+	public Learning()
 	{
 		PriceHistories = new List<PriceHistory>();
 		StartDateChanges = new List<StartDateChange>();

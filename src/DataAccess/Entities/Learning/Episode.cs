@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+namespace SFA.DAS.Learning.DataAccess.Entities.Learning;
 
 [Table("dbo.Episode")]
 [System.ComponentModel.DataAnnotations.Schema.Table("Episode")]
@@ -13,7 +13,7 @@ public class Episode
 
     [Key]
     public Guid Key { get; set; }
-    public Guid ApprenticeshipKey { get; set; }
+    public Guid LearningKey { get; set; }
     public long Ukprn { get; set; }
     public long EmployerAccountId { get; set; }
     public FundingType FundingType { get; set; }

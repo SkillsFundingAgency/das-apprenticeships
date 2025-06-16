@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+﻿namespace SFA.DAS.Learning.DataAccess.Entities.Learning;
 
 [Table("dbo.FreezeRequest")]
 [System.ComponentModel.DataAnnotations.Schema.Table("FreezeRequest")]
@@ -6,7 +6,7 @@ public class FreezeRequest
 {
     [Key]
     public Guid Key { get; set; }
-    public Guid ApprenticeshipKey { get; set; }
+    public Guid LearningKey { get; set; }
     public string FrozenBy { get; set; } = null!;
     public DateTime FrozenDateTime { get; set; }
     public bool Unfrozen { get; set; }

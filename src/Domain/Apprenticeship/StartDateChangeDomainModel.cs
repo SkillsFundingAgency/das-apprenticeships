@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+﻿using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Learning.Domain.Apprenticeship;
@@ -8,7 +8,7 @@ public class StartDateChangeDomainModel
     private readonly StartDateChange _entity;
 
     public Guid Key => _entity.Key;
-    public Guid ApprenticeshipKey => _entity.ApprenticeshipKey;
+    public Guid ApprenticeshipKey => _entity.LearningKey;
     public DateTime ActualStartDate => _entity.ActualStartDate;
     public DateTime PlannedEndDate => _entity.PlannedEndDate;
     public string Reason => _entity.Reason;
@@ -34,7 +34,7 @@ public class StartDateChangeDomainModel
     {
         return new StartDateChangeDomainModel(new StartDateChange
         {
-            ApprenticeshipKey = apprenticeshipKey,
+            LearningKey = apprenticeshipKey,
             ActualStartDate = actualStartDate,
             PlannedEndDate = plannedEndDate,
             Reason = reason,

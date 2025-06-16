@@ -18,7 +18,7 @@ public class WhenGettingByDates
 {
     private Learning.Domain.Repositories.LearningQueryRepository _sut;
     private Fixture _fixture;
-    private ApprenticeshipsDataContext _dbContext;
+    private LearningDataContext _dbContext;
 
     [SetUp]
     public void Arrange() => _fixture = new Fixture();
@@ -125,7 +125,7 @@ public class WhenGettingByDates
     {
         _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
         _sut = new Learning.Domain.Repositories.LearningQueryRepository(
-            new Lazy<ApprenticeshipsDataContext>(_dbContext),
+            new Lazy<LearningDataContext>(_dbContext),
             Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>()
         );
     }

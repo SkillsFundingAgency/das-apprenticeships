@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+﻿using SFA.DAS.Learning.DataAccess.Entities.Learning;
 
 namespace SFA.DAS.Learning.Domain.Apprenticeship;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.DataAccess.Extensions;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure;
@@ -18,7 +18,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         _accountIdClaims = accountIdClaimsHandler.GetAccountIdClaims();
     }
         
-    public void AuthorizeAccountId(Apprenticeship apprenticeship)
+    public void AuthorizeAccountId(Entities.Learning.Learning learning)
     {
         if (!_accountIdClaims.IsClaimsValidationRequired)
         {
@@ -26,7 +26,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
             return;
         }
 
-        var currentEpisode = apprenticeship.GetEpisode();
+        var currentEpisode = learning.GetEpisode();
 
         switch (_accountIdClaims.AccountIdClaimsType)
         {
@@ -47,7 +47,7 @@ public class AccountIdAuthorizer : IAccountIdAuthorizer
         }
     }
             
-    public IQueryable<Apprenticeship> ApplyAuthorizationFilterOnQueries(IQueryable<Apprenticeship> apprenticeships)
+    public IQueryable<Entities.Learning.Learning> ApplyAuthorizationFilterOnQueries(IQueryable<Entities.Learning.Learning> apprenticeships)
     {
         if (!apprenticeships.Any())
         {

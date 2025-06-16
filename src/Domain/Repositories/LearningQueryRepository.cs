@@ -10,10 +10,10 @@ using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Learning.Domain.Repositories;
 
-public class LearningQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext, ILogger<LearningQueryRepository> logger)
+public class LearningQueryRepository(Lazy<LearningDataContext> dbContext, ILogger<LearningQueryRepository> logger)
     : ILearningQueryRepository
 {
-    private ApprenticeshipsDataContext DbContext => dbContext.Value;
+    private LearningDataContext DbContext => dbContext.Value;
 
     public async Task<IEnumerable<Learning.DataTransferObjects.Learning>> GetAll(long ukprn, FundingPlatform? fundingPlatform)
     {
@@ -299,7 +299,7 @@ public class LearningQueryRepository(Lazy<ApprenticeshipsDataContext> dbContext,
 
             if (paymentStatus.IsFrozen)
             {
-                var activeFreezeRequest = apprenticeship!.FreezeRequests.Single(x => x.ApprenticeshipKey == learningKey && !x.Unfrozen);
+                var activeFreezeRequest = apprenticeship!.FreezeRequests.Single(x => x.LearningKey == learningKey && !x.Unfrozen);
                 paymentStatus.Reason = activeFreezeRequest.Reason;
                 paymentStatus.FrozenOn = activeFreezeRequest.FrozenDateTime;
             }

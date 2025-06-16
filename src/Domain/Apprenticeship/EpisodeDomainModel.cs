@@ -1,5 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Learning.Domain.Apprenticeship;

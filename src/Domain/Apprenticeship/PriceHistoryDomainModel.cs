@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+﻿using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Enums;
 
 namespace SFA.DAS.Learning.Domain.Apprenticeship;
@@ -8,7 +8,7 @@ public class PriceHistoryDomainModel
     private readonly PriceHistory _entity;
 
     public Guid Key => _entity.Key;
-    public Guid ApprenticeshipKey => _entity.ApprenticeshipKey;
+    public Guid ApprenticeshipKey => _entity.LearningKey;
     public decimal? TrainingPrice => _entity.TrainingPrice;
     public decimal? AssessmentPrice => _entity.AssessmentPrice;
     public decimal TotalPrice => _entity.TotalPrice;
@@ -38,7 +38,7 @@ public class PriceHistoryDomainModel
     {
         return new PriceHistoryDomainModel(new PriceHistory
         {
-            ApprenticeshipKey = apprenticeshipKey,
+            LearningKey = apprenticeshipKey,
             TrainingPrice = trainingPrice,
             AssessmentPrice = assessmentPrice,
             TotalPrice = totalPrice,

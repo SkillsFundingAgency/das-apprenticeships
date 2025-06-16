@@ -117,3 +117,55 @@ GO
 
 CREATE INDEX IX_LearningKey ON dbo.PriceHistory (LearningKey);
 GO
+
+/* StartDateChange */
+
+DROP INDEX IX_ApprenticeshipKey ON dbo.StartDateChange;
+GO
+
+ALTER TABLE dbo.StartDateChange
+DROP CONSTRAINT FK_StartDateChange_Apprenticeship;
+GO
+
+
+ALTER TABLE dbo.StartDateChange ADD LearningKey UNIQUEIDENTIFIER NULL;
+GO
+
+UPDATE dbo.StartDateChange
+SET LearningKey = ApprenticeshipKey;
+GO
+
+ALTER TABLE dbo.StartDateChange
+ADD CONSTRAINT FK_StartDateChange_Learning FOREIGN KEY (LearningKey) REFERENCES dbo.Learning ([Key]);
+GO
+
+ALTER TABLE dbo.StartDateChange DROP COLUMN ApprenticeshipKey;
+GO
+
+/* WithdrawalRequest */
+
+ALTER TABLE dbo.WithdrawalRequest
+DROP CONSTRAINT FK_WithdrawalRequest_Episode;
+GO
+
+DROP INDEX IX_ApprenticeshipKey ON dbo.WithdrawalRequest;
+GO
+
+ALTER TABLE dbo.WithdrawalRequest ADD LearningKey UNIQUEIDENTIFIER NULL;
+GO
+
+UPDATE dbo.WithdrawalRequest
+SET LearningKey = ApprenticeshipKey;
+GO
+
+ALTER TABLE dbo.WithdrawalRequest DROP COLUMN ApprenticeshipKey;
+GO
+
+ALTER TABLE dbo.WithdrawalRequest
+ADD CONSTRAINT FK_WithdrawalRequest_Episode FOREIGN KEY (EpisodeKey) REFERENCES dbo.Episode ([Key]);
+GO
+
+CREATE NONCLUSTERED INDEX IX_LearningKey ON dbo.WithdrawalRequest (LearningKey)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, 
+ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY];
+GO

@@ -23,13 +23,13 @@ public static class ServiceCollectionExtensions
             provider.GetService<ISqlAzureIdentityTokenProvider>(), connectionNeedsAccessToken));
 
         services.AddScoped<AccountIdClaimsHandler>();
-        services.AddDbContext<ApprenticeshipsDataContext>((provider, options) =>
+        services.AddDbContext<LearningDataContext>((provider, options) =>
             options
                 .UseSqlServer(new SqlConnection(settings.DbConnectionString),
                     optionsBuilder => optionsBuilder.CommandTimeout(7200)) //7200=2hours
                 .AddInterceptors(provider.GetRequiredService<SqlAzureIdentityAuthenticationDbConnectionInterceptor>()));
 
-        services.AddScoped(provider => new Lazy<ApprenticeshipsDataContext>(provider.GetService<ApprenticeshipsDataContext>));
+        services.AddScoped(provider => new Lazy<LearningDataContext>(provider.GetService<LearningDataContext>));
   
         return services;
     }

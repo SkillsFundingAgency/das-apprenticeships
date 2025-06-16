@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+﻿using SFA.DAS.Learning.DataAccess.Entities.Learning;
 
 namespace SFA.DAS.Learning.Domain.Apprenticeship;
 
@@ -7,7 +7,7 @@ public class FreezeRequestDomainModel
     private readonly FreezeRequest _entity;
 
     public Guid Key => _entity.Key;
-    public Guid ApprenticeshipKey => _entity.ApprenticeshipKey;
+    public Guid ApprenticeshipKey => _entity.LearningKey;
     public string FrozenBy => _entity.FrozenBy;
     public DateTime FrozenDateTime => _entity.FrozenDateTime;
     public bool Unfrozen => _entity.Unfrozen;
@@ -19,7 +19,7 @@ public class FreezeRequestDomainModel
     {
         return new FreezeRequestDomainModel(new FreezeRequest
         {
-            ApprenticeshipKey = apprenticeshipKey,
+            LearningKey = apprenticeshipKey,
             FrozenBy = userId,
             FrozenDateTime = frozenDateTime,
             Unfrozen = false,
