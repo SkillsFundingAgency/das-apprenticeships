@@ -2,9 +2,9 @@
 Pre-deployment script
 */
 
-IF EXISTS (SELECT 1 from [dbo].[Learning])
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Learning' AND schema_id = SCHEMA_ID('dbo'))
 BEGIN
-    PRINT 'Learning table already exists. Migration skipped.';
+    PRINT 'ERROR: Learning table does not exist yet. Aborting.';
     RETURN;
 END
 GO
