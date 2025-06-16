@@ -67,6 +67,9 @@ GO
 
 /* FreezeRequest */
 
+DROP INDEX IX_ApprenticeshipKey ON dbo.FreezeRequest;
+GO
+
 ALTER TABLE dbo.FreezeRequest
 DROP CONSTRAINT FK_FreezeRequest_Apprenticeship;
 GO
@@ -85,13 +88,18 @@ ALTER TABLE dbo.FreezeRequest
 ADD CONSTRAINT FK_FreezeRequest_Learning FOREIGN KEY (LearningKey) REFERENCES dbo.Learning ([Key]);
 GO
 
-DROP INDEX IX_ApprenticeshipKey ON dbo.FreezeRequest;
-GO
-
 CREATE INDEX IX_LearningKey ON dbo.FreezeRequest (LearningKey);
 GO
 
 /* Price History */
+
+
+DROP INDEX IX_ApprenticeshipKey ON dbo.PriceHistory;
+GO
+
+ALTER TABLE dbo.PriceHistory
+DROP CONSTRAINT FK_PriceHistory_Apprenticeship;
+GO
 
 ALTER TABLE dbo.PriceHistory ADD LearningKey UNIQUEIDENTIFIER NULL;
 GO
@@ -104,14 +112,7 @@ ALTER TABLE dbo.PriceHistory DROP COLUMN ApprenticeshipKey;
 GO
 
 ALTER TABLE dbo.PriceHistory
-DROP CONSTRAINT FK_PriceHistory_Apprenticeship;
-GO
-
-ALTER TABLE dbo.PriceHistory
 ADD CONSTRAINT FK_PriceHistory_Learning FOREIGN KEY (LearningKey) REFERENCES dbo.Learning ([Key]);
-GO
-
-DROP INDEX IX_ApprenticeshipKey ON dbo.PriceHistory;
 GO
 
 CREATE INDEX IX_LearningKey ON dbo.PriceHistory (LearningKey);
