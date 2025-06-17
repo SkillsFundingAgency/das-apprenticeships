@@ -74,6 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SFA.DAS.Apprenticeships.Database.publish.xml" />
-    <None Include="Scripts\PostDeployment.sql" />
+    <PostDeploy Include="Scripts\PostDeployment.sql" />
   </ItemGroup>
 </Project>
