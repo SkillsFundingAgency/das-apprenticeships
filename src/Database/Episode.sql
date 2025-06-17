@@ -2,6 +2,7 @@
 (
     [Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
 	[ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL, 
+    [LearningKey] UNIQUEIDENTIFIER NULL,
 	[IsDeleted] BIT NOT NULL DEFAULT(0),
     [Ukprn] BIGINT NOT NULL, 
     [EmployerAccountId] BIGINT NOT NULL, 

@@ -16,3 +16,8 @@ EXEC('
     SELECT [Key], [ApprovalsApprenticeshipId], [Uln], [FirstName], [LastName], [DateOfBirth], [ApprenticeshipHashedId]
     FROM [dbo].[Apprenticeship];');
 
+EXEC('UPDATE [Episode] set [LearningKey] = [ApprenticeshipKey];');
+EXEC('UPDATE [FreezeRequest] set [LearningKey] = [ApprenticeshipKey];');
+EXEC('UPDATE [PriceHistory] set [LearningKey] = [ApprenticeshipKey];');
+EXEC('UPDATE [StartDateChange] set [LearningKey] = [ApprenticeshipKey];');
+EXEC('UPDATE [WithdrawalRequest] set [LearningKey] = [ApprenticeshipKey];');
