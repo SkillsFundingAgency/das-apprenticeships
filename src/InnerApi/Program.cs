@@ -25,7 +25,7 @@ public static class Program
 
         builder.Configuration.AddAzureTableStorage(options =>
         {
-            options.ConfigurationKeys = ["SFA.DAS.Apprenticeships", "SFA.DAS.Encoding"];
+            options.ConfigurationKeys = ["SFA.DAS.Learning", "SFA.DAS.Encoding"];
             options.StorageConnectionString = builder.Configuration["ConfigurationStorageConnectionString"];
             options.EnvironmentName = builder.Configuration["EnvironmentName"];
             options.PreFixConfigurationKeys = false;
@@ -41,7 +41,7 @@ public static class Program
             opt.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
-                Title = "Apprenticeships Internal API"
+                Title = "Learning Internal API"
             });
 
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
