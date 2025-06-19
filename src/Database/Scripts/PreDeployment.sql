@@ -1,35 +1,14 @@
 ﻿/* Pre-deployment script */
---Abort if Apprenticeship table does not exist (eg. when running in context of acceptance test)
-IF NOT EXISTS (
-    SELECT 1
-    FROM INFORMATION_SCHEMA.TABLES
-    WHERE TABLE_NAME = 'Apprenticeship' AND TABLE_SCHEMA = 'dbo')
-BEGIN
-        PRINT 'ERROR: Apprenticeship table does not exist; aborting.';
-        RETURN;
-END
-
---Abort if migration already performed
-IF EXISTS (
-    SELECT 1
-    FROM INFORMATION_SCHEMA.TABLES
-    WHERE TABLE_NAME = 'Learning' AND TABLE_SCHEMA = 'dbo'
-)
-BEGIN
-    IF EXISTS (SELECT 1 FROM [dbo].[Learning])
-    BEGIN
-        PRINT 'ERROR: Learning table already populated; aborting.';
-        RETURN;
-    END
-END
-GO
-
-/* Learning (copy of Apprenticeship) */
 
 EXEC('
     INSERT INTO [dbo].[Learning] ([Key], [ApprovalsApprenticeshipId], [Uln], [FirstName], [LastName], [DateOfBirth], [ApprenticeshipHashedId])
-    SELECT [Key], [ApprovalsApprenticeshipId], [Uln], [FirstName], [LastName], [DateOfBirth], [ApprenticeshipHashedId]
-    FROM [dbo].[Apprenticeship];');
+    SELECT A.[Key], A.[ApprovalsApprenticeshipId], A.[Uln], A.[FirstName], A.[LastName], A.[DateOfBirth], A.[ApprenticeshipHashedId]
+    FROM [dbo].[Apprenticeship] A
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM [dbo].[Learning] L
+        WHERE L.[Key] = A.[Key]
+    );');
 
 EXEC('UPDATE [Episode] set [LearningKey] = [ApprenticeshipKey];');
 EXEC('UPDATE [FreezeRequest] set [LearningKey] = [ApprenticeshipKey];');
