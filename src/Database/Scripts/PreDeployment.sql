@@ -1,9 +1,16 @@
 ﻿/* Pre-deployment script */
 
-IF EXISTS (SELECT 1 FROM [Learning])
+IF EXISTS (
+    SELECT 1
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_NAME = 'Learning' AND TABLE_SCHEMA = 'dbo'
+)
 BEGIN
-    PRINT 'ERROR: Learning table already populated; aborting.';
-    RETURN;
+    IF EXISTS (SELECT 1 FROM [dbo].[Learning])
+    BEGIN
+        PRINT 'ERROR: Learning table already populated; aborting.';
+        RETURN;
+    END
 END
 GO
 
