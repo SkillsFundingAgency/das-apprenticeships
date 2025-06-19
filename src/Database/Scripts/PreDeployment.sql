@@ -1,5 +1,15 @@
 ﻿/* Pre-deployment script */
+--Abort if Apprenticeship table does not exist (eg. when running in context of acceptance test)
+IF EXISTS (
+    SELECT 1
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_NAME = 'Apprenticeship' AND TABLE_SCHEMA = 'dbo')
+BEGIN
+        PRINT 'ERROR: Apprenticeship table does not exist; aborting.';
+        RETURN;
+END
 
+--Abort if migration already performed
 IF EXISTS (
     SELECT 1
     FROM INFORMATION_SCHEMA.TABLES
