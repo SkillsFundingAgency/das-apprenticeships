@@ -6,7 +6,7 @@ public class WithdrawalRequest
 {
     [Key]
     public Guid Key { get; set; }
-    public Guid ApprenticeshipKey { get; set; }
+    public Guid LearningKey { get; set; }
     public Guid EpisodeKey { get; set; }
     public string Reason { get; set; }
     public DateTime LastDayOfLearning { get; set; }
