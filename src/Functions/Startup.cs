@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -86,10 +87,14 @@ public class Startup
 
         services.AddLogging((options) =>
         {
+            options.AddApplicationInsights();
             options.AddFilter("SFA.DAS", LogLevel.Information); // this is because all logging is filtered out by default
             options.SetMinimumLevel(LogLevel.Information);
         });
 
+        services
+            .AddApplicationInsightsTelemetryWorkerService()
+            .ConfigureFunctionsApplicationInsights();
     }
 
 
