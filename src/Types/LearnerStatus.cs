@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace SFA.DAS.Learning.Types;
+namespace SFA.DAS.Apprenticeship.Types;
 
 public enum LearnerStatus
 {

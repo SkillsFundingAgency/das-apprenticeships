@@ -5,7 +5,7 @@ using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Domain.Validators;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Learning.Infrastructure.Services;
-using SFA.DAS.Learning.Types;
+using SFA.DAS.Apprenticeship.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.WithdrawLearning;
