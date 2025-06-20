@@ -14,7 +14,7 @@ using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure.Services;
 using SFA.DAS.Learning.TestHelpers;
 using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeship.Types;
+using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Learning.Command.UnitTests.CreatePriceChange;
 

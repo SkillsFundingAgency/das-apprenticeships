@@ -7,7 +7,7 @@ using SFA.DAS.Learning.Domain;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Infrastructure.Services;
 using SFA.DAS.Learning.Queries.GetLearnerStatus;
-using SFA.DAS.Apprenticeship.Types;
+using SFA.DAS.Apprenticeships.Types;
 
 namespace SFA.DAS.Learning.Queries.UnitTests;
 

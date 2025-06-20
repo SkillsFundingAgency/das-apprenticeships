@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Apprenticeship.Types;
+﻿namespace SFA.DAS.Apprenticeships.Types;
 
 public class ApprenticeshipEpisode
 {

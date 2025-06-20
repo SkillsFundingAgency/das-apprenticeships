@@ -5,7 +5,7 @@ using Moq;
 using SFA.DAS.Learning.AcceptanceTests.Helpers;
 using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
-using SFA.DAS.Apprenticeship.Types;
+using SFA.DAS.Apprenticeships.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions

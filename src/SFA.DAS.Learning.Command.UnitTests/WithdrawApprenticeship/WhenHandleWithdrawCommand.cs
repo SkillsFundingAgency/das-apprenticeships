@@ -16,7 +16,7 @@ using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
 using SFA.DAS.Learning.Infrastructure.Services;
 using SFA.DAS.Learning.TestHelpers;
-using SFA.DAS.Apprenticeship.Types;
+using SFA.DAS.Apprenticeships.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 using LearnerStatus = SFA.DAS.Learning.Domain.Apprenticeship.LearnerStatus;
 

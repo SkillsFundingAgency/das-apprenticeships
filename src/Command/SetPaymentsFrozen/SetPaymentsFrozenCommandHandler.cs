@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.Learning.Domain.Repositories;
-using SFA.DAS.Apprenticeship.Types;
+using SFA.DAS.Apprenticeships.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.SetPaymentsFrozen;
