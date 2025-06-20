@@ -92,7 +92,7 @@ public static class ApprenticeshipDbContextTestHelper
             {
                 new()
                 {
-                    ApprenticeshipKey = apprenticeshipKey,
+                    LearningKey = apprenticeshipKey,
                     CreatedDate = DateTime.UtcNow,
                     EpisodeKey = episodeKey,
                     Key = Guid.NewGuid(),

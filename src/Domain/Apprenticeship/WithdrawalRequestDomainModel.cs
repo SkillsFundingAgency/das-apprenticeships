@@ -7,7 +7,7 @@ public class WithdrawalRequestDomainModel
     private readonly WithdrawalRequest _entity;
 
     public Guid Key => _entity.Key;
-    public Guid ApprenticeshipKey => _entity.ApprenticeshipKey;
+    public Guid ApprenticeshipKey => _entity.LearningKey;
     public Guid EpisodeKey => _entity.EpisodeKey;
     public string Reason => _entity.Reason;
     public DateTime LastDayOfLearning => _entity.LastDayOfLearning;
@@ -19,7 +19,7 @@ public class WithdrawalRequestDomainModel
     {
         return new WithdrawalRequestDomainModel(new WithdrawalRequest
         {
-            ApprenticeshipKey = apprenticeshipKey,
+            LearningKey = apprenticeshipKey,
             EpisodeKey = episodeKey,
             Reason = reason,
             LastDayOfLearning = lastDayOfLearning,
