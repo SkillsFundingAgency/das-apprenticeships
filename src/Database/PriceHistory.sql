@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[PriceHistory]
 (
 	[Key] UNIQUEIDENTIFIER PRIMARY KEY,
-    [ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL,
+    [LearningKey] UNIQUEIDENTIFIER NOT NULL,
     [TrainingPrice] DECIMAL(18, 2) NULL,
     [AssessmentPrice] DECIMAL(18, 2) NULL,
     [TotalPrice] DECIMAL(18, 2) NOT NULL,
@@ -18,7 +18,7 @@
 )
 GO
 ALTER TABLE [dbo].[PriceHistory]
-ADD CONSTRAINT FK_PriceHistory_Apprenticeship FOREIGN KEY (ApprenticeshipKey) REFERENCES dbo.Apprenticeship ([Key])
+ADD CONSTRAINT FK_PriceHistory_Learning FOREIGN KEY (LearningKey) REFERENCES dbo.Learning ([Key])
 GO
-CREATE INDEX IX_ApprenticeshipKey ON [dbo].[PriceHistory] (ApprenticeshipKey);
+CREATE INDEX IX_LearningKey ON [dbo].[PriceHistory] (LearningKey);
 GO

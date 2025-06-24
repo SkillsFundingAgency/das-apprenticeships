@@ -119,7 +119,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         var episodePrice = CreateEpisodePrice(episodeKey, startDate, endDate);
         var episode = CreateEpisode(episodeKey, ukprn, trainingCode, episodePrice);
         var withdrawRecord = _fixture.Build<WithdrawalRequest>()
-            .With(x => x.ApprenticeshipKey, apprenticeshipKey)
+            .With(x => x.LearningKey, apprenticeshipKey)
             .With(x => x.LastDayOfLearning, startDate.AddYears(1))
             .Create();
 
