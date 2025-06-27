@@ -37,18 +37,18 @@ public class StartDateChangeController : ControllerBase
     }
 
     /// <summary>
-    /// Create apprenticeship start date change
+    /// Create learning start date change
     /// </summary>
-    /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+    /// <param name="learningKey">The unique identifier of the learning</param>
     /// <param name="request">Details of the requested start date change.</param>
     /// <returns>Ok on success, Bad Request if neither employer or provider are set for initiator</returns>
-    [HttpPost("{apprenticeshipKey}/startDateChange")]
+    [HttpPost("{learningKey}/startDateChange")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> CreateApprenticeshipStartDateChange(Guid apprenticeshipKey, [FromBody] PostCreateApprenticeshipStartDateChangeRequest request)
+    public async Task<IActionResult> CreateApprenticeshipStartDateChange(Guid learningKey, [FromBody] PostCreateApprenticeshipStartDateChangeRequest request)
     {
         try
         {
-            await _commandDispatcher.Send(new CreateStartDateChangeCommand(request.Initiator, apprenticeshipKey, request.UserId, request.ActualStartDate, request.PlannedEndDate, request.Reason));
+            await _commandDispatcher.Send(new CreateStartDateChangeCommand(request.Initiator, learningKey, request.UserId, request.ActualStartDate, request.PlannedEndDate, request.Reason));
             return Ok();
         }
         catch (ArgumentException exception)
@@ -61,13 +61,13 @@ public class StartDateChangeController : ControllerBase
     /// <summary>
     /// Gets the details of a pending start date change
     /// </summary>
-    /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+    /// <param name="learningKey">The unique identifier of the learning</param>
     /// <returns>Details of the pending start date change</returns>
-    [HttpGet("{apprenticeshipKey}/startDateChange/pending")]
+    [HttpGet("{learningKey}/startDateChange/pending")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> GetPendingStartDateChange(Guid apprenticeshipKey)
+    public async Task<IActionResult> GetPendingStartDateChange(Guid learningKey)
     {
-        var request = new GetPendingStartDateChangeRequest(apprenticeshipKey);
+        var request = new GetPendingStartDateChangeRequest(learningKey);
         var response = await _queryDispatcher.Send<GetPendingStartDateChangeRequest, GetPendingStartDateChangeResponse>(request);
 
         if (!response.HasPendingStartDateChange)
@@ -81,39 +81,39 @@ public class StartDateChangeController : ControllerBase
     /// <summary>
     /// Approves a pending start date change
     /// </summary>
-    /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+    /// <param name="learningKey">The unique identifier of the apprenticeship</param>
     /// <param name="request">Details of the request for start date change approval</param>
-    [HttpPatch("{apprenticeshipKey}/startDateChange/pending")]
+    [HttpPatch("{learningKey}/startDateChange/pending")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> ApproveStartDateChange(Guid apprenticeshipKey, [FromBody] ApproveStartDateChangeRequest request)
+    public async Task<IActionResult> ApproveStartDateChange(Guid learningKey, [FromBody] ApproveStartDateChangeRequest request)
     {
-        await _commandDispatcher.Send(new ApproveStartDateChangeCommand(apprenticeshipKey, request.UserId));
+        await _commandDispatcher.Send(new ApproveStartDateChangeCommand(learningKey, request.UserId));
         return Ok();
     }
 
     /// <summary>
     /// Rejects a pending start date change
     /// </summary>
-    /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+    /// <param name="learningKey">The unique identifier of the apprenticeship</param>
     /// <param name="request">Details of the request for start date change rejection</param>
-    [HttpPatch("{apprenticeshipKey}/startDateChange/reject")]
+    [HttpPatch("{learningKey}/startDateChange/reject")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> RejectStartDateChange(Guid apprenticeshipKey, [FromBody] RejectStartDateChangeRequest request)
+    public async Task<IActionResult> RejectStartDateChange(Guid learningKey, [FromBody] RejectStartDateChangeRequest request)
     {
-        await _commandDispatcher.Send(new RejectStartDateChangeCommand(apprenticeshipKey, request.Reason));
+        await _commandDispatcher.Send(new RejectStartDateChangeCommand(learningKey, request.Reason));
         return Ok();
     }
 
     /// <summary>
     /// Removes a pending start date change
     /// </summary>
-    /// <param name="apprenticeshipKey">The unique identifier of the apprenticeship</param>
+    /// <param name="learningKey">The unique identifier of the learning</param>
     /// <returns>Ok result</returns>
-    [HttpDelete("{apprenticeshipKey}/startDateChange/pending")]
+    [HttpDelete("{learningKey}/startDateChange/pending")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> CancelPendingStartDateChange(Guid apprenticeshipKey)
+    public async Task<IActionResult> CancelPendingStartDateChange(Guid learningKey)
     {
-	    var request = new CancelPendingStartDateChangeRequest(apprenticeshipKey);
+	    var request = new CancelPendingStartDateChangeRequest(learningKey);
 	    await _commandDispatcher.Send(request);
 
 	    return Ok();

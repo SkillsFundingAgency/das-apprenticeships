@@ -49,7 +49,6 @@ public class LearningController : ControllerBase
     /// <param name="fundingPlatform" >Filter by the funding platform. This parameter is optional.</param>
     /// <remarks>Gets all apprenticeships. The response from this endpoint only contains summary apprenticeship information.</remarks>
     /// <response code="200">Apprenticeships retrieved</response>
-    [HttpGet("{ukprn}/apprenticeships")]
     [HttpGet("{ukprn}/learnings")]
     [ProducesResponseType(typeof(IEnumerable<DataTransferObjects.Learning>), 200)]
     public async Task<IActionResult> GetAll(long ukprn, FundingPlatform? fundingPlatform)
@@ -68,7 +67,6 @@ public class LearningController : ControllerBase
     /// <param name="page">Page number</param>
     /// <param name="pageSize">Number of items per page</param>
     /// <returns>GetLearningsByAcademicYearResponse</returns>
-    [HttpGet("{ukprn:long}/academicyears/{academicYear:int}/apprenticeships")]
     [HttpGet("{ukprn:long}/academicyears/{academicYear:int}/learnings")]
     [ProducesResponseType(typeof(GetLearningsByAcademicYearResponse), 200)]
     [ActionAuthorizeUserType(UserType.ServiceAccount)]
