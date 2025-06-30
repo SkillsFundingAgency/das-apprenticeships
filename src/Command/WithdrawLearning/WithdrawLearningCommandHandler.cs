@@ -86,7 +86,7 @@ public class WithdrawLearningCommandHandler : ICommandHandler<WithdrawLearningCo
         var message = new LearningWithdrawnEvent
         {
             LearningKey = learning.Key,
-            LearningId = learning.ApprovalsApprenticeshipId,
+            ApprovalsApprenticeshipId = learning.ApprovalsApprenticeshipId,
             Reason = reason,
             LastDayOfLearning = lastDayOfLearning,
             EmployerAccountId = learning.LatestEpisode.EmployerAccountId
