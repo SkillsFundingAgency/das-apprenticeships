@@ -16,7 +16,7 @@ using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Calendar;
 using SFA.DAS.Learning.Infrastructure.Services;
 using SFA.DAS.Learning.TestHelpers;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 using LearnerStatus = SFA.DAS.Learning.Domain.Apprenticeship.LearnerStatus;
 
@@ -31,7 +31,7 @@ public class WhenHandleWithdrawCommand
     private Mock<IValidator<WithdrawDomainRequest>> _validator;
     private Mock<IMessageSession> _messageSession;
     private Mock<ILogger<WithdrawLearningCommandHandler>> _logger;
-    private ApprenticeshipDomainModel? _apprenticeship;
+    private LearningDomainModel? _apprenticeship;
 
     private const long ValidUkprn = 1000000;
 
@@ -100,13 +100,13 @@ public class WhenHandleWithdrawCommand
 
         // Assert
         _apprenticeshipRepository.Verify(x => x.Update(
-            It.Is<ApprenticeshipDomainModel>(y =>
+            It.Is<LearningDomainModel>(y =>
                 y.GetEntity().WithdrawalRequests
                     .Count(z => z.Reason == command.Reason
                                 && z.LastDayOfLearning == command.LastDayOfLearning) == 1
                 && y.LatestEpisode.LearningStatus == LearnerStatus.Withdrawn)));
 
-        _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipWithdrawnEvent>(e =>
+        _messageSession.Verify(x => x.Publish(It.Is<LearningWithdrawnEvent>(e =>
             e.Reason == command.Reason &&
             e.LastDayOfLearning == command.LastDayOfLearning &&
             e.EmployerAccountId == _apprenticeship!.LatestEpisode.EmployerAccountId
@@ -144,7 +144,7 @@ public class WhenHandleWithdrawCommand
         await sut.Handle(command);
 
         // Assert
-        _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipWithdrawnEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        _messageSession.Verify(x => x.Publish(It.IsAny<LearningWithdrawnEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     private void ResetMockRepository(FundingPlatform fundingPlatform = FundingPlatform.DAS)

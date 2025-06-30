@@ -5,7 +5,7 @@ using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Domain.Validators;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient;
 using SFA.DAS.Learning.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.WithdrawLearning;
@@ -80,13 +80,13 @@ public class WithdrawLearningCommandHandler : ICommandHandler<WithdrawLearningCo
         return command.Reason;
     }
 
-    private async Task SendEvent(ApprenticeshipDomainModel learning, string reason, DateTime lastDayOfLearning)
+    private async Task SendEvent(LearningDomainModel learning, string reason, DateTime lastDayOfLearning)
     {
         _logger.LogInformation("Publishing ApprenticeshipWithdrawnEvent for {learningKey}", learning.Key);
-        var message = new ApprenticeshipWithdrawnEvent
+        var message = new LearningWithdrawnEvent
         {
-            ApprenticeshipKey = learning.Key,
-            ApprenticeshipId = learning.ApprovalsApprenticeshipId,
+            LearningKey = learning.Key,
+            LearningId = learning.ApprovalsApprenticeshipId,
             Reason = reason,
             LastDayOfLearning = lastDayOfLearning,
             EmployerAccountId = learning.LatestEpisode.EmployerAccountId

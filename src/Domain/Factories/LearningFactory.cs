@@ -4,7 +4,7 @@ namespace SFA.DAS.Learning.Domain.Factories
 {
     public class LearningFactory : ILearningFactory
     {
-        public ApprenticeshipDomainModel CreateNew(
+        public LearningDomainModel CreateNew(
             long approvalsApprenticeshipId,
             string uln, 
             DateTime dateOfBirth,
@@ -12,7 +12,7 @@ namespace SFA.DAS.Learning.Domain.Factories
             string lastName, 
             string apprenticeshipHashedId)
         {
-            return ApprenticeshipDomainModel.New(
+            return LearningDomainModel.New(
                 approvalsApprenticeshipId,
                 uln,
                 dateOfBirth,
@@ -21,9 +21,9 @@ namespace SFA.DAS.Learning.Domain.Factories
                 apprenticeshipHashedId);
         }
 
-        public ApprenticeshipDomainModel GetExisting(Learning.DataAccess.Entities.Learning.Learning entity)
+        public LearningDomainModel GetExisting(Learning.DataAccess.Entities.Learning.Learning entity)
         {
-            return ApprenticeshipDomainModel.Get(entity);
+            return LearningDomainModel.Get(entity);
         }
     }
 }

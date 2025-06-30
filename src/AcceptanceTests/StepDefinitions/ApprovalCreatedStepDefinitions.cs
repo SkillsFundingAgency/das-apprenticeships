@@ -5,7 +5,7 @@ using Moq;
 using SFA.DAS.Learning.AcceptanceTests.Helpers;
 using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
@@ -130,12 +130,12 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
         [Then(@"an ApprenticeshipCreatedEvent event is published")]
         public async Task ThenAnApprenticeshipCreatedEventEventIsPublished()
         {
-            await WaitHelper.WaitForIt(() => _testContext.MessageSession.ReceivedEvents<ApprenticeshipCreatedEvent>().Any(EventMatchesExpectation), $"Failed to find published {nameof(ApprenticeshipCreatedEvent)} event");
+            await WaitHelper.WaitForIt(() => _testContext.MessageSession.ReceivedEvents<LearningCreatedEvent>().Any(EventMatchesExpectation), $"Failed to find published {nameof(LearningCreatedEvent)} event");
 
-            var publishedEvent = _testContext.MessageSession.ReceivedEvents<ApprenticeshipCreatedEvent>().Single(EventMatchesExpectation);
+            var publishedEvent = _testContext.MessageSession.ReceivedEvents<LearningCreatedEvent>().Single(EventMatchesExpectation);
 
             publishedEvent.Uln.Should().Be(Apprenticeship.Uln);
-            publishedEvent.ApprenticeshipKey.Should().Be(Apprenticeship.Key);
+            publishedEvent.LearningKey.Should().Be(Apprenticeship.Key);
             int.Parse(publishedEvent.Episode.TrainingCode).Should().Be(int.Parse(LatestEpisode.TrainingCode));
             publishedEvent.Episode.Prices.MaxBy(x => x.StartDate)?.StartDate.Should().BeSameDateAs(LatestEpisodePrice.StartDate);
             publishedEvent.Episode.Prices.MaxBy(x => x.StartDate)?.EndDate.Should().BeSameDateAs(LatestEpisodePrice.EndDate);
@@ -157,7 +157,7 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
         public async Task ThenAnApprenticeshipCreatedEventEventIsPublishedWithTheCorrectFundingBandMaximum()
         {
             await ThenAnApprenticeshipCreatedEventEventIsPublished();
-            ((ApprenticeshipCreatedEvent)_scenarioContext["publishedEvent"])
+            ((LearningCreatedEvent)_scenarioContext["publishedEvent"])
                 .Episode
                 .Prices
                 .MaxBy(x => x.StartDate)?
@@ -168,13 +168,13 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
         [Then(@"an ApprenticeshipCreatedEvent event is not published")]
         public async Task ThenAnApprenticeshipCreatedEventEventIsNotPublished()
         {
-            await WaitHelper.WaitForUnexpected(() => _testContext.MessageSession.ReceivedEvents<ApprenticeshipCreatedEvent>().Any(EventMatchesExpectation), $"Found unexpected {nameof(ApprenticeshipCreatedEvent)} event");
+            await WaitHelper.WaitForUnexpected(() => _testContext.MessageSession.ReceivedEvents<LearningCreatedEvent>().Any(EventMatchesExpectation), $"Found unexpected {nameof(LearningCreatedEvent)} event");
         }
 
 
-        private bool EventMatchesExpectation(ApprenticeshipCreatedEvent apprenticeshipCreatedEvent)
+        private bool EventMatchesExpectation(LearningCreatedEvent learningCreatedEvent)
         {
-            return apprenticeshipCreatedEvent.Uln == ApprovalCreatedEvent.Uln;
+            return learningCreatedEvent.Uln == ApprovalCreatedEvent.Uln;
         }
 
         public CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent ApprovalCreatedEvent => (CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent)_scenarioContext["ApprovalCreatedEvent"];

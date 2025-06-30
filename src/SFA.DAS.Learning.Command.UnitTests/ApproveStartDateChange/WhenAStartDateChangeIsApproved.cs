@@ -13,7 +13,7 @@ using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.TestHelpers;
 using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.UnitTests.ApproveStartDateChange;
@@ -44,7 +44,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var command = _fixture.Create<ApproveStartDateChangeCommand>();
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var startDate = _fixture.Create<DateTime>();
         ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Provider, startDate);
@@ -55,7 +55,7 @@ public class WhenAStartDateChangeIsApproved
 
         //Assert
         _apprenticeshipRepository.Verify(x => x.Update(
-            It.Is<ApprenticeshipDomainModel>(y =>
+            It.Is<LearningDomainModel>(y =>
                 y.GetEntity().StartDateChanges
                 .Count(z => z.RequestStatus == ChangeRequestStatus.Approved
                             && z.EmployerApprovedBy == command.UserId) == 1
@@ -69,7 +69,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var command = _fixture.Create<ApproveStartDateChangeCommand>();
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var startDate = _fixture.Create<DateTime>();
         ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Employer, startDate);
@@ -80,7 +80,7 @@ public class WhenAStartDateChangeIsApproved
 
         //Assert
         _apprenticeshipRepository.Verify(x => x.Update(
-            It.Is<ApprenticeshipDomainModel>(y =>
+            It.Is<LearningDomainModel>(y =>
                 y.GetEntity().StartDateChanges
                     .Count(z => z.RequestStatus == ChangeRequestStatus.Approved
                                 && z.ProviderApprovedBy == command.UserId) == 1
@@ -92,7 +92,7 @@ public class WhenAStartDateChangeIsApproved
     {
         //Arrange
         var command = _fixture.Create<ApproveStartDateChangeCommand>();
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, fundingPlatform: FundingPlatform.SLD);
         var startDate = _fixture.Create<DateTime>();
         ApprenticeshipDomainModelTestHelper.AddPendingStartDateChange(apprenticeship, ChangeInitiator.Employer, startDate);
@@ -102,22 +102,22 @@ public class WhenAStartDateChangeIsApproved
         await _commandHandler.Handle(command);
 
         //Assert
-        _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipStartDateChangedEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        _messageSession.Verify(x => x.Publish(It.IsAny<LearningStartDateChangedEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
-    private void AssertMessageSent(DateTime actualStartDate, ApprenticeshipDomainModel apprenticeship, string approvingUserId)
+    private void AssertMessageSent(DateTime actualStartDate, LearningDomainModel learning, string approvingUserId)
     {
-        var startDateChangeDomainModel = apprenticeship.StartDateChanges.First(x => x.RequestStatus == ChangeRequestStatus.Approved);
-        _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipStartDateChangedEvent>(e =>
+        var startDateChangeDomainModel = learning.StartDateChanges.First(x => x.RequestStatus == ChangeRequestStatus.Approved);
+        _messageSession.Verify(x => x.Publish(It.Is<LearningStartDateChangedEvent>(e =>
             e.StartDate == actualStartDate &&
             IsMarkedApprovedByEmployer(e, startDateChangeDomainModel, approvingUserId) &&
-            DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) &&
-            ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)
+            DoApprenticeshipDetailsMatchDomainModel(e, learning) &&
+            ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, learning)
             ), It.IsAny<PublishOptions>(),
             It.IsAny<CancellationToken>()));
     }
 
-    private static bool IsMarkedApprovedByEmployer(ApprenticeshipStartDateChangedEvent e, StartDateChangeDomainModel startDateChange, string approvingUserId)
+    private static bool IsMarkedApprovedByEmployer(LearningStartDateChangedEvent e, StartDateChangeDomainModel startDateChange, string approvingUserId)
     {
         return
             e.ApprovedDate == startDateChange.EmployerApprovedDate!.Value &&
@@ -126,7 +126,7 @@ public class WhenAStartDateChangeIsApproved
             e.Initiator == ChangeInitiator.Provider.ToString();
     }
 
-    private static bool IsMarkedApprovedByProvider(ApprenticeshipStartDateChangedEvent e, StartDateChangeDomainModel startDateChange, string approvingUserId)
+    private static bool IsMarkedApprovedByProvider(LearningStartDateChangedEvent e, StartDateChangeDomainModel startDateChange, string approvingUserId)
     {
         return
             e.ApprovedDate == startDateChange.ProviderApprovedDate!.Value &&
@@ -135,10 +135,10 @@ public class WhenAStartDateChangeIsApproved
             e.Initiator == ChangeInitiator.Employer.ToString();
     }
 
-    private static bool DoApprenticeshipDetailsMatchDomainModel(ApprenticeshipStartDateChangedEvent e, ApprenticeshipDomainModel apprenticeship)
+    private static bool DoApprenticeshipDetailsMatchDomainModel(LearningStartDateChangedEvent e, LearningDomainModel learning)
     {
         return
-            e.ApprenticeshipKey == apprenticeship.Key &&
-            e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId;
+            e.LearningKey == learning.Key &&
+            e.LearningId == learning.ApprovalsApprenticeshipId;
     }
 }

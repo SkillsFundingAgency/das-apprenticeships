@@ -14,7 +14,7 @@ using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure.Services;
 using SFA.DAS.Learning.TestHelpers;
 using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
@@ -52,7 +52,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
             var command = _fixture.Create<ApprovePriceChangeCommand>();
             command.AssessmentPrice = null;
             command.TrainingPrice = null;
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
             var effectiveFromDate = apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>());
             ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeProviderInitiated(apprenticeship, effectiveFromDate: effectiveFromDate);
@@ -63,7 +63,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
             
             //Assert
             _apprenticeshipRepository.Verify(x => x.Update(
-                It.Is<ApprenticeshipDomainModel>(y => y
+                It.Is<LearningDomainModel>(y => y
                         .GetEntity()
                         .PriceHistories
                         .Count(z => z.PriceChangeRequestStatus == ChangeRequestStatus.Approved 
@@ -77,7 +77,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
         public async Task ByProviderThenThePriceHistoryIsApproved()
         {
             //Arrange
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             var command = _fixture.Create<ApprovePriceChangeCommand>();
             var totalPrice = command.TrainingPrice!.Value + command.AssessmentPrice!.Value;
             ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
@@ -94,7 +94,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
             
             //Assert
             _apprenticeshipRepository.Verify(x => x.Update(
-                It.Is<ApprenticeshipDomainModel>(y => y
+                It.Is<LearningDomainModel>(y => y
                     .GetEntity()
                     .PriceHistories
                     .Count(z => z.PriceChangeRequestStatus == ChangeRequestStatus.Approved 
@@ -109,7 +109,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
         public async Task WhenFundingPlatformIsNotDASThenEventNotPublished()
         {
             //Arrange
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             var command = _fixture.Create<ApprovePriceChangeCommand>();
             var totalPrice = command.TrainingPrice!.Value + command.AssessmentPrice!.Value;
             ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, fundingPlatform: FundingPlatform.SLD);
@@ -125,25 +125,25 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
             await _commandHandler.Handle(command);
 
             //Assert
-            _messageSession.Verify(x => x.Publish(It.IsAny<ApprenticeshipPriceChangedEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+            _messageSession.Verify(x => x.Publish(It.IsAny<LearningPriceChangedEvent>(), It.IsAny<PublishOptions>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
-        private void AssertEventPublished(ApprenticeshipDomainModel apprenticeship, DateTime effectiveFromDate, ApprovedBy approvedBy)
+        private void AssertEventPublished(LearningDomainModel learning, DateTime effectiveFromDate, ApprovedBy approvedBy)
         {
-            _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipPriceChangedEvent>(e =>
-                DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) &&
+            _messageSession.Verify(x => x.Publish(It.Is<LearningPriceChangedEvent>(e =>
+                DoApprenticeshipDetailsMatchDomainModel(e, learning) &&
                 e.ApprovedDate == _approvedDate &&
                 e.ApprovedBy == approvedBy &&
                 e.EffectiveFromDate == effectiveFromDate &&
-                ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>(),
+                ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, learning)), It.IsAny<PublishOptions>(),
                 It.IsAny<CancellationToken>()));
         }
 
-        private static bool DoApprenticeshipDetailsMatchDomainModel(ApprenticeshipPriceChangedEvent e, ApprenticeshipDomainModel apprenticeship)
+        private static bool DoApprenticeshipDetailsMatchDomainModel(LearningPriceChangedEvent e, LearningDomainModel learning)
         {
             return
-                e.ApprenticeshipKey == apprenticeship.Key &&
-                e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId;
+                e.LearningKey == learning.Key &&
+                e.LearningId == learning.ApprovalsApprenticeshipId;
         }
     }
 }

@@ -4,9 +4,9 @@ namespace SFA.DAS.Learning.Domain.Repositories;
 
 public interface ILearningRepository
 {
-    Task Add(ApprenticeshipDomainModel apprenticeship);
-    Task<ApprenticeshipDomainModel> Get(Guid key);
-    Task<ApprenticeshipDomainModel?> GetByUln(string uln);
-    Task<ApprenticeshipDomainModel?> Get(string uln, long approvalsApprenticeshipId);
-    Task Update(ApprenticeshipDomainModel apprenticeship);
+    Task Add(LearningDomainModel learning);
+    Task<LearningDomainModel> Get(Guid key);
+    Task<LearningDomainModel?> GetByUln(string uln);
+    Task<LearningDomainModel?> Get(string uln, long approvalsApprenticeshipId);
+    Task Update(LearningDomainModel learning);
 }

@@ -3,7 +3,7 @@ using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Extensions;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Enums;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.ApproveStartDateChange;
@@ -39,24 +39,24 @@ public class ApproveStartDateChangeCommandHandler : ICommandHandler<ApproveStart
             await SendEvent(apprenticeship, startDateChange);
         }
 
-        _logger.LogInformation("Start date change approved for apprenticeship {apprenticeshipKey}", command.LearningKey);
+        _logger.LogInformation("Start date change approved for Learning {learningKey}", command.LearningKey);
     }
 
-    private async Task SendEvent(ApprenticeshipDomainModel apprenticeship, StartDateChangeDomainModel startDateChange)
+    private async Task SendEvent(LearningDomainModel learning, StartDateChangeDomainModel startDateChange)
     {
-        _logger.LogInformation("Sending ApprenticeshipStartDateChangedEvent for apprenticeship {apprenticeshipKey}", apprenticeship.Key);
+        _logger.LogInformation("Sending ApprenticeshipStartDateChangedEvent for Learning {learningKey}", learning.Key);
         var approver = startDateChange.GetApprover();
 
-        var eventMessage = new ApprenticeshipStartDateChangedEvent()
+        var eventMessage = new LearningStartDateChangedEvent
         {
-            ApprenticeshipKey = apprenticeship.Key,
-            ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
-            StartDate = apprenticeship.StartDate,
+            LearningKey = learning.Key,
+            LearningId = learning.ApprovalsApprenticeshipId,
+            StartDate = learning.StartDate,
             ApprovedDate = approver == ApprovedBy.Employer ? startDateChange.EmployerApprovedDate!.Value : startDateChange.ProviderApprovedDate!.Value,
             ProviderApprovedBy = startDateChange.ProviderApprovedBy,
             EmployerApprovedBy = startDateChange.EmployerApprovedBy,
             Initiator = startDateChange.Initiator.ToString()!,
-            Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
+            Episode = learning.BuildEpisodeForIntegrationEvent()
         };
 
         await _messageSession.Publish(eventMessage);

@@ -1,6 +1,6 @@
-﻿namespace SFA.DAS.Apprenticeships.Types;
+﻿namespace SFA.DAS.Learning.Types;
 
-public class ApprenticeshipEpisodePrice
+public class LearningEpisodePrice
 {
     public Guid Key { get; set; }
 	public DateTime StartDate { get; set; } 
