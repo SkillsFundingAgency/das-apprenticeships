@@ -55,7 +55,7 @@ public class ApprovePriceChangeCommandHandler : ICommandHandler<ApprovePriceChan
         var eventMessage = new LearningPriceChangedEvent()
         {
             LearningKey = learning.Key,
-            LearningId = learning.ApprovalsApprenticeshipId,
+            ApprovalsApprenticeshipId = learning.ApprovalsApprenticeshipId,
             EffectiveFromDate = priceChange.EffectiveFromDate,
             ApprovedDate = priceChange.ApprovalDate(),
             ApprovedBy = approvedBy,

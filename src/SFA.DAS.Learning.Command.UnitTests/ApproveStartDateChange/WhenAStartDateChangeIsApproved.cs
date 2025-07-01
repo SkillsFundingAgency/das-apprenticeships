@@ -139,6 +139,6 @@ public class WhenAStartDateChangeIsApproved
     {
         return
             e.LearningKey == learning.Key &&
-            e.LearningId == learning.ApprovalsApprenticeshipId;
+            e.ApprovalsApprenticeshipId == learning.ApprovalsApprenticeshipId;
     }
 }

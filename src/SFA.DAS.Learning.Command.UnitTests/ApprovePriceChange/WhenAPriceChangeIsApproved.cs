@@ -143,7 +143,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.ApprovePriceChange
         {
             return
                 e.LearningKey == learning.Key &&
-                e.LearningId == learning.ApprovalsApprenticeshipId;
+                e.ApprovalsApprenticeshipId == learning.ApprovalsApprenticeshipId;
         }
     }
 }

@@ -166,6 +166,6 @@ public class WhenAPriceChangeIsCreated
     {
         return
             e.LearningKey == learning.Key &&
-            e.LearningId == learning.ApprovalsApprenticeshipId;
+            e.ApprovalsApprenticeshipId == learning.ApprovalsApprenticeshipId;
     }
 }

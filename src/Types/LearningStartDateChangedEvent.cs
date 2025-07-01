@@ -2,7 +2,7 @@
 
 public class LearningStartDateChangedEvent : LearningEvent
 {
-    public long LearningId { get; set; }
+    public long ApprovalsApprenticeshipId { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime ApprovedDate { get; set; }
     public string ProviderApprovedBy { get; set; }

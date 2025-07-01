@@ -50,7 +50,7 @@ public class ApproveStartDateChangeCommandHandler : ICommandHandler<ApproveStart
         var eventMessage = new LearningStartDateChangedEvent
         {
             LearningKey = learning.Key,
-            LearningId = learning.ApprovalsApprenticeshipId,
+            ApprovalsApprenticeshipId = learning.ApprovalsApprenticeshipId,
             StartDate = learning.StartDate,
             ApprovedDate = approver == ApprovedBy.Employer ? startDateChange.EmployerApprovedDate!.Value : startDateChange.ProviderApprovedDate!.Value,
             ProviderApprovedBy = startDateChange.ProviderApprovedBy,

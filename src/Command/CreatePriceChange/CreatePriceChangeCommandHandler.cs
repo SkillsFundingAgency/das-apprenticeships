@@ -72,7 +72,7 @@ namespace SFA.DAS.Learning.Command.CreatePriceChange
             var eventMessage = new LearningPriceChangedEvent()
             {
                 LearningKey = learning.Key,
-                LearningId = learning.ApprovalsApprenticeshipId,
+                ApprovalsApprenticeshipId = learning.ApprovalsApprenticeshipId,
                 EffectiveFromDate = priceChange.EffectiveFromDate,
                 ApprovedDate = priceChange.ProviderApprovedDate!.Value,
                 ApprovedBy = ApprovedBy.Provider,
