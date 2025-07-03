@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Extensions;
 using SFA.DAS.Learning.Domain.Factories;
@@ -104,6 +103,5 @@ public class AddLearningCommandHandler : ICommandHandler<AddLearningCommand>
         };
 
         await _messageSession.Publish(learningCreatedEvent);
-        await _messageSession.Publish((ApprenticeshipCreatedEvent)learningCreatedEvent);
     }
 }

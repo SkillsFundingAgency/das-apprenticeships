@@ -36,7 +36,6 @@ public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozen
                 _logger.LogInformation("Publishing PaymentsFrozenEvent for Learning {apprenticeshipKey}", command.LearningKey);
                 var message = new PaymentsFrozenEvent { LearningKey = command.LearningKey };
                 await _messageSession.Publish(message);
-                await _messageSession.Publish((DAS.Apprenticeships.Types.PaymentsFrozenEvent)message);
 
             }
             else
@@ -44,7 +43,6 @@ public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozen
                 _logger.LogInformation("Publishing PaymentsUnfrozenEvent for Learning {learningKey}", command.LearningKey);
                 var message = new PaymentsUnfrozenEvent { LearningKey = command.LearningKey };
                 await _messageSession.Publish(message);
-                await _messageSession.Publish((DAS.Apprenticeships.Types.PaymentsUnfrozenEvent)message);
             }
         }
     }

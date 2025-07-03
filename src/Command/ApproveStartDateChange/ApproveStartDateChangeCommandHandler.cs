@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Extensions;
 using SFA.DAS.Learning.Domain.Repositories;
@@ -61,6 +60,5 @@ public class ApproveStartDateChangeCommandHandler : ICommandHandler<ApproveStart
         };
 
         await _messageSession.Publish(eventMessage);
-        await _messageSession.Publish((ApprenticeshipStartDateChangedEvent)eventMessage);
     }
 }
