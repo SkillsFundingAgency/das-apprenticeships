@@ -88,6 +88,7 @@ public class AddLearningCommandHandler : ICommandHandler<AddLearningCommand>
         }
         catch (DbUpdateException ex) when (ex.InnerException is SqlException { Number: 2627 or 2601 })
         {
+            //2627: violation of unique constraint. 2601: violation of unique index
             _logger.LogWarning($"Unique constraint violation, uln: {command.Uln}, approvals apprenticeship id: {command.ApprovalsApprenticeshipId}.");
             return;
         }
