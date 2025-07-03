@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Learning.Domain;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Repositories;
@@ -93,5 +94,6 @@ public class WithdrawLearningCommandHandler : ICommandHandler<WithdrawLearningCo
         };
 
         await _messageSession.Publish(message);
+        await _messageSession.Publish((ApprenticeshipWithdrawnEvent)message);
     }
 }

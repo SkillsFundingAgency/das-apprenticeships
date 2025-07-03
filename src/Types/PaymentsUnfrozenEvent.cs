@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Learning.Types;
 
-public class PaymentsFrozenEvent
+public class PaymentsUnfrozenEvent
 {
     public Guid LearningKey { get; set; }
 }

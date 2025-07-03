@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Extensions;
 using SFA.DAS.Learning.Domain.Factories;
@@ -91,7 +92,7 @@ public class AddLearningCommandHandler : ICommandHandler<AddLearningCommand>
     private async Task SendEvent(LearningDomainModel learning)
     {
         _logger.LogInformation("Sending LearningCreatedEvent for Approvals Learning Id: {approvalsApprenticeshipId}", learning.ApprovalsApprenticeshipId);
-        var apprenticeshipCreatedEvent = new LearningCreatedEvent
+        var learningCreatedEvent = new LearningCreatedEvent
         {
             LearningKey = learning.Key,
             Uln = learning.Uln,
@@ -102,6 +103,7 @@ public class AddLearningCommandHandler : ICommandHandler<AddLearningCommand>
             Episode = learning.BuildEpisodeForIntegrationEvent()
         };
 
-        await _messageSession.Publish(apprenticeshipCreatedEvent);
+        await _messageSession.Publish(learningCreatedEvent);
+        await _messageSession.Publish((ApprenticeshipCreatedEvent)learningCreatedEvent);
     }
 }
