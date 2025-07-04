@@ -33,7 +33,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.RejectedPendingStartDateChange
         {
             // Arrange
             var command = _fixture.Create<RejectStartDateChangeCommand>();
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             apprenticeship.AddStartDateChange(_fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<string>(),
                 _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<string>(),
                 _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeRequestStatus.Created,
@@ -45,7 +45,7 @@ namespace SFA.DAS.Learning.Command.UnitTests.RejectedPendingStartDateChange
             await _commandHandler.Handle(command);
 
             // Assert
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().StartDateChanges.Count(z => z.RequestStatus == ChangeRequestStatus.Rejected) == 1)));
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y => y.GetEntity().StartDateChanges.Count(z => z.RequestStatus == ChangeRequestStatus.Rejected) == 1)));
         }
     }
 }

@@ -2,14 +2,14 @@
 
 public class SetPaymentsFrozenCommand : ICommand
 {
-    public Guid ApprenticeshipKey { get; }
+    public Guid LearningKey { get; }
     public string UserId { get; }
     public bool NewPaymentsFrozenStatus { get; }
     public string? Reason { get; set; }
 
-    public SetPaymentsFrozenCommand(Guid apprenticeshipKey, string userId, SetPayments setPaymentsFrozen, string? reason = null)
+    public SetPaymentsFrozenCommand(Guid learningKey, string userId, SetPayments setPaymentsFrozen, string? reason = null)
     {
-        ApprenticeshipKey = apprenticeshipKey;
+        LearningKey = learningKey;
         UserId = userId;
 
         switch (setPaymentsFrozen)

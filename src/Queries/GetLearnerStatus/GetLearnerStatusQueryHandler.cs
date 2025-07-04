@@ -2,7 +2,7 @@
 using SFA.DAS.Learning.Domain.Extensions;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 
 namespace SFA.DAS.Learning.Queries.GetLearnerStatus;
 

@@ -36,7 +36,7 @@ public class WithdrawValidator : IValidator<WithdrawDomainRequest>
     {
         message = string.Empty;
 
-        var apprenticeship = args.OfType<ApprenticeshipDomainModel>().FirstOrDefault();
+        var apprenticeship = args.OfType<LearningDomainModel>().FirstOrDefault();
         var currentAcademicYearEnd = args.OfType<DateTime>().FirstOrDefault();
 
         // Validate if apprenticeship exists
@@ -83,21 +83,21 @@ public class WithdrawValidator : IValidator<WithdrawDomainRequest>
         return true;
     }
 
-    private bool ValidateWithdrawlDate(WithdrawDomainRequest request, ApprenticeshipDomainModel apprenticeship, DateTime currentAcademicYearEnd, out string message)
+    private bool ValidateWithdrawlDate(WithdrawDomainRequest request, LearningDomainModel learning, DateTime currentAcademicYearEnd, out string message)
     {
         message = string.Empty;
         var now = _systemClockService.UtcNow;
 
-        if (request.LastDayOfLearning < apprenticeship.StartDate)
+        if (request.LastDayOfLearning < learning.StartDate)
             return FailwithMessage(out message, "LastDayOfLearning cannot be before the start date");
 
-        if (request.LastDayOfLearning > apprenticeship.EndDate)
+        if (request.LastDayOfLearning > learning.EndDate)
             return FailwithMessage(out message, "LastDayOfLearning cannot be after the planned end date");
 
         if (request.LastDayOfLearning > currentAcademicYearEnd)
             return FailwithMessage(out message, "LastDayOfLearning cannot be after the end of the current academic year");
 
-        if (request.LastDayOfLearning > now && apprenticeship.StartDate < now)
+        if (request.LastDayOfLearning > now && learning.StartDate < now)
             return FailwithMessage(out message, "LastDayOfLearning cannot be in the future unless the start date is in the future");
 
         message = string.Empty;

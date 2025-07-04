@@ -21,20 +21,20 @@ public class LearningRepository : ILearningRepository
         _accountIdAuthorizer = accountIdAuthorizer;
     }
 
-    public async Task Add(ApprenticeshipDomainModel apprenticeship)
+    public async Task Add(LearningDomainModel learning)
     {
-        var entity = apprenticeship.GetEntity();
+        var entity = learning.GetEntity();
         _accountIdAuthorizer.AuthorizeAccountId(entity);
         await DbContext.AddAsync(entity);
         await DbContext.SaveChangesAsync();
             
-        foreach (dynamic domainEvent in apprenticeship.FlushEvents())
+        foreach (dynamic domainEvent in learning.FlushEvents())
         {
             await _domainEventDispatcher.Send(domainEvent);
         }
     }
 
-    public async Task<ApprenticeshipDomainModel> Get(Guid key)
+    public async Task<LearningDomainModel> Get(Guid key)
     {
         var apprenticeship = await DbContext.Apprenticeships
             .Include(x => x.PriceHistories)
@@ -47,7 +47,7 @@ public class LearningRepository : ILearningRepository
         return _learningFactory.GetExisting(apprenticeship);
     }
 
-    public async Task<ApprenticeshipDomainModel?> Get(string uln, long approvalsApprenticeshipId)
+    public async Task<LearningDomainModel?> Get(string uln, long approvalsApprenticeshipId)
     {
         var apprenticeship = await DbContext.Apprenticeships
             .Include(x => x.PriceHistories)
@@ -59,7 +59,7 @@ public class LearningRepository : ILearningRepository
         return apprenticeship == null ? null : _learningFactory.GetExisting(apprenticeship);
     }
     
-    public async Task<ApprenticeshipDomainModel?> GetByUln(string uln)
+    public async Task<LearningDomainModel?> GetByUln(string uln)
     {
         var apprenticeship = await DbContext.Apprenticeships
             .Include(x => x.PriceHistories)
@@ -77,15 +77,15 @@ public class LearningRepository : ILearningRepository
         return _learningFactory.GetExisting(apprenticeship);
     }
 
-    public async Task Update(ApprenticeshipDomainModel apprenticeship)
+    public async Task Update(LearningDomainModel learning)
     {
-        var entity = apprenticeship.GetEntity();
+        var entity = learning.GetEntity();
         _accountIdAuthorizer.AuthorizeAccountId(entity);
         DbContext.Update(entity);
 
         await DbContext.SaveChangesAsync();
   
-        foreach (dynamic domainEvent in apprenticeship.FlushEvents())
+        foreach (dynamic domainEvent in learning.FlushEvents())
         {
             await _domainEventDispatcher.Send(domainEvent);
         }

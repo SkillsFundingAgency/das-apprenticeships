@@ -30,9 +30,9 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Apprenticeship
             apprenticeship.AgeAtStartOfApprenticeship.Should().Be(expectedAge);
         }
 
-        private ApprenticeshipDomainModel CreateApprenticeshipDomainModel(DateTime dateOfBirth, DateTime startDate)
+        private LearningDomainModel CreateApprenticeshipDomainModel(DateTime dateOfBirth, DateTime startDate)
         {
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             apprenticeship.GetEntity().DateOfBirth = dateOfBirth;
             apprenticeship.AddEpisode(
                 _fixture.Create<long>(), 

@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Apprenticeships.Types;
+﻿using SFA.DAS.Learning.Types;
 
 namespace SFA.DAS.Learning.Queries.GetLearnerStatus;
 

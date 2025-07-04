@@ -33,7 +33,7 @@ public class WhenAPendingStartDateChangeIsCancelled
     public async Task ThenStartDateChangeIsCancelled()
     {
         var command = _fixture.Create<CancelPendingStartDateChangeRequest>();
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         apprenticeship.AddStartDateChange(
             _fixture.Create<DateTime>(),    // ActualStartDate
             _fixture.Create<DateTime>(),    // PlannedEndDate
@@ -50,6 +50,6 @@ public class WhenAPendingStartDateChangeIsCancelled
 
         await _commandHandler.Handle(command);
 
-        _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().StartDateChanges.Count(z => z.RequestStatus == ChangeRequestStatus.Cancelled) == 1)));
+        _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y => y.GetEntity().StartDateChanges.Count(z => z.RequestStatus == ChangeRequestStatus.Cancelled) == 1)));
     }
 }

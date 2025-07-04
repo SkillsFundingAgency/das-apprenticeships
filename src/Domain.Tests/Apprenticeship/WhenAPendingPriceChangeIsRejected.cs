@@ -25,7 +25,7 @@ public class WhenAPendingPriceChangeIsRejected
     public void ThenThePriceHistoryRecordIsCancelled()
     {
         // Assert
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         var priceHistoryDomainModel = PriceHistoryDomainModel.Get(_fixture.Create<PriceHistory>());
         apprenticeship.AddPriceHistory(
             priceHistoryDomainModel.TrainingPrice,

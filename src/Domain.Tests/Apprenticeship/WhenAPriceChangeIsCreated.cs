@@ -23,7 +23,7 @@ public class WhenAPriceChangeIsCreated
     [Test]
     public void ThenThePriceHistoryRecordIsAdded()
     {
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         var expectedModel = PriceHistoryDomainModel.Get(_fixture.Create<PriceHistory>());
         apprenticeship.AddPriceHistory(
             expectedModel.TrainingPrice,

@@ -4,7 +4,7 @@ using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 using FundingType = SFA.DAS.Learning.Enums.FundingType;
 
@@ -15,11 +15,11 @@ public static class ApprenticeshipDomainModelTestHelper
     private static readonly Fixture _fixture = new();
 
     // If this method isn't a sign that we need to refactor this project then I don't know what is
-    public static ApprenticeshipDomainModel CreateBasicTestModel()
+    public static LearningDomainModel CreateBasicTestModel()
     {
         // Create an instance with default constructor or Activator
-        var apprenticeship = (ApprenticeshipDomainModel)Activator.CreateInstance(
-            typeof(ApprenticeshipDomainModel),
+        var apprenticeship = (LearningDomainModel)Activator.CreateInstance(
+            typeof(LearningDomainModel),
             BindingFlags.NonPublic | BindingFlags.Instance,
             null,
             new object[] { new DataAccess.Entities.Learning.Learning() },
@@ -27,32 +27,32 @@ public static class ApprenticeshipDomainModelTestHelper
         );
 
         // Set private fields to empty lists using reflection
-        typeof(ApprenticeshipDomainModel)
+        typeof(LearningDomainModel)
             .GetField("_episodes", BindingFlags.NonPublic | BindingFlags.Instance)
             .SetValue(apprenticeship, new List<EpisodeDomainModel>());
 
-        typeof(ApprenticeshipDomainModel)
+        typeof(LearningDomainModel)
             .GetField("_priceHistories", BindingFlags.NonPublic | BindingFlags.Instance)
             .SetValue(apprenticeship, new List<PriceHistoryDomainModel>());
 
-        typeof(ApprenticeshipDomainModel)
+        typeof(LearningDomainModel)
             .GetField("_startDateChanges", BindingFlags.NonPublic | BindingFlags.Instance)
             .SetValue(apprenticeship, new List<StartDateChangeDomainModel>());
 
-        typeof(ApprenticeshipDomainModel)
+        typeof(LearningDomainModel)
             .GetField("_freezeRequests", BindingFlags.NonPublic | BindingFlags.Instance)
             .SetValue(apprenticeship, new List<FreezeRequestDomainModel>());
 
         return apprenticeship;
     }
 
-    public static void AddEpisode(ApprenticeshipDomainModel apprenticeship, DateTime? startDate = null, DateTime? endDate = null, long? ukprn = null, FundingPlatform? fundingPlatform = FundingPlatform.DAS)
+    public static void AddEpisode(LearningDomainModel learning, DateTime? startDate = null, DateTime? endDate = null, long? ukprn = null, FundingPlatform? fundingPlatform = FundingPlatform.DAS)
     {
         var start = startDate ?? _fixture.Create<DateTime>();
         var end = endDate ?? (start.AddDays(_fixture.Create<int>()));
         var ukprnValue = ukprn ?? _fixture.Create<long>();
 
-        apprenticeship.AddEpisode(
+        learning.AddEpisode(
             ukprnValue,
             _fixture.Create<long>(),
             start,
@@ -70,9 +70,9 @@ public static class ApprenticeshipDomainModelTestHelper
             _fixture.Create<string?>());
     }
 
-    public static void AddPendingPriceChangeEmployerInitiated(ApprenticeshipDomainModel apprenticeship, decimal totalPrice, DateTime? effectiveFromDate = null)
+    public static void AddPendingPriceChangeEmployerInitiated(LearningDomainModel learning, decimal totalPrice, DateTime? effectiveFromDate = null)
     {
-        apprenticeship.AddPriceHistory(
+        learning.AddPriceHistory(
             null,
             null,
             totalPrice,
@@ -87,9 +87,9 @@ public static class ApprenticeshipDomainModelTestHelper
             ChangeInitiator.Employer);
     }
 
-    public static void AddPendingPriceChangeProviderInitiated(ApprenticeshipDomainModel apprenticeship, DateTime? effectiveFromDate = null)
+    public static void AddPendingPriceChangeProviderInitiated(LearningDomainModel learning, DateTime? effectiveFromDate = null)
     {
-        apprenticeship.AddPriceHistory(
+        learning.AddPriceHistory(
             _fixture.Create<decimal>(),
             _fixture.Create<decimal>(),
             _fixture.Create<decimal>(),
@@ -104,11 +104,11 @@ public static class ApprenticeshipDomainModelTestHelper
             ChangeInitiator.Provider);
     }
 
-    public static void AddPendingStartDateChange(ApprenticeshipDomainModel apprenticeship, ChangeInitiator changeInitiator, DateTime? startDate = null)
+    public static void AddPendingStartDateChange(LearningDomainModel learning, ChangeInitiator changeInitiator, DateTime? startDate = null)
     {
         var start = startDate ?? _fixture.Create<DateTime>();
         var end = start.AddDays(_fixture.Create<int>());
-        apprenticeship.AddStartDateChange(
+        learning.AddStartDateChange(
             start,
             end,
             _fixture.Create<string>(),
@@ -121,7 +121,7 @@ public static class ApprenticeshipDomainModelTestHelper
             changeInitiator);
     }
 
-    public static ApprenticeshipDomainModel BuildApprenticeshipWithPendingStartDateChange(
+    public static LearningDomainModel BuildApprenticeshipWithPendingStartDateChange(
     bool pendingProviderApproval = false,
     DateTime? originalStartDate = null,
     DateTime? newStartDate = null,
@@ -129,7 +129,7 @@ public static class ApprenticeshipDomainModelTestHelper
     DateTime? newEndDate = null)
     {
         _fixture.Customize(new ApprenticeshipCustomization());
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, originalStartDate, originalEndDate);
 
         var startDateEntity = _fixture.Build<StartDateChange>().With(x => x.ActualStartDate, newStartDate ?? _fixture.Create<DateTime>()).Create();
@@ -154,18 +154,18 @@ public static class ApprenticeshipDomainModelTestHelper
         return apprenticeship;
     }
 
-    public static bool DoEpisodeDetailsMatchDomainModel(ApprenticeshipEvent e, ApprenticeshipDomainModel apprenticeship)
+    public static bool DoEpisodeDetailsMatchDomainModel(LearningEvent e, LearningDomainModel learning)
     {
-        var episode = apprenticeship.LatestEpisode;
-        var expectedNumberOfPrices = apprenticeship.AllPrices.Count();
-        var episodePrice = apprenticeship.LatestPrice;
+        var episode = learning.LatestEpisode;
+        var expectedNumberOfPrices = learning.AllPrices.Count();
+        var episodePrice = learning.LatestPrice;
         return
             e.Episode.TrainingCode == episode.TrainingCode &&
             e.Episode.FundingEmployerAccountId == episode.FundingEmployerAccountId &&
             e.Episode.EmployerAccountId == episode.EmployerAccountId &&
             e.Episode.LegalEntityName == episode.LegalEntityName &&
             e.Episode.Ukprn == episode.Ukprn &&
-            e.Episode.AgeAtStartOfApprenticeship == apprenticeship.AgeAtStartOfApprenticeship &&
+            e.Episode.AgeAtStartOfLearning == learning.AgeAtStartOfApprenticeship &&
             e.Episode.Prices.Count == expectedNumberOfPrices &&
             e.Episode.Prices.MaxBy(x => x.StartDate).TotalPrice == episodePrice.TotalPrice &&
             e.Episode.FundingType == episode.FundingType &&

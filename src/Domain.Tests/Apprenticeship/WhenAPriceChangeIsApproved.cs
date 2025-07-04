@@ -26,7 +26,7 @@ public class WhenAPriceChangeIsApproved
     public void ByEmployerThenPriceHistoryRecordIsUpdatedAndEventAdded()
     {
         //Arrange
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeProviderInitiated(apprenticeship, effectiveFromDate:apprenticeship.LatestPrice.StartDate.AddDays(_fixture.Create<int>()));
         var employerUserId = _fixture.Create<string>();
@@ -48,7 +48,7 @@ public class WhenAPriceChangeIsApproved
     public void ByProviderThenPriceHistoryRecordIsUpdatedAndEventAdded()
     {
         //Arrange
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var trainingPrice = _fixture.Create<int>();
         var assessmentPrice = _fixture.Create<int>();
@@ -72,7 +72,7 @@ public class WhenAPriceChangeIsApproved
     public void AndTheEffectiveDateIsBeforeTheLatestEpisode_ThenTheLatestEpisodeIsDeleted()
     {
         //Arrange
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         var originalStartDate = new DateTime(2024,1,1);
         var originalEndDate = new DateTime(2024, 10, 1);
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, originalStartDate, originalEndDate);
@@ -98,7 +98,7 @@ public class WhenAPriceChangeIsApproved
     public void AndTheEffectiveDateIsBeforeTheLatestEpisodeButNotEarlierEpisode_ThenTheLatestEpisodeIsDeleted()
     {
         //Arrange
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         var originalStartDate = new DateTime(2024, 1, 1);
         var originalEndDate = new DateTime(2024, 10, 1);
         var firstPriceChangeDate = new DateTime(2024, 6, 1);
@@ -124,10 +124,10 @@ public class WhenAPriceChangeIsApproved
         prices.Count(x => x.StartDate == secondPriceChangeDate && x.EndDate == originalEndDate && x.IsDeleted).Should().Be(1);
         prices.Count(x => x.StartDate == finalPriceChangeDate && x.EndDate == originalEndDate && !x.IsDeleted).Should().Be(1);
     }
-    private void CreatePriceChange(ApprenticeshipDomainModel apprenticeship, DateTime effectiveFromDate, int newTrainingPrice, int newAssessmentPrice)
+    private void CreatePriceChange(LearningDomainModel learning, DateTime effectiveFromDate, int newTrainingPrice, int newAssessmentPrice)
     {
-        ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeEmployerInitiated(apprenticeship, newTrainingPrice + newAssessmentPrice, effectiveFromDate);
-        apprenticeship.ApprovePriceChange(_fixture.Create<string>(), newTrainingPrice, newAssessmentPrice, DateTime.Now);
-        var events = apprenticeship.FlushEvents();
+        ApprenticeshipDomainModelTestHelper.AddPendingPriceChangeEmployerInitiated(learning, newTrainingPrice + newAssessmentPrice, effectiveFromDate);
+        learning.ApprovePriceChange(_fixture.Create<string>(), newTrainingPrice, newAssessmentPrice, DateTime.Now);
+        var events = learning.FlushEvents();
     }
 }

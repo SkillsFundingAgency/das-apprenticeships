@@ -1,16 +1,16 @@
 ﻿using SFA.DAS.Learning.Domain.Apprenticeship;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 
 namespace SFA.DAS.Learning.Domain.Extensions;
 
 public static class IntegrationEventExtensions
 {
-    public static ApprenticeshipEpisode BuildEpisodeForIntegrationEvent(this ApprenticeshipDomainModel apprenticeship)
+    public static LearningEpisode BuildEpisodeForIntegrationEvent(this LearningDomainModel learning)
     {
-        var latestEpisode = apprenticeship.LatestEpisode;
+        var latestEpisode = learning.LatestEpisode;
         var activePrices = latestEpisode.ActiveEpisodePrices;
         var prices = activePrices.Select(price => 
-            new ApprenticeshipEpisodePrice
+            new LearningEpisodePrice
             {
                 Key = price.Key,
                 StartDate = price.StartDate,
@@ -21,7 +21,7 @@ public static class IntegrationEventExtensions
                 FundingBandMaximum = price.FundingBandMaximum
             }).ToList();
 
-        return new ApprenticeshipEpisode()
+        return new LearningEpisode()
         {
             Key = latestEpisode.Key,
             Ukprn = latestEpisode.Ukprn,
@@ -31,7 +31,7 @@ public static class IntegrationEventExtensions
             FundingEmployerAccountId = latestEpisode.FundingEmployerAccountId,
             LegalEntityName = latestEpisode.LegalEntityName,
             AccountLegalEntityId = latestEpisode.AccountLegalEntityId,
-            AgeAtStartOfApprenticeship = apprenticeship.AgeAtStartOfApprenticeship,
+            AgeAtStartOfLearning = learning.AgeAtStartOfApprenticeship,
             TrainingCode = latestEpisode.TrainingCode,
             TrainingCourseVersion = latestEpisode.TrainingCourseVersion,
             PaymentsFrozen = latestEpisode.PaymentsFrozen,

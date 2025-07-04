@@ -39,7 +39,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepositor
         {
             // Arrange
             SetUpApprenticeshipRepository();
-            var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Learning.DataAccess.Entities.Learning.Learning>());
+            var expectedApprenticeship = LearningDomainModel.Get(_fixture.Create<Learning.DataAccess.Entities.Learning.Learning>());
             _apprenticeshipFactory
                 .Setup(x => x.GetExisting(It.IsAny<Learning.DataAccess.Entities.Learning.Learning>())).Returns(expectedApprenticeship);
 
