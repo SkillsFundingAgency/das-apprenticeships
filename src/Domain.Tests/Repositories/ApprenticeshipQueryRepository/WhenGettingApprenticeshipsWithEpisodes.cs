@@ -164,6 +164,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         actual.Should().NotBeNull();
         actual.TrainingCode.Should().Be(expected.TrainingCode);
         actual.Prices.Count.Should().Be(expected.Prices.Count);
+        actual.LastDayOfLearning.Should().Be(expected.LastDayOfLearning);
     }
 
     private bool AssertPrice(EpisodePrice expected, Learning.DataTransferObjects.EpisodePrice actual)
