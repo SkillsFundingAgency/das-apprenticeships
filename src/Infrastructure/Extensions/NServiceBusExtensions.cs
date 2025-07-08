@@ -7,7 +7,7 @@ public static class NServiceBusExtensions
 {
     public static void ConfigureNServiceBusForSend(this IServiceCollection services, string fullyQualifiedNamespace)
     {
-        var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Apprenticeships");
+        var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Learning");
         endpointConfiguration.UseSerialization<SystemJsonSerializer>();
         endpointConfiguration.SendOnly();
 
