@@ -2,7 +2,7 @@
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;

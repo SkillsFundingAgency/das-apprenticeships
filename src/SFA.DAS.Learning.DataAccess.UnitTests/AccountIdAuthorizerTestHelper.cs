@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure;
 
@@ -26,11 +26,11 @@ public static class AccountIdAuthorizerTestHelper
         return new AccountIdAuthorizer(mockClaimsHandler.Object, mockLogger.Object);
     }
 
-    public static Apprenticeship BuildApprenticeshipWithAccountId(long? ukprn = null, long? employerAccountId = null)
+    public static Entities.Learning.Learning BuildApprenticeshipWithAccountId(long? ukprn = null, long? employerAccountId = null)
     {
         var fixture = new Fixture();
 
-        return new Apprenticeship
+        return new Entities.Learning.Learning
         {
             Episodes = new List<Episode>
             {

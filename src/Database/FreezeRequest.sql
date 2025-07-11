@@ -1,8 +1,7 @@
 ﻿CREATE TABLE [dbo].[FreezeRequest]
 (
     [Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
-    [ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL, 
-    [LearningKey] UNIQUEIDENTIFIER NULL,
+    [LearningKey] UNIQUEIDENTIFIER NOT NULL, 
     [FrozenBy] NVARCHAR(500) NOT NULL, 
     [FrozenDateTime] DATETIME NOT NULL, 
     [Unfrozen] BIT NOT NULL, 
@@ -13,7 +12,7 @@
 
 GO
 ALTER TABLE [dbo].[FreezeRequest]
-ADD CONSTRAINT FK_FreezeRequest_Apprenticeship FOREIGN KEY (ApprenticeshipKey) REFERENCES dbo.Apprenticeship ([Key])
+ADD CONSTRAINT FK_FreezeRequest_Learning FOREIGN KEY (LearningKey) REFERENCES dbo.Learning ([Key])
 GO
-CREATE INDEX IX_ApprenticeshipKey ON [dbo].[FreezeRequest] (ApprenticeshipKey);
+CREATE INDEX IX_LearningKey ON [dbo].[FreezeRequest] (LearningKey);
 GO

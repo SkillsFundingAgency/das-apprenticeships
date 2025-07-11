@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.DataAccess.Extensions;
 
 namespace SFA.DAS.Learning.DataAccess.UnitTests
 {
     [TestFixture]
-    public class ApprenticeshipExtensionsTests
+    public class LearningExtensionsTests
     {
         private Fixture _fixture;
 
@@ -81,7 +81,7 @@ namespace SFA.DAS.Learning.DataAccess.UnitTests
         public void GetAgeAtStartOfApprenticeship_ShouldReturnCorrectAge(string dob, string startDate, int expectedAge)
         {
             // Arrange
-            var apprenticeship = _fixture.Build<Apprenticeship>()
+            var apprenticeship = _fixture.Build<Entities.Learning.Learning>()
                 .With(a => a.DateOfBirth, DateTime.Parse(dob))
                 .Create();
             apprenticeship.Episodes.Add(CreateEpisode(startDate: DateTime.Parse(startDate), isDeleted: false));
@@ -153,9 +153,9 @@ namespace SFA.DAS.Learning.DataAccess.UnitTests
             result.Should().Be(new DateTime(2022, 12, 1));
         }
 
-        private Apprenticeship CreateApprenticeshipWithEpisodes(params Episode[] episodes)
+        private Entities.Learning.Learning CreateApprenticeshipWithEpisodes(params Episode[] episodes)
         {
-            var apprenticeship = _fixture.Create<Apprenticeship>();
+            var apprenticeship = _fixture.Create<Entities.Learning.Learning>();
             apprenticeship.Episodes = new List<Episode>();
             apprenticeship.Episodes.AddRange(episodes);
             return apprenticeship;

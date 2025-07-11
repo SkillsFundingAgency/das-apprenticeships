@@ -7,13 +7,13 @@ namespace SFA.DAS.Learning.Domain.Repositories;
 
 public class LearningRepository : ILearningRepository
 {
-    private readonly Lazy<ApprenticeshipsDataContext> _lazyContext;
+    private readonly Lazy<LearningDataContext> _lazyContext;
     private IDomainEventDispatcher _domainEventDispatcher;
     private readonly ILearningFactory _learningFactory;
     private readonly IAccountIdAuthorizer _accountIdAuthorizer;
-    private ApprenticeshipsDataContext DbContext => _lazyContext.Value;
+    private LearningDataContext DbContext => _lazyContext.Value;
 
-    public LearningRepository(Lazy<ApprenticeshipsDataContext> dbContext, IDomainEventDispatcher domainEventDispatcher, ILearningFactory learningFactory, IAccountIdAuthorizer accountIdAuthorizer)
+    public LearningRepository(Lazy<LearningDataContext> dbContext, IDomainEventDispatcher domainEventDispatcher, ILearningFactory learningFactory, IAccountIdAuthorizer accountIdAuthorizer)
     {
         _lazyContext = dbContext;
         _domainEventDispatcher = domainEventDispatcher;

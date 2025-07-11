@@ -16,7 +16,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepositor
     {
         private Learning.Domain.Repositories.LearningRepository _sut;
         private Fixture _fixture;
-        private ApprenticeshipsDataContext _dbContext;
+        private LearningDataContext _dbContext;
         private Mock<IDomainEventDispatcher> _domainEventDispatcher;
         private Mock<ILearningFactory> _apprenticeshipFactory;
         private Mock<IAccountIdAuthorizer> _accountIdAuthorizer;
@@ -39,9 +39,9 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepositor
         {
             // Arrange
             SetUpApprenticeshipRepository();
-            var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>());
+            var expectedApprenticeship = ApprenticeshipDomainModel.Get(_fixture.Create<Learning.DataAccess.Entities.Learning.Learning>());
             _apprenticeshipFactory
-                .Setup(x => x.GetExisting(It.IsAny<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>())).Returns(expectedApprenticeship);
+                .Setup(x => x.GetExisting(It.IsAny<Learning.DataAccess.Entities.Learning.Learning>())).Returns(expectedApprenticeship);
 
             // Act
             await _sut.Add(expectedApprenticeship);
@@ -58,7 +58,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepositor
             _accountIdAuthorizer = new Mock<IAccountIdAuthorizer>();
             _dbContext =
                 InMemoryDbContextCreator.SetUpInMemoryDbContext();
-            _sut = new Learning.Domain.Repositories.LearningRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext),
+            _sut = new Learning.Domain.Repositories.LearningRepository(new Lazy<LearningDataContext>(_dbContext),
                 _domainEventDispatcher.Object, _apprenticeshipFactory.Object, _accountIdAuthorizer.Object);
         }
     }

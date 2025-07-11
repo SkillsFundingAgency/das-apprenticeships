@@ -5,11 +5,11 @@ namespace SFA.DAS.Learning.Command.Decorators
     public class CommandHandlerWithUnitOfWork<T> : ICommandHandler<T> where T : ICommand
     {
         private readonly ICommandHandler<T> _handler;
-        private readonly ApprenticeshipsDataContext _dataContext;
+        private readonly LearningDataContext _dataContext;
 
         public CommandHandlerWithUnitOfWork(
             ICommandHandler<T> handler,
-            ApprenticeshipsDataContext dataContext)
+            LearningDataContext dataContext)
         {
             _handler = handler;
             _dataContext = dataContext;

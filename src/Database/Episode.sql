@@ -1,8 +1,7 @@
 ﻿CREATE TABLE [dbo].[Episode]
 (
     [Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
-	[ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL, 
-    [LearningKey] UNIQUEIDENTIFIER NULL,
+	[LearningKey] UNIQUEIDENTIFIER NOT NULL, 
 	[IsDeleted] BIT NOT NULL DEFAULT(0),
     [Ukprn] BIGINT NOT NULL, 
     [EmployerAccountId] BIGINT NOT NULL, 
@@ -19,9 +18,9 @@
 )
 GO
 ALTER TABLE dbo.Episode
-ADD CONSTRAINT FK_Episode_Apprenticeship FOREIGN KEY (ApprenticeshipKey) REFERENCES dbo.Apprenticeship ([Key])
+ADD CONSTRAINT FK_Episode_Learning FOREIGN KEY (LearningKey) REFERENCES dbo.Learning ([Key])
 GO
-CREATE INDEX IX_ApprenticeshipKey ON [dbo].[Episode] (ApprenticeshipKey);
+CREATE INDEX IX_LearningKey ON [dbo].[Episode] (LearningKey);
 GO
 CREATE NONCLUSTERED INDEX [IX_Ukprn_LearningStatus] ON [dbo].[Episode]
 (

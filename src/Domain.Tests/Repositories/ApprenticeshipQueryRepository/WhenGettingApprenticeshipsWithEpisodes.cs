@@ -8,11 +8,11 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Learning.DataAccess;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.DataTransferObjects;
 using SFA.DAS.Learning.TestHelpers;
-using Episode = SFA.DAS.Learning.DataAccess.Entities.Apprenticeship.Episode;
-using EpisodePrice = SFA.DAS.Learning.DataAccess.Entities.Apprenticeship.EpisodePrice;
+using Episode = SFA.DAS.Learning.DataAccess.Entities.Learning.Episode;
+using EpisodePrice = SFA.DAS.Learning.DataAccess.Entities.Learning.EpisodePrice;
 
 namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepository;
 
@@ -20,7 +20,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
 {
     private Learning.Domain.Repositories.LearningQueryRepository _sut = null!;
     private Fixture _fixture = null!;
-    private ApprenticeshipsDataContext _dbContext = null!;
+    private LearningDataContext _dbContext = null!;
 
     [SetUp]
     public void Arrange()
@@ -71,7 +71,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
         var episodePrice4 = CreateEpisodePrice(episode2Key, startDate.AddYears(1), endDate);
         var episode2 = CreateEpisode(episode2Key, ukprn, trainingCode, episodePrice3, episodePrice4);
 
-        var apprenticeshipRecord = _fixture.Build<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>()
+        var apprenticeshipRecord = _fixture.Build<Learning.DataAccess.Entities.Learning.Learning>()
                 .With(x => x.Key, apprenticeshipKey)
                 .With(x => x.Episodes, new List<Episode>() { episode1, episode2 })
                 .With(x => x.DateOfBirth, startDate.AddYears(-20).AddMonths(-6))
@@ -119,11 +119,11 @@ public class WhenGettingApprenticeshipsWithEpisodes
         var episodePrice = CreateEpisodePrice(episodeKey, startDate, endDate);
         var episode = CreateEpisode(episodeKey, ukprn, trainingCode, episodePrice);
         var withdrawRecord = _fixture.Build<WithdrawalRequest>()
-            .With(x => x.ApprenticeshipKey, apprenticeshipKey)
+            .With(x => x.LearningKey, apprenticeshipKey)
             .With(x => x.LastDayOfLearning, startDate.AddYears(1))
             .Create();
 
-        var apprenticeshipRecord = _fixture.Build<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>()
+        var apprenticeshipRecord = _fixture.Build<Learning.DataAccess.Entities.Learning.Learning>()
                 .With(x => x.Key, apprenticeshipKey)
                 .With(x => x.Episodes, new List<Episode>() { episode })
                 .With(x => x.DateOfBirth, startDate.AddYears(-20).AddMonths(-6))
@@ -144,7 +144,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
     }
 
     private void AssertApprenticeship(
-        Learning.DataAccess.Entities.Apprenticeship.Apprenticeship expected,
+        Learning.DataAccess.Entities.Learning.Learning expected,
         DateTime startDate,
         DateTime endDate,
         int age,
@@ -180,7 +180,7 @@ public class WhenGettingApprenticeshipsWithEpisodes
     {
         _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
         var logger = Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>();
-        _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
+        _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<LearningDataContext>(_dbContext), logger);
     }
 
     private EpisodePrice CreateEpisodePrice(Guid episodeKey, DateTime start, DateTime end)

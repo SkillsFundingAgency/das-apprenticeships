@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Learning.Types;
+﻿namespace SFA.DAS.Apprenticeships.Types;
 
 public enum FundingType
 {

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+﻿namespace SFA.DAS.Learning.DataAccess.Entities.Learning;
 
 [Table("dbo.EpisodePrice")]
 [System.ComponentModel.DataAnnotations.Schema.Table("EpisodePrice")]

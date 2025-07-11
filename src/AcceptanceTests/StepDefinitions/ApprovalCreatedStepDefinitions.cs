@@ -3,9 +3,9 @@ using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using SFA.DAS.Learning.AcceptanceTests.Helpers;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Infrastructure.ApprenticeshipsOuterApiClient.Standards;
-using SFA.DAS.Learning.Types;
+using SFA.DAS.Apprenticeships.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
@@ -77,7 +77,7 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
 
             await using var dbConnection = new SqlConnection(_testContext.SqlDatabase?.DatabaseInfo.ConnectionString);
 
-            var apprenticeship = dbConnection.GetAll<Apprenticeship>().Single(x => x.Uln == ApprovalCreatedEvent.Uln);
+            var apprenticeship = dbConnection.GetAll<DataAccess.Entities.Learning.Learning>().Single(x => x.Uln == ApprovalCreatedEvent.Uln);
             apprenticeship.Should().NotBeNull();
             apprenticeship.Uln.Should().Be(ApprovalCreatedEvent.Uln);
             apprenticeship.FirstName.Should().Be(ApprovalCreatedEvent.FirstName);
@@ -85,7 +85,7 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
             apprenticeship.Key.Should().NotBe(Guid.Empty);
             apprenticeship.ApprovalsApprenticeshipId.Should().Be(ApprovalCreatedEvent.ApprenticeshipId);
            
-            var episode = (await dbConnection.GetAllAsync<Episode>()).Last(x => x.ApprenticeshipKey == apprenticeship.Key);
+            var episode = (await dbConnection.GetAllAsync<Episode>()).Last(x => x.LearningKey == apprenticeship.Key);
             episode.Should().NotBeNull();
             episode.Key.Should().NotBe(Guid.Empty);
             episode.Ukprn.Should().Be(ApprovalCreatedEvent.ProviderId);
@@ -122,7 +122,7 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
         private async Task<bool> ApprenticeshipRecordMatchesExpectation()
         {
             await using var dbConnection = new SqlConnection(_testContext.SqlDatabase?.DatabaseInfo.ConnectionString);
-            var apprenticeship = (await dbConnection.GetAllAsync<Apprenticeship>()).SingleOrDefault(x => x.Uln == ApprovalCreatedEvent.Uln);
+            var apprenticeship = (await dbConnection.GetAllAsync<DataAccess.Entities.Learning.Learning>()).SingleOrDefault(x => x.Uln == ApprovalCreatedEvent.Uln);
 
             return apprenticeship != null;
         }
@@ -178,7 +178,7 @@ namespace SFA.DAS.Learning.AcceptanceTests.StepDefinitions
         }
 
         public CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent ApprovalCreatedEvent => (CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent)_scenarioContext["ApprovalCreatedEvent"];
-        public Apprenticeship Apprenticeship => (Apprenticeship)_scenarioContext["Learning"];
+        public DataAccess.Entities.Learning.Learning Apprenticeship => (DataAccess.Entities.Learning.Learning)_scenarioContext["Learning"];
         public Episode LatestEpisode => (Episode)_scenarioContext["Episode"];
         public EpisodePrice LatestEpisodePrice => (EpisodePrice)_scenarioContext["EpisodePrice"];
     }

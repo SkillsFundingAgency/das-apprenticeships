@@ -1,8 +1,7 @@
 ﻿CREATE TABLE [dbo].[StartDateChange]
 (
 	[Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
-	[ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL,
-	[LearningKey] UNIQUEIDENTIFIER NULL,
+	[LearningKey] UNIQUEIDENTIFIER NOT NULL,
 	[ActualStartDate] DATETIME NOT NULL,
 	[PlannedEndDate] DATETIME NULL,
 	[Reason] NVARCHAR(MAX),
@@ -17,7 +16,7 @@
 )
 GO
 ALTER TABLE [dbo].[StartDateChange]
-ADD CONSTRAINT FK_StartDateChange_Apprenticeship FOREIGN KEY (ApprenticeshipKey) REFERENCES dbo.Apprenticeship ([Key])
+ADD CONSTRAINT FK_StartDateChange_Learning FOREIGN KEY (LearningKey) REFERENCES dbo.Learning ([Key])
 GO
-CREATE INDEX IX_ApprenticeshipKey ON [dbo].[StartDateChange] (ApprenticeshipKey);
+CREATE INDEX IX_LearningKey ON [dbo].[StartDateChange] (LearningKey);
 GO

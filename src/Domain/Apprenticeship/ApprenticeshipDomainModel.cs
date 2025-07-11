@@ -6,7 +6,7 @@ namespace SFA.DAS.Learning.Domain.Apprenticeship;
 
 public class ApprenticeshipDomainModel : AggregateRoot
 {
-    private readonly Learning.DataAccess.Entities.Apprenticeship.Apprenticeship _entity;
+    private readonly Learning.DataAccess.Entities.Learning.Learning _entity;
     private readonly List<EpisodeDomainModel> _episodes;
     private readonly List<PriceHistoryDomainModel> _priceHistories;
     private readonly List<StartDateChangeDomainModel> _startDateChanges;
@@ -79,7 +79,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         string lastName,
         string apprenticeshipHashedId)
     {
-        return new ApprenticeshipDomainModel(new Learning.DataAccess.Entities.Apprenticeship.Apprenticeship
+        return new ApprenticeshipDomainModel(new Learning.DataAccess.Entities.Learning.Learning
         {
             Key = Guid.NewGuid(),
             ApprovalsApprenticeshipId = approvalsApprenticeshipId,
@@ -91,12 +91,12 @@ public class ApprenticeshipDomainModel : AggregateRoot
         });
     }
 
-    public static ApprenticeshipDomainModel Get(Learning.DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+    public static ApprenticeshipDomainModel Get(Learning.DataAccess.Entities.Learning.Learning entity)
     {
         return new ApprenticeshipDomainModel(entity);
     }
 
-    private ApprenticeshipDomainModel(Learning.DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+    private ApprenticeshipDomainModel(Learning.DataAccess.Entities.Learning.Learning entity)
     {
         _entity = entity;
         _episodes = entity.Episodes.Select(EpisodeDomainModel.Get).ToList();
@@ -145,7 +145,7 @@ public class ApprenticeshipDomainModel : AggregateRoot
         _entity.Episodes.Add(episode.GetEntity());
     }
 
-    public Learning.DataAccess.Entities.Apprenticeship.Apprenticeship GetEntity()
+    public Learning.DataAccess.Entities.Learning.Learning GetEntity()
     {
         return _entity;
     }

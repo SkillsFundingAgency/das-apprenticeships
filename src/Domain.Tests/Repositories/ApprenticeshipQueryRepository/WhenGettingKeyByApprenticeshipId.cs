@@ -15,7 +15,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepo
     {
         private Learning.Domain.Repositories.LearningQueryRepository _sut;
         private Fixture _fixture;
-        private ApprenticeshipsDataContext _dbContext;
+        private LearningDataContext _dbContext;
 
         [SetUp]
         public void Arrange()
@@ -62,9 +62,9 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepo
             result.Should().Be(expectedApprenticeshipKey);
         }
 
-        private Learning.DataAccess.Entities.Apprenticeship.Apprenticeship CreateApprenticeshipWithApproval(Guid apprenticeshipKey, long apprenticeshipId)
+        private Learning.DataAccess.Entities.Learning.Learning CreateApprenticeshipWithApproval(Guid apprenticeshipKey, long apprenticeshipId)
         {
-            return _fixture.Build<Learning.DataAccess.Entities.Apprenticeship.Apprenticeship>()
+            return _fixture.Build<Learning.DataAccess.Entities.Learning.Learning>()
                 .With(x => x.Key, apprenticeshipKey)
                 .Create();
         }
@@ -73,7 +73,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipQueryRepo
         {
             _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
             var logger = Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>();
-            _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
+            _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<LearningDataContext>(_dbContext), logger);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+namespace SFA.DAS.Learning.DataAccess.Entities.Learning;
 
 [Table("dbo.PriceHistory")]
 [System.ComponentModel.DataAnnotations.Schema.Table("PriceHistory")]
@@ -8,7 +8,7 @@ public class PriceHistory
 {
     [Key]
     public Guid Key { get; set; }
-    public Guid ApprenticeshipKey { get; set; }
+    public Guid LearningKey { get; set; }
     public decimal? TrainingPrice { get; set; }
     public decimal? AssessmentPrice { get; set; }
     public decimal TotalPrice { get; set; }

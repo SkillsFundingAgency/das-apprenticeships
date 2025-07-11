@@ -7,7 +7,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Learning.DataAccess;
-using SFA.DAS.Learning.DataAccess.Entities.Apprenticeship;
+using SFA.DAS.Learning.DataAccess.Entities.Learning;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Factories;
 using SFA.DAS.Learning.TestHelpers;
@@ -19,7 +19,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepositor
     {
         private Learning.Domain.Repositories.LearningRepository _sut;
         private Fixture _fixture;
-        private ApprenticeshipsDataContext _dbContext;
+        private LearningDataContext _dbContext;
         private Mock<IDomainEventDispatcher> _domainEventDispatcher;
         private Mock<ILearningFactory> _apprenticeshipFactory;
         private Mock<IAccountIdAuthorizer> _accountIdAuthorizer;
@@ -124,7 +124,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepositor
             _accountIdAuthorizer = new Mock<IAccountIdAuthorizer>();
             _dbContext =
                 InMemoryDbContextCreator.SetUpInMemoryDbContext();
-            _sut = new Learning.Domain.Repositories.LearningRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext),
+            _sut = new Learning.Domain.Repositories.LearningRepository(new Lazy<LearningDataContext>(_dbContext),
                 _domainEventDispatcher.Object, _apprenticeshipFactory.Object, _accountIdAuthorizer.Object);
         }
     }

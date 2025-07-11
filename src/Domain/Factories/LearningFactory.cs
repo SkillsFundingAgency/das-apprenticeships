@@ -21,7 +21,7 @@ namespace SFA.DAS.Learning.Domain.Factories
                 apprenticeshipHashedId);
         }
 
-        public ApprenticeshipDomainModel GetExisting(Learning.DataAccess.Entities.Apprenticeship.Apprenticeship entity)
+        public ApprenticeshipDomainModel GetExisting(Learning.DataAccess.Entities.Learning.Learning entity)
         {
             return ApprenticeshipDomainModel.Get(entity);
         }

@@ -17,7 +17,7 @@ public class WhenGettingLearnerStatus
 {
     private Learning.Domain.Repositories.LearningQueryRepository _sut;
     private Fixture _fixture;
-    private ApprenticeshipsDataContext _dbContext;
+    private LearningDataContext _dbContext;
 
     [SetUp]
     public void Arrange()
@@ -85,6 +85,6 @@ public class WhenGettingLearnerStatus
     {
         _dbContext = InMemoryDbContextCreator.SetUpInMemoryDbContext();
         var logger = Mock.Of<ILogger<Learning.Domain.Repositories.LearningQueryRepository>>();
-        _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<ApprenticeshipsDataContext>(_dbContext), logger);
+        _sut = new Learning.Domain.Repositories.LearningQueryRepository(new Lazy<LearningDataContext>(_dbContext), logger);
     }
 }
