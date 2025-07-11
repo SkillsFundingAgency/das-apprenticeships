@@ -2,7 +2,6 @@
 
 public class GetLearningPriceResponse
 {
-    public Guid ApprenticeshipKey => LearningKey;
     public Guid LearningKey { get; set; }
     public decimal? TrainingPrice { get; set; }
     public decimal? AssessmentPrice { get; set; }

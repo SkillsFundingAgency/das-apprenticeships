@@ -3,7 +3,6 @@
 public class ApprenticeshipStartDate
 {
     public Guid LearningKey { get; set; }
-    public Guid ApprenticeshipKey => LearningKey;
     public DateTime? ActualStartDate { get; set; }
     public DateTime? PlannedEndDate { get; set; }
     public long? AccountLegalEntityId { get; set; }
