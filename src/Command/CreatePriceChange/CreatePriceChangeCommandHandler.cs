@@ -4,7 +4,7 @@ using SFA.DAS.Learning.Domain.Extensions;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 
 namespace SFA.DAS.Learning.Command.CreatePriceChange
 {
@@ -31,7 +31,7 @@ namespace SFA.DAS.Learning.Command.CreatePriceChange
             CancellationToken cancellationToken = default)
         {
             var returnStatus = ChangeRequestStatus.Created;
-            var apprenticeship = await _learningRepository.Get(command.LearningKey);
+            var learning = await _learningRepository.Get(command.LearningKey);
             var now = _systemClockService.UtcNow.DateTime;
 
             if (!Enum.TryParse(command.Initiator, out ChangeInitiator initiator))
@@ -40,43 +40,43 @@ namespace SFA.DAS.Learning.Command.CreatePriceChange
 
             if (initiator == ChangeInitiator.Provider)
             {
-                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, now, ChangeRequestStatus.Created, command.UserId, command.Reason, null, now, null, initiator);
+                learning.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, now, ChangeRequestStatus.Created, command.UserId, command.Reason, null, now, null, initiator);
             }
             else
             {
-                apprenticeship.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, now, ChangeRequestStatus.Created, null, command.Reason, command.UserId, null, now, initiator);
+                learning.AddPriceHistory(command.TrainingPrice, command.AssessmentPrice, command.TotalPrice, command.EffectiveFromDate, now, ChangeRequestStatus.Created, null, command.Reason, command.UserId, null, now, initiator);
             }
 
-            await _learningRepository.Update(apprenticeship);
+            await _learningRepository.Update(learning);
 
-            if (initiator == ChangeInitiator.Provider && IsNewTotalPriceLessThanExisting(apprenticeship, command))
+            if (initiator == ChangeInitiator.Provider && IsNewTotalPriceLessThanExisting(learning, command))
             {
-	            var priceChange = apprenticeship.ProviderAutoApprovePriceChange();
+	            var priceChange = learning.ProviderAutoApprovePriceChange();
 	            returnStatus = ChangeRequestStatus.Approved;
-	            await _learningRepository.Update(apprenticeship);
-                await SendEvent(apprenticeship, priceChange);
+	            await _learningRepository.Update(learning);
+                await SendEvent(learning, priceChange);
             }
 
             return returnStatus;
         }
 
-        private static bool IsNewTotalPriceLessThanExisting(ApprenticeshipDomainModel apprenticeshipDomainModel, CreatePriceChangeCommand command)
+        private static bool IsNewTotalPriceLessThanExisting(LearningDomainModel learningDomainModel, CreatePriceChangeCommand command)
         {
-            return apprenticeshipDomainModel.LatestPrice != null && (apprenticeshipDomainModel.LatestPrice.TotalPrice >= command.TotalPrice);
+            return learningDomainModel.LatestPrice != null && (learningDomainModel.LatestPrice.TotalPrice >= command.TotalPrice);
         }
 
-        public async Task SendEvent(ApprenticeshipDomainModel apprenticeship, PriceHistoryDomainModel priceChange)
+        public async Task SendEvent(LearningDomainModel learning, PriceHistoryDomainModel priceChange)
         {
-            _logger.LogInformation("Sending provider autoapproved ApprenticeshipPriceChangedEvent for apprenticeship {apprenticeshipKey}", apprenticeship.Key);
+            _logger.LogInformation("Sending provider autoapproved LearningPriceChangedEvent for apprenticeship {apprenticeshipKey}", learning.Key);
 
-            var eventMessage = new ApprenticeshipPriceChangedEvent()
+            var eventMessage = new LearningPriceChangedEvent()
             {
-                ApprenticeshipKey = apprenticeship.Key,
-                ApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
+                LearningKey = learning.Key,
+                ApprovalsApprenticeshipId = learning.ApprovalsApprenticeshipId,
                 EffectiveFromDate = priceChange.EffectiveFromDate,
                 ApprovedDate = priceChange.ProviderApprovedDate!.Value,
                 ApprovedBy = ApprovedBy.Provider,
-                Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
+                Episode = learning.BuildEpisodeForIntegrationEvent()
             };
 
             await _messageSession.Publish(eventMessage);

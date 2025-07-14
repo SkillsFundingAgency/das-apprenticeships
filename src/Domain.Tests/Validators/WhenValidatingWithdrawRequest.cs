@@ -35,7 +35,7 @@ public class WhenValidatingWithdrawRequest
     public void WhenApprenticeshipIsNullThenReturnsExpectedValidationError()
     {
         // Arrange
-        ApprenticeshipDomainModel? apprenticeship = null;
+        LearningDomainModel? apprenticeship = null;
         var validator = new WithdrawValidator(_systemClockService.Object);
         var command = new WithdrawDomainRequest
         {

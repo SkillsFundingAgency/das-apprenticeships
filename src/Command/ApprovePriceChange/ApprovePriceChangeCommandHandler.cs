@@ -4,7 +4,7 @@ using SFA.DAS.Learning.Domain.Extensions;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.ApprovePriceChange;
@@ -48,14 +48,14 @@ public class ApprovePriceChangeCommandHandler : ICommandHandler<ApprovePriceChan
         return approver;
     }
 
-    public async Task SendEvent(ApprenticeshipDomainModel learning, PriceHistoryDomainModel priceChange, ApprovedBy approvedBy)
+    public async Task SendEvent(LearningDomainModel learning, PriceHistoryDomainModel priceChange, ApprovedBy approvedBy)
     {
         _logger.LogInformation("Sending ApprenticeshipPriceChangedEvent for learning {learningKey}", learning.Key);
         
-        var eventMessage = new ApprenticeshipPriceChangedEvent()
+        var eventMessage = new LearningPriceChangedEvent()
         {
-            ApprenticeshipKey = learning.Key,
-            ApprenticeshipId = learning.ApprovalsApprenticeshipId,
+            LearningKey = learning.Key,
+            ApprovalsApprenticeshipId = learning.ApprovalsApprenticeshipId,
             EffectiveFromDate = priceChange.EffectiveFromDate,
             ApprovedDate = priceChange.ApprovalDate(),
             ApprovedBy = approvedBy,

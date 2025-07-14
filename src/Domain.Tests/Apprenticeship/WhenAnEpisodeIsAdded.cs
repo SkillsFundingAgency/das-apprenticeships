@@ -25,7 +25,7 @@ public class WhenAnEpisodeIsAdded
     public void ThenAnEpisodeAndPriceIsAdded()
     {
         //Arrange
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         var episodePrice = _fixture.Build<EpisodePrice>().With(x => x.IsDeleted, false).Create();
         var episode = EpisodeDomainModel.Get(_fixture.Build<Episode>()
             .With(x => x.Prices, new List<EpisodePrice>(){ episodePrice })

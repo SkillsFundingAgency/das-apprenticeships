@@ -4,7 +4,7 @@ using SFA.DAS.Learning.Domain.Extensions;
 using SFA.DAS.Learning.Domain.Factories;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.Infrastructure.Services;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.AddLearning;
@@ -88,20 +88,20 @@ public class AddLearningCommandHandler : ICommandHandler<AddLearningCommand>
         }
     }
 
-    private async Task SendEvent(ApprenticeshipDomainModel apprenticeship)
+    private async Task SendEvent(LearningDomainModel learning)
     {
-        _logger.LogInformation("Sending ApprenticeshipCreatedEvent for Approvals Learning Id: {approvalsApprenticeshipId}", apprenticeship.ApprovalsApprenticeshipId);
-        var apprenticeshipCreatedEvent = new ApprenticeshipCreatedEvent
+        _logger.LogInformation("Sending LearningCreatedEvent for ApprovalsApprenticeshipId: {approvalsApprenticeshipId}", learning.ApprovalsApprenticeshipId);
+        var learningCreatedEvent = new LearningCreatedEvent
         {
-            ApprenticeshipKey = apprenticeship.Key,
-            Uln = apprenticeship.Uln,
-            ApprovalsApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId,
-            DateOfBirth = apprenticeship.DateOfBirth,
-            FirstName = apprenticeship.FirstName,
-            LastName = apprenticeship.LastName,
-            Episode = apprenticeship.BuildEpisodeForIntegrationEvent()
+            LearningKey = learning.Key,
+            Uln = learning.Uln,
+            ApprovalsApprenticeshipId = learning.ApprovalsApprenticeshipId,
+            DateOfBirth = learning.DateOfBirth,
+            FirstName = learning.FirstName,
+            LastName = learning.LastName,
+            Episode = learning.BuildEpisodeForIntegrationEvent()
         };
 
-        await _messageSession.Publish(apprenticeshipCreatedEvent);
+        await _messageSession.Publish(learningCreatedEvent);
     }
 }

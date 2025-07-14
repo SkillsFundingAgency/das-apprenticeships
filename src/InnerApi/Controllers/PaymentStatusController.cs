@@ -88,5 +88,4 @@ public class PaymentStatusController : ControllerBase
             return BadRequest();
         }
     }
-
 }

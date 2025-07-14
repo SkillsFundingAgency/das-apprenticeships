@@ -1,6 +1,6 @@
-﻿namespace SFA.DAS.Apprenticeships.Types;
+﻿namespace SFA.DAS.Learning.Types;
 
-public class ApprenticeshipCreatedEvent : ApprenticeshipEvent
+public class LearningCreatedEvent : LearningEvent
 {
     public long ApprovalsApprenticeshipId { get; set; }
     public string Uln { get; set; }

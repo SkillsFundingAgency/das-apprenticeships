@@ -33,14 +33,14 @@ namespace SFA.DAS.Learning.Command.UnitTests.CreateStartDateChange
             // Arrange
             var command = _fixture.Create<CreateStartDateChangeCommand>();
             command.Initiator = ChangeInitiator.Provider.ToString();
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
             // Act
             await _commandHandler.Handle(command);
 
             // Assert
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y =>
                 y.GetEntity().StartDateChanges.Count == 1 &&
                 y.GetEntity().StartDateChanges[0].ActualStartDate == command.ActualStartDate &&
                 y.GetEntity().StartDateChanges[0].PlannedEndDate == command.PlannedEndDate &&
@@ -61,14 +61,14 @@ namespace SFA.DAS.Learning.Command.UnitTests.CreateStartDateChange
             // Arrange
             var command = _fixture.Create<CreateStartDateChangeCommand>();
             command.Initiator = ChangeInitiator.Employer.ToString();
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             _apprenticeshipRepository.Setup(x => x.Get(command.ApprenticeshipKey)).ReturnsAsync(apprenticeship);
 
             // Act
             await _commandHandler.Handle(command);
 
             // Assert
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y =>
                 y.GetEntity().StartDateChanges.Count == 1 &&
                 y.GetEntity().StartDateChanges[0].ActualStartDate == command.ActualStartDate &&
                 y.GetEntity().StartDateChanges[0].PlannedEndDate == command.PlannedEndDate &&

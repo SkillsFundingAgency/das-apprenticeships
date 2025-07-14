@@ -14,7 +14,7 @@ using SFA.DAS.Learning.Enums;
 using SFA.DAS.Learning.Infrastructure.Services;
 using SFA.DAS.Learning.TestHelpers;
 using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 
 namespace SFA.DAS.Learning.Command.UnitTests.CreatePriceChange;
 
@@ -47,7 +47,7 @@ public class WhenAPriceChangeIsCreated
     [Test]
     public async Task ThenPriceHistoryIsAddedToApprenticeship()
     {
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var command = _fixture.Create<CreatePriceChangeCommand>();
         command.Initiator = ChangeInitiator.Provider.ToString();
@@ -56,14 +56,14 @@ public class WhenAPriceChangeIsCreated
         
         await _commandHandler.Handle(command);
         
-        _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().PriceHistories.Count == 1)));
+        _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y => y.GetEntity().PriceHistories.Count == 1)));
     }
 
     [TestCase("Provider")]
     [TestCase("Employer")]
     public async Task ThenCorrectPriceHistoryValuesAreSet(string initiator)
     {
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         var command = _fixture.Create<CreatePriceChangeCommand>();
         command.Initiator = initiator;
@@ -79,7 +79,7 @@ public class WhenAPriceChangeIsCreated
         await _commandHandler.Handle(command);
 
         if (initiator == ChangeInitiator.Provider.ToString())
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y =>
                 y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
                 y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
                 y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
@@ -91,7 +91,7 @@ public class WhenAPriceChangeIsCreated
                 y.GetEntity().PriceHistories.Single().Initiator == ChangeInitiator.Provider
             )));
         else
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y =>
                 y.GetEntity().PriceHistories.Single().TrainingPrice == command.TrainingPrice &&
                 y.GetEntity().PriceHistories.Single().AssessmentPrice == command.AssessmentPrice &&
                 y.GetEntity().PriceHistories.Single().TotalPrice == command.TotalPrice &&
@@ -109,7 +109,7 @@ public class WhenAPriceChangeIsCreated
 		[TestCase(5000, 4999, true)]
 		public async Task ThenPriceChangeIsAutoApprovedCorrectly(decimal oldTotal, decimal newTotal, bool expectAutoApprove)
 		{
-			var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+			var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
 			var command = _fixture.Create<CreatePriceChangeCommand>();
 			command.Initiator = ChangeInitiator.Provider.ToString();
@@ -126,14 +126,14 @@ public class WhenAPriceChangeIsCreated
 
         if (expectAutoApprove)
         {
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y =>
                 y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Approved)));
 
             AssertEventPublished(apprenticeship, command.EffectiveFromDate);
         }
         else
         {
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y =>
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y =>
                 y.GetEntity().PriceHistories.Single().PriceChangeRequestStatus == ChangeRequestStatus.Approved)), Times.Never);
         }
     }
@@ -144,28 +144,28 @@ public class WhenAPriceChangeIsCreated
         var command = _fixture.Create<CreatePriceChangeCommand>();
         command.Initiator = string.Empty;
             
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
 
         _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
 
         Assert.ThrowsAsync<ArgumentException>(() => _commandHandler.Handle(command));
     }
 
-    private void AssertEventPublished(ApprenticeshipDomainModel apprenticeship, DateTime effectiveFromDate)
+    private void AssertEventPublished(LearningDomainModel learning, DateTime effectiveFromDate)
     {
-        _messageSession.Verify(x => x.Publish(It.Is<ApprenticeshipPriceChangedEvent>(e =>
-            DoApprenticeshipDetailsMatchDomainModel(e, apprenticeship) &&
+        _messageSession.Verify(x => x.Publish(It.Is<LearningPriceChangedEvent>(e =>
+            DoApprenticeshipDetailsMatchDomainModel(e, learning) &&
             e.ApprovedDate == _createdDate &&
             e.ApprovedBy == ApprovedBy.Provider &&
             e.EffectiveFromDate == effectiveFromDate &&
-            ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, apprenticeship)), It.IsAny<PublishOptions>(),
+            ApprenticeshipDomainModelTestHelper.DoEpisodeDetailsMatchDomainModel(e, learning)), It.IsAny<PublishOptions>(),
             It.IsAny<CancellationToken>()));
     }
 
-    private static bool DoApprenticeshipDetailsMatchDomainModel(ApprenticeshipPriceChangedEvent e, ApprenticeshipDomainModel apprenticeship)
+    private static bool DoApprenticeshipDetailsMatchDomainModel(LearningPriceChangedEvent e, LearningDomainModel learning)
     {
         return
-            e.ApprenticeshipKey == apprenticeship.Key &&
-            e.ApprenticeshipId == apprenticeship.ApprovalsApprenticeshipId;
+            e.LearningKey == learning.Key &&
+            e.ApprovalsApprenticeshipId == learning.ApprovalsApprenticeshipId;
     }
 }

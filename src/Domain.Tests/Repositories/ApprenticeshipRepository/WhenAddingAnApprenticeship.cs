@@ -41,7 +41,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepositor
         public async Task ThenAccountIdValidationIsPerformed()
         {
             // Arrange
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             SetUpApprenticeshipRepository();
 
             // Act
@@ -56,7 +56,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepositor
         public async Task ThenApprenticeshipAddedToDataStore()
         {
             // Arrange
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             SetUpApprenticeshipRepository();
 
             // Act
@@ -75,7 +75,7 @@ namespace SFA.DAS.Learning.Domain.UnitTests.Repositories.ApprenticeshipRepositor
         public async Task ThenEpisodeAddedToDataStore()
         {
             // Arrange
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             SetUpApprenticeshipRepository();
             var episodePrice = _fixture.Build<EpisodePrice>().With(x => x.IsDeleted, false).Create();
             var episode = EpisodeDomainModel.Get(_fixture.Build<Episode>()

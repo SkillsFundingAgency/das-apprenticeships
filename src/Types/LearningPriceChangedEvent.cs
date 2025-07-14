@@ -1,10 +1,10 @@
 ﻿using SFA.DAS.Learning.Enums;
 
-namespace SFA.DAS.Apprenticeships.Types;
+namespace SFA.DAS.Learning.Types;
 
-public class ApprenticeshipPriceChangedEvent : ApprenticeshipEvent
+public class LearningPriceChangedEvent : LearningEvent
 {
-    public long ApprenticeshipId { get; set; }
+    public long ApprovalsApprenticeshipId { get; set; }
     public DateTime EffectiveFromDate { get; set; }
     public DateTime ApprovedDate { get; set; }
     public ApprovedBy ApprovedBy { get; set; }

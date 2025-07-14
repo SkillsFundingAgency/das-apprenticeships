@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.Learning.Domain.Repositories;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.SetPaymentsFrozen;
@@ -23,9 +23,9 @@ public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozen
 
     public async Task Handle(SetPaymentsFrozenCommand command, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Handling SetPaymentsFrozenCommand for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
+        _logger.LogInformation("Handling SetPaymentsFrozenCommand for Learning {learningKey}", command.LearningKey);
         
-        var apprenticeship = await _learningRepository.Get(command.ApprenticeshipKey);
+        var apprenticeship = await _learningRepository.Get(command.LearningKey);
         apprenticeship.SetPaymentsFrozen(command.NewPaymentsFrozenStatus, command.UserId, DateTime.Now, command.Reason);
         await _learningRepository.Update(apprenticeship);
 
@@ -33,13 +33,16 @@ public class SetPaymentsFrozenCommandHandler : ICommandHandler<SetPaymentsFrozen
         {
             if (command.NewPaymentsFrozenStatus)
             {
-                _logger.LogInformation("Publishing PaymentsFrozenEvent for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
-                await _messageSession.Publish(new PaymentsFrozenEvent { ApprenticeshipKey = command.ApprenticeshipKey });
+                _logger.LogInformation("Publishing PaymentsFrozenEvent for Learning {apprenticeshipKey}", command.LearningKey);
+                var message = new PaymentsFrozenEvent { LearningKey = command.LearningKey };
+                await _messageSession.Publish(message);
+
             }
             else
             {
-                _logger.LogInformation("Publishing PaymentsUnfrozenEvent for apprenticeship {apprenticeshipKey}", command.ApprenticeshipKey);
-                await _messageSession.Publish(new PaymentsUnfrozenEvent { ApprenticeshipKey = command.ApprenticeshipKey });
+                _logger.LogInformation("Publishing PaymentsUnfrozenEvent for Learning {learningKey}", command.LearningKey);
+                var message = new PaymentsUnfrozenEvent { LearningKey = command.LearningKey };
+                await _messageSession.Publish(message);
             }
         }
     }

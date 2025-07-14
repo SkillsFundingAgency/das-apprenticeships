@@ -33,14 +33,14 @@ namespace SFA.DAS.Learning.Command.UnitTests.RejectPendingPriceChange
         public async Task ThenPriceHistoryIsCancelled()
         {
             var command = _fixture.Create<RejectPendingPriceChangeRequest>();
-            var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+            var apprenticeship = _fixture.Create<LearningDomainModel>();
             apprenticeship.AddPriceHistory(_fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<decimal>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), ChangeRequestStatus.Created, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<ChangeInitiator>());
 
             _apprenticeshipRepository.Setup(x => x.Get(command.LearningKey)).ReturnsAsync(apprenticeship);
             
             await _commandHandler.Handle(command);
             
-            _apprenticeshipRepository.Verify(x => x.Update(It.Is<ApprenticeshipDomainModel>(y => y.GetEntity().PriceHistories.Count(z => z.PriceChangeRequestStatus == ChangeRequestStatus.Rejected) == 1)));
+            _apprenticeshipRepository.Verify(x => x.Update(It.Is<LearningDomainModel>(y => y.GetEntity().PriceHistories.Count(z => z.PriceChangeRequestStatus == ChangeRequestStatus.Rejected) == 1)));
         }
     }
 }

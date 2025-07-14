@@ -11,7 +11,7 @@ using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Repositories;
 using SFA.DAS.Learning.TestHelpers;
 using SFA.DAS.Learning.TestHelpers.AutoFixture.Customizations;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using FundingPlatform = SFA.DAS.Learning.Enums.FundingPlatform;
 
 namespace SFA.DAS.Learning.Command.UnitTests.SetPaymentsFrozen;
@@ -41,7 +41,7 @@ public class WhenHandleSetPaymentsFrozenCommand
     public async Task Handle_ShouldGetAndUpdateApprenticeship(SetPayments setPayments)
     {
         // Arrange
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship);
         _mockApprenticeshipRepository.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(apprenticeship);
 
@@ -55,16 +55,16 @@ public class WhenHandleSetPaymentsFrozenCommand
         await _handler.Handle(command);
 
         // Assert
-        _mockApprenticeshipRepository.Verify(x => x.Get(command.ApprenticeshipKey), Times.Once);
+        _mockApprenticeshipRepository.Verify(x => x.Get(command.LearningKey), Times.Once);
         _mockApprenticeshipRepository.Verify(x => x.Update(
-            It.Is<ApprenticeshipDomainModel>(y => y
+            It.Is<LearningDomainModel>(y => y
                 .LatestEpisode.PaymentsFrozen == command.NewPaymentsFrozenStatus)), Times.Once);
 
         switch(setPayments)
         {
             case SetPayments.Freeze:
                 _messageSession.Verify(x => x.Publish(
-                    It.Is<PaymentsFrozenEvent>(e => e.ApprenticeshipKey == command.ApprenticeshipKey),
+                    It.Is<PaymentsFrozenEvent>(e => e.LearningKey == command.LearningKey),
                     It.IsAny<PublishOptions>(),
                     It.IsAny<CancellationToken>()),
                     Times.Once);
@@ -72,7 +72,7 @@ public class WhenHandleSetPaymentsFrozenCommand
 
             case SetPayments.Unfreeze:
                 _messageSession.Verify(x => x.Publish(
-                    It.Is<PaymentsUnfrozenEvent>(e => e.ApprenticeshipKey == command.ApprenticeshipKey),
+                    It.Is<PaymentsUnfrozenEvent>(e => e.LearningKey == command.LearningKey),
                     It.IsAny<PublishOptions>(),
                     It.IsAny<CancellationToken>()),
                     Times.Once);
@@ -85,7 +85,7 @@ public class WhenHandleSetPaymentsFrozenCommand
     public async Task WhenFundingPlatformIsNotDASThenEventNotPublished(SetPayments setPayments)
     {
         // Arrange
-        var apprenticeship = _fixture.Create<ApprenticeshipDomainModel>();
+        var apprenticeship = _fixture.Create<LearningDomainModel>();
         ApprenticeshipDomainModelTestHelper.AddEpisode(apprenticeship, fundingPlatform: FundingPlatform.SLD);
         _mockApprenticeshipRepository.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(apprenticeship);
 
