@@ -1,3 +1,5 @@
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Learning.Domain.Apprenticeship;
 using SFA.DAS.Learning.Domain.Extensions;
@@ -80,7 +82,16 @@ public class AddLearningCommandHandler : ICommandHandler<AddLearningCommand>
             command.TrainingCode,
             command.TrainingCourseVersion);
 
-        await _learningRepository.Add(learning);
+        try
+        {
+            await _learningRepository.Add(learning);
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is SqlException { Number: 2627 or 2601 })
+        {
+            //2627: violation of unique constraint. 2601: violation of unique index
+            _logger.LogWarning($"Unique constraint violation, uln: {command.Uln}, approvals apprenticeship id: {command.ApprovalsApprenticeshipId}.");
+            return;
+        }
 
         if (learning.LatestEpisode.FundingPlatform == FundingPlatform.DAS)
         {
