@@ -2,7 +2,7 @@
 Post-deployment script
 */
 
-IF OBJECT_ID('[dbo].[Apprenticeships]', 'U') IS NOT NULL
+IF OBJECT_ID('[dbo].[Apprenticeship]', 'U') IS NOT NULL
 BEGIN
-    DROP TABLE [dbo].[Apprenticeships];
+    DROP TABLE [dbo].[Apprenticeship];
 END
